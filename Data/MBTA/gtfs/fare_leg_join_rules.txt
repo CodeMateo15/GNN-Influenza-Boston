@@ -1,0 +1,7 @@
+from_network_id,to_network_id,from_stop_id,to_stop_id
+commuter_rail,commuter_rail,NBM-0374,NBM-0374-01
+commuter_rail,commuter_rail,NBM-0374,NBM-0374-02
+commuter_rail,commuter_rail,NBM-0374-01,NBM-0374
+commuter_rail,commuter_rail,NBM-0374-01,NBM-0374-02
+commuter_rail,commuter_rail,NBM-0374-02,NBM-0374
+commuter_rail,commuter_rail,NBM-0374-02,NBM-0374-01

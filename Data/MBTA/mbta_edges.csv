@@ -1,0 +1,33 @@
+neighborhood_1,neighborhood_2,weight,raw_weekly_trips
+Back Bay/Beacon Hill/Downtown/North End/West End,South Boston,1.0,14896
+Jamaica Plain,Roxbury,0.959519,14293
+Fenway,Roxbury,0.932666,13893
+Back Bay/Beacon Hill/Downtown/North End/West End,South End,0.803571,11970
+Dorchester,South Boston,0.748993,11157
+Dorchester,Roxbury,0.717642,10690
+Back Bay/Beacon Hill/Downtown/North End/West End,Fenway,0.646415,9629
+Roxbury,South End,0.540749,8055
+Jamaica Plain,Roslindale,0.423872,6314
+Dorchester,Mattapan,0.323443,4818
+Back Bay/Beacon Hill/Downtown/North End/West End,Charlestown,0.269804,4019
+Hyde Park,Roslindale,0.238185,3548
+Back Bay/Beacon Hill/Downtown/North End/West End,East Boston,0.221469,3299
+East Boston,South Boston,0.213077,3174
+Fenway,South End,0.201866,3007
+Allston/Brighton,Fenway,0.193408,2881
+Roslindale,West Roxbury,0.178303,2656
+South Boston,South End,0.145005,2160
+Hyde Park,Mattapan,0.084519,1259
+Hyde Park,West Roxbury,0.081364,1212
+Jamaica Plain,Mattapan,0.078813,1174
+Back Bay/Beacon Hill/Downtown/North End/West End,Roxbury,0.050618,754
+Back Bay/Beacon Hill/Downtown/North End/West End,Dorchester,0.037057,552
+Mattapan,Roslindale,0.021818,325
+Jamaica Plain,West Roxbury,0.021214,316
+Hyde Park,Roxbury,0.021147,315
+Roxbury,South Boston,0.016045,239
+Roslindale,Roxbury,0.006915,103
+Allston/Brighton,South End,0.004028,60
+Hyde Park,Jamaica Plain,0.004028,60
+Allston/Brighton,Back Bay/Beacon Hill/Downtown/North End/West End,0.003021,45
+Back Bay/Beacon Hill/Downtown/North End/West End,Hyde Park,0.000336,5

@@ -1,0 +1,2 @@
+timeframe_group_id,start_time,end_time,service_id
+timeframe_regular,,,fare_regular

@@ -1,0 +1,61 @@
+service_id,service_description,service_schedule_name,service_schedule_type,service_schedule_typicality,rating_start_date,rating_end_date,rating_description
+BUS12026-hba16011-Weekday-02,Weekday schedule,Weekday,Weekday,1,20251214,20260404,Winter
+BUS12026-hbb16fr1-Weekday-02,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+BUS12026-hbc16fr1-Weekday-02,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+BUS12026-hbf16011-Weekday-02,Weekday schedule,Weekday,Weekday,1,20251214,20260404,Winter
+BUS12026-hbg16fr1-Weekday-02,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+BUS12026-hbl16fr1-Weekday-02,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+BUS12026-hbq16fr1-Weekday-02,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+BUS12026-hbs16fr1-Weekday-02,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+BUS12026-hbt16fr1-Weekday-02,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+Boat-EastBoston-Saturday-Summer-26,Saturday schedule,Saturday,Saturday,1,20260330,20260822,Spring/Summer
+Boat-EastBoston-Weekday-Summer-26,Weekday schedule,Weekday,Weekday,1,20260330,20260822,Spring/Summer
+Boat-F1-Weekday-Fall-25,Weekday schedule,Weekday,Weekday,1,20250824,20260329,Fall/Winter
+Boat-F4-Saturday-Fall-25,Saturday schedule,Saturday,Saturday,1,20250824,20260329,Fall/Winter
+Boat-F4-Sunday-Fall-25,Sunday schedule,Sunday,Sunday,1,20250824,20260329,Fall/Winter
+Boat-F4-Weekday-Fall-25,Weekday schedule,Weekday,Weekday,1,20250824,20260329,Fall/Winter
+CR-FoxboroWalpoleShuttle-Weekday,Weekday schedule,Weekday,Weekday,4,20251214,20260404,Winter/Spring
+CR-TowerAShuttle,Other schedule,Other,Other,4,20251214,20260404,Fall/Winter
+DIV20261-hmo16bf1-Weekday-01,Weekday schedule (modified service),Weekday (modified service),Weekday,4,20251214,20260404,Winter
+DIV20261-hmo16bh1-Weekday-01,Weekday schedule (modified service),Weekday (modified service),Weekday,4,20251214,20260404,Winter
+DIV20261-hms16cf1-Weekday-01-1,Weekday schedule (modified service),Weekday (modified service),Weekday,4,20251214,20260404,Winter
+DIV20261-hms16cs6-Saturday-01-1,Saturday schedule (modified service),Saturday (modified service),Saturday,4,20251214,20260404,Winter
+DIV20261-hms16cs7-Sunday-01-1,Sunday schedule (modified service),Sunday (modified service),Sunday,4,20251214,20260404,Winter
+DIV20261-hms16cw1-Weekday-01-1,Weekday schedule (modified service),Weekday (modified service),Weekday,4,20251214,20260404,Winter
+DIV20261-hms16df1-Weekday-01,Weekday schedule (modified service),Weekday (modified service),Weekday,4,20251214,20260404,Winter
+DIV20261-hms16ds6-Saturday-01,Saturday schedule (modified service),Saturday (modified service),Saturday,4,20251214,20260404,Winter
+DIV20261-hms16ds7-Sunday-01,Sunday schedule (modified service),Sunday (modified service),Sunday,4,20251214,20260404,Winter
+DIV20261-hms16dw1-Weekday-01,Weekday schedule (modified service),Weekday (modified service),Weekday,4,20251214,20260404,Winter
+FALL 2025-NORTHSS-Weekend-10,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FALL 2025-NORTHSS-Weekend-10-S6561ad1d,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FALL 2025-NORTHSS-Weekend-10-S7d8482ee,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FALL 2025-NORTHSS-Weekend-10-S9d378dcf,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FALL 2025-SOUTHSS-Weekend-1A-BsUpd,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FALL 2025-SOUTHSS-Weekend-66a,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FLL 2025-SOUTHSS-Wnd-1A-BaseUpdated-S86,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FLL 2025-SOUTHSS-Wnd-1A-BaseUpdated-Sb4,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FLL 2025-SOUTHSS-Wnd-1A-BaseUpdated-Sb6,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FLL 2025-SOUTHSS-Wnd-1A-BaseUpdated-Sc0,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FLL 2025-SOUTHSS-Wnd-1A-BaseUpdated-Sc5,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+FLL 2025-SOUTHSS-Wnd-1A-BaseUpdated-Sd5,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+Fall/WinterSaturday,Weekend schedule,Weekend,Weekend,1,20251027,,Fall/Winter
+Fall/WinterWeekday,Weekday schedule (modified service),Weekday (modified service),Weekday,4,20251027,,Fall/Winter
+LRV12026-hlb16fr1-Weekday-01,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+LRV12026-hlm16fr1-Weekday-01,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+PRIV12026-hpa16011-Weekday-01,Weekday schedule,Weekday,Weekday,1,20251214,20260404,Winter
+PRIV12026-hpj16011-Weekday-01,Weekday schedule,Weekday,Weekday,1,20251214,20260404,Winter
+PRIV12026-hpp16011-Weekday-01,Weekday schedule,Weekday,Weekday,1,20251214,20260404,Winter
+Parade-Shuttle-Bus,Sunday schedule,Sunday,Sunday,4,20251214,20260404,Winter
+RTL12026-hmb16bf1-Weekday-01,Weekday schedule (modified service),Weekday (modified service),Weekday,4,20251214,20260404,Winter
+RTL12026-hmo16011-Weekday-01,Monday - Thursday schedule,Monday - Thursday,Weekday,1,20251214,20260404,Winter
+RTL12026-hmo16fr1-Weekday-01,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+RTL12026-hms16011-Weekday-01,Monday - Thursday schedule,Monday - Thursday,Weekday,1,20251214,20260404,Winter
+RTL12026-hms16016-Saturday-01,Saturday schedule,Saturday,Saturday,1,20251214,20260404,Winter
+RTL12026-hms16017-Sunday-01,Sunday schedule,Sunday,Sunday,1,20251214,20260404,Winter
+RTL12026-hms16fr1-Weekday-01,Friday schedule,Friday,Weekday,1,20251214,20260404,Winter
+St.PatricksDayParade,Weekend schedule (modified service),Weekend (modified service),Weekend,4,20251027,,Fall/Winter
+WinterSaturday,Saturday schedule,Saturday,Saturday,1,20251214,20260404,Winter
+WinterSunday,Sunday schedule,Sunday,Sunday,1,20251214,20260404,Winter
+WinterWeekday,Monday - Thursday schedule,Monday - Thursday,Weekday,1,20251214,20260404,Winter
+canonical,Canonical reference trips only,Canonical reference trips,Other,6,20220313,,Reference
+fare_regular,Regular fares,Regular,Other,0,20231217,,Fares
