@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 << 'EOF'\nimport json\nimport sys\n\n# Read the main notebook\nwith open\\('Code/Boston_Influenza_GNN.ipynb', 'r'\\) as f:\n    nb = json.load\\(f\\)\n\n# Extract all imports and key function definitions\nimports = set\\(\\)\nfor cell in nb['cells']:\n    if cell['cell_type'] == 'code':\n        source = ''.join\\(cell['source']\\)\n        # Look for import statements\n        for line in source.split\\('\\\\n'\\):\n            if 'import ' in line and not line.strip\\(\\).startswith\\('#'\\):\n                imports.add\\(line.strip\\(\\)\\)\n\nprint\\(\"=\" * 70\\)\nprint\\(\"IMPORTS FOUND IN MAIN NOTEBOOK\"\\)\nprint\\(\"=\" * 70\\)\nfor imp in sorted\\(imports\\):\n    if imp:\n        print\\(imp\\)\nEOF)",
+      "Bash(cd C:/Users/mateo/GNN-Influenza-Boston && python Code/scrape_weather.py)",
+      "Bash(cd C:/Users/mateo/GNN-Influenza-Boston && python -c \"\nimport pandas as pd\ndf = pd.read_csv\\('Data/BPHC Flu Data/BPHC Dashboard Influenza ED Visits-type 2.csv'\\)\nprint\\(sorted\\(df['demographic_value'].str.strip\\(\\).unique\\(\\)\\)\\)\n\")",
+      "Bash(cd C:/Users/mateo/GNN-Influenza-Boston && python -c \"\nimport pandas as pd\ndf = pd.read_csv\\('Data/BPHC Flu Data/BPHC Dashboard Influenza Neighborhood.csv'\\)\nneighborhoods = sorted\\(df['description'].dropna\\(\\).astype\\(str\\).str.strip\\(\\).unique\\(\\)\\)\nfor n in neighborhoods:\n    print\\(n\\)\nprint\\(f'\\\\nTotal: {len\\(neighborhoods\\)}'\\)\n\")",
+      "Bash(del \"C:\\\\Users\\\\mateo\\\\GNN-Influenza-Boston\\\\Data\\\\Weather\\\\boston_weather_weekly.csv\")",
+      "Bash(python -c \"import os; os.remove\\(r'C:\\\\Users\\\\mateo\\\\GNN-Influenza-Boston\\\\Data\\\\Weather\\\\boston_weather_weekly.csv'\\)\")"
+    ]
+  }
+}
