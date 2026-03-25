@@ -1,0 +1,4 @@
+- Make 2 models, current and just flu data to compare what extra data does
+
+- Make new types of edges
+	- MBTA? Instead of 0-1, make it based on distance 0-4ish?
