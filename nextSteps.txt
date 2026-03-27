@@ -2,3 +2,6 @@
 
 - Make new types of edges
 	- MBTA? Instead of 0-1, make it based on distance 0-4ish?
+
+- Grab bluebike data
+	- https://bluebikes.com/system-data
