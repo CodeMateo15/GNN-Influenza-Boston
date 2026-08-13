@@ -1,0 +1,17 @@
+{
+  "run_name": "gnn_multiedge:post_covid",
+  "enabled": true,
+  "kg_co2": 1.7659723678023636e-05,
+  "kwh": 4.779706143080451e-05,
+  "duration_s": 3.5478571250569075,
+  "cpu_kwh": 4.188411400076196e-05,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 5.912947430042551e-06,
+  "hardware": {
+    "cpu_model": "Apple M5",
+    "gpu_model": "",
+    "cpu_count": "10",
+    "os": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "note": null
+}

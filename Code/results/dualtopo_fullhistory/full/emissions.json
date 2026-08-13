@@ -1,0 +1,17 @@
+{
+  "run_name": "dualtopo_fullhistory:full",
+  "enabled": true,
+  "kg_co2": 0.0003761414580371674,
+  "kwh": 0.0010180485665723,
+  "duration_s": 75.56665566598531,
+  "cpu_kwh": 0.0008921049841420125,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 0.0001259435824302879,
+  "hardware": {
+    "cpu_model": "Apple M5",
+    "gpu_model": "",
+    "cpu_count": "10",
+    "os": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "note": null
+}

@@ -1,0 +1,17 @@
+{
+  "run_name": "dualtopo:post_covid",
+  "enabled": true,
+  "kg_co2": 5.635643795263239e-05,
+  "kwh": 0.0001525319521389449,
+  "duration_s": 11.322005417081527,
+  "cpu_kwh": 0.00013366212616561422,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 1.8869825973330688e-05,
+  "hardware": {
+    "cpu_model": "Apple M5",
+    "gpu_model": "",
+    "cpu_count": "10",
+    "os": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "note": null
+}

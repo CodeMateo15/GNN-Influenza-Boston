@@ -1,0 +1,17 @@
+{
+  "run_name": "seasonal_naive:exclude_covid",
+  "enabled": true,
+  "kg_co2": 1.2822205117475118e-07,
+  "kwh": 3.470403823141371e-07,
+  "duration_s": 0.02579366695135832,
+  "cpu_kwh": 3.0420260405258487e-07,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 4.283777826155226e-08,
+  "hardware": {
+    "cpu_model": "Apple M5",
+    "gpu_model": "",
+    "cpu_count": "10",
+    "os": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "note": null
+}
