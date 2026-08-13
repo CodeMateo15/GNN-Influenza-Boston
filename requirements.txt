@@ -1,0 +1,35 @@
+# Boston Influenza GNN — dependencies
+#
+# Installed in layers so a fresh checkout can run the cheap models without
+# pulling torch. Install only the sections you need.
+#
+#   pip install -r requirements.txt              # everything
+#   pip install pandas numpy scipy matplotlib    # core only: run_seasonal_naive.py
+
+# --- core: required by every script -----------------------------------------
+pandas>=2.0
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+
+# --- run_arima.py -----------------------------------------------------------
+statsmodels>=0.14
+
+# --- run_lstm.py, run_gnn.py, run_dualtopo.py -------------------------------
+torch>=2.0
+
+# --- run_gnn.py only (GCNConv). run_dualtopo.py is deliberately PyG-free. ---
+torch-geometric>=2.4
+
+# --- graph visualisation (influenza/plots.py) -------------------------------
+networkx>=3.0
+seaborn>=0.13
+
+# --- emissions tracking (influenza/carbon.py). Degrades gracefully if absent.
+codecarbon>=3.0
+
+# --- vaccination features only (reads .xlsx workbooks) ----------------------
+openpyxl>=3.1
+
+# --- Rt features only (--rt). Pinned: the API moved between versions.
+epyestim==0.1

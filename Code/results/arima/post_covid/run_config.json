@@ -1,0 +1,67 @@
+{
+  "model": "arima",
+  "variant": "post_covid",
+  "git_sha": "5bc3803",
+  "created": "2026-08-12T14:35:46",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1,
+      2
+    ],
+    "test_start": "2025-05-31",
+    "test_end": "2026-05-31",
+    "val_fraction": 0.15
+  },
+  "split": {
+    "n_train": 121,
+    "n_val": 20,
+    "n_test": 48,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-03"
+  },
+  "order_grid": {
+    "p": 3,
+    "d": 1,
+    "q": 3
+  },
+  "selected_orders": {
+    "Allston/Brighton": "(3, 0, 2)",
+    "Back Bay/Beacon Hill/Downtown/North End/West End": "(0, 1, 0)",
+    "Charlestown": "(3, 0, 1)",
+    "Dorchester": "(3, 0, 3)",
+    "East Boston": "(3, 0, 2)",
+    "Fenway": "(1, 0, 0)",
+    "Hyde Park": "(3, 0, 3)",
+    "Jamaica Plain": "(0, 1, 0)",
+    "Mattapan": "(1, 0, 0)",
+    "Roslindale": "(2, 0, 3)",
+    "Roxbury": "(0, 1, 0)",
+    "South Boston": "(3, 0, 3)",
+    "South End": "(1, 0, 0)",
+    "West Roxbury": "(3, 1, 2)"
+  },
+  "fallback_forecasts": 0,
+  "missing_target_cells": 117,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 7.750145871263366,
+      "2": 0.0
+    },
+    "beta": {
+      "1": 10.35893116575407,
+      "2": 26.680068327728424
+    },
+    "kappa": {
+      "1": 0.9669129883060014,
+      "2": 0.7615203539443927
+    },
+    "n_validation": 543,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 95.76202118989406
+}

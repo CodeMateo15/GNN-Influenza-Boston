@@ -1,0 +1,17 @@
+{
+  "run_name": "arima:post_covid",
+  "enabled": true,
+  "kg_co2": 0.0002556865749649534,
+  "kwh": 0.0006920304730384992,
+  "duration_s": 51.36729262501467,
+  "cpu_kwh": 0.0006064187101200838,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 8.561176291841547e-05,
+  "hardware": {
+    "cpu_model": "Apple M5",
+    "gpu_model": "",
+    "cpu_count": "10",
+    "os": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "note": null
+}

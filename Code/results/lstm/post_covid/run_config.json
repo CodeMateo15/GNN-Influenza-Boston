@@ -1,0 +1,53 @@
+{
+  "model": "lstm",
+  "variant": "post_covid",
+  "git_sha": "5bc3803",
+  "created": "2026-08-12T14:26:40",
+  "target_kind": "level",
+  "normalize": "train",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1,
+      2
+    ],
+    "test_start": "2025-05-31",
+    "test_end": "2026-05-31",
+    "val_fraction": 0.15
+  },
+  "split": {
+    "n_train": 121,
+    "n_val": 20,
+    "n_test": 48,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-03"
+  },
+  "hidden_size": 64,
+  "epochs": 120,
+  "batch_size": 32,
+  "seed": 42,
+  "best_epoch": 89,
+  "best_val_mse": 0.9745693802833557,
+  "n_params": 22300,
+  "imputed_feature_cells": 139,
+  "checkpoint": "checkpoints/lstm_post_covid.pt",
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0,
+      "2": 0.0
+    },
+    "beta": {
+      "1": 7.452090790742468,
+      "2": 16.277446874670133
+    },
+    "kappa": {
+      "1": 0.8399804118843969,
+      "2": 0.6614406664589472
+    },
+    "n_validation": 543,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 93.39853300733496
+}

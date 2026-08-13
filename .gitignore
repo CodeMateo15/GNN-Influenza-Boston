@@ -1,1 +1,12 @@
 .claude/
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Generated caches (Rt bootstrapping is slow; results are reproducible)
+Code/results/_cache/
