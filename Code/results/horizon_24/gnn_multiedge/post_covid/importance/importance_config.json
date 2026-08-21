@@ -1,0 +1,36 @@
+{
+  "model": "gnn_multiedge",
+  "variant": "post_covid",
+  "horizon": 24,
+  "git_sha": "8dd9348",
+  "created": "2026-08-14T12:32:51",
+  "checkpoint": "Code/checkpoints/horizon_24/gnn_multiedge_post_covid.pt",
+  "n_test_origins": 49,
+  "n_background": 102,
+  "explains": "the deterministic eval-mode forward, not the MC-dropout mean reported in predictions.csv, and before the max(0, .) clip",
+  "permutation": {
+    "repeats": 20,
+    "scheme": "shared",
+    "seed": 42,
+    "baseline_RMSE": 26.929649576819976
+  },
+  "shap": {
+    "explainer": "gradient",
+    "nsamples": 300,
+    "seed": 42,
+    "units": "rate_per_100k",
+    "batching_max_abs_diff": 0.0,
+    "anchor_max_abs_shap": 0.0,
+    "local_accuracy_pct_of_spread": 4.43854212728479,
+    "constant_groups_omitted": [
+      "flu_lags \u2014 anchor",
+      "weather \u2014 anchor",
+      "demographics \u2014 own",
+      "demographics \u2014 connected",
+      "demographics \u2014 unconnected",
+      "demographics \u2014 anchor"
+    ],
+    "waterfalls": 3
+  },
+  "wall_clock_s": 23.8
+}

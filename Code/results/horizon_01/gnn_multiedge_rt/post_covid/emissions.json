@@ -1,0 +1,12 @@
+{
+  "run_name": "gnn_multiedge_rt:post_covid:h1",
+  "enabled": false,
+  "kg_co2": null,
+  "kwh": null,
+  "duration_s": null,
+  "cpu_kwh": null,
+  "gpu_kwh": null,
+  "ram_kwh": null,
+  "hardware": {},
+  "note": "--no-carbon"
+}

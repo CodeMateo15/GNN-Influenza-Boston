@@ -38,7 +38,7 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_window
+from influenza.cli import add_common_args, resolve_window, run_tag
 from influenza.config import EXPERIMENTS, Experiment
 from influenza.graphs import build_graph
 from influenza.intervals import empirical_coverage
@@ -75,6 +75,8 @@ def resolve_experiment(args: argparse.Namespace) -> Experiment:
     feature_changes: dict = {}
     if args.rt:
         feature_changes["use_rt"] = True
+    if args.seasonality:
+        feature_changes["use_seasonality"] = True
     if args.imputed_flag:
         feature_changes["use_imputed_flag"] = True
 
@@ -120,8 +122,8 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         print(f"{experiment.note}\n")
     print(f"Graph: {graph.summary()}")
     print(f"Train: {len(split.train)} | Validation: {len(split.val)} | Test: {len(split.test)}")
-    print(f"Test targets: {split.index[split.test[0] + 1].date()} -> "
-          f"{split.index[split.test[-1] + window.max_horizon].date()}")
+    first_target, last_target = split.test_target_span()
+    print(f"Test targets: {first_target.date()} -> {last_target.date()}")
 
     samples, norm = build_samples(dataset, split, experiment.features, window, graph,
                                   target=experiment.target, normalize=experiment.normalize)
@@ -134,7 +136,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
 
     edge_index, edge_weight = graph.edge_tensors()
 
-    with track_emissions(f"{experiment.name}:{experiment.variant}",
+    with track_emissions(run_tag(experiment.name, experiment.variant, window),
                          enabled=not args.no_carbon) as carbon:
         seed_everything(experiment.train.seed)
         model = InfluenzaGNN(
@@ -187,7 +189,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     print(f"95% interval calibrated on {interval_model.n_validation} validation points; "
           f"test coverage {coverage:.1f}%")
 
-    checkpoint_path = paths.CHECKPOINT_DIR / f"{experiment.name}_{experiment.variant}.pt"
+    checkpoint_path = args.checkpoint_dir / f"{experiment.name}_{experiment.variant}.pt"
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "model_state_dict": model.state_dict(),
@@ -224,7 +226,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
             "best_epoch": result.best_epoch,
             "best_val_mse": result.best_val_loss,
             "epochs_run": result.epochs_run,
-            "checkpoint": str(checkpoint_path.relative_to(paths.CODE_DIR)),
+            "checkpoint": paths.display(checkpoint_path),
             "experiment": experiment.to_json(),
             "intervals": interval_model.to_json(),
             "test_interval_coverage": coverage,
@@ -233,7 +235,6 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         bands=True,
         carbon=carbon,
         results_root=args.output_dir,
-        title=f"{experiment.name} ({experiment.variant}) — horizon 1",
     )
     save_loss_curve(result.train_losses, result.val_losses, out / "loss_curve.png",
                     title=f"{experiment.name} ({experiment.variant}) training")
@@ -257,6 +258,8 @@ def parse_args() -> argparse.Namespace:
                         help="'all' reproduces the notebooks but leaks the test window.")
     parser.add_argument("--target", choices=["delta", "level"], default=None)
     parser.add_argument("--rt", action="store_true", help="Add the Rt growth-index feature.")
+    parser.add_argument("--seasonality", action="store_true",
+                        help="Add sin/cos of the target week's calendar position.")
     parser.add_argument("--imputed-flag", action="store_true",
                         help="Add a per-lag indicator for imputed (suppressed) weeks.")
     return parser.parse_args()

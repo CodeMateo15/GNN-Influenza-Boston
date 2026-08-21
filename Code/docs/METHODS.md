@@ -200,27 +200,20 @@ Horizon 1, all neighborhood-weeks pooled, full year. Thresholds from 2022-23, 20
 | model | variant | PSS (IT50) | CSI (IT50) | PSS (IT90) | CSI (IT90) | band exact |
 | --- | --- | --- | --- | --- | --- | --- |
 | gnn_multiedge_season | post_covid | 0.766 | 0.411 | 0.637 | 0.333 | 0.856 |
-| lstm | exclude_covid | 0.757 | 0.597 | 0.096 | 0.074 | 0.920 |
 | gnn_uniform | post_covid | 0.748 | 0.406 | 0.521 | 0.256 | 0.850 |
 | gnn_multiedge | post_covid | 0.745 | 0.482 | 0.479 | 0.290 | 0.893 |
 | lstm | post_covid | 0.729 | 0.633 | 0.000 | 0.000 | 0.939 |
 | gnn_multiedge_covid_rsv | post_covid | 0.724 | 0.603 | 0.485 | 0.333 | 0.936 |
 | gnn_corrbinary | post_covid | 0.714 | 0.304 | 0.635 | 0.324 | 0.791 |
-| gnn_multiedge_covid_rsv_full | full | 0.683 | 0.562 | 0.436 | 0.348 | 0.939 |
 | persistence | post_covid | 0.680 | 0.545 | 0.428 | 0.286 | 0.928 |
-| persistence | exclude_covid | 0.680 | 0.545 | 0.428 | 0.286 | 0.928 |
 | arima | post_covid | 0.669 | 0.574 | 0.322 | 0.240 | 0.936 |
 | gnn_multiedge_rt | post_covid | 0.668 | 0.283 | 0.526 | 0.278 | 0.778 |
 | gnn_multiedge_leaknorm | post_covid | 0.658 | 0.250 | 0.794 | 0.357 | 0.740 |
-| arima | exclude_covid | 0.626 | 0.524 | 0.217 | 0.190 | 0.935 |
 | gnn_multiedge_season_level | post_covid | 0.615 | 0.196 | 0.796 | 0.366 | 0.636 |
 | gnn_geo | post_covid | 0.602 | 0.219 | 0.582 | 0.306 | 0.703 |
-| gnn_multiedge_full | full | 0.566 | 0.247 | 0.529 | 0.294 | 0.780 |
-| dualtopo_fullhistory | full | 0.562 | 0.455 | 0.158 | 0.130 | 0.927 |
 | gnn_multiedge_level | post_covid | 0.408 | 0.147 | 0.252 | 0.147 | 0.584 |
-| dualtopo_no_bg | post_covid | 0.000 | 0.000 | 0.000 | 0.000 | 0.919 |
 | dualtopo | post_covid | 0.000 | 0.000 | 0.000 | 0.000 | 0.919 |
-| seasonal_naive | exclude_covid | -0.016 | 0.047 | -0.056 | 0.000 | 0.801 |
+| dualtopo_no_bg | post_covid | 0.000 | 0.000 | 0.000 | 0.000 | 0.919 |
 | seasonal_naive | post_covid | -0.016 | 0.047 | -0.056 | 0.000 | 0.801 |
 
 PSS (Peirce skill score) is 0 for both a never-alert and an always-alert forecast, so it cannot be gamed by the 8% base rate. Method and caveats: [`Code/docs/SEVERITY.md`](Code/docs/SEVERITY.md). Full tables: [`Code/results/horizon_01/_comparison/severity_leaderboard.md`](Code/results/horizon_01/_comparison/severity_leaderboard.md).

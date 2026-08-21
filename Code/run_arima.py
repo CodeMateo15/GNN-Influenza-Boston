@@ -10,6 +10,7 @@ time across the test window.
 from __future__ import annotations
 
 import argparse
+import sys
 import warnings
 
 try:
@@ -32,7 +33,7 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_variants, resolve_window
+from influenza.cli import add_common_args, resolve_variants, resolve_window, run_tag
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
 
 MODEL = "arima"
@@ -119,32 +120,45 @@ def select_order(
     series: pd.Series,
     train_dates: pd.DatetimeIndex,
     val_dates: pd.DatetimeIndex,
+    window: Window,
+    *,
+    max_d: int = MAX_D,
 ) -> tuple[int, int, int]:
-    """Grid search (p, d, q) by one-step walk-forward RMSE on the validation origins.
+    """Grid search (p, d, q) by walk-forward RMSE on the validation origins,
+    scored at the horizon the run will actually be evaluated at.
+
+    Scoring at one step regardless of horizon would pick the order that best
+    predicts next week and then apply it a year out, which are not the same
+    question: a (0,1,1) random walk is near-optimal at one week and a straight
+    line at fifty-two.
 
     An order that needs the fallback path on validation is disqualified outright:
     its RMSE would be the fallback's, which says nothing about the order itself
     and would happily select a model that diverges on the test window.
     """
+    horizon, steps = window.min_horizon, window.max_horizon
     best_order, best_rmse = (1, 0, 0), np.inf
-    actual = np.asarray([series.loc[d + pd.Timedelta(weeks=1)] for d in val_dates], dtype=float)
+    actual = np.asarray([series.loc[d + pd.Timedelta(weeks=horizon)] for d in val_dates],
+                        dtype=float)
     for p in range(MAX_P):
-        for d in range(MAX_D):
+        for d in range(max_d):
             for q in range(MAX_Q):
                 order = (p, d, q)
                 preds, fallbacks = walk_forward_forecasts(
-                    series, order, val_dates, steps=1, initial_end=train_dates[-1]
+                    series, order, val_dates, steps=steps, initial_end=train_dates[-1]
                 )
                 if fallbacks:
                     continue
-                rmse = _selection_rmse(preds, actual)
+                # Keep one value per origin -- the week being scored -- so the
+                # shape check in _selection_rmse still compares elementwise.
+                rmse = _selection_rmse([f[horizon - 1:horizon] for f in preds], actual)
                 if np.isfinite(rmse) and rmse < best_rmse:
                     best_order, best_rmse = order, rmse
     return best_order
 
 
 def _selection_rmse(preds: list[np.ndarray], actual: np.ndarray) -> float:
-    """One-step validation RMSE used for order selection.
+    """Validation RMSE at the scored horizon, used for order selection.
 
     `ravel()` matters: `preds` is a list of length-1 arrays, so `np.asarray`
     gives shape (n, 1), and subtracting the (n,) actuals would broadcast into an
@@ -170,12 +184,12 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
 
     print(f"\n{'=' * 72}\nARIMA | {variant}\n{'=' * 72}")
     print(f"Train origins: {len(split.train)} | Validation: {len(split.val)} | Test: {len(split.test)}")
-    print(f"Test targets: {split.index[split.test[0] + 1].date()} -> "
-          f"{split.index[split.test[-1] + window.max_horizon].date()}")
+    first_target, last_target = split.test_target_span()
+    print(f"Test targets: {first_target.date()} -> {last_target.date()}")
 
     # Tracking covers only the fitting work, and must close before finish_run,
     # which serialises the emissions summary.
-    with track_emissions(f"{MODEL}:{variant}", enabled=not args.no_carbon) as carbon:
+    with track_emissions(run_tag(MODEL, variant, window), enabled=not args.no_carbon) as carbon:
         records: list[dict] = []
         val_records: list[dict] = []
         fallback_count = 0
@@ -185,7 +199,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
             # The NaN-holed calendar keeps true week spacing across an excluded
             # window, so the Kalman filter does not treat a gap as contiguous.
             series = data.calendar[neighborhood]
-            order = select_order(series, train_dates, val_dates)
+            order = select_order(series, train_dates, val_dates, window, max_d=args.max_d)
             selected[neighborhood] = order
             print(f"[{idx + 1:02d}/{len(NEIGHBORHOODS)}] {SHORT_NAMES[idx]:12s} selected ARIMA{order}")
 
@@ -237,8 +251,20 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
     orders_table = pd.DataFrame(
         [{"neighborhood": n, "order": str(o)} for n, o in selected.items()]
     )
-    print(f"Fallback forecasts: {fallback_count} | "
+    n_forecasts = len(NEIGHBORHOODS) * len(split.test)
+    fallback_share = fallback_count / n_forecasts if n_forecasts else 0.0
+    print(f"Fallback forecasts: {fallback_count}/{n_forecasts} ({fallback_share:.1%}) | "
           f"suppressed target cells (not scored): {missing_targets}")
+    if fallback_count:
+        # The fallback is "repeat the last observed value" -- persistence. At long
+        # horizons a d>=1 fit extrapolates a line or a parabola, trips the
+        # divergence guard, and lands here for every origin, producing a
+        # completed run whose metrics are persistence's under an ARIMA label.
+        # Say so at the point of failure; compare_horizons.py flags it again.
+        print(f"warning: {fallback_share:.1%} of test forecasts fell back to the last "
+              f"observed value, i.e. persistence. Treat this row as degraded, not as "
+              f"an ARIMA result. Try --max-d 1 to cap the extrapolation degree.",
+              file=sys.stderr)
 
     finish_run(
         model=MODEL,
@@ -249,9 +275,11 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
             "normalize": "none",
             "window": window.to_json(),
             "split": split.to_json(),
-            "order_grid": {"p": MAX_P - 1, "d": MAX_D - 1, "q": MAX_Q - 1},
+            "order_grid": {"p": MAX_P - 1, "d": args.max_d - 1, "q": MAX_Q - 1},
             "selected_orders": {n: str(o) for n, o in selected.items()},
             "fallback_forecasts": fallback_count,
+            "fallback_share": fallback_share,
+            "selection_horizon": window.min_horizon,
             "missing_target_cells": missing_targets,
             "intervals": interval_model.to_json(),
             "test_interval_coverage": coverage,
@@ -267,7 +295,15 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     add_common_args(parser)
-    return parser.parse_args()
+    parser.add_argument("--max-d", type=int, default=MAX_D,
+                        help="Exclusive upper bound on the differencing order d. "
+                             "Default 2 (so d in {0,1}). At long horizons d=1 already "
+                             "extrapolates a straight line for the whole forecast, so "
+                             "capping it is the cheapest guard against divergence.")
+    args = parser.parse_args()
+    if not 1 <= args.max_d <= MAX_D:
+        parser.error(f"--max-d must be between 1 and {MAX_D}")
+    return args
 
 
 def main() -> None:

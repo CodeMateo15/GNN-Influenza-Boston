@@ -38,7 +38,40 @@ EMISSIONS_DIR = RESULTS_DIR / "_emissions"
 CACHE_DIR = RESULTS_DIR / "_cache"
 COMPARISON_DIR = RESULTS_DIR / "_comparison"
 DIAGNOSTICS_DIR = RESULTS_DIR / "_diagnostics"
+CROSS_HORIZON_DIR = RESULTS_DIR / "_comparison_horizons"
 DOCS_DIR = CODE_DIR / "docs"
+
+
+def horizon_dir(horizon: int, root: Path | None = None) -> Path:
+    """results/horizon_04/ -- the output root for one forecast horizon.
+
+    Zero-padded so a directory listing sorts numerically, and two levels above
+    metrics.csv so compare_models.py's `*/*/metrics.csv` glob works unchanged
+    when pointed at one of these, and cannot see them when pointed at the root.
+    """
+    return (root or RESULTS_DIR) / f"horizon_{horizon:02d}"
+
+
+def comparison_dir(results_root: Path | None = None) -> Path:
+    """The _comparison directory belonging to a given results root.
+
+    Without this, every horizon's leaderboard would overwrite the same six
+    files in the top-level _comparison/.
+    """
+    return (results_root or RESULTS_DIR) / "_comparison"
+
+
+def display(path: Path, base: Path | None = None) -> str:
+    """Path relative to `base` for logging, falling back to absolute.
+
+    `Path.relative_to` raises when the target sits outside the base, which any
+    --checkpoint-dir or --output-dir outside the repo does. A run_config field
+    is not worth crashing a completed run over.
+    """
+    try:
+        return str(path.relative_to(base or CODE_DIR))
+    except ValueError:
+        return str(path)
 
 
 def require(path: Path, what: str) -> Path:

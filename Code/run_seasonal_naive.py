@@ -33,7 +33,7 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_variants, resolve_window
+from influenza.cli import add_common_args, resolve_variants, resolve_window, run_tag
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
 
 SEASON_LAG_WEEKS = 52
@@ -91,8 +91,8 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
 
     print(f"\n{'=' * 72}\n{model_name.upper()} (lag {lag_weeks} weeks) | {variant}\n{'=' * 72}")
     print(f"Train origins: {len(split.train)} | Validation: {len(split.val)} | Test: {len(split.test)}")
-    print(f"Test targets: {split.index[split.test[0] + 1].date()} -> "
-          f"{split.index[split.test[-1] + window.max_horizon].date()}")
+    first_target, last_target = split.test_target_span()
+    print(f"Test targets: {first_target.date()} -> {last_target.date()}")
 
     # The lag source can predate the variant slice (a post-COVID target week in
     # 2025 looks back to 2024, which is inside the slice, but exclude_covid
@@ -125,7 +125,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
                     })
         return pd.DataFrame(rows)
 
-    with track_emissions(f"{model_name}:{variant}", enabled=not args.no_carbon) as carbon:
+    with track_emissions(run_tag(model_name, variant, window), enabled=not args.no_carbon) as carbon:
         validation = forecast(split.val)
         predictions = forecast(split.test)
 
@@ -162,7 +162,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
         bands=True,
         carbon=carbon,
         results_root=args.output_dir,
-        title=f"{model_name} (lag {lag_weeks}w, {variant}) — horizon 1",
+        title=f"{model_name} (lag {lag_weeks}w, {variant}) — horizon {window.min_horizon}",
     )
 
 

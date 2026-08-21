@@ -40,7 +40,7 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_variants, resolve_window
+from influenza.cli import add_common_args, resolve_variants, resolve_window, run_tag
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
 
 MODEL = "lstm"
@@ -157,13 +157,13 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
 
     print(f"\n{'=' * 72}\nLSTM | {variant} | device={device}\n{'=' * 72}")
     print(f"Train: {len(split.train)} | Validation: {len(split.val)} | Test: {len(split.test)}")
-    print(f"Test targets: {split.index[split.test[0] + 1].date()} -> "
-          f"{split.index[split.test[-1] + window.max_horizon].date()}")
+    first_target, last_target = split.test_target_span()
+    print(f"Test targets: {first_target.date()} -> {last_target.date()}")
 
     # Tracking wraps only the modelling work, so the measured energy is training
     # and inference rather than CSV writing. It must also close before
     # finish_run, which serialises the emissions summary.
-    with track_emissions(f"{MODEL}:{variant}", enabled=not args.no_carbon) as carbon:
+    with track_emissions(run_tag(MODEL, variant, window), enabled=not args.no_carbon) as carbon:
         model, best_epoch, best_loss, train_history, val_history = train_model(
             x_train, y_train, x_val, y_val, device, args.epochs, args.batch_size, window
         )
@@ -206,7 +206,7 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
 
     print(f"Best epoch: {best_epoch} | validation MSE: {best_loss:.6f}")
 
-    checkpoint_path = paths.CHECKPOINT_DIR / f"{MODEL}_{variant}.pt"
+    checkpoint_path = args.checkpoint_dir / f"{MODEL}_{variant}.pt"
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "model_state_dict": model.state_dict(),
@@ -246,7 +246,7 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
             "best_val_mse": best_loss,
             "n_params": sum(p.numel() for p in model.parameters()),
             "imputed_feature_cells": int(imputed.to_numpy().sum()),
-            "checkpoint": str(checkpoint_path.relative_to(paths.CODE_DIR)),
+            "checkpoint": paths.display(checkpoint_path),
             "intervals": interval_model.to_json(),
             "test_interval_coverage": coverage,
         },

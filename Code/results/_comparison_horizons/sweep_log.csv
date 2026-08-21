@@ -1,0 +1,7 @@
+horizon,model,variant,status,seconds,returncode,stderr
+1,gnn_multiedge_leaknorm,post_covid,ok,8.801514917053282,0,
+2,gnn_multiedge_leaknorm,post_covid,ok,6.5789085840806365,0,
+4,gnn_multiedge_leaknorm,post_covid,ok,7.051215916173533,0,
+12,gnn_multiedge_leaknorm,post_covid,ok,7.955313332844526,0,
+24,gnn_multiedge_leaknorm,post_covid,ok,6.545978750102222,0,
+52,gnn_multiedge_leaknorm,post_covid,ok,5.476128916954622,0,

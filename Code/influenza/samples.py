@@ -125,6 +125,13 @@ def build_samples(
     global_values = _zscore(dataset.globals_.to_numpy(dtype=np.float32), end=end, per_column=True)
     global_values = np.nan_to_num(global_values)
 
+    # Calendar position rides with the city-wide covariates rather than the node
+    # features: it is identical for all 21 nodes, and the GCN's degree-normalised
+    # neighbourhood averaging cannot differentiate a constant, so as a node
+    # feature it would survive only as a bias term. It would also break
+    # run_dualtopo.to_sequence, which asserts n_feat == lookback exactly.
+    season_names = ["woy_sin", "woy_cos"] if features.use_seasonality else []
+
     imputed_mask = dataset.flu_imputed.to_numpy(dtype=np.float32)
 
     feature_names = _feature_names(features, window, per_node_norm.keys())
@@ -135,7 +142,7 @@ def build_samples(
     n_samples = len(positions)
 
     X = np.zeros((n_samples, graph.n_nodes, n_feat), dtype=np.float32)
-    g = np.zeros((n_samples, global_values.shape[1]), dtype=np.float32)
+    g = np.zeros((n_samples, global_values.shape[1] + len(season_names)), dtype=np.float32)
     y = np.zeros((n_samples, N_NEIGH, len(window.horizons)), dtype=np.float32)
     anchors = np.zeros((n_samples, N_NEIGH), dtype=np.float32)
 
@@ -172,7 +179,17 @@ def build_samples(
                 anchor_row[temporal_len:] = ANCHOR_STATIC_VALUE
             X[row, N_NEIGH:] = anchor_row
 
-        g[row] = global_values[t]
+        if season_names:
+            # Keyed to the *target* week, which is known at forecast time and is
+            # the week the model is being asked about. Day-of-year rather than
+            # ISO week: week 53 exists every five or six years and would put a
+            # discontinuity in an otherwise smooth encoding.
+            target_week = dataset.week_index[t + window.min_horizon]
+            angle = 2.0 * np.pi * target_week.dayofyear / 365.2425
+            g[row] = np.concatenate([global_values[t],
+                                     [np.sin(angle), np.cos(angle)]]).astype(np.float32)
+        else:
+            g[row] = global_values[t]
         # The anchor is an INPUT (the level the delta is measured from), so it
         # uses the causally imputed series. Targets stay raw, so a suppressed
         # target is dropped from the loss and metrics -- but a suppressed
@@ -185,7 +202,7 @@ def build_samples(
     return (
         Samples(X=X, g=g, y=y, anchors=anchors, positions=positions,
                 feature_names=feature_names,
-                global_names=list(dataset.globals_.columns)),
+                global_names=list(dataset.globals_.columns) + season_names),
         Normalization(flu_mean=flu_mean, flu_std=flu_std),
     )
 
