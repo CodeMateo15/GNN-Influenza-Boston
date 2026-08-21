@@ -44,6 +44,13 @@ class FeatureSpec:
     use_rsv_wastewater: bool = False
     use_rt: bool = False
 
+    # Sine and cosine of the target week's position in the year, added to the
+    # city-wide covariates. Not a prediction -- the calendar is known at forecast
+    # time -- but at horizons of a quarter-cycle or more it is the only thing
+    # telling the model which side of the peak it is aiming at. An 8-week
+    # lookback cannot distinguish a rising November from a falling February.
+    use_seasonality: bool = False
+
     # Marks weeks whose flu rate was imputed because BPHC suppressed the count.
     use_imputed_flag: bool = False
 
@@ -213,6 +220,27 @@ def _experiments() -> dict[str, Experiment]:
         features=replace(multiedge.features, use_covid_cases=True, use_rsv_cases=True,
                          use_covid_wastewater=True),
         note=multiedge.note + " Plus monthly COVID/RSV neighborhood rates and COVID wastewater.",
+    )
+    registry["gnn_multiedge_season"] = replace(
+        multiedge, name="gnn_multiedge_season",
+        features=replace(multiedge.features, use_seasonality=True),
+        note=multiedge.note + " Plus sin/cos of the target week's calendar position. "
+             "At horizons of a quarter-cycle or more the lookback carries no "
+             "information about where in the season the target week sits.",
+    )
+    registry["gnn_multiedge_level"] = replace(
+        multiedge, name="gnn_multiedge_level", target="level",
+        note=multiedge.note + " Level target instead of delta-from-origin. The delta "
+             "parameterisation means the model learns the residual from persistence, "
+             "which is the right frame at 1 week and again at 52 (where the origin is "
+             "the same calendar week as the target). At 12 to 24 weeks the origin level "
+             "is anti-correlated with the target, so this is the fair arm there.",
+    )
+    registry["gnn_multiedge_season_level"] = replace(
+        multiedge, name="gnn_multiedge_season_level", target="level",
+        features=replace(multiedge.features, use_seasonality=True),
+        note="Both long-horizon corrections at once: calendar position and a level "
+             "target. The arm to beat at 24 and 52 weeks.",
     )
     registry["dualtopo_no_bg"] = replace(
         dualtopo, name="dualtopo_no_bg",

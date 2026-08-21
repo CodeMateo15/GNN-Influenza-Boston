@@ -5,7 +5,7 @@ makes it appear here with no registration step:
 
     python Code/compare_models.py
     python Code/compare_models.py --segment flu_season --rank-by MAE
-    python Code/compare_models.py --update-readme
+    python Code/compare_models.py --update-readme    # writes into Code/docs/METHODS.md
 
 Directories beginning with '_' are skipped, which excludes _legacy_pre_refactor,
 _emissions, _cache and _comparison automatically.
@@ -56,6 +56,12 @@ def discover(results_root: Path) -> list[Path]:
         path for path in results_root.glob("*/*/metrics.csv")
         if not any(part.startswith("_") for part in path.relative_to(results_root).parts)
     )
+
+
+def horizon_roots(results_root: Path) -> list[Path]:
+    """Per-horizon results trees beneath `results_root`, shortest horizon first."""
+    roots = [p for p in results_root.glob("horizon_*") if p.is_dir() and discover(p)]
+    return sorted(roots, key=lambda p: int(p.name.split("_")[1]))
 
 
 def load_one(path: Path, results_root: Path, *, allow_legacy: bool) -> pd.DataFrame | None:
@@ -510,7 +516,7 @@ def neighborhood_leaderboard(
     return "\n".join(lines)
 
 
-def readme_markdown(wide: pd.DataFrame, args: argparse.Namespace) -> str:
+def readme_markdown(wide: pd.DataFrame, args: argparse.Namespace, out: Path) -> str:
     """Compact cross-segment view for the README.
 
     The full leaderboard is three ranked tables of twenty rows, which is too much
@@ -535,17 +541,23 @@ def readme_markdown(wide: pd.DataFrame, args: argparse.Namespace) -> str:
     if sort_col in view.columns:
         view = view.sort_values(sort_col)
 
+    try:
+        rel = out.relative_to(paths.ROOT).as_posix()
+    except ValueError:
+        rel = out.as_posix()
+
     lines = [
         f"Horizon {args.horizon}, `scope={args.scope}`, sorted by overall RMSE. "
         "`all` = full year (48 weeks), `flu` = Oct–Mar (26), `off` = Apr–Sep (22).",
         "",
         *_markdown_table(view),
         "",
-        "Per-segment rankings with MAPE, MAE and interval coverage are in "
-        "[`Code/results/_comparison/leaderboard.md`]"
-        "(Code/results/_comparison/leaderboard.md); per-neighborhood breakdowns in "
-        "[`leaderboard_by_neighborhood.md`]"
-        "(Code/results/_comparison/leaderboard_by_neighborhood.md).",
+        # Link relative to the repo root so the block stays correct when the
+        # leaderboard is generated from a per-horizon results tree.
+        f"Per-segment rankings with MAPE, MAE and interval coverage are in "
+        f"[`{rel}/leaderboard.md`]({rel}/leaderboard.md); per-neighborhood "
+        f"breakdowns in [`leaderboard_by_neighborhood.md`]"
+        f"({rel}/leaderboard_by_neighborhood.md).",
     ]
     return "\n".join(lines) + "\n"
 
@@ -575,7 +587,13 @@ def parse_args() -> argparse.Namespace:
                         help=f"Comma-separated segments to report (default: {ALL_SEGMENTS}).")
     parser.add_argument("--scope", default="pooled",
                         choices=["pooled", "macro", "neighborhood", "cross_week"])
-    parser.add_argument("--horizon", type=int, default=1)
+    parser.add_argument("--horizon", type=int, default=None,
+                        help="Which horizon to rank. Default: inferred from the "
+                             "discovered results when they contain exactly one.")
+    parser.add_argument("--out-dir", type=Path, default=None,
+                        help="Where the leaderboard is written. Default: a _comparison/ "
+                             "beside the results being read, so pointing --results-dir at "
+                             "results/horizon_24 does not overwrite the top-level one.")
     parser.add_argument("--rank-by", default="RMSE", choices=list(CORE_METRICS))
     parser.add_argument("--allow-legacy", action="store_true",
                         help="Include pre-refactor metrics.csv files, labelled 'legacy'.")
@@ -594,16 +612,41 @@ def main() -> None:
     results_root = args.results_dir.resolve()
     found = discover(results_root)
     if not found:
+        # Results are organised one tree per forecast horizon, so the bare
+        # results root holds no runs of its own. Name the trees that exist
+        # rather than leaving the caller to guess the layout.
+        nested = horizon_roots(results_root)
+        if nested:
+            listed = "\n".join(f"  python Code/compare_models.py --results-dir {p}"
+                               for p in nested)
+            raise SystemExit(
+                f"error: no runs directly under {results_root} — results are split by "
+                f"forecast horizon. Pick one:\n{listed}\n\n"
+                f"For a comparison across horizons instead: python Code/compare_horizons.py"
+            )
         raise SystemExit(f"error: no metrics.csv under {results_root}")
     print(f"Discovered {len(found)} model/variant results under {results_root}")
 
     frames = [load_one(path, results_root, allow_legacy=args.allow_legacy) for path in found]
     frames = [f for f in frames if f is not None]
+
+    # A per-horizon results root contains exactly one horizon, and requiring the
+    # caller to repeat it in --horizon only invites the mismatch where the flag
+    # says 1, nothing matches, and the error blames the filters.
+    if args.horizon is None:
+        available = sorted({int(h) for f in frames for h in f["horizon"].unique()})
+        if len(available) != 1:
+            raise SystemExit(
+                f"error: results contain horizons {available}; pass --horizon to pick one."
+            )
+        args.horizon = available[0]
+        print(f"Inferred --horizon {args.horizon} from the discovered results.")
+
     long = build_long(frames, args)
     warnings = check_comparability(long, args.scope)
     wide = build_wide(long, args)
 
-    out = paths.COMPARISON_DIR
+    out = (args.out_dir or paths.comparison_dir(results_root)).resolve()
     out.mkdir(parents=True, exist_ok=True)
     long.to_csv(out / "comparison_long.csv", index=False)
     wide.to_csv(out / "comparison_wide.csv", index=False)
@@ -643,7 +686,7 @@ def main() -> None:
     for warning in warnings:
         print(f"\nwarning: {warning}", file=sys.stderr)
     if args.update_readme:
-        update_readme(readme_markdown(wide, args), paths.ROOT / "README.md")
+        update_readme(readme_markdown(wide, args, out), paths.DOCS_DIR / "METHODS.md")
     print(f"\nOutputs: {out}")
 
 

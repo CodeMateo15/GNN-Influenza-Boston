@@ -1,0 +1,18 @@
+{
+  "model": "gnn_multiedge",
+  "variant": "post_covid",
+  "horizon": 1,
+  "git_sha": "8dd9348",
+  "created": "2026-08-15T16:58:29",
+  "checkpoint": "Code/checkpoints/horizon_01/gnn_multiedge_post_covid.pt",
+  "n_test_origins": 49,
+  "n_background": 122,
+  "explains": "the deterministic eval-mode forward, not the MC-dropout mean reported in predictions.csv, and before the max(0, .) clip",
+  "permutation": {
+    "repeats": 2,
+    "scheme": "shared",
+    "seed": 42,
+    "baseline_RMSE": 24.824807480316892
+  },
+  "wall_clock_s": 2.1
+}

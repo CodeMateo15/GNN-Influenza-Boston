@@ -10,3 +10,7 @@ __pycache__/
 
 # Generated caches (Rt bootstrapping is slow; results are reproducible)
 Code/results/_cache/
+
+# Sweep checkpoints. The horizon-1 checkpoints stay committed; a full sweep is
+# 5 horizons x 12 experiments of weights that any run reproduces from scratch.
+Code/checkpoints/horizon_*/

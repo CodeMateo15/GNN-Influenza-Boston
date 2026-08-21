@@ -40,7 +40,7 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_window
+from influenza.cli import add_common_args, resolve_window, run_tag
 from influenza.config import EXPERIMENTS, Experiment
 from influenza.graphs import build_graph
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
@@ -110,8 +110,8 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     print(f"Geographic topology: {graph.summary()}")
     print(f"Correlation topology: {int((np.triu(graph.W_corr, 1) > 0).sum())} undirected edges")
     print(f"Train: {len(split.train)} | Validation: {len(split.val)} | Test: {len(split.test)}")
-    print(f"Test targets: {split.index[split.test[0] + 1].date()} -> "
-          f"{split.index[split.test[-1] + window.max_horizon].date()}")
+    first_target, last_target = split.test_target_span()
+    print(f"Test targets: {first_target.date()} -> {last_target.date()}")
     if len(split.train) < 100:
         print(f"  note: only {len(split.train)} training origins. A 52-week input window on "
               f"the {experiment.variant} slice is a much smaller data budget than the "
@@ -132,7 +132,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         for name, idx in rows.items()
     }
 
-    with track_emissions(f"{experiment.name}:{experiment.variant}",
+    with track_emissions(run_tag(experiment.name, experiment.variant, window),
                          enabled=not args.no_carbon) as carbon:
         seed_everything(experiment.train.seed)
         model = DualTopoSTGCN(
@@ -238,7 +238,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
                     "error": value - float(actual[sample_idx, node, h_idx]),
                 })
 
-    checkpoint_path = paths.CHECKPOINT_DIR / f"{experiment.name}_{experiment.variant}.pt"
+    checkpoint_path = args.checkpoint_dir / f"{experiment.name}_{experiment.variant}.pt"
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "model_state_dict": model.state_dict(),
@@ -280,7 +280,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
                 "corr_threshold": experiment.graph.corr_threshold,
                 "optimizer": "Adam",
             },
-            "checkpoint": str(checkpoint_path.relative_to(paths.CODE_DIR)),
+            "checkpoint": paths.display(checkpoint_path),
             "experiment": experiment.to_json(),
             "intervals": interval_model.to_json(),
             "test_interval_coverage": coverage,
@@ -289,7 +289,6 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         bands=True,
         carbon=carbon,
         results_root=args.output_dir,
-        title=f"{experiment.name} ({experiment.variant}) — horizon 1",
     )
     save_loss_curve(train_losses, val_losses, out / "loss_curve.png",
                     title=f"{experiment.name} ({experiment.variant}) training")

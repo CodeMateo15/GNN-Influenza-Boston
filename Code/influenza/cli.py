@@ -21,6 +21,10 @@ def add_common_args(parser: argparse.ArgumentParser, *, variants=("all", "exclud
                         help="Which time-filter experiment to run.")
     parser.add_argument("--output-dir", type=Path, default=paths.RESULTS_DIR,
                         help="Root directory for results/<model>/<variant>/.")
+    parser.add_argument("--checkpoint-dir", type=Path, default=paths.CHECKPOINT_DIR,
+                        help="Where model .pt files are written. Checkpoint names carry "
+                             "no horizon, so a multi-horizon sweep must vary this or "
+                             "each horizon silently overwrites the last.")
     parser.add_argument("--test-start", type=pd.Timestamp, default=TEST_START,
                         help="First target week of the evaluation window.")
     parser.add_argument("--test-end", type=pd.Timestamp, default=TEST_END,
@@ -35,6 +39,16 @@ def add_common_args(parser: argparse.ArgumentParser, *, variants=("all", "exclud
 
 def resolve_variants(choice: str, *, default=("exclude_covid", "post_covid")) -> tuple[str, ...]:
     return tuple(default) if choice == "all" else (choice,)
+
+
+def run_tag(model: str, variant: str, window: Window) -> str:
+    """codecarbon project name for one run.
+
+    Every run appends to the single results/_emissions/emissions.csv, so the
+    name is the only thing distinguishing rows. Without the horizon, a sweep's
+    95 rows would be indistinguishable from each other.
+    """
+    return f"{model}:{variant}:h{window.min_horizon}"
 
 
 def resolve_window(args: argparse.Namespace, base: Window) -> Window:

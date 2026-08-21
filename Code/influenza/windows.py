@@ -42,6 +42,17 @@ class Window:
     def max_horizon(self) -> int:
         return max(self.horizons)
 
+    @property
+    def min_horizon(self) -> int:
+        """The first target week a sample produces.
+
+        Test membership and the split boundaries key off this rather than a
+        hardcoded 1. Both shipped windows start at horizon 1, so this changes
+        nothing today -- but a horizon-52-only run has no week t+1 target at
+        all, and treating t+1 as one silently evaluates the wrong weeks.
+        """
+        return min(self.horizons)
+
     def to_json(self) -> dict:
         return {
             "lookback": self.lookback,
@@ -87,13 +98,19 @@ class Split:
     def target_dates(self, positions: list[int], horizon: int) -> pd.DatetimeIndex:
         return self.index[[p + horizon for p in positions]]
 
+    def test_target_span(self) -> tuple[pd.Timestamp, pd.Timestamp]:
+        """First and last target week actually scored, for the run banner."""
+        return (self.index[self.test[0] + self.window.min_horizon],
+                self.index[self.test[-1] + self.window.max_horizon])
+
     def to_json(self) -> dict:
+        first_target, last_target = self.test_target_span()
         return {
             "n_train": len(self.train),
             "n_val": len(self.val),
             "n_test": len(self.test),
-            "first_test_target": str(self.index[self.test[0] + 1].date()),
-            "last_test_target": str(self.index[self.test[-1] + self.window.max_horizon].date()),
+            "first_test_target": str(first_target.date()),
+            "last_test_target": str(last_target.date()),
         }
 
 
@@ -132,7 +149,8 @@ def valid_origins(index: pd.DatetimeIndex, window: Window) -> list[int]:
 def split_origins(index: pd.DatetimeIndex, origins: list[int], window: Window) -> Split:
     """Chronological split: test by target date, validation as the last slice of
     the remainder, and a purge so no training target leaks into a later split."""
-    test = [t for t in origins if window.test_start <= index[t + 1] <= window.test_end]
+    first = window.min_horizon
+    test = [t for t in origins if window.test_start <= index[t + first] <= window.test_end]
     if not test:
         raise ValueError(
             f"No test origins: window {window.test_start.date()}..{window.test_end.date()} "
@@ -144,8 +162,8 @@ def split_origins(index: pd.DatetimeIndex, origins: list[int], window: Window) -
     train, val = non_test[:-n_val], non_test[-n_val:]
 
     # Purge boundary samples whose furthest target overlaps the following split.
-    val_target_start = index[val[0] + 1]
-    test_target_start = index[test[0] + 1]
+    val_target_start = index[val[0] + first]
+    test_target_start = index[test[0] + first]
     train = [t for t in train if index[t + window.max_horizon] < val_target_start]
     val = [t for t in val if index[t + window.max_horizon] < test_target_start]
     if not train or not val:

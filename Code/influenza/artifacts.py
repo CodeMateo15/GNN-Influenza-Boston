@@ -74,14 +74,21 @@ def finish_run(
     for name, table in (extra_tables or {}).items():
         table.to_csv(out / f"{name}.csv", index=False)
 
+    # The grid plot shows one horizon. Use the shortest one present rather than
+    # a hardcoded 1: a horizon-52-only run has no horizon-1 rows, and filtering
+    # for them yields an empty frame and a grid of blank panels.
+    horizons = sorted(int(h) for h in predictions["horizon"].unique())
+    plot_h = horizons[0]
     save_grid_plot(
         predictions,
-        out / "actual_vs_predicted_horizon1.png",
-        title or f"{model} ({variant}) — horizon 1",
+        out / f"actual_vs_predicted_horizon{plot_h}.png",
+        title or f"{model} ({variant}) — horizon {plot_h}",
+        horizon=plot_h,
         bands=bands,
     )
 
-    print("\nMetrics by segment and scope (horizon 1 and 2):")
+    listed = " and ".join(str(h) for h in horizons)
+    print(f"\nMetrics by segment and scope (horizon{'s' if len(horizons) > 1 else ''} {listed}):")
     print(summary_table(metrics))
     if carbon is not None:
         print(carbon.format_report())

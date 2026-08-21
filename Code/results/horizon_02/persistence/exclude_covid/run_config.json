@@ -1,0 +1,48 @@
+{
+  "model": "persistence",
+  "variant": "exclude_covid",
+  "git_sha": "8dd9348",
+  "created": "2026-08-14T10:59:14",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      2
+    ],
+    "test_start": "2025-05-31",
+    "test_end": "2026-05-31",
+    "val_fraction": 0.15
+  },
+  "split": {
+    "n_train": 210,
+    "n_val": 36,
+    "n_test": 49,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-03"
+  },
+  "season_lag_weeks": 1,
+  "nearest_tolerance_weeks": 2,
+  "prediction_sources": {
+    "lag": 627,
+    "nearest+1": 56,
+    "nearest+2": 3
+  },
+  "n_params": 0,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "2": 0.0
+    },
+    "beta": {
+      "2": 33.18255903526353
+    },
+    "kappa": {
+      "2": 0.6456159923553602
+    },
+    "n_validation": 487,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 92.82296650717703
+}

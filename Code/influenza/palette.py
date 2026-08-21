@@ -48,6 +48,15 @@ ACTUAL = INK_PRIMARY
 SEASON = "#eda100"
 SEASON_ALPHA = 0.10
 
+# Ordinal severity bands: low, moderate, high, very high. A sequential
+# single-hue ramp, deliberately NOT drawn from SERIES above -- the bands are
+# ordered, and encoding an ordered variable with categorical hues loses the
+# order. Single-hue sequential ramps are colourblind-safe by construction, since
+# they vary in lightness rather than hue. Used as background washes only, with
+# the observed series drawn on top in ACTUAL ink, so the sub-3:1 contrast of the
+# lighter steps is not carrying any information on its own.
+SEVERITY_WASH = ["#f4f3ee", "#fbe3cf", "#f4bd91", "#e28a55"]
+
 BAND_ALPHA = 0.16
 LINE_WIDTH = 1.8
 ACTUAL_WIDTH = 2.2
