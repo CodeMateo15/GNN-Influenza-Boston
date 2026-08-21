@@ -49,6 +49,7 @@ def finish_run(
     extra_tables: dict[str, pd.DataFrame] | None = None,
     results_root: Path | None = None,
     title: str | None = None,
+    city=None,
 ) -> Path:
     """Write predictions, metrics, config, emissions and the horizon-1 plot."""
     out = run_dir(model, variant, results_root)
@@ -85,6 +86,7 @@ def finish_run(
         title or f"{model} ({variant}) — horizon {plot_h}",
         horizon=plot_h,
         bands=bands,
+        city=city,
     )
 
     listed = " and ".join(str(h) for h in horizons)

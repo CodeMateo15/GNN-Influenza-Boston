@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from functools import lru_cache
 from pathlib import Path
 
@@ -12,7 +13,8 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from .constants import FLU_MONTHS, NEIGHBORHOODS, SHORT_NAMES  # noqa: E402
+from .cities import City, get as get_city  # noqa: E402
+from .constants import FLU_MONTHS  # noqa: E402
 
 ACTUAL_COLOUR = "#2c3e50"
 PREDICTED_COLOUR = "#e74c3c"
@@ -44,8 +46,11 @@ THRESHOLD_INK = "#52514e"
 
 
 @lru_cache(maxsize=1)
-def _fixed_axes():
+def _fixed_axes(city_name: str = "boston"):
     """(shared y ceiling, shared thresholds), or (None, None) on any failure.
+
+    Keyed by city name rather than by City object so that lru_cache still works:
+    City is frozen but holds a dict, so it is not hashable.
 
     Cached: replot_grids.py redraws 138 charts in one process, and reloading the
     BPHC series and refitting the thresholds for each one dominated the runtime.
@@ -58,11 +63,10 @@ def _fixed_axes():
     """
     try:
         from .constants import TEST_END, TEST_START
-        from .data import load_rates
         from .severity import (CITYWIDE, REFERENCE_SEASON_SETS, fit_thresholds,
                                shared_ceiling)
 
-        rates = load_rates()
+        rates = get_city(city_name).loaders.load_rates()
         fitted = fit_thresholds(rates, reference_seasons=REFERENCE_SEASON_SETS["post_covid"])
         thresholds = fitted[CITYWIDE]
         return shared_ceiling(rates, thresholds, window=(TEST_START, TEST_END)), thresholds
@@ -80,21 +84,32 @@ def save_grid_plot(
     bands: bool = False,
     shade_flu_season: bool = True,
     fixed_axes: bool = True,
+    city: City | None = None,
 ) -> None:
-    """4x4 grid of actual vs predicted, one panel per neighborhood."""
+    """Grid of actual vs predicted, one panel per scored node.
+
+    The grid was a hardcoded 4x4, which is exactly right for Boston's 14
+    neighborhoods and silently drops three of Columbus's 17 areas. It is now
+    sized from the city's node count.
+    """
+    city = city or get_city("boston")
+    node_names, short_names = list(city.node_names), list(city.short_names)
     data = predictions.loc[predictions["horizon"].eq(horizon)].copy()
     data["target_date"] = pd.to_datetime(data["target_date"])
     spans = _flu_season_spans(data["target_date"].unique()) if shade_flu_season else []
     show_bands = bands and {"lower", "upper"}.issubset(data.columns)
-    ceiling, thresholds = _fixed_axes() if fixed_axes else (None, None)
+    ceiling, thresholds = _fixed_axes(city.name) if fixed_axes else (None, None)
     entries = []
     if thresholds is not None:
         from .severity import band_entry_labels
         entries = band_entry_labels(thresholds)
 
-    fig, axes = plt.subplots(4, 4, figsize=(18, 14), sharex=True, sharey=True)
+    n_cols = 4
+    n_rows = math.ceil(len(node_names) / n_cols)
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(18, 3.5 * n_rows),
+                             sharex=True, sharey=True, squeeze=False)
     clipped: list[str] = []
-    for ax, neighborhood in zip(axes.flat, NEIGHBORHOODS):
+    for ax, neighborhood in zip(axes.flat, node_names):
         part = data.loc[data["neighborhood"].eq(neighborhood)].sort_values("target_date")
         for lo, hi in spans:
             ax.axvspan(lo, hi, color=SEASON_COLOUR, alpha=0.15, lw=0)
@@ -108,7 +123,7 @@ def save_grid_plot(
         ax.plot(part["target_date"], part["actual"], color=ACTUAL_COLOUR, label="Actual")
         ax.plot(part["target_date"], part["predicted"], "--", color=PREDICTED_COLOUR,
                 label="Predicted")
-        short = SHORT_NAMES[NEIGHBORHOODS.index(neighborhood)]
+        short = short_names[node_names.index(neighborhood)]
         if ceiling:
             ax.set_ylim(0, ceiling)
             highest = float(np.nanmax(part["predicted"].to_numpy(dtype=float), initial=0.0))
@@ -118,7 +133,7 @@ def save_grid_plot(
                             ha="right", fontsize=7, color="#898781")
         ax.set_title(short, fontsize=9)
         ax.tick_params(axis="x", rotation=35, labelsize=7)
-    for ax in axes.flat[len(NEIGHBORHOODS):]:
+    for ax in axes.flat[len(node_names):]:
         ax.axis("off")
     axes.flat[0].legend(fontsize=8, ncol=2)
     if clipped:

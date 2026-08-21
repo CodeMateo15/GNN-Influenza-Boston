@@ -10,6 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import paths
+from .cities import DEFAULT_CITY, get as get_city, names as city_names
 from .constants import TEST_END, TEST_START
 from .windows import VARIANTS, Window
 
@@ -17,6 +18,9 @@ ALL_VARIANTS = ("all", *VARIANTS)
 
 
 def add_common_args(parser: argparse.ArgumentParser, *, variants=("all", "exclude_covid", "post_covid")) -> None:
+    parser.add_argument("--city", choices=city_names(), default=DEFAULT_CITY,
+                        help="Which city to model. Boston writes to results/, other "
+                             "cities to results/<city>/.")
     parser.add_argument("--variant", choices=variants, default="all",
                         help="Which time-filter experiment to run.")
     parser.add_argument("--output-dir", type=Path, default=paths.RESULTS_DIR,
@@ -69,3 +73,35 @@ def resolve_window(args: argparse.Namespace, base: Window) -> Window:
             raise SystemExit("--horizons must be positive integers")
         changes["horizons"] = horizons
     return replace(base, **changes)
+
+
+def resolve_city(args: argparse.Namespace):
+    """The City for this run, with its variant choice validated against it.
+
+    Columbus has no pre-COVID history, so `--city columbus --variant full` is not
+    a thing that exists. Failing here beats training on a silently empty slice.
+    """
+    city = get_city(getattr(args, "city", None) or DEFAULT_CITY)
+    variant = getattr(args, "variant", "all")
+    if variant not in ("all", *city.variants):
+        raise SystemExit(
+            f"--variant {variant} is not available for {city.label}. "
+            f"{city.label} supports: {', '.join(city.variants)}."
+        )
+    return city
+
+
+def city_output_dirs(args: argparse.Namespace, city) -> tuple[Path, Path]:
+    """(results_root, checkpoint_root) for a run, honouring explicit overrides.
+
+    If the user passed --output-dir/--checkpoint-dir we respect it verbatim; the
+    per-city subdirectory is only applied to the defaults, so a horizon sweep
+    that already redirects both keeps working unchanged.
+    """
+    results = args.output_dir
+    checkpoints = args.checkpoint_dir
+    if results == paths.RESULTS_DIR:
+        results = paths.city_root(city.name)
+    if checkpoints == paths.CHECKPOINT_DIR:
+        checkpoints = paths.city_root(city.name, paths.CHECKPOINT_DIR)
+    return results, checkpoints

@@ -19,9 +19,16 @@ from .constants import HORIZONS, LOOKBACK, MC_SEED, SEED
 from .windows import Window
 
 DEFAULT_GLOBALS = ("ili_count", "ed_count", "ili_ed_perc", "flu_cases", "monthly_cases")
-GLOBAL_CHOICES = (*DEFAULT_GLOBALS, "vaccination")
+# The UNION across cities. FeatureSpec only checks that a name is spelled
+# correctly; whether a given city can actually supply it is checked against
+# City.available_globals in samples.load_dataset, which is where the failure is
+# actionable ("Columbus has no ed_count") rather than merely syntactic.
+GLOBAL_CHOICES = (*DEFAULT_GLOBALS, "vaccination", "hospitalizations")
 
-AnchorScheme = Literal["none", "single", "seven"]
+# 'seven' is Boston's anchor count and survives as the historical spelling in
+# every committed run_config.json; 'full' is the city-neutral synonym for the
+# same thing -- use this city's complete anchor set, whatever its size.
+AnchorScheme = Literal["none", "single", "seven", "full"]
 
 
 @dataclass(frozen=True)
@@ -115,9 +122,21 @@ class GraphSpec:
     uniform_complete: bool = False
     dual: bool = False
 
-    @property
-    def n_anchors(self) -> int:
-        return {"none": 0, "single": 1, "seven": 7}[self.anchors]
+    def n_anchors(self, city=None) -> int:
+        """How many anchor nodes this scheme yields for a given city.
+
+        Was a property returning a hardcoded 7. Boston has 7 anchors and
+        Columbus 3, so the count has to come from the city. Nothing in the
+        codebase read the old property -- Graph.n_anchors is computed from the
+        built node list -- so this is a widening, not a breaking change.
+        """
+        if self.anchors == "none":
+            return 0
+        if self.anchors == "single":
+            return 1
+        if city is None:
+            raise ValueError("n_anchors needs a city for the 'seven'/'full' schemes.")
+        return city.n_anchors
 
 
 @dataclass(frozen=True)

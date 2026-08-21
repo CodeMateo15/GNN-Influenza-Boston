@@ -24,7 +24,6 @@ import numpy as np
 import pandas as pd
 
 from . import paths
-from .constants import NEIGHBORHOODS
 from .data import impute_causal
 
 # Influenza generation interval: mean 2.85 d, sd 0.93 d (Cauchemez et al. 2004).

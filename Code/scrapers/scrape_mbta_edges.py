@@ -11,6 +11,7 @@ Outputs (to Data/MBTA/):
 """
 
 import os
+import sys
 import zipfile
 import requests
 import pandas as pd
@@ -19,12 +20,19 @@ from shapely.geometry import Point
 from collections import defaultdict
 from pathlib import Path
 
+# The scrapers sit one level below Code/, where the influenza package lives, so
+# that every output path resolves through influenza.paths like the rest of the
+# project. Without this these scripts wrote to Code/Data/, which does not exist:
+# they predate the move into Code/scrapers/ and silently created a second tree.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from influenza import paths
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "Data" / "MBTA"
+DATA_DIR = paths.MBTA_DIR
 
 GTFS_URL = "https://cdn.mbta.com/MBTA_GTFS.zip"
 GTFS_ZIP = DATA_DIR / "MBTA_GTFS.zip"

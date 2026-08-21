@@ -25,6 +25,13 @@ torch-geometric>=2.4
 networkx>=3.0
 seaborn>=0.13
 
+# --- scrapers/ only. Not needed to run any model: the scraped outputs are
+# committed under Data/. geopandas+shapely are used for the boundary spatial
+# joins that turn GTFS stops and ZCTA polygons into graph edges.
+requests>=2.31
+geopandas>=0.14
+shapely>=2.0
+
 # --- emissions tracking (influenza/carbon.py). Degrades gracefully if absent.
 codecarbon>=3.0
 

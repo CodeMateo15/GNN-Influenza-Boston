@@ -48,7 +48,7 @@ from influenza.artifacts import git_sha, run_dir
 from dataclasses import replace
 
 from influenza.config import EXPERIMENTS, Experiment
-from influenza.constants import NEIGHBORHOODS, SEED, SHORT_NAMES
+from influenza.constants import SEED
 from influenza.data import load_rates
 from influenza.graphs import build_graph
 from influenza.importance import (
@@ -309,16 +309,22 @@ def _slug(name: str) -> str:
     return "".join(c if c.isalnum() else "-" for c in name.lower()).strip("-")
 
 
-def resolve_waterfall(spec: str) -> tuple[str, pd.Timestamp]:
+def resolve_waterfall(spec: str, city) -> tuple[str, pd.Timestamp]:
+    """'Dorchester:2026-01-03' -> (canonical node name, timestamp).
+
+    Accepts either the canonical name or the short plot label, resolved against
+    the city being modelled rather than against Boston's list.
+    """
     if ":" not in spec:
-        raise SystemExit(f"error: --waterfall wants 'NEIGHBORHOOD:YYYY-MM-DD', got {spec!r}")
+        raise SystemExit(f"error: --waterfall wants 'NODE:YYYY-MM-DD', got {spec!r}")
     name, _, date = spec.partition(":")
     name = name.strip()
-    if name not in NEIGHBORHOODS:
-        matches = [n for n, s in zip(NEIGHBORHOODS, SHORT_NAMES) if s.lower() == name.lower()]
+    if name not in city.node_names:
+        matches = [n for n, short in zip(city.node_names, city.short_names)
+                   if short.lower() == name.lower()]
         if not matches:
-            raise SystemExit(f"error: unknown neighborhood {name!r}. "
-                             f"One of: {', '.join(SHORT_NAMES)}")
+            raise SystemExit(f"error: unknown {city.node_label} {name!r}. "
+                             f"One of: {', '.join(city.short_names)}")
         name = matches[0]
     return name, pd.Timestamp(date.strip())
 
@@ -358,13 +364,14 @@ def main() -> None:
         load_checkpoint(experiment, args.checkpoint_dir), experiment))
     window = experiment.window
 
-    rates = load_rates()
+    city = resolve_city(args)
+    rates = city.loaders.load_rates()
     data = variant_data(rates, experiment.variant)
-    dataset = load_dataset(experiment.features, rates=data.available,
+    dataset = load_dataset(experiment.features, city=city, rates=data.available,
                            need_mbta=experiment.graph.transit)
     origins = valid_origins(dataset.week_index, window)
     split = split_origins(dataset.week_index, origins, window)
-    graph = build_graph(experiment.graph,
+    graph = build_graph(experiment.graph, city=city,
                         flu_history=dataset.rates.loc[dataset.rates.index < window.test_start],
                         static=dataset.static, mbta=dataset.mbta)
     samples, norm = build_samples(dataset, split, experiment.features, window, graph,
@@ -587,7 +594,8 @@ def main() -> None:
 
         # ---------------- waterfalls ----------------
         predictions_path = out.parent / "predictions.csv"
-        picks: list[tuple[str, pd.Timestamp]] = [resolve_waterfall(s) for s in (args.waterfall or [])]
+        picks: list[tuple[str, pd.Timestamp]] = [resolve_waterfall(s, city)
+                                                 for s in (args.waterfall or [])]
         if predictions_path.exists() and args.auto_waterfalls:
             picks += interesting_samples(pd.read_csv(predictions_path, parse_dates=["target_date"]),
                                          horizon, args.auto_waterfalls)
@@ -603,7 +611,7 @@ def main() -> None:
                       f"{origin.date()} is not a test origin", file=sys.stderr)
                 continue
             row = origin_lookup[origin]
-            node = NEIGHBORHOODS.index(neighborhood)
+            node = list(city.node_names).index(neighborhood)
             labels, index = group_columns(result, node, graph.W, source_of, pooled_labels)
             contributions = aggregate(values[row, node, :], index, len(labels))
             errors = np.sqrt(aggregate(variances[row, node, :], index, len(labels)))
@@ -621,7 +629,7 @@ def main() -> None:
             subtitle += ("Static demographics and anchor nodes are omitted: they do not vary "
                          "across origins, so SHAP is exactly zero for them.")
 
-            path = out / f"waterfall_{_slug(SHORT_NAMES[node])}_{origin.date()}_h{horizon}.png"
+            path = out / f"waterfall_{_slug(city.short_names[node])}_{origin.date()}_h{horizon}.png"
             plot_waterfall([labels[i] for i in show], contributions[show], errors[show],
                            base_here, prediction, path,
                            f"{neighborhood} — {experiment.name} ({experiment.variant})",

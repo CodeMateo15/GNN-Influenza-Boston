@@ -486,3 +486,26 @@ def load_mbta_matrix() -> np.ndarray:
     if matrix.shape != (N_NEIGH, N_NEIGH):
         raise ValueError(f"Unexpected MBTA matrix shape {matrix.shape}, expected ({N_NEIGH}, {N_NEIGH})")
     return np.maximum(matrix, matrix.T)
+
+
+def load_globals(week_index: pd.DatetimeIndex, names: Sequence[str]) -> pd.DataFrame:
+    """City-wide weekly covariates for Boston, in the order requested.
+
+    Factored out of samples.load_dataset so that each city owns the mapping from
+    covariate name to source file. Boston's five all come from the BPHC
+    dashboard exports; Columbus has an entirely different (and shorter) list.
+    """
+    if not names:
+        return pd.DataFrame(index=week_index)
+    columns: dict[str, pd.Series] = {}
+    ed = load_ed_metrics(week_index)
+    for name in names:
+        if name in ed.columns:
+            columns[name] = ed[name]
+        elif name == "monthly_cases":
+            columns[name] = load_monthly_cases(week_index)
+        elif name == "vaccination":
+            columns[name] = load_vaccination_global(week_index)
+        else:
+            raise ValueError(f"Unhandled global covariate for Boston: {name!r}")
+    return pd.DataFrame(columns, index=week_index)

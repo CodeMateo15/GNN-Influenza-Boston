@@ -23,17 +23,15 @@ except ImportError as exc:  # pragma: no cover - friendly command-line failure
     ) from exc
 
 from influenza import (
-    NEIGHBORHOODS,
-    SHORT_NAMES,
     Window,
     finish_run,
-    load_rates,
     split_origins,
     track_emissions,
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_variants, resolve_window, run_tag
+from influenza.cli import (add_common_args, city_output_dirs, resolve_city,
+                          resolve_variants, resolve_window, run_tag)
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
 
 MODEL = "arima"
@@ -173,7 +171,9 @@ def _selection_rmse(preds: list[np.ndarray], actual: np.ndarray) -> float:
     return float(np.sqrt(np.nanmean(squared))) if np.any(np.isfinite(squared)) else np.inf
 
 
-def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argparse.Namespace) -> None:
+def run_variant(rates: pd.DataFrame, variant: str, window: Window,
+                args: argparse.Namespace, city) -> None:
+    results_root, checkpoint_root = city_output_dirs(args, city)
     data = variant_data(rates, variant)
     origins = valid_origins(data.index, window)
     split = split_origins(data.index, origins, window)
@@ -195,13 +195,13 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
         fallback_count = 0
         missing_targets = 0
         selected: dict[str, tuple[int, int, int]] = {}
-        for idx, neighborhood in enumerate(NEIGHBORHOODS):
+        for idx, neighborhood in enumerate(city.node_names):
             # The NaN-holed calendar keeps true week spacing across an excluded
             # window, so the Kalman filter does not treat a gap as contiguous.
             series = data.calendar[neighborhood]
             order = select_order(series, train_dates, val_dates, window, max_d=args.max_d)
             selected[neighborhood] = order
-            print(f"[{idx + 1:02d}/{len(NEIGHBORHOODS)}] {SHORT_NAMES[idx]:12s} selected ARIMA{order}")
+            print(f"[{idx + 1:02d}/{city.n_neigh}] {city.short_names[idx]:12s} selected ARIMA{order}")
 
             # Validation forecasts with the *selected* order, so the predictive
             # interval is calibrated on the same held-out weeks every other model
@@ -251,7 +251,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
     orders_table = pd.DataFrame(
         [{"neighborhood": n, "order": str(o)} for n, o in selected.items()]
     )
-    n_forecasts = len(NEIGHBORHOODS) * len(split.test)
+    n_forecasts = city.n_neigh * len(split.test)
     fallback_share = fallback_count / n_forecasts if n_forecasts else 0.0
     print(f"Fallback forecasts: {fallback_count}/{n_forecasts} ({fallback_share:.1%}) | "
           f"suppressed target cells (not scored): {missing_targets}")
@@ -287,7 +287,8 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
         bands=True,
         carbon=carbon,
         extra_tables={"selected_orders": orders_table},
-        results_root=args.output_dir,
+        results_root=results_root,
+        city=city,
     )
 
 
@@ -309,10 +310,11 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     window = resolve_window(args, Window())
-    rates = load_rates()
+    city = resolve_city(args)
+    rates = city.loaders.load_rates()
     print(f"Loaded {len(rates)} weekly dates and {rates.shape[1]} neighborhoods")
     for variant in resolve_variants(args.variant):
-        run_variant(rates, variant, window, args)
+        run_variant(rates, variant, window, args, city)
 
 
 if __name__ == "__main__":

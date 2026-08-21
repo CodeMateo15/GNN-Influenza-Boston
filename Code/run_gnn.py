@@ -28,9 +28,7 @@ except ImportError as exc:  # pragma: no cover
     ) from exc
 
 from influenza import (
-    NEIGHBORHOODS,
     finish_run,
-    load_rates,
     paths,
     save_loss_curve,
     split_origins,
@@ -38,7 +36,8 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_window, run_tag
+from influenza.cli import (add_common_args, city_output_dirs, resolve_city,
+                          resolve_window, run_tag)
 from influenza.config import EXPERIMENTS, Experiment
 from influenza.graphs import build_graph
 from influenza.intervals import empirical_coverage
@@ -102,10 +101,12 @@ def resolve_experiment(args: argparse.Namespace) -> Experiment:
 
 def run(experiment: Experiment, args: argparse.Namespace) -> None:
     window = experiment.window
-    rates = load_rates()
+    city = resolve_city(args)
+    results_root, checkpoint_root = city_output_dirs(args, city)
+    rates = city.loaders.load_rates()
     data = variant_data(rates, experiment.variant)
 
-    dataset = load_dataset(experiment.features, rates=data.available,
+    dataset = load_dataset(experiment.features, city=city, rates=data.available,
                            need_mbta=experiment.graph.transit)
     origins = valid_origins(dataset.week_index, window)
     split = split_origins(dataset.week_index, origins, window)
@@ -113,11 +114,12 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     # Correlation edges must see only pre-test weeks, or the graph structure
     # itself encodes the evaluation period.
     history = dataset.rates.loc[dataset.rates.index < window.test_start]
-    graph = build_graph(experiment.graph, flu_history=history,
+    graph = build_graph(experiment.graph, city=city, flu_history=history,
                         static=dataset.static, mbta=dataset.mbta)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"\n{'=' * 72}\n{experiment.name} | {experiment.variant} | device={device}\n{'=' * 72}")
+    print(f"\n{'=' * 72}\n{city.label} | {experiment.name} | {experiment.variant} | "
+          f"device={device}\n{'=' * 72}")
     if experiment.note:
         print(f"{experiment.note}\n")
     print(f"Graph: {graph.summary()}")
@@ -169,7 +171,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     for sample_idx, position in enumerate(test_set.positions):
         for h_idx, horizon in enumerate(window.horizons):
             target_date = split.index[position + horizon]
-            for node, neighborhood in enumerate(NEIGHBORHOODS):
+            for node, neighborhood in enumerate(city.node_names):
                 records.append({
                     "origin_date": split.index[position],
                     "target_date": target_date,
@@ -189,7 +191,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     print(f"95% interval calibrated on {interval_model.n_validation} validation points; "
           f"test coverage {coverage:.1f}%")
 
-    checkpoint_path = args.checkpoint_dir / f"{experiment.name}_{experiment.variant}.pt"
+    checkpoint_path = checkpoint_root / f"{experiment.name}_{experiment.variant}.pt"
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "model_state_dict": model.state_dict(),
@@ -199,7 +201,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         "node_names": graph.node_names,
         "flu_means": norm.flu_mean,
         "flu_stds": norm.flu_std,
-        "neighborhoods": NEIGHBORHOODS,
+        "neighborhoods": list(city.node_names),
         "feature_names": samples.feature_names,
         "global_names": samples.global_names,
         "best_epoch": result.best_epoch,
@@ -230,11 +232,13 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
             "experiment": experiment.to_json(),
             "intervals": interval_model.to_json(),
             "test_interval_coverage": coverage,
+            "city": city.name,
         },
         extras=True,
         bands=True,
         carbon=carbon,
-        results_root=args.output_dir,
+        results_root=results_root,
+        city=city,
     )
     save_loss_curve(result.train_losses, result.val_losses, out / "loss_curve.png",
                     title=f"{experiment.name} ({experiment.variant}) training")

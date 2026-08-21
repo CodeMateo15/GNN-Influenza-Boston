@@ -30,9 +30,7 @@ except ImportError as exc:  # pragma: no cover
     ) from exc
 
 from influenza import (
-    NEIGHBORHOODS,
     finish_run,
-    load_rates,
     paths,
     save_loss_curve,
     split_origins,
@@ -40,7 +38,8 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_window, run_tag
+from influenza.cli import (add_common_args, city_output_dirs, resolve_city,
+                          resolve_window, run_tag)
 from influenza.config import EXPERIMENTS, Experiment
 from influenza.graphs import build_graph
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
@@ -96,11 +95,11 @@ def resolve_experiment(args: argparse.Namespace) -> Experiment:
 def run(experiment: Experiment, args: argparse.Namespace) -> None:
     window = experiment.window
     data = variant_data(load_rates(), experiment.variant)
-    dataset = load_dataset(experiment.features, rates=data.available)
+    dataset = load_dataset(experiment.features, city=city, rates=data.available)
     split = split_origins(dataset.week_index, valid_origins(dataset.week_index, window), window)
 
     history = dataset.rates.loc[dataset.rates.index < window.test_start]
-    graph = build_graph(experiment.graph, flu_history=history)
+    graph = build_graph(experiment.graph, city=city, flu_history=history)
     if graph.W_corr is None:
         raise SystemExit("dualtopo requires GraphSpec(dual=True, corr=True).")
 
@@ -226,7 +225,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     records = []
     for sample_idx, position in enumerate(split.test):
         for h_idx, horizon in enumerate(window.horizons):
-            for node, neighborhood in enumerate(NEIGHBORHOODS):
+            for node, neighborhood in enumerate(city.node_names):
                 value = max(0.0, float(predicted[sample_idx, node, h_idx]))
                 records.append({
                     "origin_date": split.index[position],
@@ -238,7 +237,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
                     "error": value - float(actual[sample_idx, node, h_idx]),
                 })
 
-    checkpoint_path = args.checkpoint_dir / f"{experiment.name}_{experiment.variant}.pt"
+    checkpoint_path = checkpoint_root / f"{experiment.name}_{experiment.variant}.pt"
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "model_state_dict": model.state_dict(),
@@ -246,7 +245,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         "a_geo": a_geo.cpu(), "a_corr": a_corr.cpu(),
         "node_names": graph.node_names,
         "flu_means": norm.flu_mean, "flu_stds": norm.flu_std,
-        "neighborhoods": NEIGHBORHOODS,
+        "neighborhoods": list(city.node_names),
         "best_epoch": best_epoch, "best_val_mse": best_val,
     }, checkpoint_path)
     print(f"Checkpoint: {checkpoint_path}")
@@ -288,7 +287,8 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         extras=True,
         bands=True,
         carbon=carbon,
-        results_root=args.output_dir,
+        results_root=results_root,
+        city=city,
     )
     save_loss_curve(train_losses, val_losses, out / "loss_curve.png",
                     title=f"{experiment.name} ({experiment.variant}) training")

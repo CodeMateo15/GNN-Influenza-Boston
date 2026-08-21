@@ -12,8 +12,9 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 
+from .cities import City, get as get_city
 from .config import FeatureSpec
-from .constants import N_NEIGH, WEATHER_COLS
+from .constants import WEATHER_COLS
 from .data import impute_causal
 from .graphs import Graph
 from .windows import Split, Window, normalization
@@ -37,6 +38,7 @@ class Dataset:
     globals_: pd.DataFrame                    # (weeks, n_global)
     per_node: dict[str, pd.DataFrame]         # extra per-neighborhood features
     mbta: np.ndarray | None = None
+    city: City | None = None
 
 
 @dataclass
@@ -52,8 +54,8 @@ class Normalization:
 class Samples:
     X: np.ndarray            # (S, n_nodes, n_feat)
     g: np.ndarray            # (S, n_global)
-    y: np.ndarray            # (S, N_NEIGH, n_horizons) -- NaN where suppressed
-    anchors: np.ndarray      # (S, N_NEIGH) normalized level at origin
+    y: np.ndarray            # (S, n_neigh, n_horizons) -- NaN where suppressed
+    anchors: np.ndarray      # (S, n_neigh) normalized level at origin
     positions: list[int]
     feature_names: list[str]
     global_names: list[str]
@@ -141,10 +143,14 @@ def build_samples(
     positions = sorted(set(positions))
     n_samples = len(positions)
 
+    # The graph is the authority on how many nodes are scored: it already
+    # carried n_neigh as a field, so this reads it rather than a module global.
+    n_neigh = graph.n_neigh
+
     X = np.zeros((n_samples, graph.n_nodes, n_feat), dtype=np.float32)
     g = np.zeros((n_samples, global_values.shape[1] + len(season_names)), dtype=np.float32)
-    y = np.zeros((n_samples, N_NEIGH, len(window.horizons)), dtype=np.float32)
-    anchors = np.zeros((n_samples, N_NEIGH), dtype=np.float32)
+    y = np.zeros((n_samples, n_neigh, len(window.horizons)), dtype=np.float32)
+    anchors = np.zeros((n_samples, n_neigh), dtype=np.float32)
 
     for row, t in enumerate(positions):
         if t - window.lookback + 1 < 0 or t + window.max_horizon >= n_weeks:
@@ -154,7 +160,7 @@ def build_samples(
                 "weeks. valid_origins() is the only gatekeeper -- it should have "
                 "excluded this position rather than the sample builder clamping it."
             )
-        for node in range(N_NEIGH):
+        for node in range(n_neigh):
             values: list[float] = []
             for lag in range(window.lookback):
                 week = t - lag
@@ -177,7 +183,7 @@ def build_samples(
             anchor_row = np.zeros(n_feat, dtype=np.float32)
             if features.use_demographics and dataset.static is not None:
                 anchor_row[temporal_len:] = ANCHOR_STATIC_VALUE
-            X[row, N_NEIGH:] = anchor_row
+            X[row, n_neigh:] = anchor_row
 
         if season_names:
             # Keyed to the *target* week, which is known at forecast time and is
@@ -229,13 +235,19 @@ def positions_to_rows(samples: Samples, positions: list[int]) -> list[int]:
     return [lookup[p] for p in positions]
 
 
-def load_dataset(features: FeatureSpec, *, rates=None, need_mbta: bool = False) -> Dataset:
+def load_dataset(features: FeatureSpec, *, city: City | None = None,
+                 rates=None, need_mbta: bool = False) -> Dataset:
     """Load and align only the sources the feature spec actually turns on.
 
     Keeping this demand-driven is what lets run_arima.py avoid openpyxl and
     run_dualtopo.py avoid the City of Boston files entirely.
+
+    `city` selects the loader module. It defaults to Boston so that every
+    pre-existing call site keeps its exact behaviour; the model scripts pass it
+    explicitly from --city.
     """
-    from . import data as data_module
+    city = city or get_city("boston")
+    data_module = city.loaders
 
     rates = data_module.load_rates() if rates is None else rates
     week_index = rates.index
@@ -260,19 +272,15 @@ def load_dataset(features: FeatureSpec, *, rates=None, need_mbta: bool = False) 
         from .rt import weekly_rt
         per_node["rt"] = weekly_rt(rates)
 
-    columns: dict[str, pd.Series] = {}
-    if features.globals_:
-        ed = data_module.load_ed_metrics(week_index)
-        for name in features.globals_:
-            if name in ed.columns:
-                columns[name] = ed[name]
-            elif name == "monthly_cases":
-                columns[name] = data_module.load_monthly_cases(week_index)
-            elif name == "vaccination":
-                columns[name] = data_module.load_vaccination_global(week_index)
-            else:
-                raise ValueError(f"Unhandled global covariate: {name!r}")
-    globals_frame = pd.DataFrame(columns, index=week_index) if columns else pd.DataFrame(index=week_index)
+    unknown = [n for n in features.globals_ if n not in city.available_globals]
+    if unknown:
+        raise ValueError(
+            f"{city.label} has no city-wide covariate(s) {unknown}. Available for "
+            f"{city.label}: {', '.join(city.available_globals)}. Requesting an absent "
+            "covariate would z-score an all-NaN column to zeros and train the model "
+            "on a constant, which reads as a null result rather than a missing input."
+        )
+    globals_frame = data_module.load_globals(week_index, features.globals_)
 
     return Dataset(
         week_index=week_index,
@@ -284,4 +292,5 @@ def load_dataset(features: FeatureSpec, *, rates=None, need_mbta: bool = False) 
         globals_=globals_frame,
         per_node=per_node,
         mbta=data_module.load_mbta_matrix() if need_mbta else None,
+        city=city,
     )

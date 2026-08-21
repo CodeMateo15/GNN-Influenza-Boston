@@ -24,16 +24,15 @@ except ImportError as exc:  # pragma: no cover
     ) from exc
 
 from influenza import (
-    NEIGHBORHOODS,
     Window,
     finish_run,
-    load_rates,
     split_origins,
     track_emissions,
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_variants, resolve_window, run_tag
+from influenza.cli import (add_common_args, city_output_dirs, resolve_city,
+                          resolve_variants, resolve_window, run_tag)
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
 
 SEASON_LAG_WEEKS = 52
@@ -82,7 +81,9 @@ def seasonal_prediction(
     return float(train_median), "train_median"
 
 
-def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argparse.Namespace) -> None:
+def run_variant(rates: pd.DataFrame, variant: str, window: Window,
+                args: argparse.Namespace, city) -> None:
+    results_root, checkpoint_root = city_output_dirs(args, city)
     data = variant_data(rates, variant)
     origins = valid_origins(data.index, window)
     split = split_origins(data.index, origins, window)
@@ -106,7 +107,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
         for position in positions:
             for horizon in window.horizons:
                 target_date = split.index[position + horizon]
-                for neighborhood in NEIGHBORHOODS:
+                for neighborhood in city.node_names:
                     actual = float(data.available.at[target_date, neighborhood])
                     predicted, source = seasonal_prediction(
                         full[neighborhood], target_date,
@@ -161,7 +162,8 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window, args: argpars
         },
         bands=True,
         carbon=carbon,
-        results_root=args.output_dir,
+        results_root=results_root,
+        city=city,
         title=f"{model_name} (lag {lag_weeks}w, {variant}) — horizon {window.min_horizon}",
     )
 
@@ -184,10 +186,11 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     window = resolve_window(args, Window())
-    rates = load_rates()
+    city = resolve_city(args)
+    rates = city.loaders.load_rates()
     print(f"Loaded {len(rates)} weekly dates and {rates.shape[1]} neighborhoods")
     for variant in resolve_variants(args.variant):
-        run_variant(rates, variant, window, args)
+        run_variant(rates, variant, window, args, city)
 
 
 if __name__ == "__main__":

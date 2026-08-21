@@ -32,6 +32,20 @@ RSV_WASTEWATER_FILE = BPHC_COVID_RSV_DIR / "RSV" / "BPHC Dashboard RSV cases in 
 
 MBTA_ADJACENCY_FILE = MBTA_DIR / "mbta_adjacency_matrix.csv"
 
+# --- Columbus OH / Franklin County -----------------------------------------
+# The three case extracts are line-level (one row per ED visit or per case), so
+# unlike the BPHC files they carry no rate and no denominator. COLUMBUS_STATIC_FILE
+# is the scraped ACS/Gazetteer table that supplies the per-100,000 denominator;
+# it is written by Code/scrapers/scrape_acs_columbus.py, not shipped by an agency.
+COLUMBUS_DIR = DATA_DIR / "Columbus Influenza Data"
+COLUMBUS_ILI_FILE = COLUMBUS_DIR / "ILI Specified Data-Franklin_final.xlsx"
+COLUMBUS_IAH_FILE = COLUMBUS_DIR / "IAH Data CPH Franklin_final.csv"
+COLUMBUS_COVID_FILE = COLUMBUS_DIR / "COVID Data CPH Franklin_final.csv"
+COLUMBUS_ZIP_AREAS_FILE = COLUMBUS_DIR / "Columbus_FC_Zip_Areas_Nov2019.xlsx"
+COLUMBUS_STATIC_FILE = COLUMBUS_DIR / "columbus_area_static.csv"
+COLUMBUS_WEATHER_DIR = DATA_DIR / "Columbus Weather"
+COLUMBUS_COTA_ADJACENCY_FILE = COLUMBUS_DIR / "cota_adjacency_matrix.csv"
+
 RESULTS_DIR = CODE_DIR / "results"
 CHECKPOINT_DIR = CODE_DIR / "checkpoints"
 EMISSIONS_DIR = RESULTS_DIR / "_emissions"
@@ -40,6 +54,19 @@ COMPARISON_DIR = RESULTS_DIR / "_comparison"
 DIAGNOSTICS_DIR = RESULTS_DIR / "_diagnostics"
 CROSS_HORIZON_DIR = RESULTS_DIR / "_comparison_horizons"
 DOCS_DIR = CODE_DIR / "docs"
+
+
+def city_root(city_name: str, base: Path | None = None) -> Path:
+    """Results/checkpoint root for one city.
+
+    Boston keeps the historical top-level layout so that the many relative links
+    in docs/METHODS.md and every committed artifact path stay valid; a second
+    city gets a subdirectory. Renaming Boston's tree would have been tidier and
+    would have broken ~40 doc links and every path in the committed
+    run_config.json files for no analytical gain.
+    """
+    base = base or RESULTS_DIR
+    return base if city_name == "boston" else base / city_name
 
 
 def horizon_dir(horizon: int, root: Path | None = None) -> Path:
