@@ -1,0 +1,49 @@
+{
+  "model": "lstm",
+  "variant": "post_covid",
+  "git_sha": "1dc6925",
+  "created": "2026-08-21T14:13:33",
+  "target_kind": "level",
+  "normalize": "train",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1
+    ],
+    "test_start": "2025-05-31",
+    "test_end": "2026-05-31",
+    "val_fraction": 0.15
+  },
+  "split": {
+    "n_train": 122,
+    "n_val": 21,
+    "n_test": 49,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-03"
+  },
+  "hidden_size": 64,
+  "epochs": 120,
+  "batch_size": 32,
+  "seed": 42,
+  "best_epoch": 42,
+  "best_val_mse": 0.8248955011367798,
+  "n_params": 21390,
+  "imputed_feature_cells": 139,
+  "checkpoint": "Code/checkpoints/xcity_boston/lstm_post_covid.pt",
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 11.500426090961403
+    },
+    "kappa": {
+      "1": 0.6595352422304132
+    },
+    "n_validation": 285,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 94.57735247208932
+}

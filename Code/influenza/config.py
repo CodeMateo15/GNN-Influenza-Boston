@@ -267,6 +267,53 @@ def _experiments() -> dict[str, Experiment]:
         note="Dual-Topo-STGCN without boundary anchor nodes. Tests the paper's "
              "claim that a background node is worth ~0.135 Corr.",
     )
+
+    # ------------------------------------------------------------------
+    # Cross-city arms. Boston's published arms use MBTA transit edges and five
+    # BPHC city-wide covariates; Columbus has neither, so running `gnn_multiedge`
+    # in both cities would compare two different models and call the difference a
+    # city effect. These arms are restricted to what BOTH cities can supply
+    # identically -- flu lags, weather, static demographics, and `ili_count` as
+    # the single city-wide covariate -- so a Boston/Columbus difference is
+    # attributable to the city rather than to the feature set.
+    #
+    # They deliberately do NOT replace the Boston arms in METHODS.md, which stay
+    # as the best Boston model rather than the most portable one.
+    # ------------------------------------------------------------------
+    xcity_features = FeatureSpec(use_weather=True, use_demographics=True,
+                                 globals_=("ili_count",))
+    xcity_note = ("Cross-city arm: only features Boston and Columbus can both "
+                  "supply (flu lags, weather, demographics, ili_count). ")
+    registry["xcity_geo"] = Experiment(
+        name="xcity_geo", features=xcity_features,
+        graph=GraphSpec(anchors="single", geo_max_hop=1),
+        note=xcity_note + "Geographic 1-hop adjacency only.",
+    )
+    registry["xcity_corrbinary"] = Experiment(
+        name="xcity_corrbinary", features=xcity_features,
+        graph=GraphSpec(anchors="full", geo_max_hop=1, corr=True, corr_binary=True),
+        note=xcity_note + "Geographic plus binary thresholded correlation edges.",
+    )
+    registry["xcity_multiedge"] = Experiment(
+        name="xcity_multiedge", features=xcity_features,
+        graph=GraphSpec(anchors="full", geo_max_hop=3, corr=True, corr_binary=False,
+                        demo=True),
+        note=xcity_note + "Hop-graded geographic, weighted correlation and "
+                          "demographic-similarity edges. No transit: Columbus has "
+                          "no COTA adjacency, so including it would break the "
+                          "like-for-like comparison.",
+    )
+    registry["xcity_uniform"] = Experiment(
+        name="xcity_uniform", features=xcity_features,
+        graph=GraphSpec(anchors="full", uniform_complete=True),
+        note=xcity_note + "Control: every pair connected at weight 1.",
+    )
+    registry["xcity_dualtopo"] = replace(
+        dualtopo, name="xcity_dualtopo",
+        graph=replace(dualtopo.graph, anchors="full"),
+        note=xcity_note + "Dual-Topo-STGCN, ILI rates only, 52-week input.",
+    )
+
     return registry
 
 

@@ -94,7 +94,9 @@ def resolve_experiment(args: argparse.Namespace) -> Experiment:
 
 def run(experiment: Experiment, args: argparse.Namespace) -> None:
     window = experiment.window
-    data = variant_data(load_rates(), experiment.variant)
+    city = resolve_city(args)
+    results_root, checkpoint_root = city_output_dirs(args, city)
+    data = variant_data(city.loaders.load_rates(), experiment.variant)
     dataset = load_dataset(experiment.features, city=city, rates=data.available)
     split = split_origins(dataset.week_index, valid_origins(dataset.week_index, window), window)
 

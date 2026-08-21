@@ -27,12 +27,15 @@ try:
 except ImportError as exc:  # pragma: no cover
     raise SystemExit(f"Missing dependency: {exc.name}. Install pandas numpy matplotlib.") from exc
 
-from influenza import NEIGHBORHOODS, SHORT_NAMES, paths
+from influenza import paths
+from influenza.cities import get as get_city
 from influenza.metrics import CORE_METRICS
 from influenza.palette import series_colour
 
 # Full name -> short label, for the compact win-count table.
-SHORT = dict(zip(NEIGHBORHOODS, SHORT_NAMES))
+# Populated per run from --city; a leaderboard for Columbus must not label
+# its rows with Boston's neighborhood names.
+SHORT: dict[str, str] = {}
 
 # Lower is better for error metrics, higher for correlation.
 DESCENDING = {"Corr", "Spearman", "CCC", "R2", "CI_coverage"}
@@ -580,6 +583,8 @@ def update_readme(markdown: str, readme: Path) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--city", default="boston",
+                        help="Which city these results are for; sets the row labels.")
     parser.add_argument("--results-dir", type=Path, default=paths.RESULTS_DIR)
     parser.add_argument("--models", default=None, help="Comma-separated subset.")
     parser.add_argument("--variant", default=None)
@@ -609,6 +614,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    city = get_city(args.city)
+    SHORT.update(zip(city.node_names, city.short_names))
     results_root = args.results_dir.resolve()
     found = discover(results_root)
     if not found:

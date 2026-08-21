@@ -1,0 +1,68 @@
+{
+  "model": "arima",
+  "variant": "post_covid",
+  "git_sha": "1dc6925",
+  "created": "2026-08-21T14:14:07",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1
+    ],
+    "test_start": "2025-05-31",
+    "test_end": "2026-05-31",
+    "val_fraction": 0.15
+  },
+  "split": {
+    "n_train": 128,
+    "n_val": 15,
+    "n_test": 53,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-31"
+  },
+  "order_grid": {
+    "p": 3,
+    "d": 1,
+    "q": 3
+  },
+  "selected_orders": {
+    "Agler/Cassidy": "(0, 0, 3)",
+    "Bexley": "(0, 0, 3)",
+    "Clintonville/Near North": "(2, 0, 0)",
+    "Dublin": "(1, 0, 0)",
+    "Eastside": "(0, 0, 3)",
+    "Far East": "(0, 0, 3)",
+    "Far South": "(0, 0, 3)",
+    "Far Southeast": "(2, 0, 0)",
+    "Far Southwest": "(1, 0, 0)",
+    "Hilliard": "(0, 0, 2)",
+    "Linden": "(1, 0, 0)",
+    "NE Suburban": "(0, 0, 3)",
+    "Northland": "(0, 0, 2)",
+    "UA/Grandview": "(0, 0, 2)",
+    "West": "(0, 0, 2)",
+    "Westerville": "(3, 0, 0)",
+    "Worthington": "(1, 0, 0)"
+  },
+  "fallback_forecasts": 0,
+  "fallback_share": 0.0,
+  "selection_horizon": 1,
+  "missing_target_cells": 0,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 9.495469903544388
+    },
+    "beta": {
+      "1": 2.4237580550828324
+    },
+    "kappa": {
+      "1": 0.8610416154854275
+    },
+    "n_validation": 255,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 89.67813540510544
+}
