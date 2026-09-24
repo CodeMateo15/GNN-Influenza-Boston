@@ -1,0 +1,24 @@
+{"city": "buenos_aires", "arm": "persistence", "script": "run_seasonal_naive.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__persistence__post_covid__h01"}
+{"city": "buenos_aires", "arm": "persistence", "script": "run_seasonal_naive.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__persistence__post_covid__h02"}
+{"city": "buenos_aires", "arm": "persistence", "script": "run_seasonal_naive.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__persistence__post_covid__h04"}
+{"city": "buenos_aires", "arm": "seasonal_naive", "script": "run_seasonal_naive.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__seasonal_naive__post_covid__h01"}
+{"city": "buenos_aires", "arm": "seasonal_naive", "script": "run_seasonal_naive.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__seasonal_naive__post_covid__h02"}
+{"city": "buenos_aires", "arm": "seasonal_naive", "script": "run_seasonal_naive.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__seasonal_naive__post_covid__h04"}
+{"city": "buenos_aires", "arm": "arima", "script": "run_arima.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__arima__post_covid__h01"}
+{"city": "buenos_aires", "arm": "arima", "script": "run_arima.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__arima__post_covid__h02"}
+{"city": "buenos_aires", "arm": "arima", "script": "run_arima.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__arima__post_covid__h04"}
+{"city": "buenos_aires", "arm": "lstm", "script": "run_lstm.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__lstm__post_covid__h01"}
+{"city": "buenos_aires", "arm": "lstm", "script": "run_lstm.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__lstm__post_covid__h02"}
+{"city": "buenos_aires", "arm": "lstm", "script": "run_lstm.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__lstm__post_covid__h04"}
+{"city": "buenos_aires", "arm": "xgboost", "script": "run_xgboost.py", "variant": "post_covid", "horizon": 1, "extra": ["--features-from", "gnn_st_nodemo"], "task_id": "buenos_aires__xgboost__post_covid__h01"}
+{"city": "buenos_aires", "arm": "xgboost", "script": "run_xgboost.py", "variant": "post_covid", "horizon": 2, "extra": ["--features-from", "gnn_st_nodemo"], "task_id": "buenos_aires__xgboost__post_covid__h02"}
+{"city": "buenos_aires", "arm": "xgboost", "script": "run_xgboost.py", "variant": "post_covid", "horizon": 4, "extra": ["--features-from", "gnn_st_nodemo"], "task_id": "buenos_aires__xgboost__post_covid__h04"}
+{"city": "buenos_aires", "arm": "gnn_st_nodemo", "script": "run_gnn.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__gnn_st_nodemo__post_covid__h01"}
+{"city": "buenos_aires", "arm": "gnn_st_nodemo", "script": "run_gnn.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__gnn_st_nodemo__post_covid__h02"}
+{"city": "buenos_aires", "arm": "gnn_st_nodemo", "script": "run_gnn.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__gnn_st_nodemo__post_covid__h04"}
+{"city": "buenos_aires", "arm": "gat", "script": "run_gat.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__gat__post_covid__h01"}
+{"city": "buenos_aires", "arm": "gat", "script": "run_gat.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__gat__post_covid__h02"}
+{"city": "buenos_aires", "arm": "gat", "script": "run_gat.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__gat__post_covid__h04"}
+{"city": "buenos_aires", "arm": "dualtopo", "script": "run_dualtopo.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__dualtopo__post_covid__h01"}
+{"city": "buenos_aires", "arm": "dualtopo", "script": "run_dualtopo.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__dualtopo__post_covid__h02"}
+{"city": "buenos_aires", "arm": "dualtopo", "script": "run_dualtopo.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__dualtopo__post_covid__h04"}

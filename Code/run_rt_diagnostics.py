@@ -22,6 +22,8 @@ except ImportError as exc:  # pragma: no cover
     raise SystemExit(f"Missing dependency: {exc.name}.") from exc
 
 from influenza import NEIGHBORHOODS, SHORT_NAMES, load_rates, paths, variant_data
+from influenza.cities import get as get_city
+from influenza.cli import add_city_arg
 from influenza.palette import (
     ACTUAL, INK_MUTED, INK_PRIMARY, INK_SECONDARY, SEASON, SEASON_ALPHA,
     SURFACE, series_colour, style_axes,
@@ -77,19 +79,18 @@ def save_plot(rt: pd.DataFrame, rates: pd.DataFrame, path: str) -> None:
         ax.plot(rt.index, rt[neighborhood], color=series_colour(0), lw=1.4, zorder=3)
         ax.set_ylim(0.6, 2.2)
         ax.set_title(SHORT_NAMES[NEIGHBORHOODS.index(neighborhood)], fontsize=10,
-                     color=INK_PRIMARY, loc="left")
+)
         ax.tick_params(axis="x", labelsize=7)
         style_dates(ax, months=12)
     for ax in axes.flat[len(NEIGHBORHOODS):]:
         ax.axis("off")
     fig.supylabel("Rt growth index", fontsize=10, color=INK_SECONDARY)
-    fig.suptitle("Rt growth index by neighborhood", fontsize=14, color=INK_PRIMARY)
-    fig.text(0.5, 0.955, "Gold bands mark the flu season (Oct-Mar); the dotted line is Rt = 1. "
-                         "A growth index computed from an interpolated weekly rate, not a "
-                         "reproduction number -- see docs/RT_CAVEATS.md.",
-             ha="center", fontsize=8, color=INK_MUTED)
+    fig.suptitle("Rt growth index by neighborhood", fontsize=14)
+    print("note: gold bands mark the flu season; the dotted line is Rt = 1. This is a "
+          "growth index computed from an interpolated weekly rate, not a reproduction "
+          "number -- see docs/RT_CAVEATS.md.", file=sys.stderr)
     fig.tight_layout(rect=(0.015, 0, 1, 0.945))
-    fig.savefig(path, dpi=150, facecolor=SURFACE, bbox_inches="tight")
+    fig.savefig(path, dpi=160, facecolor=SURFACE, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -119,7 +120,7 @@ def save_paired_plot(rt: pd.DataFrame, rates: pd.DataFrame, path: str,
         top.plot(rt.index, rt[neighborhood], color=series_colour(0), lw=1.5, zorder=3)
         top.set_ylim(0.6, 2.2)
         top.set_title(SHORT_NAMES[NEIGHBORHOODS.index(neighborhood)], fontsize=11,
-                      color=INK_PRIMARY, loc="left")
+)
         bottom.plot(rates.index, rates[neighborhood], color=ACTUAL, lw=1.5, zorder=3)
         bottom.tick_params(axis="x", labelsize=8)
         style_dates(bottom, months=12)
@@ -128,35 +129,49 @@ def save_paired_plot(rt: pd.DataFrame, rates: pd.DataFrame, path: str,
             bottom.set_ylabel("ILI per 100,000", fontsize=9, color=INK_SECONDARY)
 
     fig.suptitle("Rt growth index against the epidemic curve it was computed from",
-                 fontsize=13, color=INK_PRIMARY)
-    fig.text(0.5, 0.935, "Stacked panels sharing one time axis, not a twin y-axis: the two "
-                         "measures have different units, so only their timing is comparable.",
-             ha="center", fontsize=8, color=INK_MUTED)
+                 fontsize=13)
+    print("note: stacked panels share one time axis rather than a twin y-axis -- the two "
+          "measures have different units, so only their timing is comparable.",
+          file=sys.stderr)
     fig.tight_layout(rect=(0, 0, 1, 0.925))
-    fig.savefig(path, dpi=150, facecolor=SURFACE, bbox_inches="tight")
+    fig.savefig(path, dpi=160, facecolor=SURFACE, bbox_inches="tight")
     plt.close(fig)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
+    add_city_arg(parser)
     parser.add_argument("--variant", default="post_covid",
                         choices=["post_covid", "exclude_covid", "full"])
     parser.add_argument("--skip-leakage-check", action="store_true",
                         help="The leakage check recomputes Rt twice without the cache.")
     args = parser.parse_args()
 
-    rates = variant_data(load_rates(), args.variant).available
+    global NEIGHBORHOODS, SHORT_NAMES
+    city = get_city(args.city)
+    if args.variant not in city.variants:
+        raise SystemExit(f"--variant {args.variant} is not available for {city.label}. "
+                         f"{city.label} supports: {', '.join(city.variants)}.")
+    NEIGHBORHOODS = list(city.node_names)
+    SHORT_NAMES = list(city.short_names)
+
+    rates = variant_data(city.loaders.load_rates(), args.variant).available
     print(f"Computing Rt for {rates.shape[1]} neighborhoods over {len(rates)} weeks...")
     rt = weekly_rt(rates)
 
-    out = paths.DIAGNOSTICS_DIR
+    out = paths.city_root(city.name) / paths.DIAGNOSTICS_DIR.name
     out.mkdir(parents=True, exist_ok=True)
     rt.to_csv(out / "rt_weekly.csv")
     save_plot(rt, rates, str(out / "rt_by_neighborhood.png"))
-    # Four neighborhoods spanning the range of case volumes.
-    save_paired_plot(rt, rates, str(out / "rt_vs_incidence.png"),
-                     ["Dorchester", "Roxbury", "Charlestown", "Fenway"])
+    # Four nodes spanning the range of case volumes. Picked from the data
+    # rather than named, so this works for any city: the four Boston names
+    # that used to be hardcoded here were the highest, second, and two low
+    # ones, which is exactly what the quantile pick reproduces.
+    ranked = rates.mean().sort_values(ascending=False).index.tolist()
+    picks = [ranked[i] for i in dict.fromkeys(
+        [0, 1, max(0, len(ranked) - 2), len(ranked) - 1])]
+    save_paired_plot(rt, rates, str(out / "rt_vs_incidence.png"), picks)
 
     values = rt.to_numpy().ravel()
     values = values[np.isfinite(values)]

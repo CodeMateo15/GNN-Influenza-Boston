@@ -54,6 +54,31 @@ class City:
     available_features: frozenset[str]
     variants: tuple[str, ...]                   # which time-filter variants exist
     suppresses_small_counts: bool               # True -> absent weeks are NaN
+
+    # --- Season geometry ----------------------------------------------------
+    # These were module constants in constants.py, which was fine for two
+    # Northern-Hemisphere cities and wrong the moment a Southern one arrived.
+    # Buenos Aires peaks in epiweeks 22-24 -- an exact six-month mirror of
+    # Boston -- so every one of these flips for it.
+    #
+    # `flu_months` splits the year into the two reporting segments.
+    # `season_start_month` is the boundary a season is NAMED from: the month
+    # the series is at its annual floor, so no observed week moves between
+    # seasons. August for the US cities (MEM's ISO week 30, rounded to a month
+    # boundary); February for Buenos Aires, whose floor is December-February.
+    flu_months: frozenset[int] = frozenset({10, 11, 12, 1, 2, 3})
+    season_start_month: int = 8
+
+    # Evaluation window, when this city cannot use the shared one. None means
+    # "use constants.TEST_START/TEST_END", which is what both US cities do --
+    # scoring them on the same weeks is the point of a shared window.
+    #
+    # Buenos Aires cannot: its surveillance backfills for months, so its last
+    # fully-reported week is well before Boston's. Scoring it on the shared
+    # window would score a model against weeks that were still filling in, and
+    # report the resulting under-prediction as model error.
+    test_start: str | None = None
+    test_end: str | None = None
     notes: str = ""
 
     def __post_init__(self) -> None:
@@ -116,19 +141,24 @@ class City:
         return self.short_names[self.node_names.index(node_name)]
 
 
+# One list, used by both `get` and `names`. These were two separate literals
+# that had to be edited together; adding a third city is exactly the moment
+# that kind of duplication bites.
+_CITY_MODULES = (("boston", "BOSTON"), ("columbus", "COLUMBUS"),
+                 ("buenos_aires", "BUENOS_AIRES"))
+
+
 def get(name: str) -> City:
     """Look up a city by slug, with an actionable error."""
-    from .boston import BOSTON
-    from .columbus import COLUMBUS
-
-    registry = {c.name: c for c in (BOSTON, COLUMBUS)}
+    registry = {slug: getattr(importlib.import_module(f"{__name__}.{slug}"), attr)
+                for slug, attr in _CITY_MODULES}
     if name not in registry:
         raise ValueError(f"Unknown city {name!r}. Available: {', '.join(sorted(registry))}.")
     return registry[name]
 
 
 def names() -> tuple[str, ...]:
-    return ("boston", "columbus")
+    return tuple(slug for slug, _ in _CITY_MODULES)
 
 
 DEFAULT_CITY = "boston"

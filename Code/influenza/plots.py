@@ -16,15 +16,29 @@ import pandas as pd  # noqa: E402
 from .cities import City, get as get_city  # noqa: E402
 from .constants import FLU_MONTHS  # noqa: E402
 
-ACTUAL_COLOUR = "#2c3e50"
-PREDICTED_COLOUR = "#e74c3c"
-SEASON_COLOUR = "#f1c40f"
+# These three hex values used to live here, duplicated from nothing and
+# disagreeing with influenza/palette.py, which is why the comparison figures and
+# these grids looked like two different projects. palette.py is now the plain
+# style and these are its first two slots, so the names stay and the values come
+# from one place.
+from .palette import ACTUAL as ACTUAL_COLOUR  # noqa: E402
+from .palette import SEASON as SEASON_COLOUR  # noqa: E402
+from .palette import THRESHOLD_INK, THRESHOLD_STYLES  # noqa: E402,F401
+from .palette import series_colour  # noqa: E402
+
+PREDICTED_COLOUR = series_colour(1)
 
 
-def _flu_season_spans(dates: pd.DatetimeIndex) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
-    """Contiguous runs of flu-season weeks, for axvspan shading."""
+def _flu_season_spans(dates: pd.DatetimeIndex, flu_months=None
+                      ) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
+    """Contiguous runs of flu-season weeks, for axvspan shading.
+
+    `flu_months` defaults to the shared Northern-Hemisphere set; a city with a
+    different season passes its own, or the shading lands on the wrong half of
+    every Buenos Aires chart.
+    """
     dates = pd.DatetimeIndex(sorted(pd.to_datetime(dates)))
-    in_season = np.isin(dates.month, list(FLU_MONTHS))
+    in_season = np.isin(dates.month, list(FLU_MONTHS if flu_months is None else flu_months))
     spans: list[tuple[pd.Timestamp, pd.Timestamp]] = []
     start: pd.Timestamp | None = None
     for date, flag in zip(dates, in_season):
@@ -38,11 +52,6 @@ def _flu_season_spans(dates: pd.DatetimeIndex) -> list[tuple[pd.Timestamp, pd.Ti
     return spans
 
 
-# One style per severity boundary, matching plot_forecasts.py so the two figure
-# families read the same way.
-THRESHOLD_STYLES = [((0, (1, 3)), 0.8, 0.50), ((0, (4, 3)), 1.0, 0.65),
-                    ((0, (7, 2)), 1.2, 0.80)]
-THRESHOLD_INK = "#52514e"
 
 
 @lru_cache(maxsize=1)
@@ -96,7 +105,8 @@ def save_grid_plot(
     node_names, short_names = list(city.node_names), list(city.short_names)
     data = predictions.loc[predictions["horizon"].eq(horizon)].copy()
     data["target_date"] = pd.to_datetime(data["target_date"])
-    spans = _flu_season_spans(data["target_date"].unique()) if shade_flu_season else []
+    spans = (_flu_season_spans(data["target_date"].unique(), city.flu_months)
+             if shade_flu_season else [])
     show_bands = bands and {"lower", "upper"}.issubset(data.columns)
     ceiling, thresholds = _fixed_axes(city.name) if fixed_axes else (None, None)
     entries = []

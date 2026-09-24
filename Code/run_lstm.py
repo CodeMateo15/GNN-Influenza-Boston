@@ -9,6 +9,12 @@ is the point of comparing it against the GNNs.
 
 from __future__ import annotations
 
+# Thread pinning must happen before numpy or torch is imported: BLAS reads its
+# thread count from the environment at import time. See influenza/threads.py.
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import influenza.threads  # noqa: F401  (import for its side effect)
+
 import argparse
 import copy
 import random
@@ -226,7 +232,8 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
     print(f"Checkpoint: {checkpoint_path}")
 
     interval_model = fit_intervals(validation["predicted"], validation["actual"],
-                                   validation["horizon"])
+                                   validation["horizon"],
+                                   two_sided=args.two_sided_intervals)
     predictions = attach_intervals(pd.DataFrame(records), interval_model)
     coverage = empirical_coverage(predictions["actual"], predictions["lower"],
                                  predictions["upper"])
@@ -277,7 +284,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    window = resolve_window(args, Window())
+    window = resolve_window(args, Window(), resolve_city(args))
     city = resolve_city(args)
     rates = city.loaders.load_rates()
     print(f"Loaded {len(rates)} weekly dates and {rates.shape[1]} neighborhoods")

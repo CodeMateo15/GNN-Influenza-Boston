@@ -19,7 +19,7 @@ Three things come out of that framing:
 Reads the per-horizon trees written by run_all_horizons.py:
 
     python Code/compare_horizons.py
-    python Code/compare_horizons.py --models arima,lstm,dualtopo,gnn_multiedge
+    python Code/compare_horizons.py --models arima,lstm,dualtopo,gnn_st
 """
 
 from __future__ import annotations
@@ -41,6 +41,8 @@ except ImportError as exc:  # pragma: no cover
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from influenza import palette, paths
+from influenza.cities import get as get_city
+from influenza.cli import add_city_arg, city_results_dir
 from influenza.metrics import CORE_METRICS
 
 # The two naive models are the floors every other model is judged against, not
@@ -51,7 +53,7 @@ REFERENCE_STYLES = {
     "persistence": {"color": palette.INK_MUTED, "linestyle": ":", "linewidth": 1.6},
     "seasonal_naive": {"color": palette.INK_SECONDARY, "linestyle": "--", "linewidth": 1.6},
 }
-DEFAULT_MODELS = "arima,lstm,dualtopo,gnn_multiedge"
+DEFAULT_MODELS = "arima,lstm,dualtopo,gnn_st"
 
 
 def discover(results_root: Path) -> list[tuple[int, Path]]:
@@ -181,7 +183,7 @@ def plot_error_growth(long: pd.DataFrame, models: list[str], variant: str,
     ax.set_ylabel(f"{metric} (ILI per 100,000)" if metric in ("RMSE", "MAE") else metric,
                   color=palette.INK_SECONDARY, fontsize=8)
     ax.set_title(f"Forecast error against horizon — {variant}, {segment}",
-                 color=palette.INK_PRIMARY, fontsize=10, loc="left")
+                 fontsize=10)
     ax.legend(frameon=False, fontsize=7, labelcolor=palette.INK_SECONDARY, ncol=2)
     _finish(fig, ax, path, horizons=horizons, xlabel="Weeks ahead (log scale)")
 
@@ -224,7 +226,7 @@ def plot_skill(long: pd.DataFrame, models: list[str], variant: str, segment: str
 
     ax.set_ylabel("RMSE ÷ seasonal_naive RMSE", color=palette.INK_SECONDARY, fontsize=8)
     ax.set_title(f"Skill against the seasonal floor — {variant}, {segment}",
-                 color=palette.INK_PRIMARY, fontsize=10, loc="left")
+                 fontsize=10)
     ax.legend(frameon=False, fontsize=7, labelcolor=palette.INK_SECONDARY, ncol=2)
     _finish(fig, ax, path, horizons=horizons, xlabel="Weeks ahead (log scale)")
 
@@ -258,7 +260,7 @@ def plot_facets(long: pd.DataFrame, variant: str, segment: str, path: Path) -> N
         series = _series(long, model, variant, segment, "RMSE")
         ax.plot(series.index, series.to_numpy(), color=palette.SERIES[0],
                 marker="o", markersize=3, linewidth=palette.LINE_WIDTH)
-        ax.set_title(model, color=palette.INK_PRIMARY, fontsize=8, loc="left")
+        ax.set_title(model, fontsize=8)
         ax.set_ylim(0, ceiling)
         ax.set_xscale("log")
         ax.set_xticks(horizons)
@@ -270,7 +272,7 @@ def plot_facets(long: pd.DataFrame, variant: str, segment: str, path: Path) -> N
 
     fig.suptitle(f"RMSE against horizon, every model — {variant}, {segment}. "
                  f"Dotted = persistence, dashed = seasonal_naive.",
-                 color=palette.INK_PRIMARY, fontsize=10, x=0.01, ha="left")
+                 fontsize=10)
     fig.patch.set_facecolor(palette.SURFACE)
     fig.tight_layout(rect=(0, 0, 1, 0.97))
     fig.savefig(path, dpi=160, bbox_inches="tight", facecolor=palette.SURFACE)
@@ -388,7 +390,7 @@ def leaderboard(long: pd.DataFrame, variant: str, segment: str, scope: str) -> s
 
 def main() -> None:
     args = parse_args()
-    results_root = args.results_dir.resolve()
+    results_root = city_results_dir(args, get_city(args.city)).resolve()
     found = discover(results_root)
     if not found:
         raise SystemExit(
@@ -441,7 +443,8 @@ def main() -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--results-dir", type=Path, default=paths.RESULTS_DIR)
+    add_city_arg(parser)
+    parser.add_argument("--results-dir", type=Path, default=None)
     parser.add_argument("--out-dir", type=Path, default=None)
     parser.add_argument("--models", default=DEFAULT_MODELS,
                         help=f"Up to {len(palette.SERIES)} coloured series. The naive "

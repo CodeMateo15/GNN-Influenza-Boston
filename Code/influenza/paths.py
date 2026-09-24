@@ -14,7 +14,6 @@ DATA_DIR = ROOT / "Data"
 BPHC_FLU_DIR = DATA_DIR / "BPHC Flu Data"
 BPHC_COVID_RSV_DIR = DATA_DIR / "BPHC Covid and RSV Data"
 WEATHER_DIR = DATA_DIR / "Weather"
-MBTA_DIR = DATA_DIR / "MBTA"
 NEIGHBORHOOD_DIR = DATA_DIR / "Neighborhood Data"
 VACCINATION_DIR = DATA_DIR / "Mass Flu Vaccination Data"
 
@@ -30,8 +29,6 @@ COVID_WASTEWATER_FILE = BPHC_COVID_RSV_DIR / "COVID" / "BPHC Dashboard COVID cas
 RSV_CASES_FILE = BPHC_COVID_RSV_DIR / "RSV" / "BPHC Dashboard Confirmed RSV Cases - Neighborhood.csv"
 RSV_WASTEWATER_FILE = BPHC_COVID_RSV_DIR / "RSV" / "BPHC Dashboard RSV cases in Wastewater.csv"
 
-MBTA_ADJACENCY_FILE = MBTA_DIR / "mbta_adjacency_matrix.csv"
-
 # --- Columbus OH / Franklin County -----------------------------------------
 # The three case extracts are line-level (one row per ED visit or per case), so
 # unlike the BPHC files they carry no rate and no denominator. COLUMBUS_STATIC_FILE
@@ -44,7 +41,22 @@ COLUMBUS_COVID_FILE = COLUMBUS_DIR / "COVID Data CPH Franklin_final.csv"
 COLUMBUS_ZIP_AREAS_FILE = COLUMBUS_DIR / "Columbus_FC_Zip_Areas_Nov2019.xlsx"
 COLUMBUS_STATIC_FILE = COLUMBUS_DIR / "columbus_area_static.csv"
 COLUMBUS_WEATHER_DIR = DATA_DIR / "Columbus Weather"
-COLUMBUS_COTA_ADJACENCY_FILE = COLUMBUS_DIR / "cota_adjacency_matrix.csv"
+COLUMBUS_AREA_EDGES_FILE = COLUMBUS_DIR / "columbus_area_edges.csv"
+
+# --- Buenos Aires / AMBA ----------------------------------------------------
+# Argentina's SNVS publishes national respiratory surveillance as one workbook
+# per release; the three vintages differ by backfill, so the panel is built by
+# merging them with the newest winning. Counts only -- the population
+# denominator comes from the committed INDEC table, which is NOT an API pull:
+# Argentina has no Census-API equivalent (see AMBA_DATA_NOTES.md).
+AMBA_DIR = DATA_DIR / "Buenos Aires Acute Respiratory Infections"
+AMBA_PANEL_FILE = AMBA_DIR / "amba_eti_weekly_long.csv"
+AMBA_WIDE_FILE = AMBA_DIR / "amba_eti_weekly_wide.csv"
+AMBA_COVERAGE_FILE = AMBA_DIR / "amba_node_coverage.csv"
+AMBA_REVISION_FILE = AMBA_DIR / "amba_eti_revision.csv"
+AMBA_STATIC_FILE = AMBA_DIR / "amba_partido_static.csv"
+AMBA_EDGES_FILE = AMBA_DIR / "amba_partido_edges.csv"
+AMBA_WEATHER_DIR = DATA_DIR / "Buenos Aires Weather"
 
 RESULTS_DIR = CODE_DIR / "results"
 CHECKPOINT_DIR = CODE_DIR / "checkpoints"
@@ -77,6 +89,17 @@ def horizon_dir(horizon: int, root: Path | None = None) -> Path:
     when pointed at one of these, and cannot see them when pointed at the root.
     """
     return (root or RESULTS_DIR) / f"horizon_{horizon:02d}"
+
+
+def backtest_dir(season: str, root: Path | None = None) -> Path:
+    """results/backtest_2022_23/ -- the output root for one rolling test season.
+
+    Deliberately the same DEPTH as horizon_dir: two levels above metrics.csv, so
+    compare_models.py's `*/*/metrics.csv` glob works when pointed at one of these
+    with no changes. A nested backtest/<model>/<variant>/<season>/ layout would be
+    invisible to that glob.
+    """
+    return (root or RESULTS_DIR) / f"backtest_{season.replace('-', '_')}"
 
 
 def comparison_dir(results_root: Path | None = None) -> Path:

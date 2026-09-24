@@ -37,8 +37,11 @@ class Dataset:
     static: np.ndarray | None
     globals_: pd.DataFrame                    # (weeks, n_global)
     per_node: dict[str, pd.DataFrame]         # extra per-neighborhood features
-    mbta: np.ndarray | None = None
     city: City | None = None
+    # Names of the columns in `static`, in order. Not always STATIC_DEMO_COLS:
+    # Buenos Aires publishes five of the eight, so the static block is narrower
+    # there and the feature names have to say which five.
+    static_cols: tuple[str, ...] = ()
 
 
 @dataclass
@@ -59,6 +62,22 @@ class Samples:
     positions: list[int]
     feature_names: list[str]
     global_names: list[str]
+    # (S, n_neigh) normalized per-week slope of the recent history at the origin,
+    # in the same units as `anchors`. A least-squares slope over TREND_WEEKS, not
+    # a single difference: one week's difference is mostly Poisson noise and BPHC
+    # suppression, and extrapolating it directly measured WORSE at every weight
+    # tried. `trendblend` is the only consumer.
+    trend: np.ndarray | None = None
+    # Normalised seasonal baseline at each TARGET week, (S, n_neigh, n_horizons).
+    # The second of the two baselines the blended target is measured from; unlike
+    # `anchors` it does not decay as the horizon grows.
+    clim: np.ndarray | None = None
+    # How the flattened feature axis decomposes. The temporal block is the first
+    # `lookback * temporal_channels` columns, lag-major and most-recent-first;
+    # everything after it is static within a sample. SpatioTemporalGNN needs this
+    # to reshape a sequence back out of the flat vector.
+    lookback: int = 0
+    temporal_channels: int = 0
 
     @property
     def n_feat(self) -> int:
@@ -68,13 +87,48 @@ class Samples:
     def n_global(self) -> int:
         return self.g.shape[1]
 
+    @property
+    def n_static_feat(self) -> int:
+        return self.n_feat - self.lookback * self.temporal_channels
+
     def subset(self, indices: list[int]) -> "Samples":
         return Samples(
             X=self.X[indices], g=self.g[indices], y=self.y[indices],
             anchors=self.anchors[indices],
+            trend=None if self.trend is None else self.trend[indices],
             positions=[self.positions[i] for i in indices],
             feature_names=self.feature_names, global_names=self.global_names,
+            clim=None if self.clim is None else self.clim[indices],
+            lookback=self.lookback, temporal_channels=self.temporal_channels,
         )
+
+
+# Weeks of history the trend is fitted over. Three is the shortest window that
+# averages out a single suppressed or spiky week; the slope is only ever used
+# scaled by a learned coefficient, so the exact choice is not load-bearing.
+TREND_WEEKS = 3
+
+
+def _recent_slope(series: np.ndarray, origin: int, weeks: int) -> np.ndarray:
+    """Per-week least-squares slope of the `weeks` values ending at `origin`.
+
+    A fitted slope rather than `series[t] - series[t-1]`: the single difference
+    is dominated by weekly Poisson noise and by BPHC suppression, and adding it
+    to the forecast directly made the typical weekly miss worse at every weight
+    tried (19.1 -> 20.5 -> 24.0 per 100,000 as the weight went 0 -> 0.5 -> 1.0).
+    Reads only weeks at or before the origin, all of which the lag block already
+    reads, so it introduces no new information and no look-ahead.
+    """
+    start = max(origin - weeks + 1, 0)
+    rows = series[start:origin + 1]
+    n = len(rows)
+    if n < 2:
+        return np.zeros(series.shape[1], dtype=np.float32)
+    time = np.arange(n, dtype=np.float32)
+    centred = time - time.mean()
+    denominator = float((centred ** 2).sum())
+    slope = (centred[:, None] * (rows - rows.mean(axis=0, keepdims=True))).sum(axis=0)
+    return (slope / denominator).astype(np.float32)
 
 
 def _zscore(values: np.ndarray, *, end: int | None, per_column: bool) -> np.ndarray:
@@ -93,7 +147,7 @@ def build_samples(
     window: Window,
     graph: Graph,
     *,
-    target: Literal["delta", "level"],
+    target: Literal["delta", "level", "blend", "trendblend", "cascade"],
     normalize: Literal["all", "train"],
 ) -> tuple[Samples, Normalization]:
     """Assemble tensors for every origin in `split`.
@@ -136,7 +190,16 @@ def build_samples(
 
     imputed_mask = dataset.flu_imputed.to_numpy(dtype=np.float32)
 
-    feature_names = _feature_names(features, window, per_node_norm.keys())
+    # Seasonal baseline, fitted on exactly the rows the normalisation reference
+    # uses, so the two share one leakage boundary rather than each choosing its
+    # own. Held in NORMALISED units because that is the space the targets and the
+    # origin-level anchors live in.
+    from .climatology import fit_climatology
+    climatology = fit_climatology(dataset.rates, end=end)
+    clim_level = (climatology.level(dataset.week_index) - flu_mean) / flu_std
+
+    feature_names = _feature_names(features, window, per_node_norm.keys(),
+                                   dataset.static_cols)
     n_feat = len(feature_names)
 
     positions = split.train + split.val + split.test
@@ -151,6 +214,8 @@ def build_samples(
     g = np.zeros((n_samples, global_values.shape[1] + len(season_names)), dtype=np.float32)
     y = np.zeros((n_samples, n_neigh, len(window.horizons)), dtype=np.float32)
     anchors = np.zeros((n_samples, n_neigh), dtype=np.float32)
+    trends = np.zeros((n_samples, n_neigh), dtype=np.float32)
+    clim = np.zeros((n_samples, n_neigh, len(window.horizons)), dtype=np.float32)
 
     for row, t in enumerate(positions):
         if t - window.lookback + 1 < 0 or t + window.max_horizon >= n_weeks:
@@ -201,19 +266,39 @@ def build_samples(
         # target is dropped from the loss and metrics -- but a suppressed
         # *origin* week no longer discards an otherwise-scorable target.
         anchors[row] = flu_features[t]
+        # Same causally imputed series and the same weeks the lag block reads,
+        # so this adds no input the model did not already have -- it only makes
+        # the slope available to the baseline as well as to the network.
+        trends[row] = _recent_slope(flu_features, t, TREND_WEEKS)
         for h_idx, horizon in enumerate(window.horizons):
             level = flu_targets[t + horizon]
             y[row, :, h_idx] = level - flu_features[t] if target == "delta" else level
+            # Keyed to the target week, which is known at forecast time -- the
+            # calendar is not a prediction. Same argument as use_seasonality.
+            clim[row, :, h_idx] = clim_level[t + horizon, :n_neigh]
 
     return (
-        Samples(X=X, g=g, y=y, anchors=anchors, positions=positions,
+        Samples(X=X, g=g, y=y, anchors=anchors, trend=trends, positions=positions,
                 feature_names=feature_names,
-                global_names=list(dataset.globals_.columns) + season_names),
+                global_names=list(dataset.globals_.columns) + season_names,
+                clim=clim, lookback=window.lookback,
+                temporal_channels=_temporal_channels(features, per_node_norm.keys())),
         Normalization(flu_mean=flu_mean, flu_std=flu_std),
     )
 
 
-def _feature_names(features: FeatureSpec, window: Window, per_node: object) -> list[str]:
+def _temporal_channels(features: FeatureSpec, per_node: object) -> int:
+    """How many values `_feature_names` emits per lag.
+
+    Must stay in lockstep with the per-lag block in `_feature_names` and the
+    writer loop in `build_samples`: flu rate, then one column per extra per-node
+    source, then optionally the imputation flag.
+    """
+    return 1 + len(list(per_node)) + (1 if features.use_imputed_flag else 0)
+
+
+def _feature_names(features: FeatureSpec, window: Window, per_node: object,
+                   static_cols: tuple[str, ...] = ()) -> list[str]:
     names: list[str] = []
     for lag in range(window.lookback):
         names.append(f"flu_lag{lag}")
@@ -224,8 +309,12 @@ def _feature_names(features: FeatureSpec, window: Window, per_node: object) -> l
     if features.use_weather:
         names.extend(WEATHER_COLS)
     if features.use_demographics:
+        # The columns the loader actually returned, not the global list: a city
+        # with fewer published demographics has a narrower static block, and
+        # labelling it with all eight names would misalign every name after the
+        # first missing one.
         from .constants import STATIC_DEMO_COLS
-        names.extend(STATIC_DEMO_COLS)
+        names.extend(static_cols or STATIC_DEMO_COLS)
     return names
 
 
@@ -236,7 +325,7 @@ def positions_to_rows(samples: Samples, positions: list[int]) -> list[int]:
 
 
 def load_dataset(features: FeatureSpec, *, city: City | None = None,
-                 rates=None, need_mbta: bool = False) -> Dataset:
+                 rates=None) -> Dataset:
     """Load and align only the sources the feature spec actually turns on.
 
     Keeping this demand-driven is what lets run_arima.py avoid openpyxl and
@@ -254,7 +343,10 @@ def load_dataset(features: FeatureSpec, *, city: City | None = None,
     flu_features, flu_imputed = impute_causal(rates)
 
     weather = data_module.load_weather(week_index) if features.use_weather else {}
-    static = data_module.load_static_demographics()[0] if features.use_demographics else None
+    static, static_cols = None, ()
+    if features.use_demographics:
+        static, cols, _ = data_module.load_static_demographics()
+        static_cols = tuple(cols)
 
     per_node: dict[str, pd.DataFrame] = {}
     for source in features.wastewater_sources:
@@ -291,6 +383,6 @@ def load_dataset(features: FeatureSpec, *, city: City | None = None,
         static=static,
         globals_=globals_frame,
         per_node=per_node,
-        mbta=data_module.load_mbta_matrix() if need_mbta else None,
         city=city,
+        static_cols=static_cols,
     )

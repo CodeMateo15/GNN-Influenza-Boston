@@ -87,8 +87,13 @@ REFERENCE_SEASON_SETS: dict[str, tuple[int, ...] | None] = {
 _EPS = 1e-9
 
 
-def season_label(dates) -> np.ndarray:
-    """Season start year for each date. August starts a new season.
+def season_label(dates, season_start_month: int | None = None) -> np.ndarray:
+    """Season start year for each date. August starts a new season by default.
+
+    `season_start_month` is the month the series sits at its annual floor, so
+    that no observed week is split across two seasons. August for the two US
+    cities; February for Buenos Aires, whose floor is December-February and
+    whose season runs April-September.
 
     MEM defines the season as ISO week 30 to week 29, which falls in late July.
     Rounding that to the August boundary keeps the label computable from the
@@ -96,7 +101,8 @@ def season_label(dates) -> np.ndarray:
     is at its annual floor throughout July and August.
     """
     stamps = pd.DatetimeIndex(pd.to_datetime(dates))
-    return np.where(stamps.month >= 8, stamps.year, stamps.year - 1)
+    boundary = 8 if season_start_month is None else int(season_start_month)
+    return np.where(stamps.month >= boundary, stamps.year, stamps.year - 1)
 
 
 def season_name(year: int) -> str:

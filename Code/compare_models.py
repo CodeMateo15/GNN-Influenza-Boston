@@ -29,6 +29,7 @@ except ImportError as exc:  # pragma: no cover
 
 from influenza import paths
 from influenza.cities import get as get_city
+from influenza.cli import add_city_arg, city_results_dir
 from influenza.metrics import CORE_METRICS
 from influenza.palette import series_colour
 
@@ -54,11 +55,96 @@ README_BEGIN = "<!-- BEGIN LEADERBOARD -->"
 README_END = "<!-- END LEADERBOARD -->"
 
 
-def discover(results_root: Path) -> list[Path]:
+def ablation_arms() -> frozenset[str]:
+    """Arms that belong to the ablation study, not the model leaderboard.
+
+    Discovery here is by glob, so anything that lands in results/horizon_*/
+    becomes a "model" and gets ranked. But Code/sweep/tasks.jsonl enumerates ~30
+    `gnn_st_*` registry arms and sends them all to horizon_*/, and an ablation arm
+    is `gnn_st` with one thing changed -- not a competing model. Ranking it
+    against its own parent is meaningless and it crowds out the baselines.
+
+    This is not hypothetical. `gnn_st_lagsonly` and `gnn_st_noglobals` reached
+    horizon_01/02/04 that way and `gnn_st_lagsonly` ranked FIRST at h=2 on RMSE,
+    above the `gnn_st` it is an ablation of. Worse, `gnn_st_noglobals` is
+    config-identical to `gnn_st` (the default already has globals_=()), so the
+    leaderboard listed one model twice and scored the two 0.017 RMSE apart --
+    pure thread-order nondeterminism presented as a difference.
+
+    Sourced from the EXPERIMENTS registry rather than from run_ablation.py's
+    table, because the table is narrower than the registry: `gnn_st_noglobals`
+    and `gnn_st_noseason` were dropped from it for measuring nothing, and keying
+    on the table would have let exactly those two back onto the leaderboard.
+    Every `gnn_st_*` entry is by definition `gnn_st` with something changed, so
+    the rule is the prefix. `gnn_st` itself is the model and stays.
+    """
+    names: set[str] = set()
+    try:
+        from influenza.config import EXPERIMENTS
+        names |= {n for n in EXPERIMENTS if n.startswith("gnn_st_")}
+    except Exception:
+        pass
+    try:
+        import run_ablation
+        names |= set(run_ablation.ALL_ARMS)
+        names |= {name for name, _ in run_ablation.REPLICATES}
+    except Exception:
+        pass
+    return frozenset(names)
+
+
+def discover(results_root: Path, *, include_ablation_arms: bool = False) -> list[Path]:
+    skip = frozenset() if include_ablation_arms else ablation_arms()
     return sorted(
         path for path in results_root.glob("*/*/metrics.csv")
         if not any(part.startswith("_") for part in path.relative_to(results_root).parts)
+        and path.relative_to(results_root).parts[0] not in skip
     )
+
+
+def warn_on_duplicate_configs(paths: list[Path], results_root: Path) -> None:
+    """Refuse to silently rank two entries that are the same model.
+
+    Two runs whose run_config.json agree on every field that defines the model
+    are the same experiment under two names. Any gap between their scores is
+    run-to-run noise, and presenting it as a ranking is wrong. Warn loudly rather
+    than drop, because which of the two to keep is not this script's call.
+    """
+    seen: dict[tuple, str] = {}
+    for path in paths:
+        config = path.parent / "run_config.json"
+        if not config.exists():
+            continue
+        try:
+            payload = json.loads(config.read_text())
+        except Exception:
+            continue
+        # Key on the CONFIGURATION, never on the run name. run_config's "model"
+        # field holds the --name the run was written under, so including it made
+        # every entry unique and the check could never fire -- which is exactly
+        # the bug it exists to catch.
+        experiment = payload.get("experiment")
+        if isinstance(experiment, dict):
+            # `train.seed` is excluded on purpose. Two arms that differ only in
+            # which seed block they drew are the same model, and the gap between
+            # their scores is exactly the run-to-run noise this warning exists to
+            # stop anyone reading as a ranking.
+            config = {k: v for k, v in experiment.items() if k not in ("name", "note")}
+            train = config.get("train")
+            if isinstance(train, dict):
+                config["train"] = {k: v for k, v in train.items() if k != "seed"}
+            key = ("experiment", json.dumps(config, sort_keys=True, default=str))
+        else:
+            key = tuple(str(payload.get(field)) for field in
+                        ("variant", "target_kind", "normalize", "n_params",
+                         "n_node_features", "n_global", "graph_counts"))
+        name = path.relative_to(results_root).parts[0]
+        if key in seen and seen[key] != name:
+            print(f"warning: `{name}` and `{seen[key]}` have identical "
+                  f"configurations -- they are the same model under two names, and "
+                  f"any difference between their scores is seed/thread noise, not a "
+                  f"ranking. Drop one.", file=sys.stderr)
+        seen.setdefault(key, name)
 
 
 def horizon_roots(results_root: Path) -> list[Path]:
@@ -266,20 +352,23 @@ def save_plot(long: pd.DataFrame, path: Path, args: argparse.Namespace) -> None:
         ax.invert_yaxis()
         ax.margins(x=0.12)
         ax.set_title(f"{metric} — {'higher' if metric in DESCENDING else 'lower'} is better",
-                     fontsize=11, color=INK_PRIMARY, loc="left", pad=8)
+                     fontsize=11, pad=8)
 
     handles = [Patch(facecolor=colours[i % len(colours)],
                      label=SEGMENT_LABELS.get(s, s)) for i, s in enumerate(segments)]
     fig.legend(handles=handles, loc="upper center", ncol=len(segments), frameon=False,
                fontsize=9, labelcolor=INK_SECONDARY,
-               bbox_to_anchor=(0.5, 1 - 0.55 / figure_height))
+               bbox_to_anchor=(0.5, 1 - 0.42 / figure_height))
     fig.suptitle(f"Model comparison by segment — scope={args.scope}, "
                  f"horizon {args.horizon}, ranked by {args.rank_by}",
-                 fontsize=13, color=INK_PRIMARY, y=1 - 0.16 / figure_height)
-    fig.text(0.5, 1 - 0.92 / figure_height,
-             "Off-season MAPE is inflated by near-zero rates; rank the off-season on "
-             "RMSE or MAE instead.", ha="center", fontsize=8, color=INK_MUTED)
-    fig.tight_layout(rect=(0, 0, 1, 1 - 1.15 / figure_height))
+                 fontsize=13, y=1 - 0.16 / figure_height)
+    # The MAPE caveat used to be drawn onto the figure as an 8pt subtitle. It
+    # belongs where it can be read and quoted, not baked into a PNG.
+    print("note: off-season MAPE is inflated by near-zero rates; rank the "
+          "off-season on RMSE or MAE instead.", file=sys.stderr)
+    # Header band: title + legend only. Was 1.15in, sized for a subtitle
+    # paragraph that no longer exists and left a visible gap above the panels.
+    fig.tight_layout(rect=(0, 0, 1, 1 - 0.72 / figure_height))
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=160, facecolor=SURFACE, bbox_inches="tight")
     plt.close(fig)
@@ -386,6 +475,58 @@ def _markdown_table(view: pd.DataFrame) -> list[str]:
     return lines
 
 
+def _mape_warning(frame: pd.DataFrame) -> list[str]:
+    """A line about MAPE when the observed rates make it unusable.
+
+    MAPE divides by the observed value. Boston publishes a suppressed rate, so
+    its denominators are bounded away from zero and MAPE is merely inflated
+    off-season. Columbus publishes observed counts, so a single ED visit in a
+    small area is a rate of ~0.1 per 100,000 and the ratio explodes -- the
+    pooled figure came out in the millions, which is not a percentage anyone
+    should read as one.
+
+    Warned rather than recomputed or hidden: changing the metric would change
+    every published Boston number, and dropping the column would make the two
+    cities' tables differ in shape.
+    """
+    if "MAPE" not in frame.columns:
+        return []
+    worst = pd.to_numeric(frame["MAPE"], errors="coerce").max()
+    if not np.isfinite(worst) or worst < 1000:
+        return []
+    return [
+        f"> **MAPE is not usable in this table** (it reaches {worst:,.0f}%). It "
+        "divides by the observed rate, and this city reports observed zeros and "
+        "near-zeros rather than suppressing small counts, so the denominator goes "
+        "to zero. Rank on RMSE or MAE. The column is kept so the two cities' "
+        "tables have the same shape.",
+        "",
+    ]
+
+
+def _coverage_sentence(frame: pd.DataFrame) -> str:
+    """How to read the tables, with the coverage claim taken from the data.
+
+    This was a hardcoded "Charlestown has 35 suppressed weeks of 201" -- a
+    Boston fact printed verbatim into every city's leaderboard. It is worse
+    than wrong for a city whose coverage is uniform, because it asserts a
+    caveat that does not apply there.
+    """
+    always = ("Compare models down a sub-table; do not compare error magnitudes "
+              "across neighborhoods or across segments without also reading the "
+              "mean rate.")
+    counts = frame.groupby("neighborhood")["n_obs"].max()
+    if counts.empty or counts.nunique() == 1:
+        weeks = f" ({int(counts.iloc[0])} weeks each)" if not counts.empty else ""
+        return (f"Every model is scored on the same weeks, in every neighborhood"
+                f"{weeks}, so the tables are directly comparable. {always}")
+    return (f"Every model is scored on the same weeks within a neighborhood, but "
+            f"coverage differs *between* them -- {counts.idxmin()} has "
+            f"{int(counts.max() - counts.min())} fewer scored weeks than the "
+            f"best-covered node ({int(counts.min())} against {int(counts.max())}) "
+            f"-- so the week count is reported per sub-table. {always}")
+
+
 def neighborhood_leaderboard(
     long: pd.DataFrame,
     scale: pd.DataFrame,
@@ -410,6 +551,7 @@ def neighborhood_leaderboard(
     else:
         order = sorted(here["neighborhood"].unique())
 
+    mape_note = _mape_warning(here)
     lines = [
         f"# Per-neighborhood leaderboard — horizon {args.horizon}",
         "",
@@ -417,13 +559,9 @@ def neighborhood_leaderboard(
         f"observed rate (highest burden first), and within each neighborhood one "
         f"sub-table per segment: {', '.join(SEGMENT_LABELS.get(s, s) for s in segments)}.",
         "",
-        "Every model is scored on the same weeks within a neighborhood, but "
-        "coverage differs *between* neighborhoods (Charlestown has 35 suppressed "
-        "weeks of 201), so the week count is reported per sub-table. Compare models "
-        "down a sub-table; do not compare error magnitudes across neighborhoods or "
-        "across segments without also reading the mean rate.",
+        _coverage_sentence(here),
         "",
-    ]
+    ] + mape_note
 
     # --- Win counts, per segment -------------------------------------------
     def winners_for(segment: str) -> pd.DataFrame:
@@ -583,9 +721,17 @@ def update_readme(markdown: str, readme: Path) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--city", default="boston",
-                        help="Which city these results are for; sets the row labels.")
-    parser.add_argument("--results-dir", type=Path, default=paths.RESULTS_DIR)
+    parser.add_argument("--include-ablation-arms", action="store_true",
+                        help="Rank gnn_st_* ablation arms alongside the baselines. "
+                             "Off by default: an ablation arm is gnn_st with one "
+                             "change, so ranking it against its own parent is "
+                             "meaningless and it crowds out the real models. "
+                             "See run_ablation.py for the arm list.")
+    add_city_arg(parser)
+    # Default None so city_results_dir can tell "left alone" from "explicitly
+    # set to the Boston root". Before this, --city columbus set the row labels
+    # but kept reading Boston's tree.
+    parser.add_argument("--results-dir", type=Path, default=None)
     parser.add_argument("--models", default=None, help="Comma-separated subset.")
     parser.add_argument("--variant", default=None)
     parser.add_argument("--segment", default=ALL_SEGMENTS,
@@ -616,8 +762,9 @@ def main() -> None:
     args = parse_args()
     city = get_city(args.city)
     SHORT.update(zip(city.node_names, city.short_names))
-    results_root = args.results_dir.resolve()
-    found = discover(results_root)
+    results_root = city_results_dir(args, city).resolve()
+    found = discover(results_root, include_ablation_arms=args.include_ablation_arms)
+    warn_on_duplicate_configs(found, results_root)
     if not found:
         # Results are organised one tree per forecast horizon, so the bare
         # results root holds no runs of its own. Name the trees that exist

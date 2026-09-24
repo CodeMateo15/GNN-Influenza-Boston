@@ -132,7 +132,8 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
 
     # Same interval recipe as every other model, fitted on the validation split.
     interval_model = fit_intervals(validation["predicted"], validation["actual"],
-                                   validation["horizon"])
+                                   validation["horizon"],
+                                   two_sided=args.two_sided_intervals)
     predictions = attach_intervals(predictions, interval_model)
     coverage = empirical_coverage(predictions["actual"], predictions["lower"],
                                   predictions["upper"])
@@ -185,7 +186,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    window = resolve_window(args, Window())
+    window = resolve_window(args, Window(), resolve_city(args))
     city = resolve_city(args)
     rates = city.loaders.load_rates()
     print(f"Loaded {len(rates)} weekly dates and {rates.shape[1]} neighborhoods")

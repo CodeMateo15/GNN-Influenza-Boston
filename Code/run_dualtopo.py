@@ -7,7 +7,6 @@ adjacency and thresholded ILI correlation) feed two parallel pathways that are
 fused before the readout.
 
     python Code/run_dualtopo.py
-    python Code/run_dualtopo.py --experiment dualtopo_no_bg   # background-node ablation
     python Code/run_dualtopo.py --variant full                # more than 3 seasons of history
 
 Unlike run_gnn.py this needs no torch_geometric: message passing is a dense
@@ -15,6 +14,12 @@ einsum against a pre-normalised adjacency.
 """
 
 from __future__ import annotations
+
+# Thread pinning must happen before numpy or torch is imported: BLAS reads its
+# thread count from the environment at import time. See influenza/threads.py.
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import influenza.threads  # noqa: F401  (import for its side effect)
 
 import argparse
 import copy
@@ -38,7 +43,8 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import (add_common_args, city_output_dirs, resolve_city,
+from influenza.cli import (add_common_args, check_experiment_supported,
+                           city_output_dirs, resolve_city,
                           resolve_window, run_tag)
 from influenza.config import EXPERIMENTS, Experiment
 from influenza.graphs import build_graph
@@ -88,13 +94,14 @@ def resolve_experiment(args: argparse.Namespace) -> Experiment:
         variant=args.variant if args.variant != "all" else experiment.variant,
         graph=replace(experiment.graph, **graph_changes) if graph_changes else experiment.graph,
         train=replace(experiment.train, **train_changes) if train_changes else experiment.train,
-        window=resolve_window(args, experiment.window),
+        window=resolve_window(args, experiment.window, resolve_city(args)),
     )
 
 
 def run(experiment: Experiment, args: argparse.Namespace) -> None:
     window = experiment.window
     city = resolve_city(args)
+    check_experiment_supported(experiment, city)
     results_root, checkpoint_root = city_output_dirs(args, city)
     data = variant_data(city.loaders.load_rates(), experiment.variant)
     dataset = load_dataset(experiment.features, city=city, rates=data.available)
@@ -222,7 +229,8 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
                                if experiment.target == "delta" else samples.y[val_rows])
     val_horizon = np.broadcast_to(np.asarray(window.horizons), val_pred.shape)
     interval_model = fit_intervals(np.maximum(val_pred, 0.0).ravel(),
-                                   val_actual.ravel(), val_horizon.ravel())
+                                   val_actual.ravel(), val_horizon.ravel(),
+                                   two_sided=args.two_sided_intervals)
 
     records = []
     for sample_idx, position in enumerate(split.test):
