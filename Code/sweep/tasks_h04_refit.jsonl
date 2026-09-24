@@ -1,0 +1,12 @@
+{"city": "boston", "arm": "persistence", "script": "run_seasonal_naive.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "boston__persistence__post_covid__h04"}
+{"city": "boston", "arm": "persistence", "script": "run_seasonal_naive.py", "variant": "exclude_covid", "horizon": 4, "extra": [], "task_id": "boston__persistence__exclude_covid__h04"}
+{"city": "boston", "arm": "seasonal_naive", "script": "run_seasonal_naive.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "boston__seasonal_naive__post_covid__h04"}
+{"city": "boston", "arm": "seasonal_naive", "script": "run_seasonal_naive.py", "variant": "exclude_covid", "horizon": 4, "extra": [], "task_id": "boston__seasonal_naive__exclude_covid__h04"}
+{"city": "boston", "arm": "arima", "script": "run_arima.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "boston__arima__post_covid__h04"}
+{"city": "boston", "arm": "arima", "script": "run_arima.py", "variant": "exclude_covid", "horizon": 4, "extra": [], "task_id": "boston__arima__exclude_covid__h04"}
+{"city": "boston", "arm": "lstm", "script": "run_lstm.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "boston__lstm__post_covid__h04"}
+{"city": "boston", "arm": "lstm", "script": "run_lstm.py", "variant": "exclude_covid", "horizon": 4, "extra": [], "task_id": "boston__lstm__exclude_covid__h04"}
+{"city": "boston", "arm": "xgboost", "script": "run_xgboost.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "boston__xgboost__post_covid__h04"}
+{"city": "boston", "arm": "gat", "script": "run_gat.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "boston__gat__post_covid__h04"}
+{"city": "boston", "arm": "dualtopo", "script": "run_dualtopo.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "boston__dualtopo__post_covid__h04"}
+{"city": "boston", "arm": "gnn_st", "script": "run_gnn.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "boston__gnn_st__post_covid__h04"}

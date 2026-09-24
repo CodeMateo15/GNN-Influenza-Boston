@@ -157,9 +157,13 @@ The COVID extract's last observed week is **2025-10-19**. The evaluation window
 is 2025-05-31 → 2026-05-31, so **33 of its 53 weeks have no COVID covariate at
 all**, and there is no Columbus RSV data whatsoever.
 
-Boston's single largest improvement is adding COVID and RSV co-circulation
-(`gnn_multiedge` 24.5 → 16.8 RMSE, the most promising direction in the
-repository). That arm has **no honest Columbus counterpart**.
+An earlier revision of this file called COVID/RSV co-circulation Boston's single
+largest improvement (24.5 → 16.8 RMSE on the then-current graph arm). **That
+result was retracted** — it was measured on inputs carrying a look-ahead defect,
+and re-measured on `gnn_st` the same feature group *costs* 0.119 macro Corr. See
+[`METHODS.md`](METHODS.md#what-this-actually-says). So the Columbus gap below
+costs less than it once appeared to, but the feature still has **no honest
+Columbus counterpart**.
 `load_covid_counts()` therefore leaves the gap as `NaN` and does *not* carry the
 last value forward — Boston's `_carry_forward()` covers a 17-week tail, which is
 defensible; 33 weeks of a 53-week window is not.
@@ -340,9 +344,16 @@ distances in that normalised space — treats them as equivalent.
 So Columbus's demographic-similarity edges are partly built on amplified
 near-noise in two of the eight columns. Keeping per-city normalisation is still
 right (a shared scale across two different geographies would be meaningless), but
-the `gnn_multiedge` comparison should carry this caveat, and a demo-edge ablation
-on the Columbus side is worth running.
+the cross-city comparison should carry this caveat, and a demo-edge ablation on
+the Columbus side is worth running. On Boston, `gnn_st_nodemoedge` already puts
+demographic edges inside the noise floor, so the likely answer is that this does
+not matter much either way.
 
-The same reasoning applies with more force to the transit edge type itself: COTA
-carries a far smaller share of trips than the MBTA, so a Columbus transit
-adjacency is a weaker mobility proxy even when correctly built.
+The same reasoning applied with more force to the transit edge type, which is
+why no COTA adjacency was ever built: COTA carries a far smaller share of trips
+than the MBTA, so a Columbus transit adjacency would be a weaker mobility proxy
+even when correctly built. That question is now closed on the Boston side too --
+the MBTA edges measured inside noise at ten seeds and were removed (see
+METHODS.md, "Transit (retired)"), so a COTA equivalent is not worth building.
+Note that `transit_share` above is the ACS commute-mode *node feature*, which is
+unaffected and still in use.

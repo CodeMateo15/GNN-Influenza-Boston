@@ -3,15 +3,29 @@
 Week-ahead forecasting of influenza-like illness (ILI) emergency-department visit
 rates for the 14 neighborhoods of Boston, framed as a problem on a graph. The
 question the project asks is whether the structure *connecting* neighborhoods —
-shared borders, correlated histories, similar demographics, transit flows —
+shared borders, correlated histories, similar demographics —
 carries forecasting signal beyond each neighborhood's own history.
 
 ## Status: work in progress
 
 This is an active research repository, not a finished result or a stable tool.
 
-- The graph models do not yet beat simple baselines at one week ahead.
-- Numbers move as data defects are found and corrected.
+- Numbers move as data defects are found and corrected. Five more were found in
+  September 2026 and are recorded as defects 5-9 in
+  [Data notes](Code/docs/DATA_NOTES.md); two of them were the largest single
+  source of error in the graph models, and fixing them moved the then-current
+  graph arm from RMSE 24.90 to 19.12 at one week ahead with no model change at
+  all.
+- The graph model (`gnn_st`) now leads every baseline at 1, 2 and 4 weeks. The
+  margin is small at one week and large at four, which is a fact about the task:
+  citywide persistence correlates 0.906 with next week and 0.271 with four weeks
+  out, so there is little room to win at h=1 and a lot at h=4.
+- **A measured ceiling bounds all of it.** Distributing a *perfect* citywide
+  forecast across neighborhoods by their historical shares scores macro Corr
+  0.938. Boston's neighborhoods co-move almost completely, so correlations here
+  should be read against 0.94, not 1.0 — and macro Corr of 0.90 at two to four
+  weeks ahead is not reachable on this data. See
+  [Methods](Code/docs/METHODS.md#how-good-can-any-model-get-here-a-measured-ceiling).
 - Script flags, feature sets and result layouts still change without notice.
 
 ## Data
@@ -26,7 +40,6 @@ the water between them).
 | `Data/BPHC Flu Data/` | **The target series.** Boston Public Health Commission dashboard exports: weekly ILI ED-visit rates per 100,000 by neighborhood (436 weeks, 2017-12-31 → 2026-05-03), plus citywide counts, ILI as a share of ED visits, monthly demographics, and daily flu wastewater by sewershed (2024-08 on). |
 | `Data/BPHC Covid and RSV Data/` | Monthly neighborhood COVID cases and testing, confirmed RSV cases, and COVID/RSV wastewater. Optional covariates. |
 | `Data/Weather/` | Weekly weather per neighborhood — temperature, humidity, precipitation, wind (438 weeks, 2017-12-31 → 2026-05-17). Scraped by `Code/scrapers/scrape_weather.py`. |
-| `Data/MBTA/` | March 2026 GTFS feed, transit ridership edges between neighborhoods derived from it, a 14×14 adjacency matrix, and neighborhood boundary GeoJSON. |
 | `Data/Neighborhood Data/` | 22 Boston Indicators / BPDA tables (population, age, poverty, commute mode, housing, education, labor force, …), reduced to eight static per-neighborhood features. |
 | `Data/Mass Flu Vaccination Data/` | Massachusetts dashboard flu vaccination workbooks, 2023-24 through 2025-26. Optional feature. |
 
@@ -57,7 +70,8 @@ Verify the layer with `python Code/run_columbus_data_check.py`.
 
 ```bash
 pip install -r requirements.txt
-python Code/run_arima.py --variant post_covid
+python Code/run_arima.py --variant post_covid          # a cheap baseline
+python Code/run_gnn.py   --experiment gnn_st          # the current model
 ```
 
 ## More detail
@@ -67,4 +81,3 @@ python Code/run_arima.py --variant post_covid
 - [Columbus data notes](Code/docs/COLUMBUS_DATA_NOTES.md) — the second city: sources, the 17-area geography, and where it cannot match Boston
 - [Graph design](Code/docs/EDGES_AND_NODES_NOTES.txt) — nodes, edge types, weighting
 - [Severity bands](Code/docs/SEVERITY.md) · [Rt caveats](Code/docs/RT_CAVEATS.md)
-- [Transit edge methodology](Data/MBTA/README_mbta_edges.txt)

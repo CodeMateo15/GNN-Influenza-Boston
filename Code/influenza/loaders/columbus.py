@@ -258,8 +258,8 @@ def load_covid_counts(week_index: pd.DatetimeIndex, path=None) -> pd.DataFrame:
 
     This series ends in MMWR 2025 week 43, roughly five months into the
     evaluation window, so it cannot support an honest Columbus counterpart to
-    Boston's `gnn_multiedge_covid_rsv`. The loader does not carry it forward:
-    that decision belongs to the caller, visibly.
+    a Boston arm enabling `use_covid_cases` / `use_rsv_cases`. The loader does
+    not carry it forward: that decision belongs to the caller, visibly.
     """
     frame = _read_line_level_weekly(
         path or paths.COLUMBUS_COVID_FILE, "Columbus COVID data", "zip_5")

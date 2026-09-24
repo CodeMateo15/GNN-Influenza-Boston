@@ -85,25 +85,34 @@ both are partly true:
 
 ## 6. Does it help?
 
-`USE_RT` defaults to `False`. The ablation is a registry entry, so the data
+`use_rt` defaults to `False`. It is reachable as a flag on any arm, so the data
 decides rather than the argument:
 
 ```
-python Code/run_gnn.py --experiment gnn_multiedge       # Rt off
-python Code/run_gnn.py --experiment gnn_multiedge_rt    # Rt on
+python Code/run_gnn.py --experiment gnn_st            # Rt off
+python Code/run_gnn.py --experiment gnn_st --rt --name gnn_st_rt   # Rt on
 ```
 
-Measured once, single seed, post-COVID, horizon 1, pooled `overall`:
+**No registry arm pins Rt on any more.** The one that did
+(`gnn_multiedge_rt`) was retired with the rest of the superseded `gcn_fusion`
+family. Its measurement, single seed, post-COVID, horizon 1, pooled `overall`,
+is archival:
 
 | | RMSE | MAE | Corr |
 |---|---|---|---|
-| `gnn_multiedge` | 24.54 | 14.89 | 0.860 |
-| `gnn_multiedge_rt` | 23.03 | 13.86 | 0.855 |
+| superseded graph arm, Rt off | 24.54 | 14.89 | 0.860 |
+| same arm, Rt on | 23.03 | 13.86 | 0.855 |
 
-A ~1.5 RMSE improvement. Treat it as suggestive only: `docs/EDGES_AND_NODES_NOTES.txt`
-section 11 puts this project's single-seed noise floor at 0.2–0.5 MAE on a
-smaller scale, and this is one seed. Re-run with several seeds before claiming
-the feature helps.
+A ~1.5 RMSE improvement — but RMSE improved while Corr got slightly *worse*,
+which is already a warning sign. Treat it as suggestive only:
+`docs/EDGES_AND_NODES_NOTES.txt` section 11 puts this project's single-seed noise
+floor at 0.2–0.5 MAE on a smaller scale, and this is one seed.
+
+**It has never been re-measured on `gnn_st`, and it should not be trusted until
+it is.** Rt is derived from the target series, so it is exactly the kind of
+covariate the September 2026 defects showed to be fragile — see the retraction in
+[`METHODS.md`](METHODS.md#what-this-actually-says). Adding `gnn_st_rt` to the
+ablation's add-one-in group is the way to settle it.
 
 ## Reproducing the checks
 

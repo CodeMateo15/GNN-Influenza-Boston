@@ -202,9 +202,9 @@ alternative for anyone who wants to see it.
 
 A forecast that never alerts scores **91.9% accuracy**. That is not a
 hypothetical: `dualtopo` never crosses IT50 in this window at all, and duly
-records 0.919 exact-band accuracy — better than `gnn_multiedge` on the same
-measure. Its `kappa_quadratic` is **0.000**, which is the number that gives it
-away.
+records 0.919 exact-band accuracy — ahead of `gat` (0.912) and within 0.03 of
+every arm except `seasonal_naive`. Its `kappa_quadratic` is **0.000**, which is
+the number that gives it away.
 
 So **PSS (Peirce skill score, `POD - FPR`) leads the tables**. It is 0 for both
 degenerate forecasts — never alert and always alert — so neither the base rate
@@ -258,43 +258,65 @@ Horizon 1, `post_covid`, all neighborhood-weeks pooled, full year, IT50
 
 | model | hits | misses | false alarms | POD | FAR | CSI | PSS | BSS |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| gnn_multiedge_season | 44 | 7 | 56 | 0.863 | 0.560 | 0.411 | **0.766** | 0.045 |
-| gnn_uniform | 43 | 8 | 55 | 0.843 | 0.561 | 0.406 | 0.748 | 0.092 |
-| gnn_multiedge | 41 | 10 | 34 | 0.804 | 0.453 | 0.482 | 0.745 | 0.271 |
-| lstm | 38 | 13 | 9 | 0.745 | 0.191 | **0.633** | 0.729 | **0.591** |
+| gnn_st | 40 | 11 | 10 | 0.784 | 0.200 | **0.656** | **0.767** | **0.709** |
+| lstm | 38 | 13 | 9 | 0.745 | 0.191 | 0.633 | 0.729 | 0.591 |
 | persistence | 36 | 15 | 15 | 0.706 | 0.294 | 0.545 | 0.680 | 0.528 |
 | arima | 35 | 16 | 10 | 0.686 | 0.222 | 0.574 | 0.669 | 0.529 |
+| xgboost | 32 | 19 | 13 | 0.627 | 0.289 | 0.500 | 0.605 | 0.492 |
+| gat | 15 | 36 | 14 | 0.294 | 0.483 | 0.231 | 0.270 | 0.188 |
 | dualtopo | 0 | 51 | 0 | 0.000 | — | 0.000 | 0.000 | -0.057 |
 | seasonal_naive | 6 | 45 | 77 | 0.118 | 0.928 | 0.047 | -0.016 | -0.545 |
 
-**The two metrics disagree, and the disagreement is the finding.**
-`gnn_multiedge_season` leads on PSS while raising 56 false alarms against 51 real
-events — a false alarm ratio of 0.560. `lstm` catches six fewer events but raises
-nine false alarms instead of 56, and leads on CSI, F1 and BSS. Which one you
-would deploy depends on the cost of a false alarm, which is not a modelling
-question. **Do not read the PSS column alone.**
+**`gnn_st` leads every column at once, which is new.** An earlier revision of
+this section reported the opposite and made the disagreement the finding: the
+best-PSS arm then (`gnn_multiedge_season`) bought 44 hits with **56 false
+alarms** against 51 real events, while the LSTM caught six fewer events with nine
+false alarms and led CSI, F1 and BSS. You had to choose which metric you
+believed.
 
-Note also that `persistence` and `arima` — the two trivial baselines — sit within
-0.09 PSS of the best graph model, and beat every graph model on BSS except
-`lstm`. **At one week ahead, the severity crossings are largely predictable by
-carrying last week forward.**
+That trade-off is gone. `gnn_st` catches 40 of 51 events with **10** false
+alarms, so it tops PSS (0.767), CSI (0.656) and BSS (0.709) simultaneously.
+Nothing about the metrics changed — the previous graph arms were simply
+over-alerting, and predicting a residual from a persistence/climatology blend
+stopped it.
+
+**Read the PSS column together with FAR anyway.** The reason PSS alone is unsafe
+has not changed: it is insensitive to the 8% base rate, so an over-alerting model
+can score well on it while being unusable. `seasonal_naive` is the demonstration
+— 77 false alarms for 6 hits, PSS −0.016.
+
+Note also that `persistence` and `arima` — the two trivial baselines — still sit
+within **0.09 PSS** of the best model (0.680 and 0.669 against 0.767). **At one
+week ahead, the severity crossings are largely predictable by carrying last week
+forward**, and that remains true even now that a model beats them.
 
 ### Bands, calibration and timing
 
-Over all four bands (627 weeks): `lstm` 0.939 exact and 0.994 within one band,
-`arima` 0.936, `persistence` 0.928, `gnn_multiedge` 0.893. `mean_band_error`
-separates the failure modes — `gnn_multiedge_season` is +0.112, systematically
-calling severity higher than it turned out to be, while `dualtopo` is -0.113 and
-never calls it at all.
+Over all four bands (627 weeks): `gnn_st` 0.946 exact and 0.997 within one band,
+`lstm` 0.939, `arima` 0.936, `persistence` 0.928, `xgboost` 0.928, `dualtopo`
+0.919, `gat` 0.912, `seasonal_naive` 0.801. `gnn_st` also leads
+`kappa_quadratic` at 0.783, which is the one to read here: it credits being
+*close* on an ordered scale rather than exactly right, and `dualtopo` scores
+0.000 on it while holding 0.919 exact accuracy — the signature of a model that
+just always says "low" in a series that is usually low.
 
-`severity_reliability.png` shows `persistence` and `arima` tracking the diagonal
-closely, while `gnn_multiedge` is **badly over-confident** in the middle of the
-range — weeks it gave roughly a 30% chance of crossing IT50 crossed about 4% of
-the time. Part of this is the band itself: `gnn_multiedge`'s pooled test-window
-`CI_coverage` is 87.4% against the 95% it was calibrated to on validation, so its
-intervals are already too narrow here. But a 7.6-point coverage shortfall does not
-account for a 30% forecast landing at 4%. **Magnitude calibration and exceedance
-calibration are different properties, and passing one does not buy the other.**
+`mean_band_error` separates the failure modes. `gnn_st` is −0.016 and
+`persistence` 0.000, both essentially unbiased; `dualtopo` is −0.113 and never
+calls severity at all; `seasonal_naive` is +0.078, the only arm that
+systematically over-calls. The superseded graph arms sat at +0.112 — over-calling
+harder than the seasonal naive — which is the same over-alerting visible in the
+contingency table above.
+
+**The over-confidence problem was real and is worth keeping on the record.**
+`severity_reliability.png` used to show the graph arm badly miscalibrated in the
+middle of the range: weeks it gave roughly a 30% chance of crossing IT50 crossed
+about 4% of the time. Only part of that was interval width — its pooled
+test-window `CI_coverage` was 87.4% against the 95% it was calibrated to, and a
+7.6-point coverage shortfall does not account for a 30% forecast landing at 4%.
+**Magnitude calibration and exceedance calibration are different properties, and
+passing one does not buy the other.** `gnn_st` holds 96.8% coverage at h=1, so
+check its reliability curve rather than assuming the problem left with the old
+arm.
 
 ### Skill decays with horizon, as it must
 

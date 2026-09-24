@@ -1,0 +1,64 @@
+# Conda environment for Northeastern's Explorer cluster.
+#
+# WARNING: `conda create --prefix` FAILS SILENTLY on Explorer -- it solves, exits
+# without creating the prefix, and a following `pip install` then falls back to
+# `--user` and installs into the shared anaconda's site-packages. That leaves you
+# with packages in a directory you did not choose and no env at all.
+#
+# Use a plain venv instead. Verified working on explorer-02, 2026-09-11:
+#
+#   module load anaconda3/2024.06          # provides python 3.12.4
+#   mkdir -p ~/envs && python -m venv ~/envs/gnn-flu
+#   ~/envs/gnn-flu/bin/python -m pip install --upgrade pip
+#   ~/envs/gnn-flu/bin/python -m pip install "torch==2.5.1+cpu" \
+#       --index-url https://download.pytorch.org/whl/cpu
+#   ~/envs/gnn-flu/bin/python -m pip install "torch-geometric==2.6.1" \
+#       "pandas>=2.0" "numpy<2" "scipy>=1.10" "matplotlib>=3.7" \
+#       "statsmodels>=0.14" networkx seaborn requests openpyxl tabulate
+#
+# Explorer partitions, from `sinfo` rather than the docs, which do not list them:
+#   short*   2-00:00:00  251 CPU nodes   <- use this
+#   sharing  1:00:00     398 nodes
+#   gpu      8:00:00     v100 / t4 / a100 / h200
+#
+# The spec below is kept for reference and for non-Explorer machines.
+#
+# Two deliberate choices, both about the fragile parts:
+#
+#  1. torch is CPU-only. The models are ~16k parameters over 122 training
+#     origins; a GPU would spend longer on kernel launch than on arithmetic, and
+#     requesting one puts the job in a scarce partition where fair-share
+#     scheduling then penalises it. The CPU wheel is ~200 MB against ~2.5 GB for
+#     the CUDA build, which is also the difference between fitting a /projects
+#     quota and not.
+#
+#  2. torch-scatter / torch-sparse / pyg-lib are deliberately ABSENT. The only
+#     torch_geometric symbol this project imports is GCNConv, which since PyG
+#     2.3 runs on pure-PyTorch scatter fallbacks with no compiled extensions.
+#     Those three packages are the ones that fail to build, and nothing needs
+#     them. Do not add them "just in case".
+#
+# geopandas and shapely are omitted: nothing in the project uses them any more.
+# Their only consumer was scrapers/scrape_mbta_edges.py, removed with the MBTA
+# pipeline.
+name: gnn-flu
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - --index-url https://download.pytorch.org/whl/cpu
+      - torch==2.5.1+cpu
+      - --extra-index-url https://pypi.org/simple
+      - torch-geometric==2.6.1
+      - pandas>=2.0
+      - numpy>=1.24,<2
+      - scipy>=1.10
+      - matplotlib>=3.7
+      - statsmodels>=0.14
+      - networkx>=3.0
+      - seaborn>=0.13
+      - requests>=2.31
+      - openpyxl>=3.1
+      - tabulate>=0.9

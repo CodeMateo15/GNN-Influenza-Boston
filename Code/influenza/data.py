@@ -148,8 +148,34 @@ def _map_ed_metric(name: str) -> str | None:
     return None
 
 
+def load_ili_share_type2() -> pd.Series:
+    """ILI as a share of all ED visits, from the type-2 file. 436 weeks.
+
+    The type-1 file carries this same quantity as its `ili ed perc` row, but
+    stops 101 weeks earlier. The two are identical wherever they overlap --
+    Pearson 1.0 and max absolute difference 0.0 across 335 weeks -- so type 2 is
+    strictly the longer view of one series, not a second measurement of it.
+
+    That matters because type 1 ends 2025-12-28, one week after the 2025-26 peak,
+    while the evaluation window runs to 2026-05-03. Reading type 1 and carrying
+    it forward pinned the covariate at its near-peak value of 10.33% for the last
+    19 of 49 test weeks, while the truth fell to 1.28% -- an eight-fold collapse
+    the model was told did not happen. See DATA_NOTES.md defect 3.
+    """
+    file = paths.require(paths.FLU_ED_TYPE2_FILE, "Influenza ED visits (type 2)")
+    frame = pd.read_csv(file)
+    frame["date"] = pd.to_datetime(frame["date_value_start"], errors="coerce")
+    frame["value_num"] = pd.to_numeric(frame["value"], errors="coerce")
+    frame = frame.dropna(subset=["date", "value_num"])
+    return frame.groupby("date")["value_num"].mean().sort_index()
+
+
 def load_ed_metrics(week_index: pd.DatetimeIndex) -> pd.DataFrame:
-    """City-wide weekly ILI/ED counts and percentages, aligned to `week_index`."""
+    """City-wide weekly ILI/ED counts and percentages, aligned to `week_index`.
+
+    `ili_ed_perc` comes from the type-2 file, which covers the whole series;
+    every other column comes from type 1, which is the only source for them.
+    """
     file = paths.require(paths.FLU_ED_TYPE1_FILE, "Influenza ED visits (type 1)")
     frame = pd.read_csv(file)
     frame["date"] = pd.to_datetime(frame["date_value_start"], errors="coerce")
@@ -163,6 +189,29 @@ def load_ed_metrics(week_index: pd.DatetimeIndex) -> pd.DataFrame:
         .unstack("metric").sort_index()
         .reindex(columns=ED_METRICS)
     )
+
+    # Swap in the longer series, and assert the two still agree where they
+    # overlap. The assert is free today (they match exactly) and is what would
+    # catch a future re-export that changed one file's definition but not the
+    # other's -- at which point silently preferring type 2 would be wrong.
+    share = load_ili_share_type2()
+    if "ili_ed_perc" in wide.columns:
+        both = pd.concat({"t1": wide["ili_ed_perc"], "t2": share}, axis=1).dropna()
+        if len(both) and not np.allclose(both["t1"], both["t2"], atol=1e-6):
+            worst = (both["t1"] - both["t2"]).abs().max()
+            raise ValueError(
+                "The type-1 and type-2 ED files disagree about ILI-as-a-share-of-ED-visits "
+                f"by up to {worst:.4f} over {len(both)} shared weeks. They were identical "
+                "when this path was written, so one of the two files has been re-exported "
+                "with a different definition. Decide which is authoritative before "
+                "trusting either -- do not just relax this tolerance."
+            )
+    # Widen onto the union of both indices first: type 2 runs 101 weeks past
+    # type 1, and those weeks must exist as rows before the share can be written
+    # into them, or the extra coverage is silently discarded.
+    wide = wide.reindex(wide.index.union(share.index)).sort_index()
+    wide["ili_ed_perc"] = share.reindex(wide.index)
+
     return _carry_forward(_align_weekly(wide, week_index), "ED visit metrics")
 
 
@@ -237,28 +286,109 @@ def _parse_censored_percent(values: pd.Series) -> pd.Series:
 # ---------------------------------------------------------------------------
 
 def _align_weekly(frame: pd.DataFrame, week_index: pd.DatetimeIndex) -> pd.DataFrame:
-    """Snap a series onto the flu week grid, tolerating a few days of offset."""
-    return frame.sort_index().reindex(week_index, method="nearest", tolerance=pd.Timedelta("7D"))
+    """Snap a series onto the flu week grid, tolerating a few days of offset.
 
+    Backward-only. `method="nearest"` used to be allowed to reach FORWARD when a
+    source observation was closer on the far side: with a 7-day tolerance the flu
+    week beginning 2024-07-28 took its wastewater value from the week beginning
+    2024-08-04, a full week in the future. `method="pad"` matches only source
+    observations at or before the flu week, which is the causal direction and the
+    only one a forecaster could use.
 
-def _carry_forward(frame: pd.DataFrame, what: str, *, warn: bool = True) -> pd.DataFrame:
-    """Forward-fill an under-covered covariate and say so.
-
-    Several city-wide files stop short of the flu series: the type-1 ED file ends
-    2025-12-28 and the demographics file 2025-12-01, while the evaluation window
-    runs to 2026-05-03. Filling those weeks with 0.0 is actively harmful -- these
-    are large positive counts, so zero lands about nine standard deviations below
-    the training mean and the model extrapolates wildly. Carrying the last
-    observation forward is causal and keeps the covariate on-scale.
+    Monthly sources relying on this to spread a value across a month are
+    unaffected: they either ffill themselves before calling here
+    (load_monthly_neighborhood) or are wrapped in _carry_forward afterwards
+    (load_monthly_cases), and pad plus ffill is the same step function.
     """
+    return frame.sort_index().reindex(week_index, method="pad", tolerance=pd.Timedelta("7D"))
+
+
+# How stale a city-wide covariate is allowed to be before the loader stops
+# pretending to know it. Values are weeks. A source may be carried forward this
+# far past its last real observation -- roughly its publication lag, i.e. the
+# staleness a forecaster would genuinely be working with -- and no further.
+#
+# The motivating failure: every city-wide covariate stopped on 2025-12-28, one
+# week after the 2025-26 peak, and the old unbounded ffill pinned all five at
+# their near-peak values for the last 19 of 49 test weeks. The model was told the
+# epidemic held at its peak for 19 weeks while it fell eight-fold. Bounding the
+# fill turns that from an invisible fabrication into a visible gap that z-scores
+# to the training mean and is reported in run_config.json.
+CARRY_FORWARD_LIMIT_WEEKS: dict[str, int] = {
+    "ili_count": 2,
+    "ed_count": 2,
+    "ili_ed_perc": 2,
+    "flu_cases": 2,
+    "monthly_cases": 6,     # monthly source: one month of staleness is normal
+    "vaccination": 2,
+    "ED visit metrics": 2,
+    "monthly demographic cases": 6,
+    "influenza wastewater": 2,
+    "covid wastewater": 2,
+    "rsv wastewater": 2,
+}
+DEFAULT_CARRY_FORWARD_LIMIT_WEEKS = 2
+
+
+def carry_forward_limit(what: str) -> int:
+    return CARRY_FORWARD_LIMIT_WEEKS.get(what, DEFAULT_CARRY_FORWARD_LIMIT_WEEKS)
+
+
+def _carry_forward(frame: pd.DataFrame, what: str, *, warn: bool = True,
+                   limit: int | None = None) -> pd.DataFrame:
+    """Forward-fill an under-covered covariate, but only so far, and say so.
+
+    Several city-wide files stop short of the flu series. Filling those weeks
+    with 0.0 is actively harmful -- these are large positive counts, so zero
+    lands about nine standard deviations below the training mean and the model
+    extrapolates wildly. Carrying the last observation forward is causal and
+    keeps the covariate on-scale.
+
+    But carrying it forward *without limit* is its own fabrication. The fill is
+    therefore capped at `limit` weeks (default from CARRY_FORWARD_LIMIT_WEEKS);
+    beyond that the covariate stays NaN, which downstream z-scoring maps to the
+    training mean and which `coverage_report` counts.
+    """
+    if limit is None:
+        limit = carry_forward_limit(what)
     missing_tail = int(frame.iloc[::-1].isna().all(axis=1).cumprod().sum())
-    filled = frame.ffill()
+    filled = frame.ffill(limit=limit) if limit else frame.copy()
     if warn and missing_tail:
         last = frame.dropna(how="all").index.max()
-        print(f"  note: {what} ends {last.date()}; the last {missing_tail} week(s) of the "
-              f"index are carried forward. Treat covariate-dependent results in that "
-              f"span with care.")
-    return filled.bfill()
+        beyond = max(0, missing_tail - limit)
+        print(f"  note: {what} ends {last.date()}; {min(missing_tail, limit)} week(s) "
+              f"carried forward and {beyond} week(s) left missing (limit {limit}w). "
+              f"Treat covariate-dependent results in that span with care.")
+    # bfill only at the head, where there is no earlier observation to carry.
+    return filled.bfill(limit=limit) if limit else filled
+
+
+def coverage_report(week_index: pd.DatetimeIndex, frame: pd.DataFrame,
+                    *, test_start=None, test_end=None) -> dict[str, dict]:
+    """Per-column coverage audit, for run_config.json.
+
+    Records, per covariate, the last week with a real observation and how many
+    weeks inside the evaluation window are missing after the bounded fill. This
+    is the number that would have exposed the frozen-covariate defect on the
+    first run rather than after three seasons of results.
+    """
+    report: dict[str, dict] = {}
+    in_test = None
+    if test_start is not None and test_end is not None:
+        in_test = (week_index >= test_start) & (week_index <= test_end)
+    for col in frame.columns:
+        series = frame[col]
+        real = series.dropna()
+        entry = {
+            "last_observed": str(real.index.max().date()) if len(real) else None,
+            "n_missing_total": int(series.isna().sum()),
+            "carry_forward_limit_weeks": carry_forward_limit(str(col)),
+        }
+        if in_test is not None:
+            entry["n_missing_in_test_window"] = int(series[in_test].isna().sum())
+            entry["n_test_weeks"] = int(in_test.sum())
+        report[str(col)] = entry
+    return report
 
 
 def load_wastewater(week_index: pd.DatetimeIndex, source: str = "influenza") -> pd.DataFrame:
@@ -288,8 +418,16 @@ def load_wastewater(week_index: pd.DatetimeIndex, source: str = "influenza") -> 
         raise ValueError(f"No wastewater zones for source {source!r} matched WASTEWATER_TO_IDX.")
     expanded = pd.concat(rows, ignore_index=True)
 
-    # Snap each sample to its Monday-start week before averaging.
-    expanded["week"] = expanded["date"] - pd.to_timedelta(expanded["date"].dt.dayofweek, unit="D")
+    # Snap each sample to its SUNDAY-start week before averaging, matching the flu
+    # week grid. Flooring to Monday (the pandas dayofweek origin) put the sample
+    # window one day out of phase, and because _align_weekly matches with
+    # method="nearest" the flu week beginning Sunday S was paired with the
+    # Monday week S+1..S+7 -- whose last day is the first day of the horizon-1
+    # TARGET week. That was a one-day look-ahead on all 93 covered weeks, inside
+    # use_covid_wastewater, and so inside any arm enabling it. Same
+    # expression as columbus.snap_to_week; see DATA_NOTES.md defect 4.
+    expanded["week"] = expanded["date"] - pd.to_timedelta(
+        (expanded["date"].dt.dayofweek + 1) % 7, unit="D")
     weekly = expanded.groupby(["week", "node"])["value"].mean().unstack("node")
     weekly = weekly.reindex(columns=range(N_NEIGH))
     aligned = _align_weekly(weekly, week_index)
@@ -431,6 +569,50 @@ def _load_city_csv(filename: str, value_cols: list[str]) -> tuple[pd.DataFrame, 
     return aggregated, int(latest)
 
 
+def _population_density() -> tuple[pd.Series, int]:
+    """Correct per-node population density, and the source year.
+
+    `_load_city_csv` sums its value columns across the planning districts that
+    make up a node, which is right for counts and wrong for a ratio. Six of the
+    fourteen nodes are multi-district, so summing the published
+    'Population per square mile' column produced a number that is not a density:
+    Back Bay/Beacon Hill/Downtown/North End/West End came out at 185,247 per
+    square mile, roughly three times Manhattan and physically impossible, because
+    it is five districts' densities added together.
+
+    Land area is recoverable without any new data -- area = population / density
+    per district -- so the density is rebuilt the only way a ratio of extensive
+    quantities can be: sum the numerators, sum the denominators, then divide.
+
+    This corrupted both the pop_density node feature and, through the
+    median-pairwise-distance bandwidth in graphs.build_graph, the
+    demographic-similarity edge weights. See DATA_NOTES.md defect 5.
+    """
+    path = paths.require(paths.NEIGHBORHOOD_DIR / "Population_in_Boston.csv",
+                         "City of Boston file Population_in_Boston.csv")
+    skiprows = 0
+    with open(path, "r") as handle:
+        for i, line in enumerate(handle):
+            if "GEOID" in line:
+                skiprows = i
+                break
+    frame = pd.read_csv(path, skiprows=skiprows)
+    frame["node"] = frame["GEOID"].map(GEOID_TO_IDX)
+    frame = frame.dropna(subset=["node"])
+    frame["node"] = frame["node"].astype(int)
+    latest = int(frame["YEAR"].max())
+    frame = frame.loc[frame["YEAR"].eq(latest)].copy()
+
+    frame["pop"] = frame["Male"] + frame["Female"]
+    density = pd.to_numeric(frame["Population per square mile"], errors="coerce")
+    # A district with zero recorded density carries no recoverable area; it also
+    # contributes no meaningful population, so dropping it is safe. Guarding here
+    # rather than dividing by zero keeps the failure visible if that changes.
+    frame["area"] = (frame["pop"] / density.where(density > 0))
+    totals = frame.groupby("node")[["pop", "area"]].sum(min_count=1)
+    return totals["pop"] / totals["area"], latest
+
+
 def load_static_demographics() -> tuple[np.ndarray, list[str], dict[str, int]]:
     """(14, 8) min-max normalised socio-economic matrix, plus source years."""
     years: dict[str, int] = {}
@@ -459,8 +641,10 @@ def load_static_demographics() -> tuple[np.ndarray, list[str], dict[str, int]]:
     commute_total = commute.sum(axis=1)
     race_total = race.sum(axis=1)
 
+    density, years["population_density"] = _population_density()
+
     static = pd.DataFrame(index=range(N_NEIGH))
-    static["pop_density"] = pop["Population per square mile"]
+    static["pop_density"] = density
     static["poverty_rate"] = poverty["Below poverty line"] / (
         poverty["Below poverty line"] + poverty["Above poverty line"])
     static["transit_share"] = commute["Public transit"] / commute_total
@@ -476,16 +660,6 @@ def load_static_demographics() -> tuple[np.ndarray, list[str], dict[str, int]]:
     span = static.max() - static.min()
     normalized = ((static - static.min()) / span.where(span > 0)).fillna(0.5)
     return normalized.to_numpy(dtype=np.float32), STATIC_DEMO_COLS, years
-
-
-def load_mbta_matrix() -> np.ndarray:
-    """(14, 14) symmetric normalised MBTA cross-boundary trip volume."""
-    path = paths.require(paths.MBTA_ADJACENCY_FILE, "MBTA adjacency matrix")
-    frame = pd.read_csv(path, index_col=0)
-    matrix = frame.to_numpy(dtype=np.float64)
-    if matrix.shape != (N_NEIGH, N_NEIGH):
-        raise ValueError(f"Unexpected MBTA matrix shape {matrix.shape}, expected ({N_NEIGH}, {N_NEIGH})")
-    return np.maximum(matrix, matrix.T)
 
 
 def load_globals(week_index: pd.DatetimeIndex, names: Sequence[str]) -> pd.DataFrame:
