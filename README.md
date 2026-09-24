@@ -46,8 +46,6 @@ the water between them).
 | `Data/Neighborhood Data/` | 22 Boston Indicators / BPDA tables (population, age, poverty, commute mode, housing, education, labor force, …), reduced to eight static per-neighborhood features. |
 | `Data/Mass Flu Vaccination Data/` | Massachusetts dashboard flu vaccination workbooks, 2023-24 through 2025-26. Optional feature. |
 
-`Data/Weather copy/` is a stale snapshot that nothing reads — ignore it.
-
 ### Third city: Buenos Aires (AMBA)
 
 19 partidos of the Buenos Aires conurbano, from Argentina's national
