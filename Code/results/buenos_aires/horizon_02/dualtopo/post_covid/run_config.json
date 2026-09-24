@@ -1,0 +1,138 @@
+{
+  "model": "dualtopo",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-22T13:58:03",
+  "target_kind": "level",
+  "normalize": "train",
+  "split": {
+    "n_train": 58,
+    "n_val": 10,
+    "n_test": 53,
+    "first_test_target": "2024-11-03",
+    "last_test_target": "2025-11-02"
+  },
+  "graph_counts": {
+    "geo_1hop": 48,
+    "anchor_edges": 16,
+    "corr": 0
+  },
+  "corr_topology_edges": 16,
+  "n_nodes": 24,
+  "fusion": "concat",
+  "time_axis_before_readout": 42,
+  "n_params": 479905,
+  "best_epoch": 43,
+  "best_val_mse": 0.5110955238342285,
+  "epochs_run": 63,
+  "paper": "Luo et al. 2025, BMC Public Health 25:408",
+  "paper_gaps_filled": {
+    "fusion_operator": "concat",
+    "corr_threshold": 0.85,
+    "optimizer": "Adam"
+  },
+  "checkpoint": "checkpoints/buenos_aires/horizon_02/dualtopo_post_covid.pt",
+  "experiment": {
+    "name": "dualtopo",
+    "model": "dualtopo",
+    "variant": "post_covid",
+    "target": "level",
+    "normalize": "train",
+    "features": {
+      "use_weather": false,
+      "use_demographics": false,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": false,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 1,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": true
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 1e-05,
+      "epochs": 120,
+      "batch_size": 26,
+      "plateau_factor": 0.2,
+      "plateau_patience": 5,
+      "early_stop_patience": 20,
+      "grad_clip": 1.0,
+      "dropout": 0.2,
+      "hidden": [
+        16,
+        64
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adam",
+      "schedule": "plateau",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 0.0,
+      "pearson_weight": 0.0,
+      "slope_weight": 0.0,
+      "n_seeds": 1,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 52,
+      "horizons": [
+        2
+      ],
+      "test_start": "2024-11-03",
+      "test_end": "2025-11-02",
+      "val_fraction": 0.15,
+      "val_mode": "tail"
+    },
+    "note": "Paper-faithful Dual-Topo-STGCN (Luo et al. 2025, BMC Public Health 25:408). ILI rates only, two separate topologies, 52-week input."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "2": 0.0
+    },
+    "beta": {
+      "2": 21.33036201213321
+    },
+    "kappa": {
+      "2": 0.6577832041736162
+    },
+    "n_validation": 190,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 82.76209677419355
+}
