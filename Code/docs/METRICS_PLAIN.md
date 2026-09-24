@@ -40,8 +40,13 @@ forecasters:
 
 Read the two rows in the middle carefully. **Trigger-happy wins on PSS.
 Careful wins on CSI, on FAR, and on accuracy.** They are not the same forecaster
-and no single number settles which is better. This is the same disagreement that
-shows up between `gnn_multiedge_season` and `lstm` in the real results.
+and no single number settles which is better.
+
+This disagreement used to show up in the real results too, between an
+over-alerting graph arm and the LSTM. It no longer does — `gnn_st` currently
+leads PSS, CSI and BSS at once — but the metrics have not changed, only the
+models. The disagreement returns the moment an arm starts over-alerting, which
+is why both columns stay in the tables.
 
 Note also that **Cautious scores 80% accuracy while being useless.** In the real
 data, where crossings are rarer, that becomes 91.9%.
@@ -137,13 +142,19 @@ of quiet weeks, and there are ~576 of them. So
 
 | model | false alarms | penalty (FPR) | POD | PSS |
 | --- | --- | --- | --- | --- |
-| gnn_multiedge_season | 56 | `56/576 = 0.097` | 0.863 | 0.766 |
-| lstm | 9 | `9/576 = 0.016` | 0.745 | 0.729 |
+| a retired over-alerting graph arm | 56 | `56/576 = 0.097` | 0.863 | 0.766 |
+| `lstm` | 9 | `9/576 = 0.016` | 0.745 | 0.729 |
+| `gnn_st` (current) | 10 | `10/576 = 0.017` | 0.784 | 0.767 |
 
 **Fifty-six false alarms cost only 0.097.** PSS is very nearly POD with a small
 haircut, because it prices false alarms against how many quiet weeks exist rather
 than against how many alerts you raised. An operational user feels the 56, not
 the 0.097. **That is why PSS should never be read without CSI or FAR beside it.**
+
+The third row makes the point from the other direction: `gnn_st` scores
+essentially the *same* PSS as the retired arm (0.767 against 0.766) while raising
+10 false alarms instead of 56. PSS could not tell those two apart. CSI could —
+0.656 against 0.411.
 
 ## BSS — "were the stated probabilities honest?"
 
@@ -171,9 +182,9 @@ On the same 20 weeks as above (base rate 0.20):
 | over-confident — 0.90 on seven weeks, 0.05 elsewhere | 0.1251 | +0.218 |
 
 **Zero means no better than reciting the base rate every week. Negative means
-worse than that** — the model's confidence is actively misleading. In the real
-results `gnn_corrbinary` scores −0.270 and `gnn_multiedge_level` −2.827: both
-would have been better off saying nothing.
+worse than that** — the model's confidence is actively misleading. In the current
+results `seasonal_naive` scores **−0.545** and `dualtopo` **−0.057**: both would
+have been better off saying nothing. Retired arms reached −2.827.
 
 BSS rewards two different things at once — picking the right weeks
 (*resolution*) and stating probabilities that match reality (*calibration*). A

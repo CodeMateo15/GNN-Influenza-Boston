@@ -1,0 +1,6 @@
+city,model,variant,horizon,group,mean_abs_shap_rate_per_100k,mean_signed_shap_rate_per_100k,n_node_weeks,n_weeks
+boston,xgboost,post_covid,2,Climatology,14.528662664821931,0.4542278941822607,154,11
+boston,xgboost,post_covid,2,Own flu history,10.7706349689126,-3.582465455507064,154,11
+boston,xgboost,post_covid,2,Own weather,3.074759736728379,-0.40304086027791963,154,11
+boston,xgboost,post_covid,2,Own demographics,1.5990340868686028,-0.5551269036845319,154,11
+boston,xgboost,post_covid,2,Node identity,0.09594989888255133,0.0007702039446464038,154,11

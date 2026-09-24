@@ -1,0 +1,2 @@
+{"city": "boston", "arm": "gnn_st_cascade", "script": "run_gnn.py", "variant": "post_covid", "horizon": 2, "extra": ["--n-seeds", "10", "--horizons", "1,2"], "out_root": "/scratch/biggs.m/gnn-flu/Code/results/_ablation/cascade/h02_s10", "task_id": "boston__gnn_st_cascade__post_covid__h02"}
+{"city": "boston", "arm": "gnn_st_joint", "script": "run_gnn.py", "variant": "post_covid", "horizon": 2, "extra": ["--n-seeds", "10", "--horizons", "1,2"], "out_root": "/scratch/biggs.m/gnn-flu/Code/results/_ablation/cascade/h02_s10", "task_id": "boston__gnn_st_joint__post_covid__h02"}

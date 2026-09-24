@@ -1,12 +1,17 @@
 {
   "run_name": "persistence:post_covid:h2",
-  "enabled": false,
-  "kg_co2": null,
-  "kwh": null,
-  "duration_s": null,
-  "cpu_kwh": null,
-  "gpu_kwh": null,
-  "ram_kwh": null,
-  "hardware": {},
-  "note": "--no-carbon"
+  "enabled": true,
+  "kg_co2": 1.752159894379391e-07,
+  "kwh": 4.742321886523213e-07,
+  "duration_s": 0.0352917080745101,
+  "cpu_kwh": 4.1578871686296124e-07,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 5.8443471789360046e-08,
+  "hardware": {
+    "cpu_model": "Apple M5",
+    "gpu_model": "",
+    "cpu_count": "10",
+    "os": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "note": null
 }

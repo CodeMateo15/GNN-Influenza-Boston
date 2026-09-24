@@ -1,5 +1,13 @@
+import sys
+
 import pandas as pd
 from pathlib import Path
+
+# Resolve data locations through influenza.paths rather than absolute paths
+# hardcoded to one developer's home directory.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from influenza import paths
 
 def read_csv_with_dynamic_header(path):
     # Detect header row automatically
@@ -29,7 +37,7 @@ def read_csv_with_dynamic_header(path):
 # GROUP 1: Multiple CSVs
 # -------------------------
 
-group1_folder = Path("/Users/mateobiggs/GNN-Influenza-Boston/Data/Neighborhood Data")  # change this
+group1_folder = paths.NEIGHBORHOOD_DIR
 group1_files = list(group1_folder.glob("*.csv"))
 
 if not group1_files:
@@ -74,7 +82,7 @@ group1_neighborhoods = sorted(reference_neighborhoods)
 # GROUP 2: Single CSV
 # -------------------------
 
-group2_path = "/Users/mateobiggs/GNN-Influenza-Boston/Data/BPHC Flu Data/BPHC Dashboard Influenza Neighborhood.csv"  # <-- change this
+group2_path = paths.FLU_FILE  # <-- change this
 df2 = pd.read_csv(group2_path)
 
 group2_neighborhoods = sorted(
@@ -86,7 +94,7 @@ group2_neighborhoods = sorted(
 # GROUP 3: Single CSV
 # -------------------------
 
-group3_path = "/Users/mateobiggs/GNN-Influenza-Boston/Data/BPHC Flu Data/BPHC Dashboard Influenza Wastewater.csv"  # <-- change this
+group3_path = paths.FLU_WASTEWATER_FILE  # <-- change this
 df3 = pd.read_csv(group3_path)
 
 group3_neighborhoods = sorted(

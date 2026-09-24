@@ -1,0 +1,295 @@
+{
+  "model": "gnn_cascade",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-18T15:19:29",
+  "target_kind": "cascade",
+  "normalize": "train",
+  "split": {
+    "n_train": 119,
+    "n_val": 13,
+    "n_test": 53,
+    "first_test_target": "2025-05-25",
+    "last_test_target": "2026-05-31"
+  },
+  "graph_counts": {
+    "geo_1hop": 48,
+    "anchor_edges": 9,
+    "geo_2hop": 58,
+    "geo_3hop": 35,
+    "corr": 28,
+    "demo": 85
+  },
+  "n_nodes": 22,
+  "edge_weight_range": [
+    0.0,
+    2.7632093648159266
+  ],
+  "n_node_features": 46,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "temp_mean_c",
+    "temp_max_c",
+    "temp_min_c",
+    "relative_humidity_mean",
+    "precipitation_sum_mm",
+    "wind_speed_max_kmh",
+    "pop_density",
+    "poverty_rate",
+    "transit_share",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate",
+    "no_vehicle_rate",
+    "nonwhite_share"
+  ],
+  "global_names": [],
+  "n_params": 15760,
+  "best_epoch": 58,
+  "best_val_mse": 0.3833305835723877,
+  "epochs_run": 120,
+  "checkpoint": "checkpoints/columbus/horizon_02/gnn_cascade_post_covid.pt",
+  "experiment": {
+    "name": "gnn_cascade",
+    "model": "stgnn",
+    "variant": "post_covid",
+    "target": "cascade",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": true,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 0.003,
+      "epochs": 120,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.25,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        1,
+        2
+      ],
+      "test_start": "2025-05-24",
+      "test_end": "2026-05-24",
+      "val_fraction": 0.15,
+      "val_mode": "tail"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Horizons 1 and 2 trained jointly, with the h=2 baseline anchored on the model's own h=1 forecast rather than the two-week-old origin level. Measured on 48 shared target weeks: RMSE 16.66 and macro Corr 0.822 against the reference's 17.38 and 0.800 -- but against its own control `gnn_st_joint` (16.79, 0.817) the cascade adds only 0.13 RMSE and 0.005 macro, which is inside seed noise. Nearly all the gain is joint training, not the cascade anchor, and the lag is untouched: the fingerprint is -0.802 either way and Dorchester's peak stays two weeks late."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 15.99482718224833,
+      "2": 0.0
+    },
+    "beta": {
+      "1": 1.772183074785489,
+      "2": 3.8176482359010326
+    },
+    "kappa": {
+      "1": 0.9536450031566095,
+      "2": 0.9360415785662822
+    },
+    "n_validation": 442,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 95.61598224195339,
+  "city": "columbus",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "n_seeds": 10,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.41016045212745667,
+    "43": 0.43558576703071594,
+    "44": 0.44616976380348206,
+    "45": 0.4459332823753357,
+    "46": 0.48742473125457764,
+    "47": 0.45890364050865173,
+    "48": 0.42596134543418884,
+    "49": 0.3833305835723877,
+    "50": 0.4105958640575409,
+    "51": 0.454581081867218
+  },
+  "per_seed_best_epoch": {
+    "42": 42,
+    "43": 46,
+    "44": 36,
+    "45": 36,
+    "46": 31,
+    "47": 35,
+    "48": 41,
+    "49": 58,
+    "50": 54,
+    "51": 50
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 14,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "1": 0.873,
+    "2": 0.7565
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 0.513,
+      "adaptive": 0.487
+    },
+    {
+      "all": 0.4925,
+      "adaptive": 0.5075
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.873,
+      0.7565
+    ],
+    "43": [
+      0.8658,
+      0.7518
+    ],
+    "44": [
+      0.8797,
+      0.7572
+    ],
+    "45": [
+      0.8777,
+      0.759
+    ],
+    "46": [
+      0.8862,
+      0.7706
+    ],
+    "47": [
+      0.8801,
+      0.7614
+    ],
+    "48": [
+      0.8699,
+      0.7558
+    ],
+    "49": [
+      0.8523,
+      0.7346
+    ],
+    "50": [
+      0.8594,
+      0.742
+    ],
+    "51": [
+      0.8569,
+      0.7415
+    ]
+  }
+}

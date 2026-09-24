@@ -1,0 +1,146 @@
+{
+  "model": "xcity_corrbinary",
+  "variant": "post_covid",
+  "git_sha": "1dc6925",
+  "created": "2026-08-21T14:17:38",
+  "target_kind": "delta",
+  "normalize": "train",
+  "split": {
+    "n_train": 122,
+    "n_val": 21,
+    "n_test": 49,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-03"
+  },
+  "graph_counts": {
+    "geo_1hop": 44,
+    "anchor_edges": 21,
+    "corr": 39
+  },
+  "n_nodes": 21,
+  "edge_weight_range": [
+    0.0,
+    2.0
+  ],
+  "n_node_features": 22,
+  "n_global": 1,
+  "feature_names": [
+    "flu_lag0",
+    "flu_lag1",
+    "flu_lag2",
+    "flu_lag3",
+    "flu_lag4",
+    "flu_lag5",
+    "flu_lag6",
+    "flu_lag7",
+    "temp_mean_c",
+    "temp_max_c",
+    "temp_min_c",
+    "relative_humidity_mean",
+    "precipitation_sum_mm",
+    "wind_speed_max_kmh",
+    "pop_density",
+    "poverty_rate",
+    "transit_share",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate",
+    "no_vehicle_rate",
+    "nonwhite_share"
+  ],
+  "global_names": [
+    "ili_count"
+  ],
+  "n_params": 4673,
+  "best_epoch": 8,
+  "best_val_mse": 0.9123121109746751,
+  "epochs_run": 33,
+  "checkpoint": "Code/checkpoints/xcity_boston/xcity_corrbinary_post_covid.pt",
+  "experiment": {
+    "name": "xcity_corrbinary",
+    "model": "gcn_fusion",
+    "variant": "post_covid",
+    "target": "delta",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": false,
+      "globals_": [
+        "ili_count"
+      ]
+    },
+    "graph": {
+      "anchors": "full",
+      "geo": true,
+      "geo_max_hop": 1,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": true,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "transit": false,
+      "transit_threshold": 0.0,
+      "transit_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 1e-05,
+      "epochs": 120,
+      "batch_size": null,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 25,
+      "grad_clip": 1.0,
+      "dropout": 0.2,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123
+    },
+    "window": {
+      "lookback": 8,
+      "horizons": [
+        1
+      ],
+      "test_start": "2025-05-31",
+      "test_end": "2026-05-31",
+      "val_fraction": 0.15
+    },
+    "note": "Cross-city arm: only features Boston and Columbus can both supply (flu lags, weather, demographics, ili_count). Geographic plus binary thresholded correlation edges."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 151.10555545145164
+    },
+    "beta": {
+      "1": 5.510166802373959
+    },
+    "kappa": {
+      "1": 0.9930579871266493
+    },
+    "n_validation": 285,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 96.81020733652312,
+  "city": "boston"
+}

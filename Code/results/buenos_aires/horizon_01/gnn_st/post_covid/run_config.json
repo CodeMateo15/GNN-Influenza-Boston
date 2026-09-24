@@ -1,0 +1,277 @@
+{
+  "model": "gnn_st",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-22T15:53:06",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 90,
+    "n_val": 15,
+    "n_test": 53,
+    "first_test_target": "2024-11-03",
+    "last_test_target": "2025-11-02"
+  },
+  "graph_counts": {
+    "geo_1hop": 48,
+    "anchor_edges": 16,
+    "geo_2hop": 41,
+    "geo_3hop": 38,
+    "corr": 0,
+    "demo": 111
+  },
+  "n_nodes": 24,
+  "edge_weight_range": [
+    0.0,
+    1.98926390483975
+  ],
+  "n_node_features": 43,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "temp_mean_c",
+    "temp_max_c",
+    "temp_min_c",
+    "relative_humidity_mean",
+    "precipitation_sum_mm",
+    "wind_speed_max_kmh",
+    "pop_density",
+    "poverty_rate",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate"
+  ],
+  "global_names": [],
+  "n_params": 15726,
+  "best_epoch": 41,
+  "best_val_mse": 0.3197016716003418,
+  "epochs_run": 120,
+  "checkpoint": "checkpoints/buenos_aires/horizon_01/gnn_st_post_covid.pt",
+  "experiment": {
+    "name": "gnn_st",
+    "model": "stgnn",
+    "variant": "post_covid",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": true,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 0.003,
+      "epochs": 120,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.25,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        1
+      ],
+      "test_start": "2024-11-03",
+      "test_end": "2025-11-02",
+      "val_fraction": 0.15,
+      "val_mode": "tail"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 24.08967249324665
+    },
+    "kappa": {
+      "1": 0.46395771540383035
+    },
+    "n_validation": 285,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 96.06854838709677,
+  "city": "buenos_aires",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "n_seeds": 10,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.33206111192703247,
+    "43": 0.32680922746658325,
+    "44": 0.322442889213562,
+    "45": 0.3358466327190399,
+    "46": 0.3475990891456604,
+    "47": 0.3238622844219208,
+    "48": 0.3197016716003418,
+    "49": 0.3353222906589508,
+    "50": 0.3404676914215088,
+    "51": 0.33166423439979553
+  },
+  "per_seed_best_epoch": {
+    "42": 72,
+    "43": 67,
+    "44": 96,
+    "45": 51,
+    "46": 37,
+    "47": 51,
+    "48": 41,
+    "49": 45,
+    "50": 31,
+    "51": 73
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 11,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "1": 0.8433
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 0.4665,
+      "adaptive": 0.5335
+    },
+    {
+      "all": 0.4491,
+      "adaptive": 0.5509
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.8433
+    ],
+    "43": [
+      0.8467
+    ],
+    "44": [
+      0.8404
+    ],
+    "45": [
+      0.8647
+    ],
+    "46": [
+      0.8758
+    ],
+    "47": [
+      0.8625
+    ],
+    "48": [
+      0.8743
+    ],
+    "49": [
+      0.8679
+    ],
+    "50": [
+      0.8859
+    ],
+    "51": [
+      0.8471
+    ]
+  }
+}

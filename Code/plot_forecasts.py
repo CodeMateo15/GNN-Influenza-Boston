@@ -1,7 +1,7 @@
 """Overlay several models' forecasts against the observed series.
 
     python Code/plot_forecasts.py
-    python Code/plot_forecasts.py --models persistence,arima,lstm,gnn_multiedge
+    python Code/plot_forecasts.py --models persistence,arima,lstm,gnn_st
     python Code/plot_forecasts.py --horizon 2 --no-ci
     python Code/plot_forecasts.py --neighborhoods Dorchester,Roxbury,Charlestown
 
@@ -33,6 +33,8 @@ except ImportError as exc:  # pragma: no cover
     raise SystemExit(f"Missing dependency: {exc.name}. Install pandas numpy matplotlib.") from exc
 
 from influenza import NEIGHBORHOODS, SHORT_NAMES, paths
+from influenza.cities import get as get_city
+from influenza.cli import add_city_arg, city_results_dir
 from influenza.palette import (
     ACTUAL,
     ACTUAL_WIDTH,
@@ -48,6 +50,7 @@ from influenza.palette import (
     series_colour,
     style_axes,
 )
+from influenza.palette import THRESHOLD_INK, THRESHOLD_STYLES
 from influenza import severity
 from influenza.constants import TEST_END, TEST_START
 from influenza.data import load_rates
@@ -55,17 +58,16 @@ from influenza.plots import _flu_season_spans
 
 # Default set: the three baselines the user compares against, plus the flagship
 # graph model. Four is also the number of validated categorical slots.
+CITY = get_city("boston")  # rebound from --city in main()
+
 DEFAULT_MODELS = ["persistence", "seasonal_naive", "arima", "lstm"]
-DEFAULT_WITH_GNN = ["persistence", "arima", "lstm", "gnn_multiedge"]
+DEFAULT_WITH_GNN = ["persistence", "arima", "lstm", "gnn_st"]
 
 # One style per severity boundary, so the three lines are told apart without a
 # per-panel label. Same ink throughout: they are one ordered family, not three
-# unrelated series, and the categorical slots belong to the models.
-THRESHOLD_STYLES = [
-    ((0, (1, 3)), 0.8, 0.50),
-    ((0, (4, 3)), 1.0, 0.65),
-    ((0, (7, 2)), 1.2, 0.80),
-]
+# unrelated series, and the categorical slots belong to the models. Defined in
+# palette.py -- this file and influenza/plots.py each used to carry their own
+# verbatim copy, with a comment in each saying it matched the other.
 
 
 def load_predictions(model: str, variant: str, results_root: Path) -> pd.DataFrame:
@@ -142,7 +144,7 @@ def legend_handles(models: list[str], *, show_ci: bool) -> list:
 def subtitle(show_ci: bool, *, scale_note: str = "") -> str:
     """Two short lines. Kept explicit rather than relying on auto-wrap, which
     reflows with figure width and then collides with the title."""
-    first = ["Gold bands mark the flu season (Oct-Mar)."]
+    first = [f"Gold bands mark the flu season ({CITY.flu_season_label})."]
     if show_ci:
         first.insert(0, "Ribbons are 95% predictive intervals, calibrated on the "
                         "validation split by one shared recipe.")
@@ -173,7 +175,7 @@ def plot_grid(frames: pd.DataFrame, models: list[str], neighborhoods: list[str],
                              sharex=True, sharey=False, squeeze=False)
     fig.patch.set_facecolor(SURFACE)
 
-    spans = _flu_season_spans(frames["target_date"].unique())
+    spans = _flu_season_spans(frames["target_date"].unique(), CITY.flu_months)
     clipped: list[str] = []
 
     for position, neighborhood in enumerate(neighborhoods):
@@ -205,7 +207,7 @@ def plot_grid(frames: pd.DataFrame, models: list[str], neighborhoods: list[str],
                 clipped.append(short)
                 ax.annotate("↑ clipped", xy=(0.985, 0.94), xycoords="axes fraction",
                             ha="right", fontsize=6.5, color=INK_MUTED)
-        ax.set_title(short, fontsize=10, color=INK_PRIMARY, loc="left", pad=6)
+        ax.set_title(short, fontsize=10, pad=6)
         style_dates(ax)
 
     for ax in axes.flat[n:]:
@@ -235,13 +237,12 @@ def plot_grid(frames: pd.DataFrame, models: list[str], neighborhoods: list[str],
     height = fig.get_size_inches()[1]
     scale_note = f"Forecasts run off the top in: {', '.join(clipped)}." if clipped else ""
     fig.suptitle(f"Observed vs forecast ILI rate, {horizon} week{'s' if horizon > 1 else ''} ahead",
-                 fontsize=13, color=INK_PRIMARY, x=0.5, y=1 - 0.22 / height)
-    fig.text(0.5, 1 - 0.60 / height, subtitle(show_ci, scale_note=scale_note),
-             ha="center", va="top", fontsize=8, color=INK_MUTED, linespacing=1.5)
+                 fontsize=13, x=0.5, y=1 - 0.22 / height)
+    print("  " + subtitle(show_ci, scale_note=scale_note).replace("\n", "\n  "))
     legend_inches = 0.42
     fig.tight_layout(rect=(0.015, legend_inches / height, 1, 1 - 1.05 / height))
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=170, facecolor=SURFACE, bbox_inches="tight")
+    fig.savefig(path, dpi=160, facecolor=SURFACE, bbox_inches="tight")
     plt.close(fig)
     print(f"  wrote {path}")
 
@@ -249,14 +250,14 @@ def plot_grid(frames: pd.DataFrame, models: list[str], neighborhoods: list[str],
 def plot_citywide(frames: pd.DataFrame, models: list[str], path: Path, *,
                   horizon: int, show_ci: bool, ceiling: float | None = None,
                   thresholds=None) -> None:
-    """The 14-neighborhood mean. One panel, so the lines are readable at a glance."""
+    """The mean over the city's scored nodes. One panel, so the lines read at a glance."""
     fig, ax = plt.subplots(figsize=(13, 6))
     fig.patch.set_facecolor(SURFACE)
     style_axes(ax)
 
     if thresholds is not None:
         draw_thresholds(ax, thresholds)
-    for low, high in _flu_season_spans(frames["target_date"].unique()):
+    for low, high in _flu_season_spans(frames["target_date"].unique(), CITY.flu_months):
         ax.axvspan(low, high, color=SEASON, alpha=SEASON_ALPHA, linewidth=0, zorder=0)
 
     for index, model in enumerate(models):
@@ -277,11 +278,11 @@ def plot_citywide(frames: pd.DataFrame, models: list[str], path: Path, *,
         ax.set_ylim(0, ceiling)
     ax.set_ylabel("Mean ILI ED visits per 100,000", fontsize=10, color=INK_SECONDARY)
     ax.set_xlabel("Target week", fontsize=10, color=INK_SECONDARY)
-    ax.set_title(f"City mean across 14 neighborhoods — {horizon} week"
-                 f"{'s' if horizon > 1 else ''} ahead",
-                 fontsize=14, color=INK_PRIMARY, loc="left", pad=44)
-    ax.text(0, 1.012, subtitle(show_ci), transform=ax.transAxes,
-            fontsize=8, color=INK_MUTED, va="bottom", linespacing=1.5)
+    ax.set_title(f"{CITY.label} mean across {len(NEIGHBORHOODS)} {CITY.node_label}s — "
+                 f"{horizon} week{'s' if horizon > 1 else ''} ahead",
+                 fontsize=14, pad=12)
+    # Caveats go to stdout, not onto the figure (see palette.py).
+    print("  " + subtitle(show_ci).replace("\n", "\n  "))
     style_dates(ax)
     handles = legend_handles(models, show_ci=show_ci)
     if thresholds is not None:
@@ -289,7 +290,7 @@ def plot_citywide(frames: pd.DataFrame, models: list[str], path: Path, *,
     ax.legend(handles=handles, loc="upper left",
               frameon=False, fontsize=9, labelcolor=INK_SECONDARY, ncol=2)
     fig.tight_layout()
-    fig.savefig(path, dpi=170, facecolor=SURFACE, bbox_inches="tight")
+    fig.savefig(path, dpi=160, facecolor=SURFACE, bbox_inches="tight")
     plt.close(fig)
     print(f"  wrote {path}")
 
@@ -319,7 +320,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reference-seasons", default="post_covid",
                         help="Reference seasons for the severity thresholds; see "
                              "docs/SEVERITY.md.")
-    parser.add_argument("--results-dir", type=Path, default=paths.RESULTS_DIR)
+    add_city_arg(parser)
+    parser.add_argument("--results-dir", type=Path, default=None)
     parser.add_argument("--out-dir", type=Path, default=None,
                         help="Default: a _comparison/ beside --results-dir, so a "
                              "per-horizon run does not write into the top-level one.")
@@ -327,7 +329,17 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    global NEIGHBORHOODS, SHORT_NAMES, CITY
     args = parse_args()
+    # Node names and the rate series come from the city, not from Boston's
+    # module-level constants. Rebound rather than threaded through every plot
+    # helper; they are read-only from here on.
+    city = get_city(args.city)
+    CITY = city
+    test_start, test_end = city.evaluation_window()
+    NEIGHBORHOODS = list(city.node_names)
+    SHORT_NAMES = list(city.short_names)
+    args.results_dir = city_results_dir(args, city)
     models = [m.strip() for m in args.models.split(",") if m.strip()]
     if not models:
         raise SystemExit("error: --models is empty")
@@ -370,7 +382,7 @@ def main() -> None:
 
     # Axes and thresholds come from the observed series, never from the
     # predictions, so every model's figure carries the same reference geometry.
-    rates = load_rates()
+    rates = city.loaders.load_rates()
     fitted, shared, per_neighborhood = None, None, None
     if not args.no_severity:
         named = severity.REFERENCE_SEASON_SETS
@@ -378,6 +390,8 @@ def main() -> None:
             rates,
             reference_seasons=(named[args.reference_seasons] if args.reference_seasons in named
                                else tuple(int(y) for y in args.reference_seasons.split(","))),
+            threshold_end=test_start,
+            season_start_month=city.season_start_month,
         )
         # The citywide set is the shared one. Pooling all 14 neighborhoods
         # instead would draw every pooled value from Dorchester and Roxbury, and
@@ -388,10 +402,10 @@ def main() -> None:
 
     if args.per_neighborhood_scale:
         ceilings = severity.panel_ceilings(rates, fitted or {},
-                                           window=(TEST_START, TEST_END))
+                                           window=(test_start, test_end))
     else:
         ceiling = args.y_max or severity.shared_ceiling(
-            rates, shared, window=(TEST_START, TEST_END))
+            rates, shared, window=(test_start, test_end))
         ceilings = {name: ceiling for name in (*NEIGHBORHOODS, severity.CITYWIDE)}
 
     print(f"Overlaying {len(models)} models on {len(neighborhoods)} neighborhoods "

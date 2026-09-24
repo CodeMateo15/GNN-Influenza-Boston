@@ -7,9 +7,23 @@ This file documents the GRAPH DESIGN for the Boston neighborhood-level influenza
 GNN: the EDGE TYPES, the SURROUNDING-AREA ANCHOR NODES, the TEST-WINDOW / SEASON
 split, and the RESULTS.
 
-STATUS: the notebooks this file originally described are frozen in
-Code/notebooks/ and superseded by the scripts in Code/. Section 1 maps the old
-notebook names onto the new experiment names. Sections 2-7 (node structure, edge
+STATUS: HISTORICAL RECORD. The notebooks this file originally described are
+frozen in Code/notebooks/ and superseded by the scripts in Code/.
+
+  !! Every gcn_fusion arm named in this file -- gnn_geo, gnn_corrbinary,
+  !! gnn_multiedge and its variants, gnn_uniform, dualtopo_no_bg and the
+  !! *_full / *_fullhistory / *_leaknorm arms -- has been RETIRED from the
+  !! registry. The leaderboard in section 9 is archival: those numbers are
+  !! reproducible only from git history. The current arms are persistence,
+  !! seasonal_naive, arima, lstm, xgboost, gat, dualtopo and gnn_st, and the
+  !! live leaderboard is Code/docs/METHODS.md.
+  !!
+  !! The GRAPH DESIGN this file documents -- edge types, anchor nodes, the
+  !! test/season split -- is still current and still what gnn_st uses. Read
+  !! sections 2-7 as live and sections 1, 9-11 as history.
+
+Section 1 maps the old notebook names onto the experiment names they had at the
+time. Sections 2-7 (node structure, edge
 types, weighting, seasons) still describe the live implementation in
 influenza/graphs.py and influenza/config.py. Section 8 was regenerated on
 2026-08-12; the old numbers are in 8b and should not be cited.
@@ -47,8 +61,9 @@ Historical description of the three notebooks:
 
   (c) Boston_Influenza_GNN_V2_MultiEdge.ipynb    <-- BEST PERFORMING
       Multi-type weighted graph: geographic (multi-hop, distance-graded) +
-      correlation + demographic-similarity + transit/mobility edges, all fused
-      into one weighted adjacency. 21 nodes (14 + 7 anchors).
+      correlation + demographic-similarity edges, all fused into one weighted
+      adjacency. 21 nodes (14 + 7 anchors). Transit/mobility edges were a fourth
+      type here; they were measured at zero and retired (see below).
 
 Reference paper for the correlation edge:
   Citation Papers/Nearest Neighbors/A novel graph neural network influenza.pdf
@@ -124,12 +139,13 @@ receive geographic edges only.
     Edge if sim > DEMO_THRESHOLD = 0.5; weight = sim. Current: 63 undirected pairs.
     Links neighborhoods with similar socio-economic profiles even if far apart.
 
-(4) TRANSIT / MOBILITY EDGES (MBTA)  [MultiEdge]
-    Source: Data/MBTA/mbta_adjacency_matrix.csv (14x14, rows/cols already in
-    canonical index order). Values = normalized weekly cross-boundary MBTA trip
-    volume between neighborhoods. Matrix is symmetrized (max of i,j / j,i);
-    edge if weight > 0; weight = MBTA value. Current: 32 undirected pairs.
-    Public-transit mobility proxy for disease spread.
+(4) TRANSIT / MOBILITY EDGES (MBTA)  [RETIRED, Sept 2026]
+    Was 32 undirected pairs from a 14x14 MBTA cross-boundary trip-volume matrix
+    derived from the GTFS feed. Removed along with Data/MBTA/ after a ten-seed
+    measurement: -0.001 / -0.007 / +0.015 macro Corr at h=1/2/4, sign-inconsistent
+    and inside noise. The mechanism was redundancy -- the 32 pairs took the graph
+    from 107 to 108 undirected edges, so 31 of them only reweighted connections
+    the border graph already had. Full write-up: METHODS.md, "Transit (retired)".
 
 (5) UNIFORM COMPLETE (control, ARCHIVED)
     Every neighborhood connected to every other with a flat weight of 1.0 (all 91
@@ -145,16 +161,16 @@ receive geographic edges only.
   CorrBinary  : geographic 1-hop (binary) + correlation (binary, r>0.85).
                 85 undirected edges, 21 nodes.
   MultiEdge   : geographic (multi-hop, graded) + correlation (weighted) +
-                demographic (weighted) + transit (weighted), summed into one
-                weighted adjacency W. 109 undirected edges, 21 nodes.
-                Edge-weight range fed to GCNConv: [0.000, 3.506].
+                demographic (weighted), summed into one weighted adjacency W.
+                107 undirected edges, 21 nodes.
+                Edge-weight range fed to GCNConv: [0.000, 2.822].
 
 --------------------------------------------------------------------------------
 5. WEIGHTING SCHEME (how weights reach the model)
 --------------------------------------------------------------------------------
   - MultiEdge / CorrWeighted build an N x N weight matrix W; overlapping edge
-    types ACCUMULATE (a pair linked by geo + corr + demo + transit sums to a
-    larger weight, up to ~3.5). W is flattened to edge_index + edge_weight and
+    types ACCUMULATE (a pair linked by geo + corr + demo sums to a
+    larger weight, up to ~2.8). W is flattened to edge_index + edge_weight and
     passed to GCNConv, which uses edge_weight in its symmetric-normalized
     aggregation (D^-1/2 A D^-1/2). Self-loops = 1.0.
   - The model's forward() threads edge_weight through both GCNConv layers:
@@ -288,20 +304,22 @@ These are not comparable to section 8 for three independent reasons:
 --------------------------------------------------------------------------------
 10. FILES / REPRODUCTION
 --------------------------------------------------------------------------------
-  Checkpoints: Code/checkpoints/<experiment>_<variant>.pt
-    (the eight pre-refactor .pt files are in Code/checkpoints/legacy/)
-  Results:     Code/results/<experiment>/<variant>/
+  Checkpoints: Code/checkpoints/horizon_NN/<experiment>_<variant>.pt
+    (checkpoints/legacy/ held eight pre-refactor .pt files; removed with the
+     gcn_fusion arms they belonged to)
+  Results:     Code/results/horizon_NN/<experiment>/<variant>/
   Data: Data/ (BPHC flu, ED visits, wastewater, COVID, RSV, weather,
-        demographics, MBTA, Mass vaccination). Quirks: Code/docs/DATA_NOTES.md.
+        demographics, Mass vaccination). Quirks: Code/docs/DATA_NOTES.md.
   Reproduce a run:
-    python Code/run_gnn.py --experiment gnn_multiedge
-    python Code/run_dualtopo.py --variant full
-    python Code/compare_models.py --update-readme
+    python Code/run_gnn.py --experiment gnn_st
+    python Code/run_dualtopo.py --variant post_covid
+    python Code/compare_models.py --results-dir Code/results/horizon_01
+    (NOT --update-readme: it overwrites hand-written analysis in METHODS.md)
   Each run writes run_config.json with the resolved config, git SHA, split sizes
   and seed, so any leaderboard number traces back to its exact command.
   Key tunable knobs (top of the graph cell):
     CORR_THRESHOLD (0.85), GEO_DECAY (0.5), GEO_MAX_HOP (3),
-    DEMO_THRESHOLD (0.5), TRANSIT_THRESHOLD (0.0), and per-type USE_* toggles.
+    DEMO_THRESHOLD (0.5), and per-type USE_* toggles.
   Vaccination: USE_VACC_NBR (default False) toggles the per-neighborhood weekly
     vaccination node feature; the weekly global vaccination covariate is always on.
   Season boundary: FLU_MONTHS = {10,11,12,1,2,3} (Oct-Mar).

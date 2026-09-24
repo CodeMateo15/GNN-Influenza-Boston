@@ -1,0 +1,53 @@
+# Columbus geographic adjacency, derived by Code/scrapers/derive_columbus_adjacency.py
+# Source: Census TIGERweb ACS2023 ZCTA polygons. Two ZCTAs are
+# adjacent when they share >= 2 boundary vertices (a shared edge, not a
+# corner touch). Aggregated ZIP -> area via the CPH crosswalk.
+kind,a,b
+area,Agler,Bexley
+area,Agler,Clinton+
+area,Agler,Eastside
+area,Agler,FarEast
+area,Agler,Linden
+area,Agler,NESub
+area,Agler,Northland
+area,Bexley,Eastside
+area,Bexley,FarEast
+area,Bexley,FarSouth
+area,Clinton+,Eastside
+area,Clinton+,FarSouth
+area,Clinton+,Linden
+area,Clinton+,Northland
+area,Clinton+,UA/Grand
+area,Clinton+,West
+area,Clinton+,Worthing.
+area,Dublin,Hilliard
+area,Dublin,UA/Grand
+area,Dublin,Worthing.
+area,Eastside,FarSouth
+area,FarEast,FarSE
+area,FarEast,FarSouth
+area,FarEast,NESub
+area,FarSE,FarSW
+area,FarSE,FarSouth
+area,FarSW,Hilliard
+area,FarSW,West
+area,FarSouth,West
+area,Hilliard,UA/Grand
+area,Hilliard,West
+area,Linden,Northland
+area,NESub,Northland
+area,NESub,Wville
+area,Northland,Worthing.
+area,Northland,Wville
+area,UA/Grand,West
+area,UA/Grand,Worthing.
+area,Worthing.,Wville
+anchor,Dublin,Amlin
+anchor,Dublin,LewisCtr
+anchor,FarSE,Orient
+anchor,FarSW,Orient
+anchor,FarSW,W.Jeff
+anchor,Hilliard,Amlin
+anchor,Worthing.,LewisCtr
+anchor,Wville,LewisCtr
+anchor,Wville,Polaris

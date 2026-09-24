@@ -9,6 +9,12 @@ is the point of comparing it against the GNNs.
 
 from __future__ import annotations
 
+# Thread pinning must happen before numpy or torch is imported: BLAS reads its
+# thread count from the environment at import time. See influenza/threads.py.
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import influenza.threads  # noqa: F401  (import for its side effect)
+
 import argparse
 import copy
 import random
@@ -25,13 +31,10 @@ except ImportError as exc:  # pragma: no cover
     ) from exc
 
 from influenza import (
-    NEIGHBORHOODS,
-    N_NEIGH,
     SEED,
     impute_causal,
     Window,
     finish_run,
-    load_rates,
     normalization,
     paths,
     save_loss_curve,
@@ -40,7 +43,8 @@ from influenza import (
     valid_origins,
     variant_data,
 )
-from influenza.cli import add_common_args, resolve_variants, resolve_window, run_tag
+from influenza.cli import (add_common_args, city_output_dirs, resolve_city,
+                          resolve_variants, resolve_window, run_tag)
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
 
 MODEL = "lstm"
@@ -85,8 +89,11 @@ def masked_mse(prediction: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     return diff.mean()
 
 
-def train_model(x_train, y_train, x_val, y_val, device, epochs, batch_size, window):
-    model = MultivariateLSTM(N_NEIGH, len(window.horizons)).to(device)
+def train_model(x_train, y_train, x_val, y_val, device, epochs, batch_size, window,
+                n_series):
+    # n_series is the city's scored-node count: the LSTM takes all of them as one
+    # input vector, so it is 14 for Boston and 17 for Columbus.
+    model = MultivariateLSTM(n_series, len(window.horizons)).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
     criterion = masked_mse
     generator = torch.Generator().manual_seed(SEED)
@@ -133,7 +140,9 @@ def train_model(x_train, y_train, x_val, y_val, device, epochs, batch_size, wind
     return model, best_epoch, best_loss, train_history, val_history
 
 
-def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: argparse.Namespace) -> None:
+def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
+                args: argparse.Namespace, city) -> None:
+    results_root, checkpoint_root = city_output_dirs(args, city)
     data = variant_data(all_rates, variant)
     rates = data.available
     origins = valid_origins(rates.index, window)
@@ -165,7 +174,8 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
     # finish_run, which serialises the emissions summary.
     with track_emissions(run_tag(MODEL, variant, window), enabled=not args.no_carbon) as carbon:
         model, best_epoch, best_loss, train_history, val_history = train_model(
-            x_train, y_train, x_val, y_val, device, args.epochs, args.batch_size, window
+            x_train, y_train, x_val, y_val, device, args.epochs, args.batch_size, window,
+            city.n_neigh,
         )
         model.eval()
         with torch.no_grad():
@@ -178,7 +188,7 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
     for sample_idx, position in enumerate(split.test):
         for h_idx, horizon in enumerate(window.horizons):
             target_date = split.index[position + horizon]
-            for node, neighborhood in enumerate(NEIGHBORHOODS):
+            for node, neighborhood in enumerate(city.node_names):
                 actual = float(rates.iloc[position + horizon, node])
                 pred = float(predicted[sample_idx, h_idx, node])
                 records.append({
@@ -196,7 +206,7 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
     for sample_idx, position in enumerate(split.val):
         for h_idx, horizon in enumerate(window.horizons):
             target_date = split.index[position + horizon]
-            for node, neighborhood in enumerate(NEIGHBORHOODS):
+            for node, neighborhood in enumerate(city.node_names):
                 val_rows.append({
                     "horizon": horizon,
                     "actual": float(rates.at[target_date, neighborhood]),
@@ -206,13 +216,13 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
 
     print(f"Best epoch: {best_epoch} | validation MSE: {best_loss:.6f}")
 
-    checkpoint_path = args.checkpoint_dir / f"{MODEL}_{variant}.pt"
+    checkpoint_path = checkpoint_root / f"{MODEL}_{variant}.pt"
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "model_state_dict": model.state_dict(),
         "flu_means": mean,
         "flu_stds": std,
-        "neighborhoods": NEIGHBORHOODS,
+        "neighborhoods": list(city.node_names),
         "horizons": list(window.horizons),
         "lookback": window.lookback,
         "hidden_size": HIDDEN_SIZE,
@@ -222,7 +232,8 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
     print(f"Checkpoint: {checkpoint_path}")
 
     interval_model = fit_intervals(validation["predicted"], validation["actual"],
-                                   validation["horizon"])
+                                   validation["horizon"],
+                                   two_sided=args.two_sided_intervals)
     predictions = attach_intervals(pd.DataFrame(records), interval_model)
     coverage = empirical_coverage(predictions["actual"], predictions["lower"],
                                  predictions["upper"])
@@ -252,7 +263,8 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window, args: arg
         },
         bands=True,
         carbon=carbon,
-        results_root=args.output_dir,
+        results_root=results_root,
+        city=city,
     )
     save_loss_curve(train_history, val_history, out / "loss_curve.png",
                     title=f"LSTM ({variant}) training")
@@ -272,11 +284,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    window = resolve_window(args, Window())
-    rates = load_rates()
+    window = resolve_window(args, Window(), resolve_city(args))
+    city = resolve_city(args)
+    rates = city.loaders.load_rates()
     print(f"Loaded {len(rates)} weekly dates and {rates.shape[1]} neighborhoods")
     for variant in resolve_variants(args.variant):
-        run_variant(rates, variant, window, args)
+        run_variant(rates, variant, window, args, city)
 
 
 if __name__ == "__main__":

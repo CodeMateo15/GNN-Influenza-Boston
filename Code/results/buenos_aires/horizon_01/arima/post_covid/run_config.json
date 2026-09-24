@@ -1,0 +1,71 @@
+{
+  "model": "arima",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-22T13:57:45",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1
+    ],
+    "test_start": "2024-11-03",
+    "test_end": "2025-11-02",
+    "val_fraction": 0.15,
+    "val_mode": "tail"
+  },
+  "split": {
+    "n_train": 97,
+    "n_val": 16,
+    "n_test": 53,
+    "first_test_target": "2024-11-03",
+    "last_test_target": "2025-11-02"
+  },
+  "order_grid": {
+    "p": 3,
+    "d": 1,
+    "q": 3
+  },
+  "selected_orders": {
+    "ALMIRANTE BROWN": "(0, 0, 2)",
+    "AVELLANEDA": "(3, 0, 2)",
+    "EZEIZA": "(0, 0, 0)",
+    "FLORENCIO VARELA": "(0, 0, 0)",
+    "GENERAL SAN MART\u00cdN": "(3, 1, 3)",
+    "JOS\u00c9 C. PAZ": "(2, 0, 0)",
+    "LA MATANZA": "(1, 0, 2)",
+    "LAN\u00daS": "(2, 1, 2)",
+    "LOMAS DE ZAMORA": "(0, 1, 0)",
+    "MALVINAS ARGENTINAS": "(0, 1, 1)",
+    "MERLO": "(1, 0, 1)",
+    "MORENO": "(0, 0, 2)",
+    "MOR\u00d3N": "(1, 1, 1)",
+    "QUILMES": "(0, 1, 2)",
+    "SAN ISIDRO": "(0, 1, 1)",
+    "SAN MIGUEL": "(0, 0, 2)",
+    "TIGRE": "(3, 1, 3)",
+    "TRES DE FEBRERO": "(2, 0, 3)",
+    "VICENTE L\u00d3PEZ": "(0, 0, 3)"
+  },
+  "fallback_forecasts": 0,
+  "fallback_share": 0.0,
+  "selection_horizon": 1,
+  "missing_target_cells": 15,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 17.314765610369033
+    },
+    "kappa": {
+      "1": 0.5384104940627211
+    },
+    "n_validation": 304,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 90.7258064516129
+}

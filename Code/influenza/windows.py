@@ -37,6 +37,21 @@ class Window:
     test_start: pd.Timestamp = TEST_START
     test_end: pd.Timestamp = TEST_END
     val_fraction: float = 0.15
+    # How the validation slice is chosen.
+    #
+    # "tail" takes the last `val_fraction` of every non-test origin, which is
+    # correct only when the test window is at the END of the series -- the case
+    # every shipped arm uses. For a non-terminal window it puts validation AFTER
+    # the test window and the purge then empties it: five of the seven candidate
+    # backtest seasons raise, and 2024-25 does something worse, silently yielding
+    # six validation origins while discarding 49 post-test ones. A model selected
+    # on six origins is not a model selection.
+    #
+    # "pre_test" restricts both train and validation to origins whose furthest
+    # target lands strictly before `test_start`, then validates on the last
+    # `val_fraction` of those. Required for run_backtest.py; changes nothing for
+    # a terminal window beyond dropping origins there are none of.
+    val_mode: Literal["tail", "pre_test"] = "tail"
 
     @property
     def max_horizon(self) -> int:
@@ -60,6 +75,7 @@ class Window:
             "test_start": str(self.test_start.date()),
             "test_end": str(self.test_end.date()),
             "val_fraction": self.val_fraction,
+            "val_mode": self.val_mode,
         }
 
 
@@ -157,17 +173,32 @@ def split_origins(index: pd.DatetimeIndex, origins: list[int], window: Window) -
             f"does not overlap the data ({index.min().date()}..{index.max().date()})."
         )
     test_set = set(test)
-    non_test = [t for t in origins if t not in test_set]
-    n_val = max(1, int(window.val_fraction * len(non_test)))
-    train, val = non_test[:-n_val], non_test[-n_val:]
+    test_target_start = index[test[0] + first]
+    if window.val_mode == "pre_test":
+        # Only origins fully resolved before the test window are candidates, so
+        # nothing after the test period can leak backwards into model selection.
+        candidates = [t for t in origins
+                      if t not in test_set
+                      and index[t + window.max_horizon] < test_target_start]
+    else:
+        candidates = [t for t in origins if t not in test_set]
+
+    n_val = max(1, int(window.val_fraction * len(candidates)))
+    train, val = candidates[:-n_val], candidates[-n_val:]
 
     # Purge boundary samples whose furthest target overlaps the following split.
     val_target_start = index[val[0] + first]
-    test_target_start = index[test[0] + first]
     train = [t for t in train if index[t + window.max_horizon] < val_target_start]
     val = [t for t in val if index[t + window.max_horizon] < test_target_start]
     if not train or not val:
-        raise ValueError("The configured date ranges do not yield non-empty train/validation sets.")
+        raise ValueError(
+            "The configured date ranges do not yield non-empty train/validation sets"
+            f" (val_mode={window.val_mode!r}, {len(candidates)} candidate origins)."
+            + ("" if window.val_mode == "pre_test" else
+               " If the test window is not at the end of the series, use"
+               " val_mode='pre_test': 'tail' selects validation from AFTER the"
+               " test window and the purge then empties it.")
+        )
     return Split(index=index, train=train, val=val, test=test, window=window)
 
 

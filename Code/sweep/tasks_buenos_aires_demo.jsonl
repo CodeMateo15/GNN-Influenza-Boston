@@ -1,0 +1,6 @@
+{"city": "buenos_aires", "arm": "gnn_st", "script": "run_gnn.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__gnn_st__post_covid__h01"}
+{"city": "buenos_aires", "arm": "gnn_st", "script": "run_gnn.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__gnn_st__post_covid__h02"}
+{"city": "buenos_aires", "arm": "gnn_st", "script": "run_gnn.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__gnn_st__post_covid__h04"}
+{"city": "buenos_aires", "arm": "xgboost", "script": "run_xgboost.py", "variant": "post_covid", "horizon": 1, "extra": [], "task_id": "buenos_aires__xgboost__post_covid__h01"}
+{"city": "buenos_aires", "arm": "xgboost", "script": "run_xgboost.py", "variant": "post_covid", "horizon": 2, "extra": [], "task_id": "buenos_aires__xgboost__post_covid__h02"}
+{"city": "buenos_aires", "arm": "xgboost", "script": "run_xgboost.py", "variant": "post_covid", "horizon": 4, "extra": [], "task_id": "buenos_aires__xgboost__post_covid__h04"}

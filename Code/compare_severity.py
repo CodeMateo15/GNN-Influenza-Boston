@@ -20,6 +20,7 @@ keeps its own set.
 from __future__ import annotations
 
 import argparse
+import math
 import json
 import sys
 from pathlib import Path
@@ -36,8 +37,9 @@ except ImportError as exc:  # pragma: no cover
 
 from compare_models import _cells_scored, _markdown_table, update_readme
 from influenza import paths, severity
+from influenza.cities import get as get_city
+from influenza.cli import add_city_arg, city_results_dir
 from influenza.constants import NEIGHBORHOODS, SHORT_NAMES, TEST_END, TEST_START
-from influenza.data import load_rates
 from influenza.intervals import Z95
 from influenza.metrics import segment_labels
 from influenza.palette import (
@@ -60,9 +62,11 @@ from plot_forecasts import load_predictions, style_dates
 SHORT = dict(zip(NEIGHBORHOODS, SHORT_NAMES))
 
 # Four models, because palette.series_colour raises beyond four validated slots.
-DEFAULT_PLOT_MODELS = ["persistence", "seasonal_naive", "arima", "gnn_multiedge"]
+DEFAULT_PLOT_MODELS = ["persistence", "seasonal_naive", "arima", "gnn_st"]
 
 ALL_SEGMENTS = "overall,flu_season"
+CITY = None  # the City being analysed; set in main()
+
 SEGMENT_LABELS = {
     "overall": "Overall (full year)",
     "flu_season": "Flu season (Oct–Mar)",
@@ -164,8 +168,9 @@ def indicator_frame(predictions: pd.DataFrame, fitted: dict[str, severity.Thresh
     # A suppressed week is not an observation. Dropping here keeps every layer
     # below working on the same rows.
     combined = combined.loc[combined["actual"].notna() & combined["predicted"].notna()]
-    combined["segment"] = segment_labels(combined["target_date"])
-    combined["season"] = severity.season_label(combined["target_date"])
+    combined["segment"] = segment_labels(combined["target_date"], CITY.flu_months)
+    combined["season"] = severity.season_label(combined["target_date"],
+                                               CITY.season_start_month)
 
     parts = []
     for name, part in combined.groupby("indicator", sort=False):
@@ -314,7 +319,12 @@ def plot_bands(rates: pd.DataFrame, fitted: dict[str, severity.Thresholds],
     span = rates.loc[(rates.index >= test_start) & (rates.index <= test_end)].index
     span = span if len(span) else rates.index
 
-    fig, axes = plt.subplots(4, 4, figsize=(19, 13), facecolor=SURFACE)
+    # One cell per panel plus one for the legend, four across. Boston's 15
+    # panels + legend fill the historical 4x4 exactly (same figure size); a
+    # fixed 4x4 has no room for Columbus's 18 or Buenos Aires's 20.
+    rows = math.ceil((len(panels) + 1) / 4)
+    fig, axes = plt.subplots(rows, 4, figsize=(19, 3.25 * rows), facecolor=SURFACE,
+                             squeeze=False)
     for ax, (name, series) in zip(axes.flat, panels):
         thresholds = common or fitted[name]
         window = series.loc[(series.index >= test_start) & (series.index <= test_end)].dropna()
@@ -329,13 +339,12 @@ def plot_bands(rates: pd.DataFrame, fitted: dict[str, severity.Thresholds],
         peak = window.idxmax()
         ax.plot([peak], [window.max()], "o", color=ACTUAL, ms=4.5, zorder=4)
         band = severity.SEVERITY_BANDS[int(thresholds.band([window.max()])[0])]
-        # Boxed and offset clear of the curve: the peak sits at the top of a
-        # steep rise, so an unboxed label lands on the descending limb.
+        # Offset clear of the curve: the peak sits at the top of a steep rise,
+        # so a label placed on the point lands on the descending limb. The
+        # rounded bbox this used to wear is gone with the rest of the chrome.
         ax.annotate(f"{window.max():.0f} — {band}", (peak, window.max()),
                     textcoords="offset points", xytext=(7, 7), fontsize=7,
-                    color=INK_PRIMARY, zorder=5,
-                    bbox=dict(boxstyle="round,pad=0.25", facecolor=SURFACE,
-                              edgecolor=AXIS, linewidth=0.5, alpha=0.9))
+                    zorder=5)
         ax.set_ylim(0, ceiling)
         ax.set_xlim(span.min(), span.max())
         ax.set_title(SHORT.get(name, name), fontsize=8.5, color=INK_PRIMARY)
@@ -352,9 +361,8 @@ def plot_bands(rates: pd.DataFrame, fitted: dict[str, severity.Thresholds],
     handles.append(Line2D([0], [0], color=ACTUAL, lw=ACTUAL_WIDTH, label="Observed rate"))
     axes.flat[len(panels)].legend(handles=handles, loc="center", fontsize=8, frameon=False)
 
-    fig.suptitle("Observed ILI ED visit rate against MEM intensity bands", fontsize=13,
-                 color=INK_PRIMARY)
-    fig.text(0.5, 0.945, reference_note, ha="center", fontsize=8, color=INK_SECONDARY)
+    fig.suptitle("Observed ILI ED visit rate against MEM intensity bands", fontsize=13)
+    print(f"note: {reference_note}", file=sys.stderr)
     fig.supylabel("ILI ED visits per 100,000", color=INK_SECONDARY, fontsize=9)
     fig.tight_layout(rect=(0.01, 0.0, 1.0, 0.935))
     _save(fig, path)
@@ -392,9 +400,9 @@ def plot_skill(long: pd.DataFrame, path: Path, *, scope: str, segment: str,
                  f"{SEGMENT_LABELS.get(segment, segment)}", fontsize=11, color=INK_PRIMARY)
     style_axes(ax)
     ax.legend(fontsize=8, frameon=False, ncol=3)
-    ax.text(0.0, -0.30, "0 is no skill: both 'never alert' and 'always alert' score 0. "
-                        "! marks a threshold with fewer than 5 observed events.",
-            transform=ax.transAxes, fontsize=7.5, color=INK_MUTED)
+    # Caption printed rather than drawn: plain figures carry no paragraphs.
+    print(f"note ({path.name}): " + "0 is no skill: both 'never alert' and 'always alert' score 0. "
+                        "! marks a threshold with fewer than 5 observed events.", file=sys.stderr)
     _save(fig, path)
 
 
@@ -435,9 +443,9 @@ def plot_reliability(bands: dict[str, pd.DataFrame], models: list[str], path: Pa
                  color=INK_PRIMARY)
     style_axes(ax, grid_axis="both")
     ax.legend(fontsize=8, frameon=False, loc="upper left")
-    ax.text(0.0, -0.16, "On the diagonal the stated probability matches how often it happened. "
-                        "Below it the model is over-confident.",
-            transform=ax.transAxes, fontsize=7.5, color=INK_MUTED)
+    # Caption printed rather than drawn: plain figures carry no paragraphs.
+    print(f"note ({path.name}): " + "On the diagonal the stated probability matches how often it happened. "
+                        "Below it the model is over-confident.", file=sys.stderr)
     _save(fig, path)
 
 
@@ -466,15 +474,15 @@ def plot_timing(frame: pd.DataFrame, path: Path, *, level: float, models: list[s
     ax.set_title(f"When did the forecast first cross IT{level * 100:g}?", fontsize=11,
                  color=INK_PRIMARY)
     style_axes(ax, grid_axis="x")
-    ax.text(0.0, -0.26, "One point per neighborhood-season. The bar is the median. "
-                        "Neighborhood-seasons where neither series crossed are omitted.",
-            transform=ax.transAxes, fontsize=7.5, color=INK_MUTED)
+    # Caption printed rather than drawn: plain figures carry no paragraphs.
+    print(f"note ({path.name}): " + "One point per neighborhood-season. The bar is the median. "
+                        "Neighborhood-seasons where neither series crossed are omitted.", file=sys.stderr)
     _save(fig, path)
 
 
 def _save(fig, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=165, facecolor=SURFACE, bbox_inches="tight")
+    fig.savefig(path, dpi=160, facecolor=SURFACE, bbox_inches="tight")
     plt.close(fig)
     print(f"Wrote {paths.display(path)}")
 
@@ -681,7 +689,8 @@ def parse_reference_seasons(text: str) -> tuple[int, ...] | None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--results-dir", type=Path, default=paths.RESULTS_DIR)
+    add_city_arg(parser)
+    parser.add_argument("--results-dir", type=Path, default=None)
     parser.add_argument("--out-dir", type=Path, default=None,
                         help="Default: a _comparison/ beside the results being read.")
     parser.add_argument("--models", default=None, help="Comma-separated subset.")
@@ -706,8 +715,8 @@ def parse_args() -> argparse.Namespace:
                         help="Student-t quantile with mem's sqrt(1+1/m) inflation (default).")
     parser.add_argument("--no-use-t", dest="use_t", action="store_false",
                         help="Normal quantile instead.")
-    parser.add_argument("--threshold-end", type=pd.Timestamp, default=TEST_START,
-                        help="Exclusive cutoff for threshold fitting. Default TEST_START, "
+    parser.add_argument("--threshold-end", type=pd.Timestamp, default=None,
+                        help="Exclusive cutoff for threshold fitting. Default: the city's test start, "
                              "which is what keeps the test window out of the thresholds.")
     parser.add_argument("--citywide-sigma", default="correlated",
                         choices=["correlated", "independent"])
@@ -726,7 +735,21 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    results_root = args.results_dir.resolve()
+    global NEIGHBORHOODS, SHORT_NAMES, SHORT, CITY
+    city = get_city(args.city)
+    CITY = city
+    SEGMENT_LABELS.update(city.segment_labels)
+    test_start, test_end = city.evaluation_window()
+    if args.threshold_end is None:
+        args.threshold_end = test_start
+    # Node names and the rate series come from the city, not from Boston's
+    # module-level constants. Rebound here rather than threaded through every
+    # plot function: the call graph is a dozen deep and the names are read-only
+    # after this point.
+    NEIGHBORHOODS = list(city.node_names)
+    SHORT_NAMES = list(city.short_names)
+    SHORT = dict(zip(NEIGHBORHOODS, SHORT_NAMES))
+    results_root = city_results_dir(args, city).resolve()
     runs = discover_runs(results_root)
     if not runs:
         nested = horizon_roots(results_root)
@@ -760,11 +783,12 @@ def main() -> None:
     warnings: list[str] = []
 
     # --- thresholds ---------------------------------------------------------
-    rates = load_rates()
+    rates = city.loaders.load_rates()
     reference = parse_reference_seasons(args.reference_seasons)
     fitted = severity.fit_thresholds(
         rates, reference_seasons=reference, threshold_end=args.threshold_end,
         levels=levels, values_per_season=args.values_per_season, use_t=args.use_t,
+        season_start_month=city.season_start_month,
     )
     citywide = fitted[severity.CITYWIDE]
     plural = "value" if citywide.values_per_season == 1 else "values"
@@ -874,7 +898,7 @@ def main() -> None:
         reference_note += ("  Shared citywide bands on every panel; the scores in "
                            "severity_long.csv use each neighborhood's own thresholds.")
     plot_bands(rates, fitted, out_dir / "severity_bands.png",
-               test_start=TEST_START, test_end=TEST_END, reference_note=reference_note,
+               test_start=test_start, test_end=test_end, reference_note=reference_note,
                standardise=not args.per_neighborhood_scale)
     headline_scope = "pooled" if "pooled" in scopes else scopes[0]
     plot_skill(long, out_dir / "severity_skill.png", scope=headline_scope,

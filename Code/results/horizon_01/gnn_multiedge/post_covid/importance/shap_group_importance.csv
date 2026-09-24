@@ -1,8 +1,0 @@
-group,mean_abs_shap
-citywide,13.243174376178427
-flu_lags — connected,5.686842854084544
-weather — connected,0.9669453280165919
-flu_lags — own,0.6852572193234573
-weather — own,0.11661362917036722
-flu_lags — unconnected,0.05566068785292357
-weather — unconnected,0.009609532825618427

@@ -1,35 +1,36 @@
 """Run every model at every forecast horizon, one results tree per horizon.
 
-At one week ahead the leaderboard is a tie: nothing beats persistence, because
-next week's ILI is almost this week's ILI and there is no room for a model to
-distinguish itself. That is a fact about the task, not about the models. This
-script asks the harder question -- 2, 4, 12, 24 and 52 weeks ahead -- where the
-models have somewhere to separate.
+One week ahead, no model can win by much: next week's ILI is almost this
+week's ILI, so persistence is already near the ceiling. That is a fact about
+the task, not about the models. Horizon 1 is still run -- it is the number the
+paper reports -- but 2 and 4 weeks are where the models have somewhere to
+separate, and where the margin over the baselines is worth quoting.
 
-Each horizon gets its own root, `results/horizon_24/<model>/<variant>/`, so
+Each horizon gets its own root, `results/horizon_04/<model>/<variant>/`, so
 `metrics.csv` still sits two levels below it and compare_models.py works
 unchanged when pointed at one. The top-level `results/` tree is untouched.
 
 Three things this enforces that are easy to get wrong by hand:
 
-  * **One horizon per invocation.** With `--horizons 1,52` test membership is
-    decided by horizon 1 while `valid_origins` requires t+52 to exist, so the
+  * **One horizon per invocation.** With `--horizons 1,4` test membership is
+    decided by horizon 1 while `valid_origins` requires t+4 to exist, so the
     test set silently shrinks and the two horizons score different weeks.
   * **An explicit variant, always.** run_gnn.py and run_dualtopo.py read
     `--variant all` as "use the registry's variant" and run exactly one, unlike
     the other three scripts which expand it.
   * **A per-horizon checkpoint directory.** Checkpoint filenames carry no
-    horizon, so a sweep sharing one directory overwrites the same file five
+    horizon, so a sweep sharing one directory overwrites the same file three
     times and leaves whichever horizon finished last.
 
-    python Code/run_all_horizons.py --horizons 2,4,12,24,52 --dry-run
-    python Code/run_all_horizons.py --horizons 2,4,12,24,52
+    python Code/run_all_horizons.py --horizons 1,2,4 --dry-run
+    python Code/run_all_horizons.py --horizons 1,2,4
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -44,10 +45,15 @@ except ImportError as exc:  # pragma: no cover
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from influenza import paths
-from influenza.constants import TEST_END, TEST_START
+from influenza.cities import DEFAULT_CITY, City, get as get_city, names as city_names
 from influenza.windows import Window, split_origins, valid_origins, variant_data
 
-DEFAULT_HORIZONS = (2, 4, 12, 24, 52)
+DEFAULT_HORIZONS = (1, 2, 4)
+
+
+def default_log_dir() -> Path:
+    """Under paths.LOG_DIR, where run_progress.py looks by default."""
+    return paths.LOG_DIR / "horizon_logs"
 DEFAULT_VARIANTS = ("exclude_covid", "post_covid")
 
 
@@ -67,12 +73,15 @@ class Job:
         return f"{self.model}/{self.variant}"
 
 
-def build_matrix(variants: tuple[str, ...]) -> tuple[Job, ...]:
-    """The run matrix, mirroring the directories already in Code/results/.
+def build_matrix(variants: tuple[str, ...], city: City) -> tuple[Job, ...]:
+    """The run matrix: the eight arms on the leaderboard, nothing else.
 
-    The `full`-variant arms are pinned to `full` regardless of --variants: they
-    exist precisely to contrast against the post_covid ones, so filtering them
-    by variant would silently drop the contrast rather than narrowing it.
+    Ablations of `gnn_st` are deliberately absent -- they are a separate axis
+    with its own runner and its own noise-floor accounting. See run_ablation.py.
+
+    `variants` is intersected with the city's own list by the caller, so a city
+    with only post_covid history does not enqueue exclude_covid jobs that
+    cli.resolve_city would reject one subprocess later.
     """
     jobs: list[Job] = []
 
@@ -81,36 +90,22 @@ def build_matrix(variants: tuple[str, ...]) -> tuple[Job, ...]:
         jobs.append(Job("seasonal_naive", "run_seasonal_naive.py", variant, ("--season-lag", "52")))
         jobs.append(Job("arima", "run_arima.py", variant))
         jobs.append(Job("lstm", "run_lstm.py", variant))
+        # Boosted trees over the same per-node columns the graph model reads, with
+        # no edges. The strongest non-graph baseline at four weeks.
+        jobs.append(Job("xgboost", "run_xgboost.py", variant))
 
-    # The GCN registry entries are all defined on post_covid; run them there
-    # regardless, and add the `full` arms as their own contrast.
-    for name in ("gnn_geo", "gnn_corrbinary", "gnn_multiedge", "gnn_uniform",
-                 "gnn_multiedge_rt", "gnn_multiedge_covid_rsv",
-                 # The long-horizon corrections, run at every horizon so their
-                 # cost at 1-2 weeks is visible alongside their benefit at 24-52.
-                 "gnn_multiedge_season", "gnn_multiedge_level",
-                 "gnn_multiedge_season_level"):
-        jobs.append(Job(name, "run_gnn.py", "post_covid", ("--experiment", name)))
+    # The headline arm. 16-week lookback natively, and its 10-seed ensemble makes
+    # it roughly 10x the cost of a baseline -- which is why the sweep is a
+    # job-array candidate rather than a laptop loop. See Code/sweep.py.
+    jobs.append(Job("gnn_st", "run_gnn.py", "post_covid",
+                    ("--experiment", "gnn_st"), native_lookback=16))
 
-    jobs.append(Job("gnn_multiedge_full", "run_gnn.py", "full",
-                    ("--experiment", "gnn_multiedge", "--name", "gnn_multiedge_full")))
-    # The leakage demonstration: normalising over the whole series instead of the
-    # training window only. Not a registry entry because it is a deliberately
-    # wrong configuration kept for the contrast it provides.
-    jobs.append(Job("gnn_multiedge_leaknorm", "run_gnn.py", "post_covid",
-                    ("--experiment", "gnn_multiedge", "--normalize", "all",
-                     "--name", "gnn_multiedge_leaknorm")))
-    jobs.append(Job("gnn_multiedge_covid_rsv_full", "run_gnn.py", "full",
-                    ("--experiment", "gnn_multiedge_covid_rsv",
-                     "--name", "gnn_multiedge_covid_rsv_full")))
-
+    # The two Luo et al. 2025 models, both standalone with a 52-week native
+    # window, so both are excluded from shorter-lookback sweeps.
+    jobs.append(Job("gat", "run_gat.py", "post_covid",
+                    ("--experiment", "gat"), native_lookback=52))
     jobs.append(Job("dualtopo", "run_dualtopo.py", "post_covid",
                     ("--experiment", "dualtopo"), native_lookback=52))
-    jobs.append(Job("dualtopo_no_bg", "run_dualtopo.py", "post_covid",
-                    ("--experiment", "dualtopo_no_bg"), native_lookback=52))
-    jobs.append(Job("dualtopo_fullhistory", "run_dualtopo.py", "full",
-                    ("--experiment", "dualtopo", "--name", "dualtopo_fullhistory"),
-                    native_lookback=52))
     return tuple(jobs)
 
 
@@ -142,7 +137,10 @@ def build_command(job: Job, horizon: int, args: argparse.Namespace) -> list[str]
     out_root = paths.horizon_dir(horizon, args.results_dir)
     ckpt_root = paths.horizon_dir(horizon, args.checkpoint_root)
     command = [
-        sys.executable, str(Path(__file__).resolve().parent / job.script),
+        # -u so the child's own status lines reach the tee'd log as they are
+        # printed rather than at exit. See the status-line contract in run_progress.py.
+        sys.executable, "-u", str(Path(__file__).resolve().parent / job.script),
+        "--city", args.city,
         "--variant", job.variant,
         "--horizons", str(horizon),
         "--output-dir", str(out_root),
@@ -158,32 +156,48 @@ def build_command(job: Job, horizon: int, args: argparse.Namespace) -> list[str]
     return command
 
 
-def run_job(job: Job, horizon: int, args: argparse.Namespace) -> dict:
+def run_job(job: Job, horizon: int, args: argparse.Namespace, log_dir: Path) -> dict:
+    """Run one model at one horizon, tee-ing its output to a watchable log.
+
+    Output goes to a file rather than into a pipe so that run_progress.py can
+    read the child's own `Budget:` / `Epoch` / `--- seed ---` markers while the
+    job is still running. Capturing it in memory, as this used to, meant a
+    ten-seed gnn_st job was a single silent hour.
+    """
     out_dir = paths.horizon_dir(horizon, args.results_dir) / job.model / job.variant
     if args.skip_existing and is_complete(out_dir, horizon):
-        return {"status": "skipped", "seconds": 0.0, "returncode": 0, "stderr": ""}
+        return {"status": "skipped", "seconds": 0.0, "returncode": 0, "stderr": "",
+                "log": ""}
 
     command = build_command(job, horizon, args)
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_path = log_dir / f"h{horizon:02d}_{job.model}_{job.variant}.log"
     started = time.perf_counter()
-    completed = subprocess.run(command, capture_output=True, text=True)
+    with log_path.open("w") as handle:
+        completed = subprocess.run(command, stdout=handle,
+                                   stderr=subprocess.STDOUT, text=True)
     elapsed = time.perf_counter() - started
+    lines = log_path.read_text(errors="replace").splitlines()
 
     if completed.returncode != 0:
-        tail = "\n".join(completed.stderr.strip().splitlines()[-20:])
         return {"status": "failed", "seconds": elapsed,
-                "returncode": completed.returncode, "stderr": tail}
+                "returncode": completed.returncode,
+                "stderr": "\n".join(line for line in lines[-20:]),
+                "log": str(log_path)}
 
     # A zero exit with no artifacts means the script wrote somewhere unexpected.
     if not is_complete(out_dir, horizon):
         return {"status": "failed", "seconds": elapsed, "returncode": 0,
-                "stderr": f"exited 0 but {out_dir} has no run_config.json for horizon {horizon}"}
+                "stderr": f"exited 0 but {out_dir} has no run_config.json for horizon {horizon}",
+                "log": str(log_path)}
 
-    warning = [line for line in completed.stderr.splitlines() if line.startswith("warning:")]
+    warning = [line for line in lines if line.startswith("warning:")]
     return {"status": "ok", "seconds": elapsed, "returncode": 0,
-            "stderr": "\n".join(warning[-3:])}
+            "stderr": "\n".join(warning[-3:]), "log": str(log_path)}
 
 
-def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...]) -> list[str]:
+def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...],
+                   city: City) -> list[str]:
     """Assert every horizon scores the same test weeks, before anything trains.
 
     Test membership is decided by target date, so all horizons should land on
@@ -191,9 +205,11 @@ def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...]) -> list
     error-growth curve would be comparing different evaluation sets and every
     number downstream would be meaningless.
     """
-    from influenza.data import load_rates
-
-    rates = load_rates()
+    rates = city.loaders.load_rates()
+    # The window the child runs will actually use: the city's own if it
+    # declares one (Buenos Aires), else the shared one. Checking the shared
+    # window for every city validated the wrong weeks for AMBA.
+    test_start, test_end = city.evaluation_window()
     problems: list[str] = []
     spans: set[tuple[str, str]] = set()
     print(f"\n{'variant':>14} {'H':>3} {'origins':>8} {'train':>6} {'val':>5} {'test':>5}  "
@@ -201,7 +217,7 @@ def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...]) -> list
     for variant in variants:
         index = variant_data(rates, variant).index
         for horizon in horizons:
-            window = Window(horizons=(horizon,))
+            window = Window(horizons=(horizon,), test_start=test_start, test_end=test_end)
             origins = valid_origins(index, window)
             try:
                 split = split_origins(index, origins, window)
@@ -212,7 +228,7 @@ def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...]) -> list
             spans.add((str(first.date()), str(last.date())))
             print(f"{variant:>14} {horizon:>3} {len(origins):>8} {len(split.train):>6} "
                   f"{len(split.val):>5} {len(split.test):>5}  {first.date()} -> {last.date()}")
-            if not (TEST_START <= first <= TEST_END):
+            if not (test_start <= first <= test_end):
                 problems.append(f"{variant} h={horizon}: first test target {first.date()} "
                                 f"outside the evaluation window")
     if len(spans) > 1:
@@ -223,9 +239,19 @@ def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...]) -> list
 
 def main() -> None:
     args = parse_args()
+    city = get_city(args.city)
     horizons = args.horizons
-    variants = args.variants
-    matrix = build_matrix(variants)
+    # Only the variants this city actually has. Columbus and Buenos Aires start
+    # in 2022, so exclude_covid is not a window they can express.
+    variants = tuple(v for v in args.variants if v in city.variants)
+    dropped = tuple(v for v in args.variants if v not in city.variants)
+    if dropped:
+        print(f"note: {city.label} has no {', '.join(dropped)} history; "
+              f"running {', '.join(variants) or '(nothing)'}")
+    if not variants:
+        raise SystemExit(f"error: none of {args.variants} exist for {city.label}. "
+                         f"Available: {', '.join(city.variants)}.")
+    matrix = build_matrix(variants, city)
     if args.models:
         wanted = {m.strip() for m in args.models.split(",") if m.strip()}
         unknown = wanted - {job.model for job in matrix}
@@ -234,9 +260,11 @@ def main() -> None:
                              f"Available: {sorted({j.model for j in matrix})}")
         matrix = tuple(job for job in matrix if job.model in wanted)
 
-    print(f"{len(matrix)} runs x {len(horizons)} horizons = {len(matrix) * len(horizons)} jobs")
+    print(f"{city.label}: {len(matrix)} runs x {len(horizons)} horizons = "
+          f"{len(matrix) * len(horizons)} jobs")
+    print(f"Results root: {paths.display(args.results_dir)}")
 
-    problems = check_geometry(horizons, variants)
+    problems = check_geometry(horizons, variants, city)
     for problem in problems:
         print(f"\nerror: {problem}", file=sys.stderr)
     if problems:
@@ -251,14 +279,27 @@ def main() -> None:
         return
 
     log: list[dict] = []
+    log_dir = args.log_dir or default_log_dir()
+    # run_progress.py denominator. This is a task runner, so the budget is
+    # expressed in tasks and each finished job advances the epoch axis -- the
+    # convention the status-line contract in run_progress.py sets out, and the same
+    # one run_ablation.py uses. Without these lines a three-horizon sweep was
+    # invisible to the reporter.
+    total = len(matrix) * len(horizons)
+    print(f"Budget: {total} epochs x 1 seeds", flush=True)
+    print(f"Per-job logs: {log_dir}", flush=True)
+    done = 0
     for horizon in horizons:
-        print(f"\n{'=' * 78}\nHORIZON {horizon}\n{'=' * 78}")
+        print(f"\n{'=' * 78}\nHORIZON {horizon}\n{'=' * 78}", flush=True)
         for job in matrix:
-            outcome = run_job(job, horizon, args)
+            outcome = run_job(job, horizon, args, log_dir)
+            done += 1
             log.append({"horizon": horizon, "model": job.model, "variant": job.variant,
                         **outcome})
             mark = {"ok": "ok", "skipped": "--", "failed": "FAIL"}[outcome["status"]]
-            print(f"  [{mark:>4}] {job.key:<40} {outcome['seconds']:6.1f}s")
+            print(f"Epoch {done} | {job.key} h={horizon} [{mark}] "
+                  f"{outcome['seconds']:.1f}s", flush=True)
+            print(f"  [{mark:>4}] {job.key:<40} {outcome['seconds']:6.1f}s", flush=True)
             if outcome["stderr"]:
                 for line in outcome["stderr"].splitlines():
                     print(f"         {line}")
@@ -266,8 +307,9 @@ def main() -> None:
                 raise SystemExit(f"stopping: {job.key} at horizon {horizon} failed")
 
     frame = pd.DataFrame(log)
-    paths.CROSS_HORIZON_DIR.mkdir(parents=True, exist_ok=True)
-    destination = paths.CROSS_HORIZON_DIR / "sweep_log.csv"
+    cross_horizon = args.results_dir / paths.CROSS_HORIZON_DIR.name
+    cross_horizon.mkdir(parents=True, exist_ok=True)
+    destination = cross_horizon / "sweep_log.csv"
     frame.to_csv(destination, index=False)
 
     counts = frame["status"].value_counts()
@@ -276,12 +318,15 @@ def main() -> None:
           f"{int(counts.get('failed', 0))} failed | "
           f"{frame['seconds'].sum() / 60:.1f} min total")
     print(f"Log: {destination}")
+    # Completion marker for run_progress.py.
+    print(f"Outputs: {paths.display(destination)}", flush=True)
 
     if args.compare:
         for horizon in horizons:
             root = paths.horizon_dir(horizon, args.results_dir)
             subprocess.run([sys.executable,
                             str(Path(__file__).resolve().parent / "compare_models.py"),
+                            "--city", args.city,
                             "--results-dir", str(root)], check=False)
 
     if int(counts.get("failed", 0)):
@@ -291,13 +336,19 @@ def main() -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--city", choices=city_names(), default=DEFAULT_CITY,
+                        help="Which city to sweep. Results and checkpoints land under "
+                             "the city's root; Boston keeps the historical top-level "
+                             "layout. Variants are intersected with the city's own list.")
     parser.add_argument("--horizons", default=",".join(str(h) for h in DEFAULT_HORIZONS),
                         help="Comma-separated. Each runs as its own single-horizon job.")
     parser.add_argument("--variants", default=",".join(DEFAULT_VARIANTS),
                         help="Comma-separated variants for the baselines.")
     parser.add_argument("--models", default=None, help="Comma-separated subset of the matrix.")
-    parser.add_argument("--results-dir", type=Path, default=paths.RESULTS_DIR)
-    parser.add_argument("--checkpoint-root", type=Path, default=paths.CHECKPOINT_DIR)
+    # Default None, then resolved through city_root below, so that an explicit
+    # --results-dir is still honoured verbatim -- matching cli.city_output_dirs.
+    parser.add_argument("--results-dir", type=Path, default=None)
+    parser.add_argument("--checkpoint-root", type=Path, default=None)
     parser.add_argument("--lookback", type=int, default=None,
                         help="Override the lookback for models that do not set their own. "
                              "Left unset for the headline sweep so the error-growth curve "
@@ -311,6 +362,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-carbon", action="store_true")
     parser.add_argument("--compare", action="store_true",
                         help="Run compare_models.py per horizon when the sweep finishes.")
+    parser.add_argument("--log-dir", type=Path, default=None,
+                        help="Where per-job stdout is tee'd. Defaults to the "
+                             "session scratchpad that run_progress.py watches.")
     parser.add_argument("--dry-run", action="store_true",
                         help="Check split geometry and print commands; run nothing.")
     args = parser.parse_args()
@@ -322,6 +376,10 @@ def parse_args() -> argparse.Namespace:
     if not args.horizons or min(args.horizons) < 1:
         parser.error("--horizons must be positive integers")
     args.variants = tuple(v.strip() for v in args.variants.split(",") if v.strip())
+    if args.results_dir is None:
+        args.results_dir = paths.city_root(args.city, paths.RESULTS_DIR)
+    if args.checkpoint_root is None:
+        args.checkpoint_root = paths.city_root(args.city, paths.CHECKPOINT_DIR)
     return args
 
 

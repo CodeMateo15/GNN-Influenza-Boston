@@ -17,7 +17,10 @@ from typing import Iterator
 
 from . import paths
 
+# Kept as-is for Boston so the single appended emissions.csv stays continuous
+# with every row logged before the second city existed.
 PROJECT_PREFIX = "boston-flu"
+CITY_PREFIX = {"boston": "boston-flu", "columbus": "columbus-flu"}
 
 # Energy equivalences for the console report. Rough public averages, used only
 # to make kWh legible -- not part of any result.

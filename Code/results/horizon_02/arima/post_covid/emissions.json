@@ -1,12 +1,17 @@
 {
   "run_name": "arima:post_covid:h2",
-  "enabled": false,
-  "kg_co2": null,
-  "kwh": null,
-  "duration_s": null,
-  "cpu_kwh": null,
-  "gpu_kwh": null,
-  "ram_kwh": null,
-  "hardware": {},
-  "note": "--no-carbon"
+  "enabled": true,
+  "kg_co2": 0.0011019023660813164,
+  "kwh": 0.0029823623541674663,
+  "duration_s": 221.37196408282034,
+  "cpu_kwh": 0.0026134121476371853,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 0.0003689502065302804,
+  "hardware": {
+    "cpu_model": "Apple M5",
+    "gpu_model": "",
+    "cpu_count": "10",
+    "os": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "note": null
 }

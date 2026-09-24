@@ -12,16 +12,8 @@ from dataclasses import dataclass, field
 import numpy as np
 import pandas as pd
 
+from .cities import City
 from .config import GraphSpec
-from .constants import (
-    ANCHOR_SHORT,
-    BACKGROUND_SHORT,
-    GEO_EDGES_ANCHOR,
-    GEO_EDGES_BACKGROUND,
-    GEO_EDGES_NEIGHBORHOOD,
-    N_NEIGH,
-    SHORT_NAMES,
-)
 
 
 @dataclass
@@ -35,6 +27,12 @@ class Graph:
     A: np.ndarray                       # binary, for plotting only
     counts: dict[str, int] = field(default_factory=dict)
     W_corr: np.ndarray | None = None    # second topology when spec.dual
+    # One adjacency per active edge type, in addition to their sum in `W`.
+    # Summing the types into `W` answers "does connectivity help" but throws away
+    # "which KIND of connection helped", which is the question the project exists
+    # to ask. The multi-relational model consumes these; every existing consumer
+    # keeps reading `W` and is unaffected.
+    relations: dict[str, np.ndarray] = field(default_factory=dict)
 
     @property
     def n_anchors(self) -> int:
@@ -59,6 +57,39 @@ class Graph:
         edge_weight = torch.tensor(weights, dtype=torch.float32)
         return edge_index, edge_weight
 
+    def relation_tensors(self, names: list[str] | None = None):
+        """[(name, edge_index, edge_weight)] per relation, each with self-loops.
+
+        Self-loops go on every relation so a node keeps its own signal even in a
+        relation where it happens to be isolated -- without them an isolated node
+        in one relation returns zeros and the residual path has to undo it.
+        """
+        import torch
+
+        # "all" is the summed adjacency W itself, exposed as a pseudo-relation so
+        # the single-relation and multi-relation paths are one code path. It is
+        # the DEFAULT: keeping the edge types separate measured -0.023 macro at
+        # h=2 and -0.021 at h=4 against summing them, because three relation
+        # channels widen the mixer's input on 14 scored nodes and overfit. The
+        # separate-relation path ships as an ablation so that negative result is
+        # on the record rather than assumed.
+        available = {"all": self.W, **self.relations}
+        chosen = list(self.relations) if names is None else [n for n in names if n in available]
+        out = []
+        for name in chosen:
+            matrix = available[name]
+            src, dst, weights = [], [], []
+            for i in range(self.n_nodes):
+                for j in range(self.n_nodes):
+                    if i != j and matrix[i, j] > 0:
+                        src.append(i); dst.append(j); weights.append(float(matrix[i, j]))
+            for i in range(self.n_nodes):
+                src.append(i); dst.append(i); weights.append(1.0)
+            out.append((name,
+                        torch.tensor([src, dst], dtype=torch.long),
+                        torch.tensor(weights, dtype=torch.float32)))
+        return out
+
     def normalized(self, matrix: np.ndarray | None = None) -> np.ndarray:
         """Symmetric normalisation D^-1/2 (A + I) D^-1/2, for the dense path."""
         source = self.W if matrix is None else matrix
@@ -70,25 +101,25 @@ class Graph:
     def summary(self) -> str:
         undirected = int((np.triu(self.W, 1) > 0).sum())
         parts = ", ".join(f"{k}={v}" for k, v in sorted(self.counts.items()))
-        return (f"{self.n_nodes} nodes ({self.n_neigh} neighborhoods + {self.n_anchors} anchors), "
+        return (f"{self.n_nodes} nodes ({self.n_neigh} scored + {self.n_anchors} anchors), "
                 f"{undirected} undirected edges, weights "
                 f"[{self.W.min():.3f}, {self.W.max():.3f}]\n  {parts}")
 
 
-def node_names(spec: GraphSpec) -> list[str]:
+def node_names(spec: GraphSpec, city: City) -> list[str]:
     if spec.anchors == "none":
-        return list(SHORT_NAMES)
+        return list(city.short_names)
     if spec.anchors == "single":
-        return [*SHORT_NAMES, BACKGROUND_SHORT]
-    return [*SHORT_NAMES, *ANCHOR_SHORT]
+        return [*city.short_names, city.background_short]
+    return [*city.short_names, *city.anchor_short]
 
 
-def _anchor_edges(spec: GraphSpec) -> list[tuple[str, str]]:
+def _anchor_edges(spec: GraphSpec, city: City) -> list[tuple[str, str]]:
     if spec.anchors == "none":
         return []
     if spec.anchors == "single":
-        return list(GEO_EDGES_BACKGROUND)
-    return list(GEO_EDGES_ANCHOR)
+        return list(city.geo_edges_background)
+    return list(city.geo_edges_anchor)
 
 
 def _hop_distances(adjacency: dict[int, set[int]], source: int) -> dict[int, int]:
@@ -107,45 +138,60 @@ def _hop_distances(adjacency: dict[int, set[int]], source: int) -> dict[int, int
 def build_graph(
     spec: GraphSpec,
     *,
+    city: City,
     flu_history: pd.DataFrame,
     static: np.ndarray | None = None,
-    mbta: np.ndarray | None = None,
 ) -> Graph:
     """Assemble the weighted adjacency from the active edge types.
 
     `flu_history` must already be sliced to weeks strictly before the test
     window. The caller does that slicing so the leakage guard stays visible at
     the call site rather than hidden in here.
+
+    `city` is required rather than defaulting to Boston: a silently-defaulted
+    city would build a 14-node Boston graph for a 17-node Columbus dataset and
+    the shape mismatch would surface somewhere far less obvious.
     """
-    names = node_names(spec)
+    names = node_names(spec, city)
     n_nodes = len(names)
+    n_neigh = city.n_neigh
     index = {name: i for i, name in enumerate(names)}
     counts: dict[str, int] = {}
 
     W = np.zeros((n_nodes, n_nodes), dtype=np.float64)
-    anchor_pairs = _anchor_edges(spec)
+    relations: dict[str, np.ndarray] = {}
+    anchor_pairs = _anchor_edges(spec, city)
+
+    def put(relation: str, i: int, j: int, weight: float) -> None:
+        """Accumulate into the summed W and into this relation's own matrix.
+
+        W is written exactly as before, so every existing arm reproduces.
+        """
+        W[i, j] += weight
+        W[j, i] += weight
+        matrix = relations.setdefault(relation, np.zeros((n_nodes, n_nodes), dtype=np.float64))
+        matrix[i, j] += weight
+        matrix[j, i] += weight
 
     # --- 1. Geographic -----------------------------------------------------
     if spec.geo:
         adjacency: dict[int, set[int]] = collections.defaultdict(set)
-        for a, b in GEO_EDGES_NEIGHBORHOOD:
+        for a, b in city.geo_edges:
             adjacency[index[a]].add(index[b])
             adjacency[index[b]].add(index[a])
 
-        one_hop = GEO_EDGES_NEIGHBORHOOD if not spec.uniform_complete else []
+        one_hop = city.geo_edges if not spec.uniform_complete else []
         for a, b in [*one_hop, *anchor_pairs]:
-            i, j = index[a], index[b]
-            W[i, j] += 1.0
-            W[j, i] += 1.0
+            put("geo", index[a], index[b], 1.0)
         counts["geo_1hop"] = len(one_hop) + len(anchor_pairs)
         counts["anchor_edges"] = len(anchor_pairs)
 
         if spec.geo_max_hop >= 2 and not spec.uniform_complete:
             hop_counts: collections.Counter = collections.Counter()
-            for i in range(N_NEIGH):
+            for i in range(n_neigh):
                 for node, distance in _hop_distances(adjacency, i).items():
-                    if node < N_NEIGH and 2 <= distance <= spec.geo_max_hop:
-                        W[i, node] += spec.geo_decay ** (distance - 1)
+                    if node < n_neigh and 2 <= distance <= spec.geo_max_hop:
+                        put("geo", i, node, 0.5 * spec.geo_decay ** (distance - 1))
                         if i < node:
                             hop_counts[distance] += 1
             for hop, count in sorted(hop_counts.items()):
@@ -153,11 +199,10 @@ def build_graph(
 
     # --- 2. Uniform complete control ---------------------------------------
     if spec.uniform_complete:
-        for i in range(N_NEIGH):
-            for j in range(i + 1, N_NEIGH):
-                W[i, j] += 1.0
-                W[j, i] += 1.0
-        counts["uniform"] = N_NEIGH * (N_NEIGH - 1) // 2
+        for i in range(n_neigh):
+            for j in range(i + 1, n_neigh):
+                put("uniform", i, j, 1.0)
+        counts["uniform"] = n_neigh * (n_neigh - 1) // 2
 
     # --- 3. Correlation / functional ---------------------------------------
     W_corr = None
@@ -165,13 +210,18 @@ def build_graph(
         corr_matrix = _correlation_matrix(flu_history)
         target = np.zeros_like(W) if spec.dual else W
         n_corr = 0
-        for i in range(N_NEIGH):
-            for j in range(i + 1, N_NEIGH):
+        for i in range(n_neigh):
+            for j in range(i + 1, n_neigh):
                 r = corr_matrix[i, j]
                 if np.isfinite(r) and r > spec.corr_threshold:
                     weight = spec.corr_coef * (1.0 if spec.corr_binary else float(r))
                     target[i, j] += weight
                     target[j, i] += weight
+                    if not spec.dual:
+                        matrix = relations.setdefault(
+                            "corr", np.zeros((n_nodes, n_nodes), dtype=np.float64))
+                        matrix[i, j] += weight
+                        matrix[j, i] += weight
                     n_corr += 1
         counts["corr"] = n_corr
         if spec.dual:
@@ -193,40 +243,29 @@ def build_graph(
         similarity = np.exp(-(distances ** 2) / (2 * bandwidth ** 2))
         np.fill_diagonal(similarity, 0.0)
         n_demo = 0
-        for i in range(N_NEIGH):
-            for j in range(i + 1, N_NEIGH):
+        for i in range(n_neigh):
+            for j in range(i + 1, n_neigh):
                 if similarity[i, j] > spec.demo_threshold:
-                    weight = spec.demo_coef * float(similarity[i, j])
-                    W[i, j] += weight
-                    W[j, i] += weight
+                    put("demo", i, j, spec.demo_coef * float(similarity[i, j]))
                     n_demo += 1
         counts["demo"] = n_demo
 
-    # --- 5. Transit / mobility ---------------------------------------------
-    if spec.transit:
-        if mbta is None:
-            raise ValueError("GraphSpec.transit is set but no MBTA matrix was provided.")
-        n_transit = 0
-        for i in range(N_NEIGH):
-            for j in range(i + 1, N_NEIGH):
-                if mbta[i, j] > spec.transit_threshold:
-                    weight = spec.transit_coef * float(mbta[i, j])
-                    W[i, j] += weight
-                    W[j, i] += weight
-                    n_transit += 1
-        counts["transit"] = n_transit
-
-    if spec.anchors == "seven" and counts.get("anchor_edges", 0) != len(GEO_EDGES_ANCHOR):
+    # 'seven' is Boston's anchor count and survives as the historical spelling in
+    # saved run_config.json files; 'full' is the city-neutral synonym. Both mean
+    # "use this city's complete anchor set", which is 7 nodes / 21 edges in Boston
+    # and 3 nodes / 10 edges in Columbus.
+    if spec.anchors in ("seven", "full") and \
+            counts.get("anchor_edges", 0) != len(city.geo_edges_anchor):
         raise ValueError(
-            f"Expected {len(GEO_EDGES_ANCHOR)} anchor edges, built "
+            f"Expected {len(city.geo_edges_anchor)} anchor edges for {city.label}, built "
             f"{counts.get('anchor_edges', 0)}. Anchors differ only by their edge "
             "sets -- identical edges would make them indistinguishable."
         )
 
     binary = (W > 0).astype(float)
     np.fill_diagonal(binary, 1.0)
-    return Graph(node_names=names, n_nodes=n_nodes, n_neigh=N_NEIGH,
-                 W=W, A=binary, counts=counts, W_corr=W_corr)
+    return Graph(node_names=names, n_nodes=n_nodes, n_neigh=n_neigh,
+                 W=W, A=binary, counts=counts, W_corr=W_corr, relations=relations)
 
 
 def _correlation_matrix(flu_history: pd.DataFrame) -> np.ndarray:

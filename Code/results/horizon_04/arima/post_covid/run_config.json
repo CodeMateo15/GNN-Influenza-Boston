@@ -1,8 +1,8 @@
 {
   "model": "arima",
   "variant": "post_covid",
-  "git_sha": "8dd9348",
-  "created": "2026-08-14T11:16:32",
+  "git_sha": null,
+  "created": "2026-09-17T13:20:49",
   "target_kind": "level",
   "normalize": "none",
   "window": {
@@ -12,7 +12,8 @@
     ],
     "test_start": "2025-05-31",
     "test_end": "2026-05-31",
-    "val_fraction": 0.15
+    "val_fraction": 0.15,
+    "val_mode": "tail"
   },
   "split": {
     "n_train": 119,
@@ -52,10 +53,10 @@
       "4": 0.0
     },
     "beta": {
-      "4": 67.42294764917621
+      "4": 67.42065135820987
     },
     "kappa": {
-      "4": 0.9067583056063104
+      "4": 0.9067845214653804
     },
     "n_validation": 285,
     "fitted": true,

@@ -1,8 +1,8 @@
 {
   "model": "persistence",
   "variant": "post_covid",
-  "git_sha": "8dd9348",
-  "created": "2026-08-14T11:15:35",
+  "git_sha": null,
+  "created": "2026-09-17T12:52:49",
   "target_kind": "level",
   "normalize": "none",
   "window": {
@@ -12,7 +12,8 @@
     ],
     "test_start": "2025-05-31",
     "test_end": "2026-05-31",
-    "val_fraction": 0.15
+    "val_fraction": 0.15,
+    "val_mode": "tail"
   },
   "split": {
     "n_train": 119,
@@ -35,10 +36,10 @@
       "4": 0.0
     },
     "beta": {
-      "4": 90.8228400211132
+      "4": 90.8228400211131
     },
     "kappa": {
-      "4": 0.7434249234084361
+      "4": 0.7434249234084366
     },
     "n_validation": 285,
     "fitted": true,

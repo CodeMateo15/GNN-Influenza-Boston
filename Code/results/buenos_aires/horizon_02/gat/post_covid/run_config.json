@@ -1,0 +1,37 @@
+{
+  "model": "gat",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-22T13:55:26",
+  "model_class": "GATBaseline",
+  "paper": "Luo et al. 2025, BMC Public Health 25:408 (comparison model)",
+  "paper_reported_corr": 0.5994,
+  "paper_gaps_filled": {
+    "n_layers": 2,
+    "hidden": 64,
+    "heads": 8,
+    "activation": "ELU",
+    "readout": "linear",
+    "edge_weight": "passed as a 1-d edge feature (edge_dim=1)",
+    "note": "The paper specifies only a standard multi-head attention network over the topology; these are our choices."
+  },
+  "target_kind": "level",
+  "split": {
+    "n_train": 58,
+    "n_val": 10,
+    "n_test": 53,
+    "first_test_target": "2024-11-03",
+    "last_test_target": "2025-11-02"
+  },
+  "graph_counts": {
+    "geo_1hop": 48,
+    "anchor_edges": 16,
+    "corr": 0
+  },
+  "n_node_features": 52,
+  "n_params": 8129,
+  "best_epoch": 24,
+  "best_val_mse": 0.5005742520093918,
+  "test_interval_coverage": 91.22983870967742,
+  "city": "buenos_aires"
+}

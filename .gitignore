@@ -1,5 +1,8 @@
 .claude/
 
+# Personal agent instructions; not shared.
+CLAUDE.md
+
 # macOS
 .DS_Store
 
@@ -14,3 +17,18 @@ Code/results/_cache/
 # Sweep checkpoints. The horizon-1 checkpoints stay committed; a full sweep is
 # 5 horizons x 12 experiments of weights that any run reproduces from scratch.
 Code/checkpoints/horizon_*/
+
+# Backtest and sweep output. A rolling backtest is 4 seasons x 3 horizons x
+# every arm; at ~300 KB of predictions/metrics per run that is gigabytes, and
+# any run reproduces it from the recorded seed and config. The aggregated
+# _backtest/ tables are committed; the per-run trees are not.
+Code/results/backtest_*/
+Code/results/_backtest/*.csv
+Code/checkpoints/backtest*/
+Code/sweep/tasks.jsonl
+
+# Raw SNVS respiratory-surveillance workbooks (Argentina Ministry of Health),
+# ~61 MB together. Only Code/scrapers/build_amba_panel.py reads them; the loader
+# uses the derived amba_*.csv files beside them, which ARE committed. Re-download
+# from the national open-data portal to rebuild the panel.
+Data/Buenos Aires Acute Respiratory Infections/informacion-publica-respiratorias-*.xlsx

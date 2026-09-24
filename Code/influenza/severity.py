@@ -87,8 +87,13 @@ REFERENCE_SEASON_SETS: dict[str, tuple[int, ...] | None] = {
 _EPS = 1e-9
 
 
-def season_label(dates) -> np.ndarray:
-    """Season start year for each date. August starts a new season.
+def season_label(dates, season_start_month: int | None = None) -> np.ndarray:
+    """Season start year for each date. August starts a new season by default.
+
+    `season_start_month` is the month the series sits at its annual floor, so
+    that no observed week is split across two seasons. August for the two US
+    cities; February for Buenos Aires, whose floor is December-February and
+    whose season runs April-September.
 
     MEM defines the season as ISO week 30 to week 29, which falls in late July.
     Rounding that to the August boundary keeps the label computable from the
@@ -96,7 +101,8 @@ def season_label(dates) -> np.ndarray:
     is at its annual floor throughout July and August.
     """
     stamps = pd.DatetimeIndex(pd.to_datetime(dates))
-    return np.where(stamps.month >= 8, stamps.year, stamps.year - 1)
+    boundary = 8 if season_start_month is None else int(season_start_month)
+    return np.where(stamps.month >= boundary, stamps.year, stamps.year - 1)
 
 
 def season_name(year: int) -> str:
@@ -246,6 +252,7 @@ def fit_thresholds(
     values_per_season: int | None = None,
     use_t: bool = True,
     include_citywide: bool = True,
+    season_start_month: int | None = None,
 ) -> dict[str, Thresholds]:
     """One set of thresholds per neighborhood, plus the citywide indicator.
 
@@ -258,6 +265,11 @@ def fit_thresholds(
     2024-25 season reaches into June and July 2025, which are inside the
     evaluation window: the thresholds a forecast is judged against would have
     been fitted partly on the period being judged.
+
+    `season_start_month` is the city's season boundary (`City.season_start_month`).
+    It defaults to August; Buenos Aires passes February, or its seasons would be
+    split in the middle of its trough-to-trough year and the reference seasons
+    would each contain half of two epidemics.
     """
     threshold_end = pd.Timestamp(threshold_end)
     history = rates.loc[rates.index < threshold_end]
@@ -267,7 +279,8 @@ def fit_thresholds(
             f"data spans {rates.index.min().date()}..{rates.index.max().date()}."
         )
 
-    seasons = pd.Series(season_label(history.index), index=history.index)
+    seasons = pd.Series(season_label(history.index, season_start_month),
+                        index=history.index)
     available = tuple(sorted(seasons.unique()))
     wanted = available if reference_seasons is None else tuple(sorted(reference_seasons))
     missing = [y for y in wanted if y not in available]

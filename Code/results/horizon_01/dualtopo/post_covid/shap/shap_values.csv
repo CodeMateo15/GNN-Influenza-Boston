@@ -1,0 +1,3 @@
+city,model,variant,horizon,origin_date,target_date,neighborhood,group,shap_rate_per_100k,base_rate_per_100k,predicted_rate_per_100k,actual_rate_per_100k,n_background,seed
+boston,dualtopo,post_covid,1,2025-12-14,2025-12-21,Dorchester,Own flu history,0.21190433665769604,64.71521763031906,65.81370416107893,256.1499938964844,20,0
+boston,dualtopo,post_covid,1,2025-12-14,2025-12-21,Dorchester,Neighbours' flu history,0.8865821941021679,64.71521763031906,65.81370416107893,256.1499938964844,20,0

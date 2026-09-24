@@ -1,0 +1,3 @@
+city,model,variant,horizon,group,mean_abs_shap_rate_per_100k,mean_signed_shap_rate_per_100k,n_node_weeks,n_weeks
+boston,dualtopo,post_covid,2,Neighbours' flu history,0.006498937689132654,-0.0010761458697318828,154,11
+boston,dualtopo,post_covid,2,Own flu history,0.0018130813890213158,-0.0008466479978445521,154,11

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from functools import lru_cache
 from pathlib import Path
 
@@ -12,17 +13,32 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
-from .constants import FLU_MONTHS, NEIGHBORHOODS, SHORT_NAMES  # noqa: E402
+from .cities import City, get as get_city  # noqa: E402
+from .constants import FLU_MONTHS  # noqa: E402
 
-ACTUAL_COLOUR = "#2c3e50"
-PREDICTED_COLOUR = "#e74c3c"
-SEASON_COLOUR = "#f1c40f"
+# These three hex values used to live here, duplicated from nothing and
+# disagreeing with influenza/palette.py, which is why the comparison figures and
+# these grids looked like two different projects. palette.py is now the plain
+# style and these are its first two slots, so the names stay and the values come
+# from one place.
+from .palette import ACTUAL as ACTUAL_COLOUR  # noqa: E402
+from .palette import SEASON as SEASON_COLOUR  # noqa: E402
+from .palette import THRESHOLD_INK, THRESHOLD_STYLES  # noqa: E402,F401
+from .palette import series_colour  # noqa: E402
+
+PREDICTED_COLOUR = series_colour(1)
 
 
-def _flu_season_spans(dates: pd.DatetimeIndex) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
-    """Contiguous runs of flu-season weeks, for axvspan shading."""
+def _flu_season_spans(dates: pd.DatetimeIndex, flu_months=None
+                      ) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
+    """Contiguous runs of flu-season weeks, for axvspan shading.
+
+    `flu_months` defaults to the shared Northern-Hemisphere set; a city with a
+    different season passes its own, or the shading lands on the wrong half of
+    every Buenos Aires chart.
+    """
     dates = pd.DatetimeIndex(sorted(pd.to_datetime(dates)))
-    in_season = np.isin(dates.month, list(FLU_MONTHS))
+    in_season = np.isin(dates.month, list(FLU_MONTHS if flu_months is None else flu_months))
     spans: list[tuple[pd.Timestamp, pd.Timestamp]] = []
     start: pd.Timestamp | None = None
     for date, flag in zip(dates, in_season):
@@ -36,16 +52,14 @@ def _flu_season_spans(dates: pd.DatetimeIndex) -> list[tuple[pd.Timestamp, pd.Ti
     return spans
 
 
-# One style per severity boundary, matching plot_forecasts.py so the two figure
-# families read the same way.
-THRESHOLD_STYLES = [((0, (1, 3)), 0.8, 0.50), ((0, (4, 3)), 1.0, 0.65),
-                    ((0, (7, 2)), 1.2, 0.80)]
-THRESHOLD_INK = "#52514e"
 
 
 @lru_cache(maxsize=1)
-def _fixed_axes():
+def _fixed_axes(city_name: str = "boston"):
     """(shared y ceiling, shared thresholds), or (None, None) on any failure.
+
+    Keyed by city name rather than by City object so that lru_cache still works:
+    City is frozen but holds a dict, so it is not hashable.
 
     Cached: replot_grids.py redraws 138 charts in one process, and reloading the
     BPHC series and refitting the thresholds for each one dominated the runtime.
@@ -57,15 +71,17 @@ def _fixed_axes():
     completed training run over.
     """
     try:
-        from .constants import TEST_END, TEST_START
-        from .data import load_rates
         from .severity import (CITYWIDE, REFERENCE_SEASON_SETS, fit_thresholds,
                                shared_ceiling)
 
-        rates = load_rates()
-        fitted = fit_thresholds(rates, reference_seasons=REFERENCE_SEASON_SETS["post_covid"])
+        city = get_city(city_name)
+        test_start, test_end = city.evaluation_window()
+        rates = city.loaders.load_rates()
+        fitted = fit_thresholds(rates, reference_seasons=REFERENCE_SEASON_SETS["post_covid"],
+                                threshold_end=test_start,
+                                season_start_month=city.season_start_month)
         thresholds = fitted[CITYWIDE]
-        return shared_ceiling(rates, thresholds, window=(TEST_START, TEST_END)), thresholds
+        return shared_ceiling(rates, thresholds, window=(test_start, test_end)), thresholds
     except Exception as exc:  # pragma: no cover
         print(f"warning: falling back to autoscaled axes ({type(exc).__name__}: {exc})")
         return None, None
@@ -80,21 +96,33 @@ def save_grid_plot(
     bands: bool = False,
     shade_flu_season: bool = True,
     fixed_axes: bool = True,
+    city: City | None = None,
 ) -> None:
-    """4x4 grid of actual vs predicted, one panel per neighborhood."""
+    """Grid of actual vs predicted, one panel per scored node.
+
+    The grid was a hardcoded 4x4, which is exactly right for Boston's 14
+    neighborhoods and silently drops three of Columbus's 17 areas. It is now
+    sized from the city's node count.
+    """
+    city = city or get_city("boston")
+    node_names, short_names = list(city.node_names), list(city.short_names)
     data = predictions.loc[predictions["horizon"].eq(horizon)].copy()
     data["target_date"] = pd.to_datetime(data["target_date"])
-    spans = _flu_season_spans(data["target_date"].unique()) if shade_flu_season else []
+    spans = (_flu_season_spans(data["target_date"].unique(), city.flu_months)
+             if shade_flu_season else [])
     show_bands = bands and {"lower", "upper"}.issubset(data.columns)
-    ceiling, thresholds = _fixed_axes() if fixed_axes else (None, None)
+    ceiling, thresholds = _fixed_axes(city.name) if fixed_axes else (None, None)
     entries = []
     if thresholds is not None:
         from .severity import band_entry_labels
         entries = band_entry_labels(thresholds)
 
-    fig, axes = plt.subplots(4, 4, figsize=(18, 14), sharex=True, sharey=True)
+    n_cols = 4
+    n_rows = math.ceil(len(node_names) / n_cols)
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(18, 3.5 * n_rows),
+                             sharex=True, sharey=True, squeeze=False)
     clipped: list[str] = []
-    for ax, neighborhood in zip(axes.flat, NEIGHBORHOODS):
+    for ax, neighborhood in zip(axes.flat, node_names):
         part = data.loc[data["neighborhood"].eq(neighborhood)].sort_values("target_date")
         for lo, hi in spans:
             ax.axvspan(lo, hi, color=SEASON_COLOUR, alpha=0.15, lw=0)
@@ -108,7 +136,7 @@ def save_grid_plot(
         ax.plot(part["target_date"], part["actual"], color=ACTUAL_COLOUR, label="Actual")
         ax.plot(part["target_date"], part["predicted"], "--", color=PREDICTED_COLOUR,
                 label="Predicted")
-        short = SHORT_NAMES[NEIGHBORHOODS.index(neighborhood)]
+        short = short_names[node_names.index(neighborhood)]
         if ceiling:
             ax.set_ylim(0, ceiling)
             highest = float(np.nanmax(part["predicted"].to_numpy(dtype=float), initial=0.0))
@@ -118,7 +146,7 @@ def save_grid_plot(
                             ha="right", fontsize=7, color="#898781")
         ax.set_title(short, fontsize=9)
         ax.tick_params(axis="x", rotation=35, labelsize=7)
-    for ax in axes.flat[len(NEIGHBORHOODS):]:
+    for ax in axes.flat[len(node_names):]:
         ax.axis("off")
     axes.flat[0].legend(fontsize=8, ncol=2)
     if clipped:

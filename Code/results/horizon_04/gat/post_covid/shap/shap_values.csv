@@ -1,0 +1,3 @@
+city,model,variant,horizon,origin_date,target_date,neighborhood,group,shap_rate_per_100k,base_rate_per_100k,predicted_rate_per_100k,actual_rate_per_100k,n_background,seed
+boston,gat,post_covid,4,2025-11-23,2025-12-21,Dorchester,Own flu history,-2.8320236687691285,58.50446876336891,50.19027790459222,256.1499938964844,20,0
+boston,gat,post_covid,4,2025-11-23,2025-12-21,Dorchester,Neighbours' flu history,-5.482167190007566,58.50446876336891,50.19027790459222,256.1499938964844,20,0

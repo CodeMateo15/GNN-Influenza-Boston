@@ -6,12 +6,21 @@ the flu data boundaries.
 Output: Data/Weather/<neighborhood_slug>_weather_weekly.csv (one per neighborhood)
 """
 
+import sys
 import time
 from datetime import date, timedelta
 from pathlib import Path
 
 import pandas as pd
 import requests
+
+# The scrapers sit one level below Code/, where the influenza package lives, so
+# that every output path resolves through influenza.paths like the rest of the
+# project. Without this these scripts wrote to Code/Data/, which does not exist:
+# they predate the move into Code/scrapers/ and silently created a second tree.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from influenza import paths
 
 # --- Config ---
 API_URL = "https://archive-api.open-meteo.com/v1/archive"
@@ -29,7 +38,7 @@ DAILY_VARIABLES = [
     "wind_speed_10m_max",
 ]
 
-OUTPUT_DIR = Path(__file__).resolve().parent.parent / "Data" / "Weather"
+OUTPUT_DIR = paths.WEATHER_DIR
 
 MAX_RETRIES = 5
 BACKOFF_BASE = 2  # seconds

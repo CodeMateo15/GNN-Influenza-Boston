@@ -100,10 +100,18 @@ def metric_values(
     return out
 
 
-def segment_labels(target_dates) -> np.ndarray:
-    """'flu_season' for Oct-Mar target weeks, 'off_season' otherwise."""
+def segment_labels(target_dates, flu_months=None) -> np.ndarray:
+    """'flu_season' for in-season target weeks, 'off_season' otherwise.
+
+    `flu_months` defaults to the Northern-Hemisphere Oct-Mar set so that every
+    existing call keeps its behaviour. A Southern-Hemisphere city passes its
+    own: Buenos Aires peaks in epiweeks 22-24 and its season is Apr-Sep, so the
+    default would label its entire epidemic "off_season" and then report that
+    the off-season is where all the error is.
+    """
     months = pd.DatetimeIndex(pd.to_datetime(target_dates)).month
-    return np.where(np.isin(months, list(FLU_MONTHS)), "flu_season", "off_season")
+    months_in_season = list(FLU_MONTHS if flu_months is None else flu_months)
+    return np.where(np.isin(months, months_in_season), "flu_season", "off_season")
 
 
 def _segment_mask(frame: pd.DataFrame, segment: str) -> pd.Series:
@@ -141,6 +149,7 @@ def build_metrics(
     variant: str,
     extras: bool = False,
     segments: tuple[str, ...] = SEGMENTS,
+    flu_months=None,
 ) -> pd.DataFrame:
     """Long-form metrics table: one row per (segment, scope, neighborhood, horizon).
 
@@ -148,7 +157,10 @@ def build_metrics(
     predicted, and optionally lower/upper for interval coverage.
     """
     frame = predictions.copy()
-    frame["segment"] = segment_labels(frame["target_date"])
+    # `flu_months` is the city's season (City.flu_months). Without it every
+    # run is split Oct-Mar, which labels Buenos Aires's entire epidemic
+    # "off_season".
+    frame["segment"] = segment_labels(frame["target_date"], flu_months)
     has_bands = {"lower", "upper"}.issubset(frame.columns)
 
     def band(part: pd.DataFrame) -> dict:
