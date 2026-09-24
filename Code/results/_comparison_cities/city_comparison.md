@@ -4,9 +4,8 @@ Horizon 1, variant `post_covid`, the **49 target weeks common to both cities** (
 
 `xcity_*` arms use only features BOTH cities can supply — flu lags, weather,
 static demographics and `ili_count`. Boston's published `gnn_*` arms also use
-MBTA transit edges and four more city-wide covariates that Columbus has no
-equivalent for; comparing those directly would attribute a feature-set
-difference to the city.
+four more city-wide covariates that Columbus has no equivalent for; comparing
+those directly would attribute a feature-set difference to the city.
 
 **Skill** is RMSE ÷ persistence's RMSE in the same city. Below 1.00 beats
 "next week equals this week". Raw RMSE is not comparable across the cities

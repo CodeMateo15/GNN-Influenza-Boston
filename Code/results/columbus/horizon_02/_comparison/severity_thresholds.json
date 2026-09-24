@@ -1,0 +1,470 @@
+{
+  "Agler/Cassidy": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Agler/Cassidy",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 51.74083078339265,
+      "0.9": 88.48740693700204,
+      "0.98": 124.72586226376617
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 51.74083078339265,
+    "log_sd": 0.4025266688571466,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Bexley": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Bexley",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 24.605454693531783,
+      "0.9": 37.5430295506582,
+      "0.98": 49.19357270883574
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 24.605454693531783,
+    "log_sd": 0.3169423645056228,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Clintonville/Near North": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Clintonville/Near North",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 15.728895715230147,
+      "0.9": 22.099499115677975,
+      "0.98": 27.469599865392972
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 15.728895715230147,
+    "log_sd": 0.25508397411240086,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Dublin": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Dublin",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 8.038849454818003,
+      "0.9": 14.1626396504559,
+      "0.98": 20.345693253667104
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 8.038849454818003,
+    "log_sd": 0.42481175012976624,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Eastside": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Eastside",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 53.89825474693718,
+      "0.9": 89.53274062296502,
+      "0.98": 123.87134674281285
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 53.89825474693718,
+    "log_sd": 0.38069298733725804,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Far East": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Far East",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 76.01095931639992,
+      "0.9": 119.58175049878095,
+      "0.98": 159.7885780471188
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 76.01095931639992,
+    "log_sd": 0.33989853131603626,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Far South": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Far South",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 69.7066330370401,
+      "0.9": 121.95949130896,
+      "0.98": 174.42921640712913
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 69.7066330370401,
+    "log_sd": 0.41961485315569236,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Far Southeast": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Far Southeast",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 10.956265259525463,
+      "0.9": 18.40391015194404,
+      "0.98": 25.644566505740826
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 10.956265259525463,
+    "log_sd": 0.38905343479489685,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Far Southwest": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Far Southwest",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 34.041053932580134,
+      "0.9": 54.68112356483704,
+      "0.98": 74.04650918881951
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 34.041053932580134,
+    "log_sd": 0.35552256649752395,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Hilliard": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Hilliard",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 19.24134804712757,
+      "0.9": 34.52709434950146,
+      "0.98": 50.186768532537315
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 19.24134804712757,
+    "log_sd": 0.43858504087382677,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Linden": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Linden",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 53.62727596624066,
+      "0.9": 82.61523156370409,
+      "0.98": 108.92078323683364
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 53.62727596624066,
+    "log_sd": 0.32415606641056255,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "NE Suburban": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "NE Suburban",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 27.312493683860776,
+      "0.9": 41.22759712033061,
+      "0.98": 53.6511443833241
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 27.312493683860776,
+    "log_sd": 0.3088740590557928,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Northland": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Northland",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 56.127661353876796,
+      "0.9": 89.91407794411414,
+      "0.98": 121.54516325409915
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 56.127661353876796,
+    "log_sd": 0.3534780766950588,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "UA/Grandview": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "UA/Grandview",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 8.143164584776198,
+      "0.9": 16.706142473783938,
+      "0.98": 26.455007113900507
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 8.143164584776198,
+    "log_sd": 0.5390377923682365,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "West": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "West",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 73.15037971354549,
+      "0.9": 114.1022318647041,
+      "0.98": 151.63555393306305
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 73.15037971354549,
+    "log_sd": 0.3334885570585623,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Westerville": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Westerville",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 24.33364195874595,
+      "0.9": 36.408491039457616,
+      "0.98": 47.11324141772458
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 24.33364195874595,
+    "log_sd": 0.30225687807845436,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "Worthington": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Worthington",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 13.721631551906164,
+      "0.9": 22.978569674557114,
+      "0.98": 31.956357603850087
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 13.721631551906164,
+    "log_sd": 0.38675565844444393,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  },
+  "CITYWIDE": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "CITYWIDE",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 35.19412725226089,
+      "0.9": 56.071415152332634,
+      "0.98": 75.53173152268305
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24",
+      "2024-25"
+    ],
+    "values_per_season": 10,
+    "n_pooled": 30,
+    "geometric_mean": 35.19412725226089,
+    "log_sd": 0.3493682620878028,
+    "use_t": true,
+    "fitted_through": "2025-05-31",
+    "underpowered": false
+  }
+}

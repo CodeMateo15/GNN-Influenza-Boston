@@ -1,8 +1,8 @@
 {
   "model": "lstm",
   "variant": "post_covid",
-  "git_sha": "8dd9348",
-  "created": "2026-08-14T11:06:48",
+  "git_sha": "814d672",
+  "created": "2026-09-02T19:53:09",
   "target_kind": "level",
   "normalize": "train",
   "window": {
@@ -12,7 +12,8 @@
     ],
     "test_start": "2025-05-31",
     "test_end": "2026-05-31",
-    "val_fraction": 0.15
+    "val_fraction": 0.15,
+    "val_mode": "tail"
   },
   "split": {
     "n_train": 121,
@@ -29,7 +30,7 @@
   "best_val_mse": 1.0924482345581055,
   "n_params": 21390,
   "imputed_feature_cells": 139,
-  "checkpoint": "checkpoints/horizon_02/lstm_post_covid.pt",
+  "checkpoint": "Code/checkpoints/horizon_02/lstm_post_covid.pt",
   "intervals": {
     "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
     "alpha": {

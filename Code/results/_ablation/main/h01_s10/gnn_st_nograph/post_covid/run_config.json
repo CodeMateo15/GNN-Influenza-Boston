@@ -1,0 +1,270 @@
+{
+  "model": "gnn_st_nograph",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-17T15:29:01",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 115,
+    "n_val": 20,
+    "n_test": 49,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-03"
+  },
+  "graph_counts": {},
+  "n_nodes": 14,
+  "edge_weight_range": [
+    0.0,
+    0.0
+  ],
+  "n_node_features": 46,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "temp_mean_c",
+    "temp_max_c",
+    "temp_min_c",
+    "relative_humidity_mean",
+    "precipitation_sum_mm",
+    "wind_speed_max_kmh",
+    "pop_density",
+    "poverty_rate",
+    "transit_share",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate",
+    "no_vehicle_rate",
+    "nonwhite_share"
+  ],
+  "global_names": [],
+  "n_params": 13876,
+  "best_epoch": 45,
+  "best_val_mse": 0.8003085851669312,
+  "epochs_run": 120,
+  "checkpoint": "checkpoints/_ablation/main/h01_s10/gnn_st_nograph_post_covid.pt",
+  "experiment": {
+    "name": "gnn_st_nograph",
+    "model": "stgnn",
+    "variant": "post_covid",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "none",
+      "geo": false,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": false,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 0.003,
+      "epochs": 120,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.25,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": false,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        1
+      ],
+      "test_start": "2025-05-31",
+      "test_end": "2026-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "tail"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Genuinely no spatial term: no hand-built edges AND no adaptive adjacency, so each neighborhood is forecast from its own history with shared weights. The honest floor for 'does the graph help at all', and the number that decides whether this is a graph problem. Removing the hand-built edges alone does not get here -- the adaptive adjacency would still be a learned graph."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 12.264466662947278
+    },
+    "kappa": {
+      "1": 0.8128926523493608
+    },
+    "n_validation": 271,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 96.81020733652312,
+  "city": "boston",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "n_seeds": 10,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.8453218340873718,
+    "43": 0.8414886593818665,
+    "44": 0.8269498944282532,
+    "45": 0.8615805506706238,
+    "46": 0.885631799697876,
+    "47": 0.8003085851669312,
+    "48": 0.8383951187133789,
+    "49": 0.8341534733772278,
+    "50": 0.8168842792510986,
+    "51": 0.9089304804801941
+  },
+  "per_seed_best_epoch": {
+    "42": 45,
+    "43": 64,
+    "44": 60,
+    "45": 36,
+    "46": 67,
+    "47": 45,
+    "48": 54,
+    "49": 71,
+    "50": 67,
+    "51": 85
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 14,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "1": 0.8539
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 1.0
+    },
+    {
+      "all": 1.0
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.8539
+    ],
+    "43": [
+      0.8327
+    ],
+    "44": [
+      0.8414
+    ],
+    "45": [
+      0.8658
+    ],
+    "46": [
+      0.8328
+    ],
+    "47": [
+      0.8608
+    ],
+    "48": [
+      0.8445
+    ],
+    "49": [
+      0.8238
+    ],
+    "50": [
+      0.8322
+    ],
+    "51": [
+      0.8201
+    ]
+  }
+}

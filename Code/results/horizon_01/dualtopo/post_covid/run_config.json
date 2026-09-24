@@ -1,8 +1,8 @@
 {
   "model": "dualtopo",
   "variant": "post_covid",
-  "git_sha": "8dd9348",
-  "created": "2026-08-14T10:57:06",
+  "git_sha": "814d672",
+  "created": "2026-09-02T19:54:35",
   "target_kind": "level",
   "normalize": "train",
   "split": {
@@ -31,7 +31,7 @@
     "corr_threshold": 0.85,
     "optimizer": "Adam"
   },
-  "checkpoint": "checkpoints/horizon_01/dualtopo_post_covid.pt",
+  "checkpoint": "Code/checkpoints/horizon_01/dualtopo_post_covid.pt",
   "experiment": {
     "name": "dualtopo",
     "model": "dualtopo",
@@ -48,6 +48,7 @@
       "use_rsv_cases": false,
       "use_rsv_wastewater": false,
       "use_rt": false,
+      "use_seasonality": false,
       "use_imputed_flag": false,
       "globals_": []
     },
@@ -85,7 +86,26 @@
       ],
       "seed": 42,
       "mc_samples": 100,
-      "mc_seed": 123
+      "mc_seed": 123,
+      "optimizer": "adam",
+      "schedule": "plateau",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 0.0,
+      "pearson_weight": 0.0,
+      "n_seeds": 1,
+      "relations": [
+        "all"
+      ]
     },
     "window": {
       "lookback": 52,
@@ -94,7 +114,8 @@
       ],
       "test_start": "2025-05-31",
       "test_end": "2026-05-31",
-      "val_fraction": 0.15
+      "val_fraction": 0.15,
+      "val_mode": "tail"
     },
     "note": "Paper-faithful Dual-Topo-STGCN (Luo et al. 2025, BMC Public Health 25:408). ILI rates only, two separate topologies, 52-week input."
   },

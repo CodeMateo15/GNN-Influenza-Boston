@@ -1,0 +1,8 @@
+city,model,variant,horizon,group,mean_abs_shap_rate_per_100k,mean_signed_shap_rate_per_100k,n_node_weeks,n_weeks
+boston,gnn_st,post_covid,2,Persistence anchor,12.45303538725831,-0.7327222577919709,154,11
+boston,gnn_st,post_covid,2,Neighbours' flu history,6.048424539545908,-1.8498279518930858,154,11
+boston,gnn_st,post_covid,2,Own flu history,4.211319747666551,-0.8963836251792322,154,11
+boston,gnn_st,post_covid,2,Climatology,3.2424823954123347,-0.23895359845148503,154,11
+boston,gnn_st,post_covid,2,Neighbours' other inputs,1.1434618028407817,0.06494411941912838,154,11
+boston,gnn_st,post_covid,2,Own weather,0.43952785199571087,-0.01869273473955816,154,11
+boston,gnn_st,post_covid,2,Own demographics,0.042764921348484815,0.009289489800563693,154,11

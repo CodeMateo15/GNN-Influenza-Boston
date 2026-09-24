@@ -1,8 +1,8 @@
 {
   "model": "seasonal_naive",
   "variant": "post_covid",
-  "git_sha": "8dd9348",
-  "created": "2026-08-14T10:54:42",
+  "git_sha": "814d672",
+  "created": "2026-09-02T19:49:09",
   "target_kind": "level",
   "normalize": "none",
   "window": {
@@ -12,7 +12,8 @@
     ],
     "test_start": "2025-05-31",
     "test_end": "2026-05-31",
-    "val_fraction": 0.15
+    "val_fraction": 0.15,
+    "val_mode": "tail"
   },
   "split": {
     "n_train": 122,

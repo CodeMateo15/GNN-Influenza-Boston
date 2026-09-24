@@ -1,0 +1,315 @@
+{
+  "model": "gnn_st_trendblend",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-18T12:01:43",
+  "target_kind": "trendblend",
+  "normalize": "train",
+  "split": {
+    "n_train": 113,
+    "n_val": 19,
+    "n_test": 49,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-03"
+  },
+  "graph_counts": {
+    "geo_1hop": 44,
+    "anchor_edges": 21,
+    "geo_2hop": 29,
+    "geo_3hop": 22,
+    "corr": 39,
+    "demo": 60
+  },
+  "n_nodes": 21,
+  "edge_weight_range": [
+    0.0,
+    2.821521257220462
+  ],
+  "n_node_features": 46,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "temp_mean_c",
+    "temp_max_c",
+    "temp_min_c",
+    "relative_humidity_mean",
+    "precipitation_sum_mm",
+    "wind_speed_max_kmh",
+    "pop_density",
+    "poverty_rate",
+    "transit_share",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate",
+    "no_vehicle_rate",
+    "nonwhite_share"
+  ],
+  "global_names": [],
+  "n_params": 15703,
+  "best_epoch": 19,
+  "best_val_mse": 1.4291884899139404,
+  "epochs_run": 120,
+  "checkpoint": "checkpoints/_ablation/timing/h04_s10/gnn_st_trendblend_post_covid.pt",
+  "experiment": {
+    "name": "gnn_st_trendblend",
+    "model": "stgnn",
+    "variant": "post_covid",
+    "target": "trendblend",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": true,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 0.003,
+      "epochs": 120,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.25,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        4
+      ],
+      "test_start": "2025-05-31",
+      "test_end": "2026-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "tail"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. The origin half of the blended baseline is extrapolated along the recent trend instead of held flat, by a learned and sigmoid-bounded share -- so the anchor is not h weeks stale."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "4": 0.0
+    },
+    "beta": {
+      "4": 51.58018181656547
+    },
+    "kappa": {
+      "4": 0.6210472316513532
+    },
+    "n_validation": 257,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 96.96969696969697,
+  "city": "boston",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "n_seeds": 10,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 1.6846402883529663,
+    "43": 1.6813043355941772,
+    "44": 1.5304383039474487,
+    "45": 1.7807047367095947,
+    "46": 1.6316115856170654,
+    "47": 1.7536349296569824,
+    "48": 1.4291884899139404,
+    "49": 1.6286464929580688,
+    "50": 1.4962217807769775,
+    "51": 1.6085261106491089
+  },
+  "per_seed_best_epoch": {
+    "42": 54,
+    "43": 79,
+    "44": 28,
+    "45": 17,
+    "46": 25,
+    "47": 12,
+    "48": 19,
+    "49": 23,
+    "50": 72,
+    "51": 60
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 14,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "4": 0.3576
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 0.5444,
+      "adaptive": 0.4556
+    },
+    {
+      "all": 0.6136,
+      "adaptive": 0.3864
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.3576
+    ],
+    "43": [
+      0.3421
+    ],
+    "44": [
+      0.4024
+    ],
+    "45": [
+      0.4291
+    ],
+    "46": [
+      0.4079
+    ],
+    "47": [
+      0.4528
+    ],
+    "48": [
+      0.4321
+    ],
+    "49": [
+      0.4104
+    ],
+    "50": [
+      0.3483
+    ],
+    "51": [
+      0.3458
+    ]
+  },
+  "blend_trend_share_per_horizon": {
+    "4": 0.1697
+  },
+  "per_seed_blend_trend_share": {
+    "42": [
+      0.1697
+    ],
+    "43": [
+      0.1657
+    ],
+    "44": [
+      0.2048
+    ],
+    "45": [
+      0.2259
+    ],
+    "46": [
+      0.2037
+    ],
+    "47": [
+      0.2288
+    ],
+    "48": [
+      0.2167
+    ],
+    "49": [
+      0.2064
+    ],
+    "50": [
+      0.1682
+    ],
+    "51": [
+      0.1665
+    ]
+  }
+}

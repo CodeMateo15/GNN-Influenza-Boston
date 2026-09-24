@@ -1,0 +1,47 @@
+{
+  "model": "seasonal_naive",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-22T12:48:16",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      2
+    ],
+    "test_start": "2025-05-31",
+    "test_end": "2026-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "tail"
+  },
+  "split": {
+    "n_train": 127,
+    "n_val": 15,
+    "n_test": 53,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-31"
+  },
+  "season_lag_weeks": 52,
+  "nearest_tolerance_weeks": 2,
+  "prediction_sources": {
+    "lag": 901
+  },
+  "n_params": 0,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "2": 0.0
+    },
+    "beta": {
+      "2": 19.878929908875957
+    },
+    "kappa": {
+      "2": 0.9207943261202425
+    },
+    "n_validation": 255,
+    "fitted": true,
+    "note": ""
+  },
+  "test_interval_coverage": 97.89123196448391
+}

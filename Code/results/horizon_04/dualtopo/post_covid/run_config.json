@@ -1,8 +1,8 @@
 {
   "model": "dualtopo",
   "variant": "post_covid",
-  "git_sha": "8dd9348",
-  "created": "2026-08-14T11:17:55",
+  "git_sha": null,
+  "created": "2026-09-17T12:56:35",
   "target_kind": "level",
   "normalize": "train",
   "split": {
@@ -23,7 +23,7 @@
   "time_axis_before_readout": 42,
   "n_params": 479905,
   "best_epoch": 3,
-  "best_val_mse": 0.3602164089679718,
+  "best_val_mse": 0.36021625995635986,
   "epochs_run": 23,
   "paper": "Luo et al. 2025, BMC Public Health 25:408",
   "paper_gaps_filled": {
@@ -64,9 +64,6 @@
       "demo": false,
       "demo_threshold": 0.5,
       "demo_coef": 1.0,
-      "transit": false,
-      "transit_threshold": 0.0,
-      "transit_coef": 1.0,
       "uniform_complete": false,
       "dual": true
     },
@@ -86,7 +83,28 @@
       ],
       "seed": 42,
       "mc_samples": 100,
-      "mc_seed": 123
+      "mc_seed": 123,
+      "optimizer": "adam",
+      "schedule": "plateau",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 0.0,
+      "pearson_weight": 0.0,
+      "n_seeds": 1,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
     },
     "window": {
       "lookback": 52,
@@ -95,7 +113,8 @@
       ],
       "test_start": "2025-05-31",
       "test_end": "2026-05-31",
-      "val_fraction": 0.15
+      "val_fraction": 0.15,
+      "val_mode": "tail"
     },
     "note": "Paper-faithful Dual-Topo-STGCN (Luo et al. 2025, BMC Public Health 25:408). ILI rates only, two separate topologies, 52-week input."
   },
@@ -105,10 +124,10 @@
       "4": 0.0
     },
     "beta": {
-      "4": 17.58552524900168
+      "4": 17.585522721504525
     },
     "kappa": {
-      "4": 0.6756436035008616
+      "4": 0.6756438435654946
     },
     "n_validation": 187,
     "fitted": true,

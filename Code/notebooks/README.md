@@ -5,15 +5,20 @@ These notebooks produced the results recorded in
 They are **no longer the source of truth** and are not maintained.
 
 The Python scripts in `Code/` replaced them. Three notebooks that differed in
-only six cells collapsed into one `run_gnn.py` plus an entry in the
-`EXPERIMENTS` registry in `influenza/config.py`:
+only six cells collapsed into one `run_gnn.py` plus an entry in the `EXPERIMENTS`
+registry in `influenza/config.py`:
 
-| Notebook | Replaced by |
+| Notebook | Was replaced by |
 |---|---|
-| `Boston_Influenza_GNN_PostCovid.ipynb` | `run_gnn.py --experiment gnn_geo` |
-| `Boston_Influenza_GNN_V2_CorrBinary.ipynb` | `run_gnn.py --experiment gnn_corrbinary` |
-| `Boston_Influenza_GNN_V2_MultiEdge.ipynb` | `run_gnn.py --experiment gnn_multiedge` |
-| `archive/Boston_Influenza_GNN_V2_UniformComplete.ipynb` | `run_gnn.py --experiment gnn_uniform` |
+| `Boston_Influenza_GNN_PostCovid.ipynb` | `--experiment gnn_geo` |
+| `Boston_Influenza_GNN_V2_CorrBinary.ipynb` | `--experiment gnn_corrbinary` |
+| `Boston_Influenza_GNN_V2_MultiEdge.ipynb` | `--experiment gnn_multiedge` |
+| `archive/Boston_Influenza_GNN_V2_UniformComplete.ipynb` | `--experiment gnn_uniform` |
+
+**Those four arms no longer exist.** They were the `gcn_fusion` family, retired
+once `gnn_st` beat all of them at every horizon; the table is kept so the
+notebook lineage stays traceable through git history. The current graph model is
+`run_gnn.py --experiment gnn_st`.
 
 `archive/` holds earlier variants that predict normalized **levels** rather than
 week-over-week **deltas**, so their numbers were never comparable with the three

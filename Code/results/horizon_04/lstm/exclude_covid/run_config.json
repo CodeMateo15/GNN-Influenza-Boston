@@ -1,8 +1,8 @@
 {
   "model": "lstm",
   "variant": "exclude_covid",
-  "git_sha": "8dd9348",
-  "created": "2026-08-14T11:15:33",
+  "git_sha": null,
+  "created": "2026-09-17T12:54:06",
   "target_kind": "level",
   "normalize": "train",
   "window": {
@@ -12,7 +12,8 @@
     ],
     "test_start": "2025-05-31",
     "test_end": "2026-05-31",
-    "val_fraction": 0.15
+    "val_fraction": 0.15,
+    "val_mode": "tail"
   },
   "split": {
     "n_train": 206,
@@ -36,10 +37,10 @@
       "4": 0.0
     },
     "beta": {
-      "4": 28.900584985100657
+      "4": 28.900581476106257
     },
     "kappa": {
-      "4": 0.6468482716319883
+      "4": 0.6468483109008676
     },
     "n_validation": 487,
     "fitted": true,

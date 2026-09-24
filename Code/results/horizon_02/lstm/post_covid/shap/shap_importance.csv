@@ -1,0 +1,3 @@
+city,model,variant,horizon,group,mean_abs_shap_rate_per_100k,mean_signed_shap_rate_per_100k,n_node_weeks,n_weeks
+boston,lstm,post_covid,2,Neighbours' flu history,15.799753127135626,-7.134988431848605,154,11
+boston,lstm,post_covid,2,Own flu history,2.20409706355177,-0.2302928360186447,154,11
