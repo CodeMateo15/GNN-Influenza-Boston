@@ -45,6 +45,8 @@ DESCENDING = {"Corr", "Spearman", "CCC", "R2", "CI_coverage"}
 # operationally, and the quiet months. Errors differ by roughly 3x between the
 # last two, so a single full-year number hides which one a model is good at.
 ALL_SEGMENTS = "overall,flu_season,off_season"
+FLU_MONTHS = None  # set from the city in main()
+
 SEGMENT_LABELS = {
     "overall": "Overall (full year)",
     "flu_season": "Flu season (Oct–Mar)",
@@ -304,7 +306,7 @@ def observed_scale(long: pd.DataFrame, results_root: Path, args: argparse.Namesp
         frame = frame.loc[frame["horizon"].eq(args.horizon)]
         if frame.empty:
             continue
-        frame["segment"] = segment_labels(frame["target_date"])
+        frame["segment"] = segment_labels(frame["target_date"], FLU_MONTHS)
         overall = frame.assign(segment="overall")
         both = pd.concat([frame, overall], ignore_index=True)
         return (both.groupby(["neighborhood", "segment"])["actual"]
@@ -689,7 +691,8 @@ def readme_markdown(wide: pd.DataFrame, args: argparse.Namespace, out: Path) -> 
 
     lines = [
         f"Horizon {args.horizon}, `scope={args.scope}`, sorted by overall RMSE. "
-        "`all` = full year (48 weeks), `flu` = Oct–Mar (26), `off` = Apr–Sep (22).",
+        f"`all` = full year, `flu` = {SEGMENT_LABELS['flu_season']}, "
+        f"`off` = {SEGMENT_LABELS['off_season']}.",
         "",
         *_markdown_table(view),
         "",
@@ -760,8 +763,14 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    global FLU_MONTHS
     city = get_city(args.city)
     SHORT.update(zip(city.node_names, city.short_names))
+    # Segment names and the months behind them are the city's: Buenos Aires's
+    # flu season is Apr-Sep, and a hardcoded "Oct-Mar" would label its epidemic
+    # the off-season.
+    SEGMENT_LABELS.update(city.segment_labels)
+    FLU_MONTHS = city.flu_months
     results_root = city_results_dir(args, city).resolve()
     found = discover(results_root, include_ablation_arms=args.include_ablation_arms)
     warn_on_duplicate_configs(found, results_root)

@@ -57,16 +57,23 @@ def season_label(year: int) -> str:
     return f"{year}_{str(year + 1)[2:]}"
 
 
-def season_window(year: int) -> tuple[str, str]:
-    """Test targets spanning one influenza season, June through May."""
-    return f"{year}-06-01", f"{year + 1}-05-31"
+def season_window(year: int, city=None) -> tuple[str, str]:
+    """Test targets spanning one influenza season.
+
+    June through May for the two US cities, December through November for
+    Buenos Aires -- see City.backtest_window, which derives the fold from the
+    city's own flu season so a Southern-Hemisphere fold is not cut through the
+    middle of its epidemic.
+    """
+    from influenza.cities import get as _get
+    return (city or _get("boston")).backtest_window(year)
 
 
 def build_jobs(experiment: str, seasons: tuple[int, ...], horizons: tuple[int, ...],
-               variant: str) -> list[dict]:
+               variant: str, city=None) -> list[dict]:
     jobs = []
     for year in seasons:
-        start, end = season_window(year)
+        start, end = season_window(year, city)
         for horizon in horizons:
             jobs.append({
                 "season": season_label(year),
@@ -174,7 +181,7 @@ def main() -> None:
 
     seasons = tuple(int(s) for s in args.seasons.split(","))
     horizons = tuple(int(h) for h in args.horizons.split(","))
-    jobs = build_jobs(args.experiment, seasons, horizons, args.variant)
+    jobs = build_jobs(args.experiment, seasons, horizons, args.variant, city)
 
     if not args.collect_only:
         for i, job in enumerate(jobs, 1):

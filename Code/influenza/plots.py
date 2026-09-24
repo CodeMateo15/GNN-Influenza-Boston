@@ -71,14 +71,17 @@ def _fixed_axes(city_name: str = "boston"):
     completed training run over.
     """
     try:
-        from .constants import TEST_END, TEST_START
         from .severity import (CITYWIDE, REFERENCE_SEASON_SETS, fit_thresholds,
                                shared_ceiling)
 
-        rates = get_city(city_name).loaders.load_rates()
-        fitted = fit_thresholds(rates, reference_seasons=REFERENCE_SEASON_SETS["post_covid"])
+        city = get_city(city_name)
+        test_start, test_end = city.evaluation_window()
+        rates = city.loaders.load_rates()
+        fitted = fit_thresholds(rates, reference_seasons=REFERENCE_SEASON_SETS["post_covid"],
+                                threshold_end=test_start,
+                                season_start_month=city.season_start_month)
         thresholds = fitted[CITYWIDE]
-        return shared_ceiling(rates, thresholds, window=(TEST_START, TEST_END)), thresholds
+        return shared_ceiling(rates, thresholds, window=(test_start, test_end)), thresholds
     except Exception as exc:  # pragma: no cover
         print(f"warning: falling back to autoscaled axes ({type(exc).__name__}: {exc})")
         return None, None

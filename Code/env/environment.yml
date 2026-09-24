@@ -14,7 +14,9 @@
 #       --index-url https://download.pytorch.org/whl/cpu
 #   ~/envs/gnn-flu/bin/python -m pip install "torch-geometric==2.6.1" \
 #       "pandas>=2.0" "numpy<2" "scipy>=1.10" "matplotlib>=3.7" \
-#       "statsmodels>=0.14" networkx seaborn requests openpyxl tabulate
+#       "statsmodels>=0.14" "xgboost>=2.0" networkx seaborn requests openpyxl tabulate
+#
+# xgboost is required by run_xgboost.py, which every sweep task list runs.
 #
 # Explorer partitions, from `sinfo` rather than the docs, which do not list them:
 #   short*   2-00:00:00  251 CPU nodes   <- use this
@@ -57,6 +59,7 @@ dependencies:
       - scipy>=1.10
       - matplotlib>=3.7
       - statsmodels>=0.14
+      - xgboost>=2.0
       - networkx>=3.0
       - seaborn>=0.13
       - requests>=2.31

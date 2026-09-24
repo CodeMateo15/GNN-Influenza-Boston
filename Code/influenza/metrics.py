@@ -149,6 +149,7 @@ def build_metrics(
     variant: str,
     extras: bool = False,
     segments: tuple[str, ...] = SEGMENTS,
+    flu_months=None,
 ) -> pd.DataFrame:
     """Long-form metrics table: one row per (segment, scope, neighborhood, horizon).
 
@@ -156,7 +157,10 @@ def build_metrics(
     predicted, and optionally lower/upper for interval coverage.
     """
     frame = predictions.copy()
-    frame["segment"] = segment_labels(frame["target_date"])
+    # `flu_months` is the city's season (City.flu_months). Without it every
+    # run is split Oct-Mar, which labels Buenos Aires's entire epidemic
+    # "off_season".
+    frame["segment"] = segment_labels(frame["target_date"], flu_months)
     has_bands = {"lower", "upper"}.issubset(frame.columns)
 
     def band(part: pd.DataFrame) -> dict:

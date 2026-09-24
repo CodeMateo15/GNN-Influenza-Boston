@@ -46,7 +46,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from influenza import paths
 from influenza.cities import DEFAULT_CITY, City, get as get_city, names as city_names
-from influenza.constants import TEST_END, TEST_START
 from influenza.windows import Window, split_origins, valid_origins, variant_data
 
 DEFAULT_HORIZONS = (1, 2, 4)
@@ -207,6 +206,10 @@ def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...],
     number downstream would be meaningless.
     """
     rates = city.loaders.load_rates()
+    # The window the child runs will actually use: the city's own if it
+    # declares one (Buenos Aires), else the shared one. Checking the shared
+    # window for every city validated the wrong weeks for AMBA.
+    test_start, test_end = city.evaluation_window()
     problems: list[str] = []
     spans: set[tuple[str, str]] = set()
     print(f"\n{'variant':>14} {'H':>3} {'origins':>8} {'train':>6} {'val':>5} {'test':>5}  "
@@ -214,7 +217,7 @@ def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...],
     for variant in variants:
         index = variant_data(rates, variant).index
         for horizon in horizons:
-            window = Window(horizons=(horizon,))
+            window = Window(horizons=(horizon,), test_start=test_start, test_end=test_end)
             origins = valid_origins(index, window)
             try:
                 split = split_origins(index, origins, window)
@@ -225,7 +228,7 @@ def check_geometry(horizons: tuple[int, ...], variants: tuple[str, ...],
             spans.add((str(first.date()), str(last.date())))
             print(f"{variant:>14} {horizon:>3} {len(origins):>8} {len(split.train):>6} "
                   f"{len(split.val):>5} {len(split.test):>5}  {first.date()} -> {last.date()}")
-            if not (TEST_START <= first <= TEST_END):
+            if not (test_start <= first <= test_end):
                 problems.append(f"{variant} h={horizon}: first test target {first.date()} "
                                 f"outside the evaluation window")
     if len(spans) > 1:

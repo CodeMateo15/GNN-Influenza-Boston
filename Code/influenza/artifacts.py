@@ -57,7 +57,8 @@ def finish_run(
     predictions = predictions.sort_values(PREDICTION_SORT).reset_index(drop=True)
     predictions.to_csv(out / "predictions.csv", index=False)
 
-    metrics = build_metrics(predictions, model=model, variant=variant, extras=extras)
+    metrics = build_metrics(predictions, model=model, variant=variant, extras=extras,
+                            flu_months=getattr(city, "flu_months", None))
     metrics.to_csv(out / "metrics.csv", index=False)
 
     payload = {

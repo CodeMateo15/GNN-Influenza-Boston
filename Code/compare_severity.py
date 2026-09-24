@@ -20,6 +20,7 @@ keeps its own set.
 from __future__ import annotations
 
 import argparse
+import math
 import json
 import sys
 from pathlib import Path
@@ -64,6 +65,8 @@ SHORT = dict(zip(NEIGHBORHOODS, SHORT_NAMES))
 DEFAULT_PLOT_MODELS = ["persistence", "seasonal_naive", "arima", "gnn_st"]
 
 ALL_SEGMENTS = "overall,flu_season"
+CITY = None  # the City being analysed; set in main()
+
 SEGMENT_LABELS = {
     "overall": "Overall (full year)",
     "flu_season": "Flu season (Oct–Mar)",
@@ -165,8 +168,9 @@ def indicator_frame(predictions: pd.DataFrame, fitted: dict[str, severity.Thresh
     # A suppressed week is not an observation. Dropping here keeps every layer
     # below working on the same rows.
     combined = combined.loc[combined["actual"].notna() & combined["predicted"].notna()]
-    combined["segment"] = segment_labels(combined["target_date"])
-    combined["season"] = severity.season_label(combined["target_date"])
+    combined["segment"] = segment_labels(combined["target_date"], CITY.flu_months)
+    combined["season"] = severity.season_label(combined["target_date"],
+                                               CITY.season_start_month)
 
     parts = []
     for name, part in combined.groupby("indicator", sort=False):
@@ -315,7 +319,12 @@ def plot_bands(rates: pd.DataFrame, fitted: dict[str, severity.Thresholds],
     span = rates.loc[(rates.index >= test_start) & (rates.index <= test_end)].index
     span = span if len(span) else rates.index
 
-    fig, axes = plt.subplots(4, 4, figsize=(19, 13), facecolor=SURFACE)
+    # One cell per panel plus one for the legend, four across. Boston's 15
+    # panels + legend fill the historical 4x4 exactly (same figure size); a
+    # fixed 4x4 has no room for Columbus's 18 or Buenos Aires's 20.
+    rows = math.ceil((len(panels) + 1) / 4)
+    fig, axes = plt.subplots(rows, 4, figsize=(19, 3.25 * rows), facecolor=SURFACE,
+                             squeeze=False)
     for ax, (name, series) in zip(axes.flat, panels):
         thresholds = common or fitted[name]
         window = series.loc[(series.index >= test_start) & (series.index <= test_end)].dropna()
@@ -391,9 +400,9 @@ def plot_skill(long: pd.DataFrame, path: Path, *, scope: str, segment: str,
                  f"{SEGMENT_LABELS.get(segment, segment)}", fontsize=11, color=INK_PRIMARY)
     style_axes(ax)
     ax.legend(fontsize=8, frameon=False, ncol=3)
-    ax.text(0.0, -0.30, "0 is no skill: both 'never alert' and 'always alert' score 0. "
-                        "! marks a threshold with fewer than 5 observed events.",
-            transform=ax.transAxes, fontsize=7.5, color=INK_MUTED)
+    # Caption printed rather than drawn: plain figures carry no paragraphs.
+    print(f"note ({path.name}): " + "0 is no skill: both 'never alert' and 'always alert' score 0. "
+                        "! marks a threshold with fewer than 5 observed events.", file=sys.stderr)
     _save(fig, path)
 
 
@@ -434,9 +443,9 @@ def plot_reliability(bands: dict[str, pd.DataFrame], models: list[str], path: Pa
                  color=INK_PRIMARY)
     style_axes(ax, grid_axis="both")
     ax.legend(fontsize=8, frameon=False, loc="upper left")
-    ax.text(0.0, -0.16, "On the diagonal the stated probability matches how often it happened. "
-                        "Below it the model is over-confident.",
-            transform=ax.transAxes, fontsize=7.5, color=INK_MUTED)
+    # Caption printed rather than drawn: plain figures carry no paragraphs.
+    print(f"note ({path.name}): " + "On the diagonal the stated probability matches how often it happened. "
+                        "Below it the model is over-confident.", file=sys.stderr)
     _save(fig, path)
 
 
@@ -465,9 +474,9 @@ def plot_timing(frame: pd.DataFrame, path: Path, *, level: float, models: list[s
     ax.set_title(f"When did the forecast first cross IT{level * 100:g}?", fontsize=11,
                  color=INK_PRIMARY)
     style_axes(ax, grid_axis="x")
-    ax.text(0.0, -0.26, "One point per neighborhood-season. The bar is the median. "
-                        "Neighborhood-seasons where neither series crossed are omitted.",
-            transform=ax.transAxes, fontsize=7.5, color=INK_MUTED)
+    # Caption printed rather than drawn: plain figures carry no paragraphs.
+    print(f"note ({path.name}): " + "One point per neighborhood-season. The bar is the median. "
+                        "Neighborhood-seasons where neither series crossed are omitted.", file=sys.stderr)
     _save(fig, path)
 
 
@@ -706,8 +715,8 @@ def parse_args() -> argparse.Namespace:
                         help="Student-t quantile with mem's sqrt(1+1/m) inflation (default).")
     parser.add_argument("--no-use-t", dest="use_t", action="store_false",
                         help="Normal quantile instead.")
-    parser.add_argument("--threshold-end", type=pd.Timestamp, default=TEST_START,
-                        help="Exclusive cutoff for threshold fitting. Default TEST_START, "
+    parser.add_argument("--threshold-end", type=pd.Timestamp, default=None,
+                        help="Exclusive cutoff for threshold fitting. Default: the city's test start, "
                              "which is what keeps the test window out of the thresholds.")
     parser.add_argument("--citywide-sigma", default="correlated",
                         choices=["correlated", "independent"])
@@ -726,8 +735,13 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    global NEIGHBORHOODS, SHORT_NAMES, SHORT
+    global NEIGHBORHOODS, SHORT_NAMES, SHORT, CITY
     city = get_city(args.city)
+    CITY = city
+    SEGMENT_LABELS.update(city.segment_labels)
+    test_start, test_end = city.evaluation_window()
+    if args.threshold_end is None:
+        args.threshold_end = test_start
     # Node names and the rate series come from the city, not from Boston's
     # module-level constants. Rebound here rather than threaded through every
     # plot function: the call graph is a dozen deep and the names are read-only
@@ -774,6 +788,7 @@ def main() -> None:
     fitted = severity.fit_thresholds(
         rates, reference_seasons=reference, threshold_end=args.threshold_end,
         levels=levels, values_per_season=args.values_per_season, use_t=args.use_t,
+        season_start_month=city.season_start_month,
     )
     citywide = fitted[severity.CITYWIDE]
     plural = "value" if citywide.values_per_season == 1 else "values"
@@ -883,7 +898,7 @@ def main() -> None:
         reference_note += ("  Shared citywide bands on every panel; the scores in "
                            "severity_long.csv use each neighborhood's own thresholds.")
     plot_bands(rates, fitted, out_dir / "severity_bands.png",
-               test_start=TEST_START, test_end=TEST_END, reference_note=reference_note,
+               test_start=test_start, test_end=test_end, reference_note=reference_note,
                standardise=not args.per_neighborhood_scale)
     headline_scope = "pooled" if "pooled" in scopes else scopes[0]
     plot_skill(long, out_dir / "severity_skill.png", scope=headline_scope,

@@ -23,6 +23,8 @@ is what makes the comparison meaningful.
 from __future__ import annotations
 
 import importlib
+
+import pandas as pd
 from dataclasses import dataclass, field
 from types import ModuleType
 
@@ -120,6 +122,58 @@ class City:
         would deadlock the import graph.
         """
         return importlib.import_module(self.loader_module)
+
+    # --- Season helpers ---------------------------------------------------------
+    # Every consumer that used to hardcode "Oct-Mar", June-May backtest folds or
+    # the shared test window reads these instead, so a city with a different
+    # season geometry cannot be half-configured.
+
+    @property
+    def season_first_month(self) -> int:
+        """First calendar month of the flu season (Oct for Boston, Apr for AMBA)."""
+        months = set(self.flu_months)
+        return next(m for m in range(1, 13)
+                    if m in months and ((m - 2) % 12) + 1 not in months)
+
+    def _span_label(self, first: int, length: int) -> str:
+        import calendar
+        last = ((first - 1 + length - 1) % 12) + 1
+        return f"{calendar.month_abbr[first]}–{calendar.month_abbr[last]}"
+
+    @property
+    def flu_season_label(self) -> str:
+        """"Oct–Mar" style label for the flu season."""
+        return self._span_label(self.season_first_month, len(self.flu_months))
+
+    @property
+    def off_season_label(self) -> str:
+        first = ((self.season_first_month - 1 + len(self.flu_months)) % 12) + 1
+        return self._span_label(first, 12 - len(self.flu_months))
+
+    @property
+    def segment_labels(self) -> dict[str, str]:
+        return {"overall": "Overall (full year)",
+                "flu_season": f"Flu season ({self.flu_season_label})",
+                "off_season": f"Off-season ({self.off_season_label})"}
+
+    def backtest_window(self, year: int) -> tuple[str, str]:
+        """(start, end) of a one-season backtest fold labelled `year`.
+
+        The fold opens four months before the flu season starts, so it carries
+        the whole off-season run-up: June-May for Boston and Columbus (whose
+        season starts in October) -- exactly the fold run_backtest.py always
+        used -- and December-November for Buenos Aires.
+        """
+        start = ((self.season_first_month - 1 - 4) % 12) + 1
+        begin = pd.Timestamp(year=year, month=start, day=1)
+        end = begin + pd.DateOffset(years=1) - pd.Timedelta(days=1)
+        return str(begin.date()), str(end.date())
+
+    def evaluation_window(self) -> tuple[pd.Timestamp, pd.Timestamp]:
+        """This city's test window: its own if declared, else the shared one."""
+        from ..constants import TEST_END, TEST_START
+        return (pd.Timestamp(self.test_start) if self.test_start else TEST_START,
+                pd.Timestamp(self.test_end) if self.test_end else TEST_END)
 
     def supports(self, feature: str) -> bool:
         return feature in self.available_features

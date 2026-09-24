@@ -58,6 +58,8 @@ from influenza.plots import _flu_season_spans
 
 # Default set: the three baselines the user compares against, plus the flagship
 # graph model. Four is also the number of validated categorical slots.
+CITY = get_city("boston")  # rebound from --city in main()
+
 DEFAULT_MODELS = ["persistence", "seasonal_naive", "arima", "lstm"]
 DEFAULT_WITH_GNN = ["persistence", "arima", "lstm", "gnn_st"]
 
@@ -142,7 +144,7 @@ def legend_handles(models: list[str], *, show_ci: bool) -> list:
 def subtitle(show_ci: bool, *, scale_note: str = "") -> str:
     """Two short lines. Kept explicit rather than relying on auto-wrap, which
     reflows with figure width and then collides with the title."""
-    first = ["Gold bands mark the flu season (Oct-Mar)."]
+    first = [f"Gold bands mark the flu season ({CITY.flu_season_label})."]
     if show_ci:
         first.insert(0, "Ribbons are 95% predictive intervals, calibrated on the "
                         "validation split by one shared recipe.")
@@ -173,7 +175,7 @@ def plot_grid(frames: pd.DataFrame, models: list[str], neighborhoods: list[str],
                              sharex=True, sharey=False, squeeze=False)
     fig.patch.set_facecolor(SURFACE)
 
-    spans = _flu_season_spans(frames["target_date"].unique())
+    spans = _flu_season_spans(frames["target_date"].unique(), CITY.flu_months)
     clipped: list[str] = []
 
     for position, neighborhood in enumerate(neighborhoods):
@@ -248,14 +250,14 @@ def plot_grid(frames: pd.DataFrame, models: list[str], neighborhoods: list[str],
 def plot_citywide(frames: pd.DataFrame, models: list[str], path: Path, *,
                   horizon: int, show_ci: bool, ceiling: float | None = None,
                   thresholds=None) -> None:
-    """The 14-neighborhood mean. One panel, so the lines are readable at a glance."""
+    """The mean over the city's scored nodes. One panel, so the lines read at a glance."""
     fig, ax = plt.subplots(figsize=(13, 6))
     fig.patch.set_facecolor(SURFACE)
     style_axes(ax)
 
     if thresholds is not None:
         draw_thresholds(ax, thresholds)
-    for low, high in _flu_season_spans(frames["target_date"].unique()):
+    for low, high in _flu_season_spans(frames["target_date"].unique(), CITY.flu_months):
         ax.axvspan(low, high, color=SEASON, alpha=SEASON_ALPHA, linewidth=0, zorder=0)
 
     for index, model in enumerate(models):
@@ -276,11 +278,11 @@ def plot_citywide(frames: pd.DataFrame, models: list[str], path: Path, *,
         ax.set_ylim(0, ceiling)
     ax.set_ylabel("Mean ILI ED visits per 100,000", fontsize=10, color=INK_SECONDARY)
     ax.set_xlabel("Target week", fontsize=10, color=INK_SECONDARY)
-    ax.set_title(f"City mean across 14 neighborhoods — {horizon} week"
-                 f"{'s' if horizon > 1 else ''} ahead",
+    ax.set_title(f"{CITY.label} mean across {len(NEIGHBORHOODS)} {CITY.node_label}s — "
+                 f"{horizon} week{'s' if horizon > 1 else ''} ahead",
                  fontsize=14, pad=12)
-    ax.text(0, 1.012, subtitle(show_ci), transform=ax.transAxes,
-            fontsize=8, color=INK_MUTED, va="bottom", linespacing=1.5)
+    # Caveats go to stdout, not onto the figure (see palette.py).
+    print("  " + subtitle(show_ci).replace("\n", "\n  "))
     style_dates(ax)
     handles = legend_handles(models, show_ci=show_ci)
     if thresholds is not None:
@@ -327,12 +329,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    global NEIGHBORHOODS, SHORT_NAMES
+    global NEIGHBORHOODS, SHORT_NAMES, CITY
     args = parse_args()
     # Node names and the rate series come from the city, not from Boston's
     # module-level constants. Rebound rather than threaded through every plot
     # helper; they are read-only from here on.
     city = get_city(args.city)
+    CITY = city
+    test_start, test_end = city.evaluation_window()
     NEIGHBORHOODS = list(city.node_names)
     SHORT_NAMES = list(city.short_names)
     args.results_dir = city_results_dir(args, city)
@@ -386,6 +390,8 @@ def main() -> None:
             rates,
             reference_seasons=(named[args.reference_seasons] if args.reference_seasons in named
                                else tuple(int(y) for y in args.reference_seasons.split(","))),
+            threshold_end=test_start,
+            season_start_month=city.season_start_month,
         )
         # The citywide set is the shared one. Pooling all 14 neighborhoods
         # instead would draw every pooled value from Dorchester and Roxbury, and
@@ -396,10 +402,10 @@ def main() -> None:
 
     if args.per_neighborhood_scale:
         ceilings = severity.panel_ceilings(rates, fitted or {},
-                                           window=(TEST_START, TEST_END))
+                                           window=(test_start, test_end))
     else:
         ceiling = args.y_max or severity.shared_ceiling(
-            rates, shared, window=(TEST_START, TEST_END))
+            rates, shared, window=(test_start, test_end))
         ceilings = {name: ceiling for name in (*NEIGHBORHOODS, severity.CITYWIDE)}
 
     print(f"Overlaying {len(models)} models on {len(neighborhoods)} neighborhoods "

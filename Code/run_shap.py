@@ -625,7 +625,12 @@ def explain_lstm(args, city, results_root, checkpoint_root) -> None:
     checkpoint = torch.load(path, map_location="cpu", weights_only=False)
 
     horizons = tuple(int(h) for h in checkpoint["horizons"])
-    window = replace(Window(), horizons=horizons, lookback=int(checkpoint["lookback"]))
+    # The city's evaluation window, with the checkpoint's own horizons and
+    # lookback: run_lstm.py resolved its window with the city, so the default
+    # Window() would pick different test origins for Buenos Aires.
+    test_start, test_end = city.evaluation_window()
+    window = replace(Window(), horizons=horizons, lookback=int(checkpoint["lookback"]),
+                     test_start=test_start, test_end=test_end)
     horizon = int(args.horizon or horizons[0])
     if horizon not in horizons:
         raise SystemExit(f"--horizon {horizon} not in {list(horizons)}")
@@ -839,7 +844,7 @@ def explain_xgboost(args, city, results_root, checkpoint_root) -> None:
 
     # Rebuild exactly the design matrix run_xgboost.py trained on.
     features = EXPERIMENTS[args.features_from].features
-    window = resolve_window(args, replace(EXPERIMENTS[args.features_from].window,
+    window = resolve_window(args, city=city, base=replace(EXPERIMENTS[args.features_from].window,
                                           horizons=(horizon,)))
     data = variant_data(city.loaders.load_rates(), variant)
     dataset = load_dataset(features, city=city, rates=data.available)
@@ -1240,7 +1245,10 @@ def main() -> None:
 
     checkpoint = load_checkpoint(experiment, checkpoint_root)
     window = window_from_checkpoint(checkpoint, experiment)
-    window = resolve_window(args, window)
+    # With the city, as run_gnn.py resolved it: window_from_checkpoint carries
+    # horizons and lookback only, so without this Buenos Aires would be
+    # explained on the shared test window rather than the one it was scored on.
+    window = resolve_window(args, window, city)
     experiment = replace(experiment, window=window)
 
     # `delta` re-introduces the anchor through the un-normalisation rather than

@@ -10,6 +10,8 @@ ratio. Run this before deciding whether Rt is worth using as a model feature.
 from __future__ import annotations
 
 import argparse
+import math
+import sys
 
 try:
     import matplotlib
@@ -30,6 +32,8 @@ from influenza.palette import (
 )
 from influenza.plots import _flu_season_spans
 from influenza.rt import growth_ratio, weekly_rt
+
+CITY = get_city("boston")  # rebound from --city in main()
 
 
 def style_dates(ax, months: int = 6) -> None:
@@ -68,8 +72,13 @@ def redundancy_check(rt: pd.DataFrame, rates: pd.DataFrame) -> tuple[float, floa
 
 def save_plot(rt: pd.DataFrame, rates: pd.DataFrame, path: str) -> None:
     """One panel per neighborhood, Rt only, on a single shared scale."""
-    spans = _flu_season_spans(rates.index)
-    fig, axes = plt.subplots(4, 4, figsize=(20, 13), sharex=True, sharey=True)
+    spans = _flu_season_spans(rates.index, CITY.flu_months)
+    # Sized from the city's node count: a fixed 4x4 grid silently dropped
+    # Columbus's 17th area and would drop three of Buenos Aires's 19 partidos.
+    cols = 4
+    rows = math.ceil(len(NEIGHBORHOODS) / cols)
+    fig, axes = plt.subplots(rows, cols, figsize=(20, 3.25 * rows), sharex=True,
+                             sharey=True, squeeze=False)
     fig.patch.set_facecolor(SURFACE)
     for ax, neighborhood in zip(axes.flat, NEIGHBORHOODS):
         style_axes(ax)
@@ -104,7 +113,7 @@ def save_paired_plot(rt: pd.DataFrame, rates: pd.DataFrame, path: str,
     scales happened to be pinned. Stacked panels share the time axis, which is
     the only axis the comparison actually needs.
     """
-    spans = _flu_season_spans(rates.index)
+    spans = _flu_season_spans(rates.index, CITY.flu_months)
     fig, axes = plt.subplots(2, len(neighborhoods), figsize=(5.2 * len(neighborhoods), 6.4),
                              sharex=True, squeeze=False,
                              gridspec_kw={"height_ratios": [1, 1], "hspace": 0.12})
@@ -148,8 +157,9 @@ def main() -> None:
                         help="The leakage check recomputes Rt twice without the cache.")
     args = parser.parse_args()
 
-    global NEIGHBORHOODS, SHORT_NAMES
+    global NEIGHBORHOODS, SHORT_NAMES, CITY
     city = get_city(args.city)
+    CITY = city
     if args.variant not in city.variants:
         raise SystemExit(f"--variant {args.variant} is not available for {city.label}. "
                          f"{city.label} supports: {', '.join(city.variants)}.")

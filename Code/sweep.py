@@ -34,6 +34,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from influenza import paths  # noqa: E402
+from influenza.cities import get as get_city  # noqa: E402
 from influenza.config import EXPERIMENTS  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
@@ -176,10 +177,14 @@ def enumerate_tasks(*, cities: tuple[str, ...], arms: tuple[str, ...],
                                       variant=arm_variant, horizon=horizon))
                     continue
                 for year in seasons:
+                    # Same fold as run_backtest.season_window: derived from the
+                    # city's season, so June-May for the US cities and
+                    # December-November for Buenos Aires.
+                    start, end = get_city(city).backtest_window(year)
                     tasks.append(Task(
                         city=city, arm=arm, script=script, variant=arm_variant,
                         horizon=horizon, season=f"{year}_{str(year + 1)[2:]}",
-                        test_start=f"{year}-06-01", test_end=f"{year + 1}-05-31"))
+                        test_start=start, test_end=end))
     return tasks
 
 
