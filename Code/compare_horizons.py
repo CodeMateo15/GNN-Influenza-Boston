@@ -407,7 +407,10 @@ def main() -> None:
     horizons = sorted(long["horizon"].unique())
     print(f"Discovered {len(frames)} runs across horizons {horizons} under {results_root}")
 
-    out = (args.out_dir or paths.CROSS_HORIZON_DIR).resolve()
+    # Beside the results being read, not the fixed Boston folder: with the
+    # fixed default, `--city columbus` and `--city buenos_aires` overwrote
+    # Boston's results/_comparison_horizons/.
+    out = (args.out_dir or results_root / paths.CROSS_HORIZON_DIR.name).resolve()
     out.mkdir(parents=True, exist_ok=True)
     long.to_csv(out / "horizon_long.csv", index=False)
     build_matrix(long, args.segment).to_csv(out / "horizon_matrix.csv", index=False)
