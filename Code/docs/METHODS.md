@@ -13,13 +13,14 @@ this repository asks is whether **the structure connecting neighborhoods** —
 shared borders, correlated histories, similar demographics —
 carries forecasting signal beyond each neighborhood's own history.
 
-The answer, on the corrected data, is **yes at one and two weeks ahead, in
-both cities tested so far — and not reliably at four.** Against the four
-original baselines (persistence, seasonal naive, ARIMA, LSTM) the margin widens
-with horizon. Against boosted trees it does not: at h=4 `gnn_st` is tied with
-`xgboost` in Boston (macro RMSE 19.63 vs 19.81) and behind it in Columbus
-(9.03 vs 8.68). See [Cities](#cities) for the full table and
-[Results](#results) for Boston in detail.
+The answer, on the corrected data, is **yes at one and two weeks ahead in all
+three cities tested, and city-dependent at four.** Against the four original
+baselines (persistence, seasonal naive, ARIMA, LSTM) the margin widens with
+horizon. Against boosted trees it does not reliably: at h=4 `gnn_st` is tied
+with `xgboost` in Boston (macro RMSE 19.63 vs 19.81), behind it in Columbus
+(9.03 vs 8.68), and ahead in Buenos Aires (23.05 vs 29.01). See
+[Cities](#cities) for the full tables and [Results](#results) for Boston in
+detail.
 
 Two caveats belong next to that sentence rather than at the bottom. First, five
 data defects were fixed in September 2026, and two of them were the largest
@@ -1430,10 +1431,34 @@ counts; pooled MAPE reaches the millions of percent. `compare_models` now
 prints a warning into the leaderboard when MAPE exceeds 1,000%. The column is
 kept so the cities' tables share a shape. Rank Columbus on RMSE or MAE.
 
-**Buenos Aires** runs the same matrix (`sweep/tasks_buenos_aires*.jsonl`), plus
-the ablation pair `gnn_st_nodemo` / `xgboost_nodemo` that ran before its
-demographics were built. Results land in `results/buenos_aires/`; add them here
-once pulled.
+**Buenos Aires**, on its own test window (2024-11-03 → 2025-11-02), so read
+margins over baselines, not raw errors against the other two cities:
+
+| Buenos Aires | macro Corr h1 | h2 | h4 | macro RMSE h1 | h2 | h4 |
+|---|---|---|---|---|---|---|
+| `gnn_st` | **0.825** | **0.764** | **0.707** | **14.81** | **17.58** | **23.05** |
+| `gnn_st_nodemo` | 0.824 | 0.767 | 0.710 | 14.90 | 17.62 | 22.96 |
+| `persistence` | 0.791 | 0.713 | 0.532 | 15.67 | 18.88 | 26.25 |
+| `arima` | 0.755 | 0.665 | 0.490 | 18.79 | 22.95 | 26.74 |
+| `xgboost` | 0.709 | 0.706 | 0.670 | 25.88 | 27.71 | 29.01 |
+| `xgboost_nodemo` | 0.721 | 0.684 | 0.668 | 26.57 | 27.96 | 28.97 |
+| `dualtopo` | 0.724 | 0.606 | 0.646 | 25.87 | 32.44 | 33.45 |
+| `gat` | 0.683 | 0.678 | 0.678 | 26.85 | 27.99 | 29.20 |
+| `lstm` | 0.701 | 0.631 | 0.439 | 30.66 | 32.90 | 36.05 |
+| `seasonal_naive` | 0.563 | 0.563 | 0.563 | 34.16 | 34.16 | 34.16 |
+
+`gnn_st` wins at every horizon here, including four weeks — so the h=4 tie with
+`xgboost` is a property of the US cities, not of the model. Persistence, not
+`xgboost`, is the strongest baseline in Buenos Aires. The five BA demographic
+columns change nothing (`gnn_st` vs `gnn_st_nodemo` within ±0.003 Corr), the
+same result the Boston ablations give. One run per arm; the 10-seed noise floor
+in [Ablations](#ablations) applies.
+
+The first BA `metrics.csv` files were written before per-city seasons reached
+the metrics code, so their flu-season and off-season rows were swapped (the two
+segments are complements). They were re-scored from each run's
+`predictions.csv`; overall rows are unchanged, and the originals are kept as
+`metrics_pre_season_fix.csv`.
 
 Earlier, from a 10-seed h=2 comparison: the leaner `gnn_st_minimal` (no
 demographics, no city-wide covariate) was the top arm in Columbus and within

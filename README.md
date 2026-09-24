@@ -16,10 +16,13 @@ This is an active research repository, not a finished result or a stable tool.
   source of error in the graph models, and fixing them moved the then-current
   graph arm from RMSE 24.90 to 19.12 at one week ahead with no model change at
   all.
-- The graph model (`gnn_st`) now leads every baseline at 1, 2 and 4 weeks. The
-  margin is small at one week and large at four, which is a fact about the task:
-  citywide persistence correlates 0.906 with next week and 0.271 with four weeks
-  out, so there is little room to win at h=1 and a lot at h=4.
+- The graph model (`gnn_st`) leads every baseline at 1 and 2 weeks in all
+  three cities (Boston, Columbus OH, Buenos Aires). At 4 weeks it is
+  city-dependent: it still beats persistence, ARIMA and LSTM everywhere, but it
+  is tied with boosted trees (`xgboost`) in Boston, behind them in Columbus and
+  ahead in Buenos Aires. See [Methods § Cities](Code/docs/METHODS.md#cities).
+  Citywide persistence correlates 0.906 with next week and 0.271 with four
+  weeks out, so there is little room to win at h=1.
 - **A measured ceiling bounds all of it.** Distributing a *perfect* citywide
   forecast across neighborhoods by their historical shares scores macro Corr
   0.938. Boston's neighborhoods co-move almost completely, so correlations here
@@ -45,7 +48,15 @@ the water between them).
 
 `Data/Weather copy/` is a stale snapshot that nothing reads — ignore it.
 
-### Second city: Columbus OH (in progress)
+### Third city: Buenos Aires (AMBA)
+
+19 partidos of the Buenos Aires conurbano, from Argentina's national
+respiratory surveillance (SNVS) with INDEC 2022 census denominators. Southern
+Hemisphere (flu season April–September) with its own evaluation window,
+because the feed backfills for about four months. Details in
+[AMBA data notes](Code/docs/AMBA_DATA_NOTES.md).
+
+### Second city: Columbus OH
 
 Boston's findings rest on one city, one test season and one seed, so a second
 city is being added to test whether the *model ordering* reproduces — not
