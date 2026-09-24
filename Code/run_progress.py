@@ -11,6 +11,20 @@ the training loop.
     python Code/run_progress.py --watch              # refresh every 15s
     python Code/run_progress.py --remote             # squeue + logs on Explorer
 
+Status-line contract
+--------------------
+Any entrypoint that runs longer than about a minute should print these four
+lines, unbuffered (`python -u`), so this script can report a percentage:
+
+    Budget: <N> epochs x <M> seeds        # the denominator, once at start
+    --- seed <S> (<i>/<M>) ---            # at each seed boundary
+    Epoch <N> | <metrics...>              # each epoch
+    Outputs: <path>                       # completion marker
+
+Task runners (sweep.py, run_all_horizons.py, run_ablation.py) express their
+budget in tasks -- `Budget: <n_tasks> epochs x 1 seeds` -- so the same
+arithmetic applies. A log missing `Budget:` renders as `(budget?)`.
+
 Progress is (seeds_done * epochs + current_epoch) / (n_seeds * epochs). It is
 honest about what it cannot see: a run that has finished its seeds but is still
 in the MC-dropout pass reports 100% and a `finishing` state rather than
@@ -20,7 +34,9 @@ pretending to be done, because that phase emits no progress markers at all.
 from __future__ import annotations
 
 import argparse
+import os
 import re
+import tempfile
 import subprocess
 import sys
 import time
@@ -124,7 +140,7 @@ def remote_status(host: str, root: str, total: int | None = None,
     `total` is the number of runs the submitted task list contains. squeue can
     say how many array elements are alive but not how far through their chunk
     they are, so without a denominator there is no percentage -- and a bare
-    "still running" is exactly what CLAUDE.md rule 3 forbids. `subdir` narrows
+    "still running" is not a progress report. `subdir` narrows
     the completed-run count to one study's output tree.
     """
     script = f"""
@@ -173,7 +189,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--log-dir", type=Path,
-                        default=Path("/private/tmp/claude-501/-Users-mateobiggs-GNN-Influenza-Boston"))
+                        default=None,
+                        help="Default: paths.LOG_DIR (set GNNFLU_LOG_DIR to change).")
     parser.add_argument("--pattern", default="**/*.log")
     parser.add_argument("--watch", action="store_true", help="Refresh until everything is done.")
     parser.add_argument("--interval", type=int, default=15)
@@ -193,7 +210,11 @@ def main() -> None:
         return
 
     while True:
-        runs = local_runs(args.log_dir, args.pattern)
+        # Same default as influenza.paths.LOG_DIR, repeated rather than imported
+        # so this script stays runnable without the package on the path.
+        log_dir = args.log_dir or Path(os.environ.get("GNNFLU_LOG_DIR")
+                                       or Path(tempfile.gettempdir()) / "gnn-flu-logs")
+        runs = local_runs(log_dir, args.pattern)
         stamp = time.strftime("%H:%M:%S")
         block = f"\nTraining progress  {stamp}\n" + "-" * 78 + "\n" + render(runs)
         if args.watch:

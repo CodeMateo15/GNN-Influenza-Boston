@@ -345,7 +345,7 @@ def train(names: list[tuple[str, str, int | None]], horizon: int, n_seeds: int,
         processes = []
         for name, arm, seed in batch:
             done += 1
-            # run_progress.py parses this; see CLAUDE.md "Status-line contract".
+            # run_progress.py parses this; see the status-line contract in run_progress.py.
             # A task runner counts tasks on the epoch axis, not the seed axis --
             # `Budget: <n_tasks> epochs x 1 seeds` above is the matching
             # denominator. Printing `--- seed <arm> (done/total) ---` here instead
@@ -431,10 +431,7 @@ def main() -> None:
     jobs += [(name, REFERENCE, seed) for name, seed in replicates]
     jobs += [(a, a, None) for a in arms]
 
-    log_dir = Path(args.log_dir) if args.log_dir else Path(
-        os.environ.get("CLAUDE_SCRATCHPAD",
-                       "/private/tmp/claude-501/-Users-mateobiggs-GNN-Influenza-Boston")
-    ) / "ablation_logs"
+    log_dir = Path(args.log_dir) if args.log_dir else paths.LOG_DIR / "ablation_logs"
 
     rows: list[dict] = []
     if not args.collect_only:
@@ -445,7 +442,7 @@ def main() -> None:
             for h in horizons}
         total = sum(len(v) for v in pending_by_h.values())
         # run_progress.py denominator; tasks expressed as epochs x 1 seeds so its
-        # arithmetic works unchanged. See CLAUDE.md "Status-line contract".
+        # arithmetic works unchanged. See the status-line contract in run_progress.py.
         print(f"Budget: {total} epochs x 1 seeds", flush=True)
         done = 0
         for horizon in horizons:
@@ -497,7 +494,7 @@ def main() -> None:
     (out / f"{stem}.md").write_text(text)
     print("\n" + text)
     print(f"Wrote {paths.display(out)}/{stem}.{{csv,md}}")
-    # run_progress.py completion marker; see CLAUDE.md "Status-line contract".
+    # run_progress.py completion marker; see the status-line contract in run_progress.py.
     print(f"Outputs: {paths.display(out)}/{stem}.md", flush=True)
 
 

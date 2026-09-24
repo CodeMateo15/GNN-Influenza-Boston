@@ -5,6 +5,8 @@ Paths are derived from this file's location, so scripts work from any cwd.
 
 from __future__ import annotations
 
+import os
+import tempfile
 from pathlib import Path
 
 CODE_DIR = Path(__file__).resolve().parents[1]
@@ -57,6 +59,12 @@ AMBA_REVISION_FILE = AMBA_DIR / "amba_eti_revision.csv"
 AMBA_STATIC_FILE = AMBA_DIR / "amba_partido_static.csv"
 AMBA_EDGES_FILE = AMBA_DIR / "amba_partido_edges.csv"
 AMBA_WEATHER_DIR = DATA_DIR / "Buenos Aires Weather"
+
+# Where long-running scripts tee their stdout and where run_progress.py looks
+# by default. Override with GNNFLU_LOG_DIR; otherwise a per-user temp folder,
+# so logs never land inside the repository.
+LOG_DIR = Path(os.environ.get("GNNFLU_LOG_DIR")
+               or Path(tempfile.gettempdir()) / "gnn-flu-logs")
 
 RESULTS_DIR = CODE_DIR / "results"
 CHECKPOINT_DIR = CODE_DIR / "checkpoints"

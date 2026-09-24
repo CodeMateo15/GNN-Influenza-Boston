@@ -53,10 +53,8 @@ DEFAULT_HORIZONS = (1, 2, 4)
 
 
 def default_log_dir() -> Path:
-    """Where run_progress.py looks by default; see CLAUDE.md rule 3."""
-    return Path(os.environ.get(
-        "CLAUDE_SCRATCHPAD",
-        "/private/tmp/claude-501/-Users-mateobiggs-GNN-Influenza-Boston")) / "horizon_logs"
+    """Under paths.LOG_DIR, where run_progress.py looks by default."""
+    return paths.LOG_DIR / "horizon_logs"
 DEFAULT_VARIANTS = ("exclude_covid", "post_covid")
 
 
@@ -141,7 +139,7 @@ def build_command(job: Job, horizon: int, args: argparse.Namespace) -> list[str]
     ckpt_root = paths.horizon_dir(horizon, args.checkpoint_root)
     command = [
         # -u so the child's own status lines reach the tee'd log as they are
-        # printed rather than at exit. See CLAUDE.md "Status-line contract".
+        # printed rather than at exit. See the status-line contract in run_progress.py.
         sys.executable, "-u", str(Path(__file__).resolve().parent / job.script),
         "--city", args.city,
         "--variant", job.variant,
@@ -281,7 +279,7 @@ def main() -> None:
     log_dir = args.log_dir or default_log_dir()
     # run_progress.py denominator. This is a task runner, so the budget is
     # expressed in tasks and each finished job advances the epoch axis -- the
-    # convention CLAUDE.md sets out under "Status-line contract", and the same
+    # convention the status-line contract in run_progress.py sets out, and the same
     # one run_ablation.py uses. Without these lines a three-horizon sweep was
     # invisible to the reporter.
     total = len(matrix) * len(horizons)

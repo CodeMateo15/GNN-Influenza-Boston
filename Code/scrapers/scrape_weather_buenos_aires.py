@@ -79,7 +79,8 @@ def main() -> None:
     end_date = (date.today() - timedelta(days=1)).isoformat()
     print(f"Fetching weather for {len(PARTIDOS)} AMBA partidos "
           f"({START_DATE} to {end_date})\n")
-    # Budget line so a run longer than a minute is watchable; see CLAUDE.md.
+    # Budget line so a run longer than a minute is watchable; see the
+    # status-line contract in run_progress.py.
     print(f"Budget: {len(PARTIDOS)} epochs x 1 seeds", flush=True)
     print("--- seed weather (1/1) ---", flush=True)
 
