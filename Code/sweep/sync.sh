@@ -6,6 +6,8 @@
 #
 # Code/results/ (128 MB, 1037 tracked files) is excluded INBOUND: the cluster
 # produces results, it should not receive the laptop's.
+# logs/ is excluded for the same reason, and because --delete would otherwise
+# remove the logs of array jobs that are still running.
 set -euo pipefail
 MODE="${1:?push or pull}"
 NUID="${2:?your NU username}"
@@ -20,6 +22,7 @@ case "$MODE" in
       --exclude 'Data/Weather copy/' \
       --exclude 'Code/results/' \
       --exclude 'Code/checkpoints/' \
+      --exclude 'logs/' \
       --exclude 'Citation Papers/' \
       --exclude 'Writings/' \
       --exclude '__pycache__/' \

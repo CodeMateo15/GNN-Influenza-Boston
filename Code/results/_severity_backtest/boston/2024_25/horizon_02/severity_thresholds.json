@@ -1,0 +1,407 @@
+{
+  "Allston/Brighton": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Allston/Brighton",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 42.34829947805673,
+      "0.9": 68.78164964490152,
+      "0.98": 93.68863869370105
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 42.34829947805673,
+    "log_sd": 0.36473224077031224,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Back Bay/Beacon Hill/Downtown/North End/West End": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Back Bay/Beacon Hill/Downtown/North End/West End",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 29.393008432397277,
+      "0.9": 45.71580659105301,
+      "0.98": 60.57488158313664
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 29.393008432397277,
+    "log_sd": 0.33215400662320516,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Charlestown": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Charlestown",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 49.64206767606929,
+      "0.9": 77.0617694097583,
+      "0.98": 101.98451635145125
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 49.64206767606929,
+    "log_sd": 0.3307112042983454,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Dorchester": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Dorchester",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 163.3039604151679,
+      "0.9": 253.6349342509307,
+      "0.98": 335.7736247950179
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 163.3039604151679,
+    "log_sd": 0.33109775852185724,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "East Boston": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "East Boston",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 31.31890549295345,
+      "0.9": 51.44681928977263,
+      "0.98": 70.58376964567458
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 31.31890549295345,
+    "log_sd": 0.373243503047115,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Fenway": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Fenway",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 20.12065081406716,
+      "0.9": 31.54747133014397,
+      "0.98": 42.016609361560214
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 20.12065081406716,
+    "log_sd": 0.338214821496214,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Hyde Park": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Hyde Park",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 62.135485574249586,
+      "0.9": 93.74554515598311,
+      "0.98": 121.83125732958142
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 62.135485574249586,
+    "log_sd": 0.3092775212269203,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Jamaica Plain": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Jamaica Plain",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 32.863397521574726,
+      "0.9": 51.59397723706041,
+      "0.98": 68.77250433224559
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 32.863397521574726,
+    "log_sd": 0.33919145755233293,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Mattapan": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Mattapan",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 73.74664616575558,
+      "0.9": 109.5096396150132,
+      "0.98": 140.88453178936837
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 73.74664616575558,
+    "log_sd": 0.297328180379773,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Roslindale": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Roslindale",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 84.50609640517568,
+      "0.9": 117.89637684573074,
+      "0.98": 145.76230259289989
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 84.50609640517568,
+    "log_sd": 0.2504066635616913,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "Roxbury": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "Roxbury",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 150.73278258702234,
+      "0.9": 231.47954091002234,
+      "0.98": 304.2448012585144
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 150.73278258702234,
+    "log_sd": 0.3226001477371513,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "South Boston": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "South Boston",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 33.582254483370555,
+      "0.9": 54.07856825264641,
+      "0.98": 73.26024855851239
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 33.582254483370555,
+    "log_sd": 0.3582885884649452,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "South End": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "South End",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 81.51720167242223,
+      "0.9": 120.97999602123217,
+      "0.98": 155.5850726198637
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 81.51720167242223,
+    "log_sd": 0.296902608243621,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "West Roxbury": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "West Roxbury",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 35.710234100179726,
+      "0.9": 55.788627749718,
+      "0.98": 74.13137167900604
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 35.710234100179726,
+    "log_sd": 0.3354970370572948,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  },
+  "CITYWIDE": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "CITYWIDE",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 60.772202531385844,
+      "0.9": 91.57080470487641,
+      "0.98": 118.90743290545251
+    },
+    "reference_seasons": [
+      "2017-18",
+      "2018-19",
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 8,
+    "n_pooled": 32,
+    "geometric_mean": 60.772202531385844,
+    "log_sd": 0.30830976667493676,
+    "use_t": true,
+    "fitted_through": "2024-06-01",
+    "underpowered": false
+  }
+}

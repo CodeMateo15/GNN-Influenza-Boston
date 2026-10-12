@@ -1,6 +1,0 @@
-- Make 2 models, current and just flu data to compare what extra data does
-
-- Make new types of edges
-
-- Grab bluebike data
-	- https://bluebikes.com/system-data

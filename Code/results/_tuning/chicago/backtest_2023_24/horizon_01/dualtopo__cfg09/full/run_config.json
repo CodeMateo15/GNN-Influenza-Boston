@@ -1,0 +1,201 @@
+{
+  "model": "dualtopo__cfg09",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-09T16:14:37",
+  "target_kind": "level",
+  "normalize": "train",
+  "split": {
+    "n_train": 119,
+    "n_val": 20,
+    "n_test": 52,
+    "first_test_target": "2023-06-04",
+    "last_test_target": "2024-05-26"
+  },
+  "graph_counts": {
+    "geo_1hop": 115,
+    "anchor_edges": 2,
+    "corr": 2
+  },
+  "corr_topology_edges": 4,
+  "n_nodes": 59,
+  "fusion": "concat",
+  "time_axis_before_readout": 42,
+  "n_params": 479905,
+  "best_epoch": 4,
+  "best_val_mse": 0.5997321009635925,
+  "epochs_run": 24,
+  "n_seeds": 1,
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 4,
+      "best_val_mse": 0.5997321009635925
+    }
+  ],
+  "paper": "Luo et al. 2025, BMC Public Health 25:408",
+  "paper_gaps_filled": {
+    "fusion_operator": "concat",
+    "corr_threshold": 0.85,
+    "optimizer": "Adam"
+  },
+  "checkpoint": "checkpoints/_tuning/chicago/backtest_2023_24/horizon_01/dualtopo__cfg09_full.pt",
+  "experiment": {
+    "name": "dualtopo__cfg09",
+    "model": "dualtopo",
+    "variant": "full",
+    "target": "level",
+    "normalize": "train",
+    "features": {
+      "use_weather": false,
+      "use_demographics": false,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": false,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 1,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": true
+    },
+    "train": {
+      "lr": 0.01,
+      "weight_decay": 0.001,
+      "epochs": 200,
+      "batch_size": 26,
+      "plateau_factor": 0.2,
+      "plateau_patience": 5,
+      "early_stop_patience": 20,
+      "grad_clip": 1.0,
+      "dropout": 0.2,
+      "hidden": [
+        16,
+        64
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adam",
+      "schedule": "plateau",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 0.0,
+      "pearson_weight": 0.0,
+      "slope_weight": 0.0,
+      "n_seeds": 1,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 52,
+      "horizons": [
+        1
+      ],
+      "test_start": "2023-06-01",
+      "test_end": "2024-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Paper-faithful Dual-Topo-STGCN (Luo et al. 2025, BMC Public Health 25:408). ILI rates only, two separate topologies, 52-week input."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 3.145693768289955
+    },
+    "beta": {
+      "1": 0.9859987092000395
+    },
+    "kappa": {
+      "1": 1.134052353228829
+    },
+    "n_validation": 1160,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.1897481318666552,
+        -1.1265206523603932,
+        -1.0667464534366546,
+        -0.909908870181875,
+        -0.791782667251572,
+        -0.7442572605280761,
+        -0.6568412355247399,
+        -0.6132567062500969,
+        -0.5414503744767216,
+        -0.45466620881033576,
+        -0.43120473732935155,
+        -0.3800641796891001,
+        -0.2512887368804809,
+        -0.14535772875089029,
+        -0.01396900780732842,
+        0.19569423429750793,
+        0.43162405494327066,
+        0.66260145666774,
+        1.011618575840261,
+        1.443893727150577,
+        2.2227017864437886,
+        2.558653991196434,
+        3.2586737674456914
+      ]
+    },
+    "scale_floor": {
+      "1": 0.24460353631494436
+    }
+  },
+  "test_interval_coverage": 91.1472148541114
+}

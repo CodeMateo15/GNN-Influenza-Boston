@@ -4,8 +4,17 @@ Open-Meteo Archive API and aggregate to Sunday-start weeks matching
 the flu data boundaries.
 
 Output: Data/Weather/<neighborhood_slug>_weather_weekly.csv (one per neighborhood)
+
+    python Code/scrapers/scrape_weather.py            # fetch missing files only
+    python Code/scrapers/scrape_weather.py --refresh  # append weeks through yesterday
+
+--refresh never rewrites past weeks: Open-Meteo revises its archive slightly
+(0.1-degree rounding drift), and the paper's backtest must keep seeing the exact
+weather it was run on. Only the old last week (possibly partial) and newer weeks
+are taken from the new download.
 """
 
+import argparse
 import sys
 import time
 from datetime import date, timedelta
@@ -137,12 +146,20 @@ def aggregate_to_weekly(df: pd.DataFrame) -> pd.DataFrame:
 
     # Drop partial first week before 2017-12-31
     weekly = weekly.loc[weekly.index >= "2017-12-31"]
+    # Drop a partial last week: a week scraped mid-week would carry 1-6 days of
+    # weather and be silently overwritten on the next refresh.
+    weekly = weekly.loc[weekly.index + pd.Timedelta(days=6) <= df.index.max()]
 
     weekly.index.name = "week_start"
     return weekly
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser.add_argument("--refresh", action="store_true",
+                        help="append new weeks to files that already exist, unless "
+                             "already written today (so a rate-limited run can resume)")
+    args = parser.parse_args()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     print(f"Fetching weather for {len(NEIGHBORHOODS)} neighborhoods "
@@ -152,8 +169,10 @@ def main():
         slug = slugify(name)
         out_path = OUTPUT_DIR / f"{slug}_weather_weekly.csv"
 
-        # Skip if already downloaded (resume after rate-limit failures)
-        if out_path.exists():
+        # Skip if already downloaded (resume after rate-limit failures). With
+        # --refresh only files written today count as done.
+        if out_path.exists() and (not args.refresh or
+                                  date.fromtimestamp(out_path.stat().st_mtime) == date.today()):
             print(f"{name} - already exists, skipping")
             continue
 
@@ -163,6 +182,9 @@ def main():
         print(f"{name} ({lat}, {lon})...")
         daily = fetch_daily_weather(lat, lon)
         weekly = aggregate_to_weekly(daily)
+        if args.refresh and out_path.exists():
+            old = pd.read_csv(out_path, index_col="week_start", parse_dates=True)
+            weekly = pd.concat([old.iloc[:-1], weekly.loc[weekly.index >= old.index[-1]]])
         weekly.to_csv(out_path)
         print(f"  {len(weekly)} weeks -> {out_path.name}")
 

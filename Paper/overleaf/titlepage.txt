@@ -1,0 +1,91 @@
+% titlepage.txt -- AJE requires the title page as a separate file for
+% double-anonymous review. Rename to titlepage.tex in Overleaf.
+% Red bracketed text marks items the authors must fill in or confirm.
+
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{setspace}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\newcommand{\NOTE}[1]{\textcolor{red}{[#1]}}
+\doublespacing
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries Spatiotemporal Graph Neural Networks for Neighborhood-Level Influenza Forecasting in Boston\par}
+
+\bigskip
+Mateo Biggs$^{1,*}$, D. Yu$^{1}$ \NOTE{full first name}, A. Nilapwar$^{1}$
+\NOTE{full first name}, and R. Venkatesaramani$^{1}$ \NOTE{full first name}
+\end{center}
+
+\noindent$^{1}$ \NOTE{Department}, Northeastern University, Boston,
+Massachusetts, United States \NOTE{confirm each author's department and
+institution; add further affiliation numbers if they differ}
+
+\medskip
+\noindent$^{*}$ Corresponding author: Mateo Biggs, \NOTE{department},
+Northeastern University, 360 Huntington Avenue, Boston, MA 02115
+\NOTE{confirm mailing address}. Email: biggs.m@northeastern.edu
+
+\bigskip
+\noindent\textbf{Running head:} Neighborhood influenza forecasting with graphs
+
+\medskip
+\noindent\textbf{Word count:} abstract, \NOTE{n}; text, \NOTE{n}
+\NOTE{fill from texcount before submission; limits are 200 and 4,000}
+
+\section*{Acknowledgments}
+
+We thank the Boston Public Health Commission and Columbus Public Health for
+providing and explaining their surveillance data, and Professor Ariel Hamlin
+(Khoury College of Computer Sciences, Northeastern University) for guidance
+throughout the project. This work was
+supported in part by a PEAK Trailblazer fellowship from Northeastern
+University. Computation was performed on the Explorer cluster of Northeastern
+University's research computing service.
+
+\section*{Funding}
+
+\NOTE{List each funding source with grant or award numbers, e.g., the PEAK
+Trailblazer award number, or state that the work received no specific
+funding.}
+
+\section*{Conflict of Interest}
+
+The authors declare no conflicts of interest. \NOTE{confirm for every
+author}
+
+\section*{Disclaimer}
+
+The findings and conclusions are those of the authors and do not necessarily
+represent the views of the Boston Public Health Commission or Columbus Public
+Health.
+
+\section*{Data Availability}
+
+Boston neighborhood influenza-like illness rates are published by the Boston
+Public Health Commission. Chicago ZIP code influenza-like illness activity
+levels are published by the Chicago Department of Public Health on the City of
+Chicago Data Portal (dataset 8vvr-jv2g; ZIP code boundaries, dataset
+unjd-c2ca). Columbus data
+were provided by Columbus Public Health as de-identified visit-level extracts;
+with their agreement, the weekly area-level counts used in every analysis are
+publicly available with the code, and the visit-level extracts are available
+from Columbus Public Health on request. Weather data come from the Open-Meteo
+archive (CC BY 4.0), and boundary files from the City of Boston, the City of
+Chicago, and the US Census Bureau. All code, frozen model
+configurations, and the scripts that produce every table and figure are
+available at \url{https://github.com/CodeMateo15/GNN-Influenza-Boston}
+\NOTE{tag the release used for this paper, e.g., paper-v1, and cite it or a
+Zenodo DOI here}. The forecasting models are also released as an installable
+Python package for health departments, areaFluForecast
+(\url{https://github.com/CodeMateo15/areaFluForecast}), which reproduces the
+Boston results reported here \NOTE{confirm once the parity check (Gate B)
+passes; add the package's Zenodo DOI}.
+
+\end{document}

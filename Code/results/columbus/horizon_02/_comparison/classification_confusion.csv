@@ -1,0 +1,1377 @@
+model,variant,bound,horizon,segment,actual_band,forecast_band,count
+arima,post_covid,point,2,overall,low,low,690
+arima,post_covid,point,2,overall,low,moderate,49
+arima,post_covid,point,2,overall,low,high,1
+arima,post_covid,point,2,overall,low,very high,0
+arima,post_covid,point,2,overall,moderate,low,49
+arima,post_covid,point,2,overall,moderate,moderate,44
+arima,post_covid,point,2,overall,moderate,high,9
+arima,post_covid,point,2,overall,moderate,very high,1
+arima,post_covid,point,2,overall,high,low,5
+arima,post_covid,point,2,overall,high,moderate,23
+arima,post_covid,point,2,overall,high,high,10
+arima,post_covid,point,2,overall,high,very high,0
+arima,post_covid,point,2,overall,very high,low,5
+arima,post_covid,point,2,overall,very high,moderate,8
+arima,post_covid,point,2,overall,very high,high,6
+arima,post_covid,point,2,overall,very high,very high,1
+arima,post_covid,point,2,flu_season,low,low,289
+arima,post_covid,point,2,flu_season,low,moderate,17
+arima,post_covid,point,2,flu_season,low,high,1
+arima,post_covid,point,2,flu_season,low,very high,0
+arima,post_covid,point,2,flu_season,moderate,low,32
+arima,post_covid,point,2,flu_season,moderate,moderate,35
+arima,post_covid,point,2,flu_season,moderate,high,9
+arima,post_covid,point,2,flu_season,moderate,very high,1
+arima,post_covid,point,2,flu_season,high,low,5
+arima,post_covid,point,2,flu_season,high,moderate,23
+arima,post_covid,point,2,flu_season,high,high,10
+arima,post_covid,point,2,flu_season,high,very high,0
+arima,post_covid,point,2,flu_season,very high,low,5
+arima,post_covid,point,2,flu_season,very high,moderate,8
+arima,post_covid,point,2,flu_season,very high,high,6
+arima,post_covid,point,2,flu_season,very high,very high,1
+arima,post_covid,lower95,2,overall,low,low,740
+arima,post_covid,lower95,2,overall,low,moderate,0
+arima,post_covid,lower95,2,overall,low,high,0
+arima,post_covid,lower95,2,overall,low,very high,0
+arima,post_covid,lower95,2,overall,moderate,low,99
+arima,post_covid,lower95,2,overall,moderate,moderate,4
+arima,post_covid,lower95,2,overall,moderate,high,0
+arima,post_covid,lower95,2,overall,moderate,very high,0
+arima,post_covid,lower95,2,overall,high,low,35
+arima,post_covid,lower95,2,overall,high,moderate,3
+arima,post_covid,lower95,2,overall,high,high,0
+arima,post_covid,lower95,2,overall,high,very high,0
+arima,post_covid,lower95,2,overall,very high,low,16
+arima,post_covid,lower95,2,overall,very high,moderate,3
+arima,post_covid,lower95,2,overall,very high,high,1
+arima,post_covid,lower95,2,overall,very high,very high,0
+arima,post_covid,lower95,2,flu_season,low,low,307
+arima,post_covid,lower95,2,flu_season,low,moderate,0
+arima,post_covid,lower95,2,flu_season,low,high,0
+arima,post_covid,lower95,2,flu_season,low,very high,0
+arima,post_covid,lower95,2,flu_season,moderate,low,73
+arima,post_covid,lower95,2,flu_season,moderate,moderate,4
+arima,post_covid,lower95,2,flu_season,moderate,high,0
+arima,post_covid,lower95,2,flu_season,moderate,very high,0
+arima,post_covid,lower95,2,flu_season,high,low,35
+arima,post_covid,lower95,2,flu_season,high,moderate,3
+arima,post_covid,lower95,2,flu_season,high,high,0
+arima,post_covid,lower95,2,flu_season,high,very high,0
+arima,post_covid,lower95,2,flu_season,very high,low,16
+arima,post_covid,lower95,2,flu_season,very high,moderate,3
+arima,post_covid,lower95,2,flu_season,very high,high,1
+arima,post_covid,lower95,2,flu_season,very high,very high,0
+arima,post_covid,upper95,2,overall,low,low,519
+arima,post_covid,upper95,2,overall,low,moderate,170
+arima,post_covid,upper95,2,overall,low,high,47
+arima,post_covid,upper95,2,overall,low,very high,4
+arima,post_covid,upper95,2,overall,moderate,low,8
+arima,post_covid,upper95,2,overall,moderate,moderate,40
+arima,post_covid,upper95,2,overall,moderate,high,42
+arima,post_covid,upper95,2,overall,moderate,very high,13
+arima,post_covid,upper95,2,overall,high,low,0
+arima,post_covid,upper95,2,overall,high,moderate,5
+arima,post_covid,upper95,2,overall,high,high,17
+arima,post_covid,upper95,2,overall,high,very high,16
+arima,post_covid,upper95,2,overall,very high,low,1
+arima,post_covid,upper95,2,overall,very high,moderate,4
+arima,post_covid,upper95,2,overall,very high,high,7
+arima,post_covid,upper95,2,overall,very high,very high,8
+arima,post_covid,upper95,2,flu_season,low,low,219
+arima,post_covid,upper95,2,flu_season,low,moderate,69
+arima,post_covid,upper95,2,flu_season,low,high,16
+arima,post_covid,upper95,2,flu_season,low,very high,3
+arima,post_covid,upper95,2,flu_season,moderate,low,7
+arima,post_covid,upper95,2,flu_season,moderate,moderate,25
+arima,post_covid,upper95,2,flu_season,moderate,high,33
+arima,post_covid,upper95,2,flu_season,moderate,very high,12
+arima,post_covid,upper95,2,flu_season,high,low,0
+arima,post_covid,upper95,2,flu_season,high,moderate,5
+arima,post_covid,upper95,2,flu_season,high,high,17
+arima,post_covid,upper95,2,flu_season,high,very high,16
+arima,post_covid,upper95,2,flu_season,very high,low,1
+arima,post_covid,upper95,2,flu_season,very high,moderate,4
+arima,post_covid,upper95,2,flu_season,very high,high,7
+arima,post_covid,upper95,2,flu_season,very high,very high,8
+arima,post_covid,lower99,2,overall,low,low,740
+arima,post_covid,lower99,2,overall,low,moderate,0
+arima,post_covid,lower99,2,overall,low,high,0
+arima,post_covid,lower99,2,overall,low,very high,0
+arima,post_covid,lower99,2,overall,moderate,low,102
+arima,post_covid,lower99,2,overall,moderate,moderate,1
+arima,post_covid,lower99,2,overall,moderate,high,0
+arima,post_covid,lower99,2,overall,moderate,very high,0
+arima,post_covid,lower99,2,overall,high,low,38
+arima,post_covid,lower99,2,overall,high,moderate,0
+arima,post_covid,lower99,2,overall,high,high,0
+arima,post_covid,lower99,2,overall,high,very high,0
+arima,post_covid,lower99,2,overall,very high,low,19
+arima,post_covid,lower99,2,overall,very high,moderate,1
+arima,post_covid,lower99,2,overall,very high,high,0
+arima,post_covid,lower99,2,overall,very high,very high,0
+arima,post_covid,lower99,2,flu_season,low,low,307
+arima,post_covid,lower99,2,flu_season,low,moderate,0
+arima,post_covid,lower99,2,flu_season,low,high,0
+arima,post_covid,lower99,2,flu_season,low,very high,0
+arima,post_covid,lower99,2,flu_season,moderate,low,76
+arima,post_covid,lower99,2,flu_season,moderate,moderate,1
+arima,post_covid,lower99,2,flu_season,moderate,high,0
+arima,post_covid,lower99,2,flu_season,moderate,very high,0
+arima,post_covid,lower99,2,flu_season,high,low,38
+arima,post_covid,lower99,2,flu_season,high,moderate,0
+arima,post_covid,lower99,2,flu_season,high,high,0
+arima,post_covid,lower99,2,flu_season,high,very high,0
+arima,post_covid,lower99,2,flu_season,very high,low,19
+arima,post_covid,lower99,2,flu_season,very high,moderate,1
+arima,post_covid,lower99,2,flu_season,very high,high,0
+arima,post_covid,lower99,2,flu_season,very high,very high,0
+arima,post_covid,upper99,2,overall,low,low,478
+arima,post_covid,upper99,2,overall,low,moderate,166
+arima,post_covid,upper99,2,overall,low,high,86
+arima,post_covid,upper99,2,overall,low,very high,10
+arima,post_covid,upper99,2,overall,moderate,low,3
+arima,post_covid,upper99,2,overall,moderate,moderate,26
+arima,post_covid,upper99,2,overall,moderate,high,47
+arima,post_covid,upper99,2,overall,moderate,very high,27
+arima,post_covid,upper99,2,overall,high,low,0
+arima,post_covid,upper99,2,overall,high,moderate,1
+arima,post_covid,upper99,2,overall,high,high,13
+arima,post_covid,upper99,2,overall,high,very high,24
+arima,post_covid,upper99,2,overall,very high,low,1
+arima,post_covid,upper99,2,overall,very high,moderate,3
+arima,post_covid,upper99,2,overall,very high,high,6
+arima,post_covid,upper99,2,overall,very high,very high,10
+arima,post_covid,upper99,2,flu_season,low,low,199
+arima,post_covid,upper99,2,flu_season,low,moderate,73
+arima,post_covid,upper99,2,flu_season,low,high,30
+arima,post_covid,upper99,2,flu_season,low,very high,5
+arima,post_covid,upper99,2,flu_season,moderate,low,3
+arima,post_covid,upper99,2,flu_season,moderate,moderate,20
+arima,post_covid,upper99,2,flu_season,moderate,high,31
+arima,post_covid,upper99,2,flu_season,moderate,very high,23
+arima,post_covid,upper99,2,flu_season,high,low,0
+arima,post_covid,upper99,2,flu_season,high,moderate,1
+arima,post_covid,upper99,2,flu_season,high,high,13
+arima,post_covid,upper99,2,flu_season,high,very high,24
+arima,post_covid,upper99,2,flu_season,very high,low,1
+arima,post_covid,upper99,2,flu_season,very high,moderate,3
+arima,post_covid,upper99,2,flu_season,very high,high,6
+arima,post_covid,upper99,2,flu_season,very high,very high,10
+dualtopo,post_covid,point,2,overall,low,low,662
+dualtopo,post_covid,point,2,overall,low,moderate,78
+dualtopo,post_covid,point,2,overall,low,high,0
+dualtopo,post_covid,point,2,overall,low,very high,0
+dualtopo,post_covid,point,2,overall,moderate,low,60
+dualtopo,post_covid,point,2,overall,moderate,moderate,43
+dualtopo,post_covid,point,2,overall,moderate,high,0
+dualtopo,post_covid,point,2,overall,moderate,very high,0
+dualtopo,post_covid,point,2,overall,high,low,11
+dualtopo,post_covid,point,2,overall,high,moderate,27
+dualtopo,post_covid,point,2,overall,high,high,0
+dualtopo,post_covid,point,2,overall,high,very high,0
+dualtopo,post_covid,point,2,overall,very high,low,9
+dualtopo,post_covid,point,2,overall,very high,moderate,11
+dualtopo,post_covid,point,2,overall,very high,high,0
+dualtopo,post_covid,point,2,overall,very high,very high,0
+dualtopo,post_covid,point,2,flu_season,low,low,293
+dualtopo,post_covid,point,2,flu_season,low,moderate,14
+dualtopo,post_covid,point,2,flu_season,low,high,0
+dualtopo,post_covid,point,2,flu_season,low,very high,0
+dualtopo,post_covid,point,2,flu_season,moderate,low,51
+dualtopo,post_covid,point,2,flu_season,moderate,moderate,26
+dualtopo,post_covid,point,2,flu_season,moderate,high,0
+dualtopo,post_covid,point,2,flu_season,moderate,very high,0
+dualtopo,post_covid,point,2,flu_season,high,low,11
+dualtopo,post_covid,point,2,flu_season,high,moderate,27
+dualtopo,post_covid,point,2,flu_season,high,high,0
+dualtopo,post_covid,point,2,flu_season,high,very high,0
+dualtopo,post_covid,point,2,flu_season,very high,low,9
+dualtopo,post_covid,point,2,flu_season,very high,moderate,11
+dualtopo,post_covid,point,2,flu_season,very high,high,0
+dualtopo,post_covid,point,2,flu_season,very high,very high,0
+dualtopo,post_covid,lower95,2,overall,low,low,740
+dualtopo,post_covid,lower95,2,overall,low,moderate,0
+dualtopo,post_covid,lower95,2,overall,low,high,0
+dualtopo,post_covid,lower95,2,overall,low,very high,0
+dualtopo,post_covid,lower95,2,overall,moderate,low,103
+dualtopo,post_covid,lower95,2,overall,moderate,moderate,0
+dualtopo,post_covid,lower95,2,overall,moderate,high,0
+dualtopo,post_covid,lower95,2,overall,moderate,very high,0
+dualtopo,post_covid,lower95,2,overall,high,low,38
+dualtopo,post_covid,lower95,2,overall,high,moderate,0
+dualtopo,post_covid,lower95,2,overall,high,high,0
+dualtopo,post_covid,lower95,2,overall,high,very high,0
+dualtopo,post_covid,lower95,2,overall,very high,low,20
+dualtopo,post_covid,lower95,2,overall,very high,moderate,0
+dualtopo,post_covid,lower95,2,overall,very high,high,0
+dualtopo,post_covid,lower95,2,overall,very high,very high,0
+dualtopo,post_covid,lower95,2,flu_season,low,low,307
+dualtopo,post_covid,lower95,2,flu_season,low,moderate,0
+dualtopo,post_covid,lower95,2,flu_season,low,high,0
+dualtopo,post_covid,lower95,2,flu_season,low,very high,0
+dualtopo,post_covid,lower95,2,flu_season,moderate,low,77
+dualtopo,post_covid,lower95,2,flu_season,moderate,moderate,0
+dualtopo,post_covid,lower95,2,flu_season,moderate,high,0
+dualtopo,post_covid,lower95,2,flu_season,moderate,very high,0
+dualtopo,post_covid,lower95,2,flu_season,high,low,38
+dualtopo,post_covid,lower95,2,flu_season,high,moderate,0
+dualtopo,post_covid,lower95,2,flu_season,high,high,0
+dualtopo,post_covid,lower95,2,flu_season,high,very high,0
+dualtopo,post_covid,lower95,2,flu_season,very high,low,20
+dualtopo,post_covid,lower95,2,flu_season,very high,moderate,0
+dualtopo,post_covid,lower95,2,flu_season,very high,high,0
+dualtopo,post_covid,lower95,2,flu_season,very high,very high,0
+dualtopo,post_covid,upper95,2,overall,low,low,517
+dualtopo,post_covid,upper95,2,overall,low,moderate,204
+dualtopo,post_covid,upper95,2,overall,low,high,19
+dualtopo,post_covid,upper95,2,overall,low,very high,0
+dualtopo,post_covid,upper95,2,overall,moderate,low,13
+dualtopo,post_covid,upper95,2,overall,moderate,moderate,69
+dualtopo,post_covid,upper95,2,overall,moderate,high,21
+dualtopo,post_covid,upper95,2,overall,moderate,very high,0
+dualtopo,post_covid,upper95,2,overall,high,low,0
+dualtopo,post_covid,upper95,2,overall,high,moderate,30
+dualtopo,post_covid,upper95,2,overall,high,high,8
+dualtopo,post_covid,upper95,2,overall,high,very high,0
+dualtopo,post_covid,upper95,2,overall,very high,low,0
+dualtopo,post_covid,upper95,2,overall,very high,moderate,15
+dualtopo,post_covid,upper95,2,overall,very high,high,5
+dualtopo,post_covid,upper95,2,overall,very high,very high,0
+dualtopo,post_covid,upper95,2,flu_season,low,low,247
+dualtopo,post_covid,upper95,2,flu_season,low,moderate,58
+dualtopo,post_covid,upper95,2,flu_season,low,high,2
+dualtopo,post_covid,upper95,2,flu_season,low,very high,0
+dualtopo,post_covid,upper95,2,flu_season,moderate,low,13
+dualtopo,post_covid,upper95,2,flu_season,moderate,moderate,53
+dualtopo,post_covid,upper95,2,flu_season,moderate,high,11
+dualtopo,post_covid,upper95,2,flu_season,moderate,very high,0
+dualtopo,post_covid,upper95,2,flu_season,high,low,0
+dualtopo,post_covid,upper95,2,flu_season,high,moderate,30
+dualtopo,post_covid,upper95,2,flu_season,high,high,8
+dualtopo,post_covid,upper95,2,flu_season,high,very high,0
+dualtopo,post_covid,upper95,2,flu_season,very high,low,0
+dualtopo,post_covid,upper95,2,flu_season,very high,moderate,15
+dualtopo,post_covid,upper95,2,flu_season,very high,high,5
+dualtopo,post_covid,upper95,2,flu_season,very high,very high,0
+dualtopo,post_covid,lower99,2,overall,low,low,740
+dualtopo,post_covid,lower99,2,overall,low,moderate,0
+dualtopo,post_covid,lower99,2,overall,low,high,0
+dualtopo,post_covid,lower99,2,overall,low,very high,0
+dualtopo,post_covid,lower99,2,overall,moderate,low,103
+dualtopo,post_covid,lower99,2,overall,moderate,moderate,0
+dualtopo,post_covid,lower99,2,overall,moderate,high,0
+dualtopo,post_covid,lower99,2,overall,moderate,very high,0
+dualtopo,post_covid,lower99,2,overall,high,low,38
+dualtopo,post_covid,lower99,2,overall,high,moderate,0
+dualtopo,post_covid,lower99,2,overall,high,high,0
+dualtopo,post_covid,lower99,2,overall,high,very high,0
+dualtopo,post_covid,lower99,2,overall,very high,low,20
+dualtopo,post_covid,lower99,2,overall,very high,moderate,0
+dualtopo,post_covid,lower99,2,overall,very high,high,0
+dualtopo,post_covid,lower99,2,overall,very high,very high,0
+dualtopo,post_covid,lower99,2,flu_season,low,low,307
+dualtopo,post_covid,lower99,2,flu_season,low,moderate,0
+dualtopo,post_covid,lower99,2,flu_season,low,high,0
+dualtopo,post_covid,lower99,2,flu_season,low,very high,0
+dualtopo,post_covid,lower99,2,flu_season,moderate,low,77
+dualtopo,post_covid,lower99,2,flu_season,moderate,moderate,0
+dualtopo,post_covid,lower99,2,flu_season,moderate,high,0
+dualtopo,post_covid,lower99,2,flu_season,moderate,very high,0
+dualtopo,post_covid,lower99,2,flu_season,high,low,38
+dualtopo,post_covid,lower99,2,flu_season,high,moderate,0
+dualtopo,post_covid,lower99,2,flu_season,high,high,0
+dualtopo,post_covid,lower99,2,flu_season,high,very high,0
+dualtopo,post_covid,lower99,2,flu_season,very high,low,20
+dualtopo,post_covid,lower99,2,flu_season,very high,moderate,0
+dualtopo,post_covid,lower99,2,flu_season,very high,high,0
+dualtopo,post_covid,lower99,2,flu_season,very high,very high,0
+dualtopo,post_covid,upper99,2,overall,low,low,517
+dualtopo,post_covid,upper99,2,overall,low,moderate,145
+dualtopo,post_covid,upper99,2,overall,low,high,78
+dualtopo,post_covid,upper99,2,overall,low,very high,0
+dualtopo,post_covid,upper99,2,overall,moderate,low,13
+dualtopo,post_covid,upper99,2,overall,moderate,moderate,47
+dualtopo,post_covid,upper99,2,overall,moderate,high,43
+dualtopo,post_covid,upper99,2,overall,moderate,very high,0
+dualtopo,post_covid,upper99,2,overall,high,low,0
+dualtopo,post_covid,upper99,2,overall,high,moderate,11
+dualtopo,post_covid,upper99,2,overall,high,high,27
+dualtopo,post_covid,upper99,2,overall,high,very high,0
+dualtopo,post_covid,upper99,2,overall,very high,low,0
+dualtopo,post_covid,upper99,2,overall,very high,moderate,9
+dualtopo,post_covid,upper99,2,overall,very high,high,11
+dualtopo,post_covid,upper99,2,overall,very high,very high,0
+dualtopo,post_covid,upper99,2,flu_season,low,low,247
+dualtopo,post_covid,upper99,2,flu_season,low,moderate,46
+dualtopo,post_covid,upper99,2,flu_season,low,high,14
+dualtopo,post_covid,upper99,2,flu_season,low,very high,0
+dualtopo,post_covid,upper99,2,flu_season,moderate,low,13
+dualtopo,post_covid,upper99,2,flu_season,moderate,moderate,38
+dualtopo,post_covid,upper99,2,flu_season,moderate,high,26
+dualtopo,post_covid,upper99,2,flu_season,moderate,very high,0
+dualtopo,post_covid,upper99,2,flu_season,high,low,0
+dualtopo,post_covid,upper99,2,flu_season,high,moderate,11
+dualtopo,post_covid,upper99,2,flu_season,high,high,27
+dualtopo,post_covid,upper99,2,flu_season,high,very high,0
+dualtopo,post_covid,upper99,2,flu_season,very high,low,0
+dualtopo,post_covid,upper99,2,flu_season,very high,moderate,9
+dualtopo,post_covid,upper99,2,flu_season,very high,high,11
+dualtopo,post_covid,upper99,2,flu_season,very high,very high,0
+gat,post_covid,point,2,overall,low,low,686
+gat,post_covid,point,2,overall,low,moderate,49
+gat,post_covid,point,2,overall,low,high,5
+gat,post_covid,point,2,overall,low,very high,0
+gat,post_covid,point,2,overall,moderate,low,34
+gat,post_covid,point,2,overall,moderate,moderate,36
+gat,post_covid,point,2,overall,moderate,high,29
+gat,post_covid,point,2,overall,moderate,very high,4
+gat,post_covid,point,2,overall,high,low,1
+gat,post_covid,point,2,overall,high,moderate,9
+gat,post_covid,point,2,overall,high,high,15
+gat,post_covid,point,2,overall,high,very high,13
+gat,post_covid,point,2,overall,very high,low,0
+gat,post_covid,point,2,overall,very high,moderate,5
+gat,post_covid,point,2,overall,very high,high,8
+gat,post_covid,point,2,overall,very high,very high,7
+gat,post_covid,point,2,flu_season,low,low,258
+gat,post_covid,point,2,flu_season,low,moderate,44
+gat,post_covid,point,2,flu_season,low,high,5
+gat,post_covid,point,2,flu_season,low,very high,0
+gat,post_covid,point,2,flu_season,moderate,low,13
+gat,post_covid,point,2,flu_season,moderate,moderate,31
+gat,post_covid,point,2,flu_season,moderate,high,29
+gat,post_covid,point,2,flu_season,moderate,very high,4
+gat,post_covid,point,2,flu_season,high,low,1
+gat,post_covid,point,2,flu_season,high,moderate,9
+gat,post_covid,point,2,flu_season,high,high,15
+gat,post_covid,point,2,flu_season,high,very high,13
+gat,post_covid,point,2,flu_season,very high,low,0
+gat,post_covid,point,2,flu_season,very high,moderate,5
+gat,post_covid,point,2,flu_season,very high,high,8
+gat,post_covid,point,2,flu_season,very high,very high,7
+gat,post_covid,lower95,2,overall,low,low,735
+gat,post_covid,lower95,2,overall,low,moderate,5
+gat,post_covid,lower95,2,overall,low,high,0
+gat,post_covid,lower95,2,overall,low,very high,0
+gat,post_covid,lower95,2,overall,moderate,low,73
+gat,post_covid,lower95,2,overall,moderate,moderate,26
+gat,post_covid,lower95,2,overall,moderate,high,4
+gat,post_covid,lower95,2,overall,moderate,very high,0
+gat,post_covid,lower95,2,overall,high,low,10
+gat,post_covid,lower95,2,overall,high,moderate,19
+gat,post_covid,lower95,2,overall,high,high,9
+gat,post_covid,lower95,2,overall,high,very high,0
+gat,post_covid,lower95,2,overall,very high,low,5
+gat,post_covid,lower95,2,overall,very high,moderate,10
+gat,post_covid,lower95,2,overall,very high,high,5
+gat,post_covid,lower95,2,overall,very high,very high,0
+gat,post_covid,lower95,2,flu_season,low,low,302
+gat,post_covid,lower95,2,flu_season,low,moderate,5
+gat,post_covid,lower95,2,flu_season,low,high,0
+gat,post_covid,lower95,2,flu_season,low,very high,0
+gat,post_covid,lower95,2,flu_season,moderate,low,47
+gat,post_covid,lower95,2,flu_season,moderate,moderate,26
+gat,post_covid,lower95,2,flu_season,moderate,high,4
+gat,post_covid,lower95,2,flu_season,moderate,very high,0
+gat,post_covid,lower95,2,flu_season,high,low,10
+gat,post_covid,lower95,2,flu_season,high,moderate,19
+gat,post_covid,lower95,2,flu_season,high,high,9
+gat,post_covid,lower95,2,flu_season,high,very high,0
+gat,post_covid,lower95,2,flu_season,very high,low,5
+gat,post_covid,lower95,2,flu_season,very high,moderate,10
+gat,post_covid,lower95,2,flu_season,very high,high,5
+gat,post_covid,lower95,2,flu_season,very high,very high,0
+gat,post_covid,upper95,2,overall,low,low,552
+gat,post_covid,upper95,2,overall,low,moderate,151
+gat,post_covid,upper95,2,overall,low,high,32
+gat,post_covid,upper95,2,overall,low,very high,5
+gat,post_covid,upper95,2,overall,moderate,low,5
+gat,post_covid,upper95,2,overall,moderate,moderate,35
+gat,post_covid,upper95,2,overall,moderate,high,27
+gat,post_covid,upper95,2,overall,moderate,very high,36
+gat,post_covid,upper95,2,overall,high,low,0
+gat,post_covid,upper95,2,overall,high,moderate,1
+gat,post_covid,upper95,2,overall,high,high,6
+gat,post_covid,upper95,2,overall,high,very high,31
+gat,post_covid,upper95,2,overall,very high,low,0
+gat,post_covid,upper95,2,overall,very high,moderate,0
+gat,post_covid,upper95,2,overall,very high,high,5
+gat,post_covid,upper95,2,overall,very high,very high,15
+gat,post_covid,upper95,2,flu_season,low,low,196
+gat,post_covid,upper95,2,flu_season,low,moderate,77
+gat,post_covid,upper95,2,flu_season,low,high,29
+gat,post_covid,upper95,2,flu_season,low,very high,5
+gat,post_covid,upper95,2,flu_season,moderate,low,2
+gat,post_covid,upper95,2,flu_season,moderate,moderate,14
+gat,post_covid,upper95,2,flu_season,moderate,high,25
+gat,post_covid,upper95,2,flu_season,moderate,very high,36
+gat,post_covid,upper95,2,flu_season,high,low,0
+gat,post_covid,upper95,2,flu_season,high,moderate,1
+gat,post_covid,upper95,2,flu_season,high,high,6
+gat,post_covid,upper95,2,flu_season,high,very high,31
+gat,post_covid,upper95,2,flu_season,very high,low,0
+gat,post_covid,upper95,2,flu_season,very high,moderate,0
+gat,post_covid,upper95,2,flu_season,very high,high,5
+gat,post_covid,upper95,2,flu_season,very high,very high,15
+gat,post_covid,lower99,2,overall,low,low,739
+gat,post_covid,lower99,2,overall,low,moderate,1
+gat,post_covid,lower99,2,overall,low,high,0
+gat,post_covid,lower99,2,overall,low,very high,0
+gat,post_covid,lower99,2,overall,moderate,low,93
+gat,post_covid,lower99,2,overall,moderate,moderate,8
+gat,post_covid,lower99,2,overall,moderate,high,2
+gat,post_covid,lower99,2,overall,moderate,very high,0
+gat,post_covid,lower99,2,overall,high,low,17
+gat,post_covid,lower99,2,overall,high,moderate,20
+gat,post_covid,lower99,2,overall,high,high,1
+gat,post_covid,lower99,2,overall,high,very high,0
+gat,post_covid,lower99,2,overall,very high,low,11
+gat,post_covid,lower99,2,overall,very high,moderate,9
+gat,post_covid,lower99,2,overall,very high,high,0
+gat,post_covid,lower99,2,overall,very high,very high,0
+gat,post_covid,lower99,2,flu_season,low,low,306
+gat,post_covid,lower99,2,flu_season,low,moderate,1
+gat,post_covid,lower99,2,flu_season,low,high,0
+gat,post_covid,lower99,2,flu_season,low,very high,0
+gat,post_covid,lower99,2,flu_season,moderate,low,67
+gat,post_covid,lower99,2,flu_season,moderate,moderate,8
+gat,post_covid,lower99,2,flu_season,moderate,high,2
+gat,post_covid,lower99,2,flu_season,moderate,very high,0
+gat,post_covid,lower99,2,flu_season,high,low,17
+gat,post_covid,lower99,2,flu_season,high,moderate,20
+gat,post_covid,lower99,2,flu_season,high,high,1
+gat,post_covid,lower99,2,flu_season,high,very high,0
+gat,post_covid,lower99,2,flu_season,very high,low,11
+gat,post_covid,lower99,2,flu_season,very high,moderate,9
+gat,post_covid,lower99,2,flu_season,very high,high,0
+gat,post_covid,lower99,2,flu_season,very high,very high,0
+gat,post_covid,upper99,2,overall,low,low,499
+gat,post_covid,upper99,2,overall,low,moderate,185
+gat,post_covid,upper99,2,overall,low,high,45
+gat,post_covid,upper99,2,overall,low,very high,11
+gat,post_covid,upper99,2,overall,moderate,low,2
+gat,post_covid,upper99,2,overall,moderate,moderate,27
+gat,post_covid,upper99,2,overall,moderate,high,26
+gat,post_covid,upper99,2,overall,moderate,very high,48
+gat,post_covid,upper99,2,overall,high,low,0
+gat,post_covid,upper99,2,overall,high,moderate,0
+gat,post_covid,upper99,2,overall,high,high,4
+gat,post_covid,upper99,2,overall,high,very high,34
+gat,post_covid,upper99,2,overall,very high,low,0
+gat,post_covid,upper99,2,overall,very high,moderate,0
+gat,post_covid,upper99,2,overall,very high,high,3
+gat,post_covid,upper99,2,overall,very high,very high,17
+gat,post_covid,upper99,2,flu_season,low,low,175
+gat,post_covid,upper99,2,flu_season,low,moderate,81
+gat,post_covid,upper99,2,flu_season,low,high,40
+gat,post_covid,upper99,2,flu_season,low,very high,11
+gat,post_covid,upper99,2,flu_season,moderate,low,1
+gat,post_covid,upper99,2,flu_season,moderate,moderate,11
+gat,post_covid,upper99,2,flu_season,moderate,high,17
+gat,post_covid,upper99,2,flu_season,moderate,very high,48
+gat,post_covid,upper99,2,flu_season,high,low,0
+gat,post_covid,upper99,2,flu_season,high,moderate,0
+gat,post_covid,upper99,2,flu_season,high,high,4
+gat,post_covid,upper99,2,flu_season,high,very high,34
+gat,post_covid,upper99,2,flu_season,very high,low,0
+gat,post_covid,upper99,2,flu_season,very high,moderate,0
+gat,post_covid,upper99,2,flu_season,very high,high,3
+gat,post_covid,upper99,2,flu_season,very high,very high,17
+gnn_cascade,post_covid,point,2,overall,low,low,718
+gnn_cascade,post_covid,point,2,overall,low,moderate,20
+gnn_cascade,post_covid,point,2,overall,low,high,2
+gnn_cascade,post_covid,point,2,overall,low,very high,0
+gnn_cascade,post_covid,point,2,overall,moderate,low,39
+gnn_cascade,post_covid,point,2,overall,moderate,moderate,52
+gnn_cascade,post_covid,point,2,overall,moderate,high,10
+gnn_cascade,post_covid,point,2,overall,moderate,very high,2
+gnn_cascade,post_covid,point,2,overall,high,low,2
+gnn_cascade,post_covid,point,2,overall,high,moderate,12
+gnn_cascade,post_covid,point,2,overall,high,high,19
+gnn_cascade,post_covid,point,2,overall,high,very high,5
+gnn_cascade,post_covid,point,2,overall,very high,low,0
+gnn_cascade,post_covid,point,2,overall,very high,moderate,6
+gnn_cascade,post_covid,point,2,overall,very high,high,9
+gnn_cascade,post_covid,point,2,overall,very high,very high,5
+gnn_cascade,post_covid,point,2,flu_season,low,low,288
+gnn_cascade,post_covid,point,2,flu_season,low,moderate,17
+gnn_cascade,post_covid,point,2,flu_season,low,high,2
+gnn_cascade,post_covid,point,2,flu_season,low,very high,0
+gnn_cascade,post_covid,point,2,flu_season,moderate,low,19
+gnn_cascade,post_covid,point,2,flu_season,moderate,moderate,46
+gnn_cascade,post_covid,point,2,flu_season,moderate,high,10
+gnn_cascade,post_covid,point,2,flu_season,moderate,very high,2
+gnn_cascade,post_covid,point,2,flu_season,high,low,2
+gnn_cascade,post_covid,point,2,flu_season,high,moderate,12
+gnn_cascade,post_covid,point,2,flu_season,high,high,19
+gnn_cascade,post_covid,point,2,flu_season,high,very high,5
+gnn_cascade,post_covid,point,2,flu_season,very high,low,0
+gnn_cascade,post_covid,point,2,flu_season,very high,moderate,6
+gnn_cascade,post_covid,point,2,flu_season,very high,high,9
+gnn_cascade,post_covid,point,2,flu_season,very high,very high,5
+gnn_cascade,post_covid,lower95,2,overall,low,low,740
+gnn_cascade,post_covid,lower95,2,overall,low,moderate,0
+gnn_cascade,post_covid,lower95,2,overall,low,high,0
+gnn_cascade,post_covid,lower95,2,overall,low,very high,0
+gnn_cascade,post_covid,lower95,2,overall,moderate,low,100
+gnn_cascade,post_covid,lower95,2,overall,moderate,moderate,3
+gnn_cascade,post_covid,lower95,2,overall,moderate,high,0
+gnn_cascade,post_covid,lower95,2,overall,moderate,very high,0
+gnn_cascade,post_covid,lower95,2,overall,high,low,29
+gnn_cascade,post_covid,lower95,2,overall,high,moderate,9
+gnn_cascade,post_covid,lower95,2,overall,high,high,0
+gnn_cascade,post_covid,lower95,2,overall,high,very high,0
+gnn_cascade,post_covid,lower95,2,overall,very high,low,13
+gnn_cascade,post_covid,lower95,2,overall,very high,moderate,6
+gnn_cascade,post_covid,lower95,2,overall,very high,high,1
+gnn_cascade,post_covid,lower95,2,overall,very high,very high,0
+gnn_cascade,post_covid,lower95,2,flu_season,low,low,307
+gnn_cascade,post_covid,lower95,2,flu_season,low,moderate,0
+gnn_cascade,post_covid,lower95,2,flu_season,low,high,0
+gnn_cascade,post_covid,lower95,2,flu_season,low,very high,0
+gnn_cascade,post_covid,lower95,2,flu_season,moderate,low,74
+gnn_cascade,post_covid,lower95,2,flu_season,moderate,moderate,3
+gnn_cascade,post_covid,lower95,2,flu_season,moderate,high,0
+gnn_cascade,post_covid,lower95,2,flu_season,moderate,very high,0
+gnn_cascade,post_covid,lower95,2,flu_season,high,low,29
+gnn_cascade,post_covid,lower95,2,flu_season,high,moderate,9
+gnn_cascade,post_covid,lower95,2,flu_season,high,high,0
+gnn_cascade,post_covid,lower95,2,flu_season,high,very high,0
+gnn_cascade,post_covid,lower95,2,flu_season,very high,low,13
+gnn_cascade,post_covid,lower95,2,flu_season,very high,moderate,6
+gnn_cascade,post_covid,lower95,2,flu_season,very high,high,1
+gnn_cascade,post_covid,lower95,2,flu_season,very high,very high,0
+gnn_cascade,post_covid,upper95,2,overall,low,low,556
+gnn_cascade,post_covid,upper95,2,overall,low,moderate,158
+gnn_cascade,post_covid,upper95,2,overall,low,high,22
+gnn_cascade,post_covid,upper95,2,overall,low,very high,4
+gnn_cascade,post_covid,upper95,2,overall,moderate,low,2
+gnn_cascade,post_covid,upper95,2,overall,moderate,moderate,36
+gnn_cascade,post_covid,upper95,2,overall,moderate,high,46
+gnn_cascade,post_covid,upper95,2,overall,moderate,very high,19
+gnn_cascade,post_covid,upper95,2,overall,high,low,0
+gnn_cascade,post_covid,upper95,2,overall,high,moderate,2
+gnn_cascade,post_covid,upper95,2,overall,high,high,6
+gnn_cascade,post_covid,upper95,2,overall,high,very high,30
+gnn_cascade,post_covid,upper95,2,overall,very high,low,0
+gnn_cascade,post_covid,upper95,2,overall,very high,moderate,0
+gnn_cascade,post_covid,upper95,2,overall,very high,high,0
+gnn_cascade,post_covid,upper95,2,overall,very high,very high,20
+gnn_cascade,post_covid,upper95,2,flu_season,low,low,201
+gnn_cascade,post_covid,upper95,2,flu_season,low,moderate,84
+gnn_cascade,post_covid,upper95,2,flu_season,low,high,18
+gnn_cascade,post_covid,upper95,2,flu_season,low,very high,4
+gnn_cascade,post_covid,upper95,2,flu_season,moderate,low,1
+gnn_cascade,post_covid,upper95,2,flu_season,moderate,moderate,17
+gnn_cascade,post_covid,upper95,2,flu_season,moderate,high,40
+gnn_cascade,post_covid,upper95,2,flu_season,moderate,very high,19
+gnn_cascade,post_covid,upper95,2,flu_season,high,low,0
+gnn_cascade,post_covid,upper95,2,flu_season,high,moderate,2
+gnn_cascade,post_covid,upper95,2,flu_season,high,high,6
+gnn_cascade,post_covid,upper95,2,flu_season,high,very high,30
+gnn_cascade,post_covid,upper95,2,flu_season,very high,low,0
+gnn_cascade,post_covid,upper95,2,flu_season,very high,moderate,0
+gnn_cascade,post_covid,upper95,2,flu_season,very high,high,0
+gnn_cascade,post_covid,upper95,2,flu_season,very high,very high,20
+gnn_cascade,post_covid,lower99,2,overall,low,low,740
+gnn_cascade,post_covid,lower99,2,overall,low,moderate,0
+gnn_cascade,post_covid,lower99,2,overall,low,high,0
+gnn_cascade,post_covid,lower99,2,overall,low,very high,0
+gnn_cascade,post_covid,lower99,2,overall,moderate,low,102
+gnn_cascade,post_covid,lower99,2,overall,moderate,moderate,1
+gnn_cascade,post_covid,lower99,2,overall,moderate,high,0
+gnn_cascade,post_covid,lower99,2,overall,moderate,very high,0
+gnn_cascade,post_covid,lower99,2,overall,high,low,37
+gnn_cascade,post_covid,lower99,2,overall,high,moderate,1
+gnn_cascade,post_covid,lower99,2,overall,high,high,0
+gnn_cascade,post_covid,lower99,2,overall,high,very high,0
+gnn_cascade,post_covid,lower99,2,overall,very high,low,17
+gnn_cascade,post_covid,lower99,2,overall,very high,moderate,3
+gnn_cascade,post_covid,lower99,2,overall,very high,high,0
+gnn_cascade,post_covid,lower99,2,overall,very high,very high,0
+gnn_cascade,post_covid,lower99,2,flu_season,low,low,307
+gnn_cascade,post_covid,lower99,2,flu_season,low,moderate,0
+gnn_cascade,post_covid,lower99,2,flu_season,low,high,0
+gnn_cascade,post_covid,lower99,2,flu_season,low,very high,0
+gnn_cascade,post_covid,lower99,2,flu_season,moderate,low,76
+gnn_cascade,post_covid,lower99,2,flu_season,moderate,moderate,1
+gnn_cascade,post_covid,lower99,2,flu_season,moderate,high,0
+gnn_cascade,post_covid,lower99,2,flu_season,moderate,very high,0
+gnn_cascade,post_covid,lower99,2,flu_season,high,low,37
+gnn_cascade,post_covid,lower99,2,flu_season,high,moderate,1
+gnn_cascade,post_covid,lower99,2,flu_season,high,high,0
+gnn_cascade,post_covid,lower99,2,flu_season,high,very high,0
+gnn_cascade,post_covid,lower99,2,flu_season,very high,low,17
+gnn_cascade,post_covid,lower99,2,flu_season,very high,moderate,3
+gnn_cascade,post_covid,lower99,2,flu_season,very high,high,0
+gnn_cascade,post_covid,lower99,2,flu_season,very high,very high,0
+gnn_cascade,post_covid,upper99,2,overall,low,low,488
+gnn_cascade,post_covid,upper99,2,overall,low,moderate,195
+gnn_cascade,post_covid,upper99,2,overall,low,high,52
+gnn_cascade,post_covid,upper99,2,overall,low,very high,5
+gnn_cascade,post_covid,upper99,2,overall,moderate,low,1
+gnn_cascade,post_covid,upper99,2,overall,moderate,moderate,28
+gnn_cascade,post_covid,upper99,2,overall,moderate,high,42
+gnn_cascade,post_covid,upper99,2,overall,moderate,very high,32
+gnn_cascade,post_covid,upper99,2,overall,high,low,0
+gnn_cascade,post_covid,upper99,2,overall,high,moderate,0
+gnn_cascade,post_covid,upper99,2,overall,high,high,4
+gnn_cascade,post_covid,upper99,2,overall,high,very high,34
+gnn_cascade,post_covid,upper99,2,overall,very high,low,0
+gnn_cascade,post_covid,upper99,2,overall,very high,moderate,0
+gnn_cascade,post_covid,upper99,2,overall,very high,high,0
+gnn_cascade,post_covid,upper99,2,overall,very high,very high,20
+gnn_cascade,post_covid,upper99,2,flu_season,low,low,172
+gnn_cascade,post_covid,upper99,2,flu_season,low,moderate,92
+gnn_cascade,post_covid,upper99,2,flu_season,low,high,38
+gnn_cascade,post_covid,upper99,2,flu_season,low,very high,5
+gnn_cascade,post_covid,upper99,2,flu_season,moderate,low,1
+gnn_cascade,post_covid,upper99,2,flu_season,moderate,moderate,12
+gnn_cascade,post_covid,upper99,2,flu_season,moderate,high,33
+gnn_cascade,post_covid,upper99,2,flu_season,moderate,very high,31
+gnn_cascade,post_covid,upper99,2,flu_season,high,low,0
+gnn_cascade,post_covid,upper99,2,flu_season,high,moderate,0
+gnn_cascade,post_covid,upper99,2,flu_season,high,high,4
+gnn_cascade,post_covid,upper99,2,flu_season,high,very high,34
+gnn_cascade,post_covid,upper99,2,flu_season,very high,low,0
+gnn_cascade,post_covid,upper99,2,flu_season,very high,moderate,0
+gnn_cascade,post_covid,upper99,2,flu_season,very high,high,0
+gnn_cascade,post_covid,upper99,2,flu_season,very high,very high,20
+gnn_st,post_covid,point,2,overall,low,low,720
+gnn_st,post_covid,point,2,overall,low,moderate,19
+gnn_st,post_covid,point,2,overall,low,high,1
+gnn_st,post_covid,point,2,overall,low,very high,0
+gnn_st,post_covid,point,2,overall,moderate,low,39
+gnn_st,post_covid,point,2,overall,moderate,moderate,53
+gnn_st,post_covid,point,2,overall,moderate,high,9
+gnn_st,post_covid,point,2,overall,moderate,very high,2
+gnn_st,post_covid,point,2,overall,high,low,1
+gnn_st,post_covid,point,2,overall,high,moderate,18
+gnn_st,post_covid,point,2,overall,high,high,14
+gnn_st,post_covid,point,2,overall,high,very high,5
+gnn_st,post_covid,point,2,overall,very high,low,0
+gnn_st,post_covid,point,2,overall,very high,moderate,7
+gnn_st,post_covid,point,2,overall,very high,high,9
+gnn_st,post_covid,point,2,overall,very high,very high,4
+gnn_st,post_covid,point,2,flu_season,low,low,291
+gnn_st,post_covid,point,2,flu_season,low,moderate,15
+gnn_st,post_covid,point,2,flu_season,low,high,1
+gnn_st,post_covid,point,2,flu_season,low,very high,0
+gnn_st,post_covid,point,2,flu_season,moderate,low,20
+gnn_st,post_covid,point,2,flu_season,moderate,moderate,46
+gnn_st,post_covid,point,2,flu_season,moderate,high,9
+gnn_st,post_covid,point,2,flu_season,moderate,very high,2
+gnn_st,post_covid,point,2,flu_season,high,low,1
+gnn_st,post_covid,point,2,flu_season,high,moderate,18
+gnn_st,post_covid,point,2,flu_season,high,high,14
+gnn_st,post_covid,point,2,flu_season,high,very high,5
+gnn_st,post_covid,point,2,flu_season,very high,low,0
+gnn_st,post_covid,point,2,flu_season,very high,moderate,7
+gnn_st,post_covid,point,2,flu_season,very high,high,9
+gnn_st,post_covid,point,2,flu_season,very high,very high,4
+gnn_st,post_covid,lower95,2,overall,low,low,740
+gnn_st,post_covid,lower95,2,overall,low,moderate,0
+gnn_st,post_covid,lower95,2,overall,low,high,0
+gnn_st,post_covid,lower95,2,overall,low,very high,0
+gnn_st,post_covid,lower95,2,overall,moderate,low,99
+gnn_st,post_covid,lower95,2,overall,moderate,moderate,4
+gnn_st,post_covid,lower95,2,overall,moderate,high,0
+gnn_st,post_covid,lower95,2,overall,moderate,very high,0
+gnn_st,post_covid,lower95,2,overall,high,low,28
+gnn_st,post_covid,lower95,2,overall,high,moderate,10
+gnn_st,post_covid,lower95,2,overall,high,high,0
+gnn_st,post_covid,lower95,2,overall,high,very high,0
+gnn_st,post_covid,lower95,2,overall,very high,low,13
+gnn_st,post_covid,lower95,2,overall,very high,moderate,5
+gnn_st,post_covid,lower95,2,overall,very high,high,2
+gnn_st,post_covid,lower95,2,overall,very high,very high,0
+gnn_st,post_covid,lower95,2,flu_season,low,low,307
+gnn_st,post_covid,lower95,2,flu_season,low,moderate,0
+gnn_st,post_covid,lower95,2,flu_season,low,high,0
+gnn_st,post_covid,lower95,2,flu_season,low,very high,0
+gnn_st,post_covid,lower95,2,flu_season,moderate,low,73
+gnn_st,post_covid,lower95,2,flu_season,moderate,moderate,4
+gnn_st,post_covid,lower95,2,flu_season,moderate,high,0
+gnn_st,post_covid,lower95,2,flu_season,moderate,very high,0
+gnn_st,post_covid,lower95,2,flu_season,high,low,28
+gnn_st,post_covid,lower95,2,flu_season,high,moderate,10
+gnn_st,post_covid,lower95,2,flu_season,high,high,0
+gnn_st,post_covid,lower95,2,flu_season,high,very high,0
+gnn_st,post_covid,lower95,2,flu_season,very high,low,13
+gnn_st,post_covid,lower95,2,flu_season,very high,moderate,5
+gnn_st,post_covid,lower95,2,flu_season,very high,high,2
+gnn_st,post_covid,lower95,2,flu_season,very high,very high,0
+gnn_st,post_covid,upper95,2,overall,low,low,549
+gnn_st,post_covid,upper95,2,overall,low,moderate,161
+gnn_st,post_covid,upper95,2,overall,low,high,26
+gnn_st,post_covid,upper95,2,overall,low,very high,4
+gnn_st,post_covid,upper95,2,overall,moderate,low,3
+gnn_st,post_covid,upper95,2,overall,moderate,moderate,34
+gnn_st,post_covid,upper95,2,overall,moderate,high,45
+gnn_st,post_covid,upper95,2,overall,moderate,very high,21
+gnn_st,post_covid,upper95,2,overall,high,low,0
+gnn_st,post_covid,upper95,2,overall,high,moderate,0
+gnn_st,post_covid,upper95,2,overall,high,high,7
+gnn_st,post_covid,upper95,2,overall,high,very high,31
+gnn_st,post_covid,upper95,2,overall,very high,low,0
+gnn_st,post_covid,upper95,2,overall,very high,moderate,0
+gnn_st,post_covid,upper95,2,overall,very high,high,1
+gnn_st,post_covid,upper95,2,overall,very high,very high,19
+gnn_st,post_covid,upper95,2,flu_season,low,low,200
+gnn_st,post_covid,upper95,2,flu_season,low,moderate,84
+gnn_st,post_covid,upper95,2,flu_season,low,high,19
+gnn_st,post_covid,upper95,2,flu_season,low,very high,4
+gnn_st,post_covid,upper95,2,flu_season,moderate,low,2
+gnn_st,post_covid,upper95,2,flu_season,moderate,moderate,16
+gnn_st,post_covid,upper95,2,flu_season,moderate,high,38
+gnn_st,post_covid,upper95,2,flu_season,moderate,very high,21
+gnn_st,post_covid,upper95,2,flu_season,high,low,0
+gnn_st,post_covid,upper95,2,flu_season,high,moderate,0
+gnn_st,post_covid,upper95,2,flu_season,high,high,7
+gnn_st,post_covid,upper95,2,flu_season,high,very high,31
+gnn_st,post_covid,upper95,2,flu_season,very high,low,0
+gnn_st,post_covid,upper95,2,flu_season,very high,moderate,0
+gnn_st,post_covid,upper95,2,flu_season,very high,high,1
+gnn_st,post_covid,upper95,2,flu_season,very high,very high,19
+gnn_st,post_covid,lower99,2,overall,low,low,740
+gnn_st,post_covid,lower99,2,overall,low,moderate,0
+gnn_st,post_covid,lower99,2,overall,low,high,0
+gnn_st,post_covid,lower99,2,overall,low,very high,0
+gnn_st,post_covid,lower99,2,overall,moderate,low,103
+gnn_st,post_covid,lower99,2,overall,moderate,moderate,0
+gnn_st,post_covid,lower99,2,overall,moderate,high,0
+gnn_st,post_covid,lower99,2,overall,moderate,very high,0
+gnn_st,post_covid,lower99,2,overall,high,low,37
+gnn_st,post_covid,lower99,2,overall,high,moderate,1
+gnn_st,post_covid,lower99,2,overall,high,high,0
+gnn_st,post_covid,lower99,2,overall,high,very high,0
+gnn_st,post_covid,lower99,2,overall,very high,low,17
+gnn_st,post_covid,lower99,2,overall,very high,moderate,3
+gnn_st,post_covid,lower99,2,overall,very high,high,0
+gnn_st,post_covid,lower99,2,overall,very high,very high,0
+gnn_st,post_covid,lower99,2,flu_season,low,low,307
+gnn_st,post_covid,lower99,2,flu_season,low,moderate,0
+gnn_st,post_covid,lower99,2,flu_season,low,high,0
+gnn_st,post_covid,lower99,2,flu_season,low,very high,0
+gnn_st,post_covid,lower99,2,flu_season,moderate,low,77
+gnn_st,post_covid,lower99,2,flu_season,moderate,moderate,0
+gnn_st,post_covid,lower99,2,flu_season,moderate,high,0
+gnn_st,post_covid,lower99,2,flu_season,moderate,very high,0
+gnn_st,post_covid,lower99,2,flu_season,high,low,37
+gnn_st,post_covid,lower99,2,flu_season,high,moderate,1
+gnn_st,post_covid,lower99,2,flu_season,high,high,0
+gnn_st,post_covid,lower99,2,flu_season,high,very high,0
+gnn_st,post_covid,lower99,2,flu_season,very high,low,17
+gnn_st,post_covid,lower99,2,flu_season,very high,moderate,3
+gnn_st,post_covid,lower99,2,flu_season,very high,high,0
+gnn_st,post_covid,lower99,2,flu_season,very high,very high,0
+gnn_st,post_covid,upper99,2,overall,low,low,480
+gnn_st,post_covid,upper99,2,overall,low,moderate,195
+gnn_st,post_covid,upper99,2,overall,low,high,60
+gnn_st,post_covid,upper99,2,overall,low,very high,5
+gnn_st,post_covid,upper99,2,overall,moderate,low,1
+gnn_st,post_covid,upper99,2,overall,moderate,moderate,23
+gnn_st,post_covid,upper99,2,overall,moderate,high,47
+gnn_st,post_covid,upper99,2,overall,moderate,very high,32
+gnn_st,post_covid,upper99,2,overall,high,low,0
+gnn_st,post_covid,upper99,2,overall,high,moderate,0
+gnn_st,post_covid,upper99,2,overall,high,high,4
+gnn_st,post_covid,upper99,2,overall,high,very high,34
+gnn_st,post_covid,upper99,2,overall,very high,low,0
+gnn_st,post_covid,upper99,2,overall,very high,moderate,0
+gnn_st,post_covid,upper99,2,overall,very high,high,0
+gnn_st,post_covid,upper99,2,overall,very high,very high,20
+gnn_st,post_covid,upper99,2,flu_season,low,low,169
+gnn_st,post_covid,upper99,2,flu_season,low,moderate,93
+gnn_st,post_covid,upper99,2,flu_season,low,high,40
+gnn_st,post_covid,upper99,2,flu_season,low,very high,5
+gnn_st,post_covid,upper99,2,flu_season,moderate,low,1
+gnn_st,post_covid,upper99,2,flu_season,moderate,moderate,9
+gnn_st,post_covid,upper99,2,flu_season,moderate,high,37
+gnn_st,post_covid,upper99,2,flu_season,moderate,very high,30
+gnn_st,post_covid,upper99,2,flu_season,high,low,0
+gnn_st,post_covid,upper99,2,flu_season,high,moderate,0
+gnn_st,post_covid,upper99,2,flu_season,high,high,4
+gnn_st,post_covid,upper99,2,flu_season,high,very high,34
+gnn_st,post_covid,upper99,2,flu_season,very high,low,0
+gnn_st,post_covid,upper99,2,flu_season,very high,moderate,0
+gnn_st,post_covid,upper99,2,flu_season,very high,high,0
+gnn_st,post_covid,upper99,2,flu_season,very high,very high,20
+gnn_st_v2,post_covid,point,2,overall,low,low,720
+gnn_st_v2,post_covid,point,2,overall,low,moderate,20
+gnn_st_v2,post_covid,point,2,overall,low,high,0
+gnn_st_v2,post_covid,point,2,overall,low,very high,0
+gnn_st_v2,post_covid,point,2,overall,moderate,low,40
+gnn_st_v2,post_covid,point,2,overall,moderate,moderate,53
+gnn_st_v2,post_covid,point,2,overall,moderate,high,8
+gnn_st_v2,post_covid,point,2,overall,moderate,very high,2
+gnn_st_v2,post_covid,point,2,overall,high,low,1
+gnn_st_v2,post_covid,point,2,overall,high,moderate,19
+gnn_st_v2,post_covid,point,2,overall,high,high,14
+gnn_st_v2,post_covid,point,2,overall,high,very high,4
+gnn_st_v2,post_covid,point,2,overall,very high,low,0
+gnn_st_v2,post_covid,point,2,overall,very high,moderate,7
+gnn_st_v2,post_covid,point,2,overall,very high,high,9
+gnn_st_v2,post_covid,point,2,overall,very high,very high,4
+gnn_st_v2,post_covid,point,2,flu_season,low,low,291
+gnn_st_v2,post_covid,point,2,flu_season,low,moderate,16
+gnn_st_v2,post_covid,point,2,flu_season,low,high,0
+gnn_st_v2,post_covid,point,2,flu_season,low,very high,0
+gnn_st_v2,post_covid,point,2,flu_season,moderate,low,21
+gnn_st_v2,post_covid,point,2,flu_season,moderate,moderate,46
+gnn_st_v2,post_covid,point,2,flu_season,moderate,high,8
+gnn_st_v2,post_covid,point,2,flu_season,moderate,very high,2
+gnn_st_v2,post_covid,point,2,flu_season,high,low,1
+gnn_st_v2,post_covid,point,2,flu_season,high,moderate,19
+gnn_st_v2,post_covid,point,2,flu_season,high,high,14
+gnn_st_v2,post_covid,point,2,flu_season,high,very high,4
+gnn_st_v2,post_covid,point,2,flu_season,very high,low,0
+gnn_st_v2,post_covid,point,2,flu_season,very high,moderate,7
+gnn_st_v2,post_covid,point,2,flu_season,very high,high,9
+gnn_st_v2,post_covid,point,2,flu_season,very high,very high,4
+gnn_st_v2,post_covid,lower95,2,overall,low,low,740
+gnn_st_v2,post_covid,lower95,2,overall,low,moderate,0
+gnn_st_v2,post_covid,lower95,2,overall,low,high,0
+gnn_st_v2,post_covid,lower95,2,overall,low,very high,0
+gnn_st_v2,post_covid,lower95,2,overall,moderate,low,99
+gnn_st_v2,post_covid,lower95,2,overall,moderate,moderate,4
+gnn_st_v2,post_covid,lower95,2,overall,moderate,high,0
+gnn_st_v2,post_covid,lower95,2,overall,moderate,very high,0
+gnn_st_v2,post_covid,lower95,2,overall,high,low,28
+gnn_st_v2,post_covid,lower95,2,overall,high,moderate,10
+gnn_st_v2,post_covid,lower95,2,overall,high,high,0
+gnn_st_v2,post_covid,lower95,2,overall,high,very high,0
+gnn_st_v2,post_covid,lower95,2,overall,very high,low,14
+gnn_st_v2,post_covid,lower95,2,overall,very high,moderate,4
+gnn_st_v2,post_covid,lower95,2,overall,very high,high,2
+gnn_st_v2,post_covid,lower95,2,overall,very high,very high,0
+gnn_st_v2,post_covid,lower95,2,flu_season,low,low,307
+gnn_st_v2,post_covid,lower95,2,flu_season,low,moderate,0
+gnn_st_v2,post_covid,lower95,2,flu_season,low,high,0
+gnn_st_v2,post_covid,lower95,2,flu_season,low,very high,0
+gnn_st_v2,post_covid,lower95,2,flu_season,moderate,low,73
+gnn_st_v2,post_covid,lower95,2,flu_season,moderate,moderate,4
+gnn_st_v2,post_covid,lower95,2,flu_season,moderate,high,0
+gnn_st_v2,post_covid,lower95,2,flu_season,moderate,very high,0
+gnn_st_v2,post_covid,lower95,2,flu_season,high,low,28
+gnn_st_v2,post_covid,lower95,2,flu_season,high,moderate,10
+gnn_st_v2,post_covid,lower95,2,flu_season,high,high,0
+gnn_st_v2,post_covid,lower95,2,flu_season,high,very high,0
+gnn_st_v2,post_covid,lower95,2,flu_season,very high,low,14
+gnn_st_v2,post_covid,lower95,2,flu_season,very high,moderate,4
+gnn_st_v2,post_covid,lower95,2,flu_season,very high,high,2
+gnn_st_v2,post_covid,lower95,2,flu_season,very high,very high,0
+gnn_st_v2,post_covid,upper95,2,overall,low,low,548
+gnn_st_v2,post_covid,upper95,2,overall,low,moderate,163
+gnn_st_v2,post_covid,upper95,2,overall,low,high,25
+gnn_st_v2,post_covid,upper95,2,overall,low,very high,4
+gnn_st_v2,post_covid,upper95,2,overall,moderate,low,3
+gnn_st_v2,post_covid,upper95,2,overall,moderate,moderate,34
+gnn_st_v2,post_covid,upper95,2,overall,moderate,high,45
+gnn_st_v2,post_covid,upper95,2,overall,moderate,very high,21
+gnn_st_v2,post_covid,upper95,2,overall,high,low,0
+gnn_st_v2,post_covid,upper95,2,overall,high,moderate,0
+gnn_st_v2,post_covid,upper95,2,overall,high,high,8
+gnn_st_v2,post_covid,upper95,2,overall,high,very high,30
+gnn_st_v2,post_covid,upper95,2,overall,very high,low,0
+gnn_st_v2,post_covid,upper95,2,overall,very high,moderate,0
+gnn_st_v2,post_covid,upper95,2,overall,very high,high,2
+gnn_st_v2,post_covid,upper95,2,overall,very high,very high,18
+gnn_st_v2,post_covid,upper95,2,flu_season,low,low,201
+gnn_st_v2,post_covid,upper95,2,flu_season,low,moderate,84
+gnn_st_v2,post_covid,upper95,2,flu_season,low,high,18
+gnn_st_v2,post_covid,upper95,2,flu_season,low,very high,4
+gnn_st_v2,post_covid,upper95,2,flu_season,moderate,low,2
+gnn_st_v2,post_covid,upper95,2,flu_season,moderate,moderate,16
+gnn_st_v2,post_covid,upper95,2,flu_season,moderate,high,38
+gnn_st_v2,post_covid,upper95,2,flu_season,moderate,very high,21
+gnn_st_v2,post_covid,upper95,2,flu_season,high,low,0
+gnn_st_v2,post_covid,upper95,2,flu_season,high,moderate,0
+gnn_st_v2,post_covid,upper95,2,flu_season,high,high,8
+gnn_st_v2,post_covid,upper95,2,flu_season,high,very high,30
+gnn_st_v2,post_covid,upper95,2,flu_season,very high,low,0
+gnn_st_v2,post_covid,upper95,2,flu_season,very high,moderate,0
+gnn_st_v2,post_covid,upper95,2,flu_season,very high,high,2
+gnn_st_v2,post_covid,upper95,2,flu_season,very high,very high,18
+gnn_st_v2,post_covid,lower99,2,overall,low,low,740
+gnn_st_v2,post_covid,lower99,2,overall,low,moderate,0
+gnn_st_v2,post_covid,lower99,2,overall,low,high,0
+gnn_st_v2,post_covid,lower99,2,overall,low,very high,0
+gnn_st_v2,post_covid,lower99,2,overall,moderate,low,103
+gnn_st_v2,post_covid,lower99,2,overall,moderate,moderate,0
+gnn_st_v2,post_covid,lower99,2,overall,moderate,high,0
+gnn_st_v2,post_covid,lower99,2,overall,moderate,very high,0
+gnn_st_v2,post_covid,lower99,2,overall,high,low,37
+gnn_st_v2,post_covid,lower99,2,overall,high,moderate,1
+gnn_st_v2,post_covid,lower99,2,overall,high,high,0
+gnn_st_v2,post_covid,lower99,2,overall,high,very high,0
+gnn_st_v2,post_covid,lower99,2,overall,very high,low,18
+gnn_st_v2,post_covid,lower99,2,overall,very high,moderate,2
+gnn_st_v2,post_covid,lower99,2,overall,very high,high,0
+gnn_st_v2,post_covid,lower99,2,overall,very high,very high,0
+gnn_st_v2,post_covid,lower99,2,flu_season,low,low,307
+gnn_st_v2,post_covid,lower99,2,flu_season,low,moderate,0
+gnn_st_v2,post_covid,lower99,2,flu_season,low,high,0
+gnn_st_v2,post_covid,lower99,2,flu_season,low,very high,0
+gnn_st_v2,post_covid,lower99,2,flu_season,moderate,low,77
+gnn_st_v2,post_covid,lower99,2,flu_season,moderate,moderate,0
+gnn_st_v2,post_covid,lower99,2,flu_season,moderate,high,0
+gnn_st_v2,post_covid,lower99,2,flu_season,moderate,very high,0
+gnn_st_v2,post_covid,lower99,2,flu_season,high,low,37
+gnn_st_v2,post_covid,lower99,2,flu_season,high,moderate,1
+gnn_st_v2,post_covid,lower99,2,flu_season,high,high,0
+gnn_st_v2,post_covid,lower99,2,flu_season,high,very high,0
+gnn_st_v2,post_covid,lower99,2,flu_season,very high,low,18
+gnn_st_v2,post_covid,lower99,2,flu_season,very high,moderate,2
+gnn_st_v2,post_covid,lower99,2,flu_season,very high,high,0
+gnn_st_v2,post_covid,lower99,2,flu_season,very high,very high,0
+gnn_st_v2,post_covid,upper99,2,overall,low,low,482
+gnn_st_v2,post_covid,upper99,2,overall,low,moderate,193
+gnn_st_v2,post_covid,upper99,2,overall,low,high,60
+gnn_st_v2,post_covid,upper99,2,overall,low,very high,5
+gnn_st_v2,post_covid,upper99,2,overall,moderate,low,1
+gnn_st_v2,post_covid,upper99,2,overall,moderate,moderate,23
+gnn_st_v2,post_covid,upper99,2,overall,moderate,high,48
+gnn_st_v2,post_covid,upper99,2,overall,moderate,very high,31
+gnn_st_v2,post_covid,upper99,2,overall,high,low,0
+gnn_st_v2,post_covid,upper99,2,overall,high,moderate,0
+gnn_st_v2,post_covid,upper99,2,overall,high,high,6
+gnn_st_v2,post_covid,upper99,2,overall,high,very high,32
+gnn_st_v2,post_covid,upper99,2,overall,very high,low,0
+gnn_st_v2,post_covid,upper99,2,overall,very high,moderate,0
+gnn_st_v2,post_covid,upper99,2,overall,very high,high,0
+gnn_st_v2,post_covid,upper99,2,overall,very high,very high,20
+gnn_st_v2,post_covid,upper99,2,flu_season,low,low,171
+gnn_st_v2,post_covid,upper99,2,flu_season,low,moderate,91
+gnn_st_v2,post_covid,upper99,2,flu_season,low,high,40
+gnn_st_v2,post_covid,upper99,2,flu_season,low,very high,5
+gnn_st_v2,post_covid,upper99,2,flu_season,moderate,low,1
+gnn_st_v2,post_covid,upper99,2,flu_season,moderate,moderate,9
+gnn_st_v2,post_covid,upper99,2,flu_season,moderate,high,38
+gnn_st_v2,post_covid,upper99,2,flu_season,moderate,very high,29
+gnn_st_v2,post_covid,upper99,2,flu_season,high,low,0
+gnn_st_v2,post_covid,upper99,2,flu_season,high,moderate,0
+gnn_st_v2,post_covid,upper99,2,flu_season,high,high,6
+gnn_st_v2,post_covid,upper99,2,flu_season,high,very high,32
+gnn_st_v2,post_covid,upper99,2,flu_season,very high,low,0
+gnn_st_v2,post_covid,upper99,2,flu_season,very high,moderate,0
+gnn_st_v2,post_covid,upper99,2,flu_season,very high,high,0
+gnn_st_v2,post_covid,upper99,2,flu_season,very high,very high,20
+lstm,post_covid,point,2,overall,low,low,682
+lstm,post_covid,point,2,overall,low,moderate,54
+lstm,post_covid,point,2,overall,low,high,4
+lstm,post_covid,point,2,overall,low,very high,0
+lstm,post_covid,point,2,overall,moderate,low,37
+lstm,post_covid,point,2,overall,moderate,moderate,46
+lstm,post_covid,point,2,overall,moderate,high,19
+lstm,post_covid,point,2,overall,moderate,very high,1
+lstm,post_covid,point,2,overall,high,low,1
+lstm,post_covid,point,2,overall,high,moderate,14
+lstm,post_covid,point,2,overall,high,high,16
+lstm,post_covid,point,2,overall,high,very high,7
+lstm,post_covid,point,2,overall,very high,low,1
+lstm,post_covid,point,2,overall,very high,moderate,7
+lstm,post_covid,point,2,overall,very high,high,8
+lstm,post_covid,point,2,overall,very high,very high,4
+lstm,post_covid,point,2,flu_season,low,low,280
+lstm,post_covid,point,2,flu_season,low,moderate,24
+lstm,post_covid,point,2,flu_season,low,high,3
+lstm,post_covid,point,2,flu_season,low,very high,0
+lstm,post_covid,point,2,flu_season,moderate,low,24
+lstm,post_covid,point,2,flu_season,moderate,moderate,34
+lstm,post_covid,point,2,flu_season,moderate,high,18
+lstm,post_covid,point,2,flu_season,moderate,very high,1
+lstm,post_covid,point,2,flu_season,high,low,1
+lstm,post_covid,point,2,flu_season,high,moderate,14
+lstm,post_covid,point,2,flu_season,high,high,16
+lstm,post_covid,point,2,flu_season,high,very high,7
+lstm,post_covid,point,2,flu_season,very high,low,1
+lstm,post_covid,point,2,flu_season,very high,moderate,7
+lstm,post_covid,point,2,flu_season,very high,high,8
+lstm,post_covid,point,2,flu_season,very high,very high,4
+lstm,post_covid,lower95,2,overall,low,low,740
+lstm,post_covid,lower95,2,overall,low,moderate,0
+lstm,post_covid,lower95,2,overall,low,high,0
+lstm,post_covid,lower95,2,overall,low,very high,0
+lstm,post_covid,lower95,2,overall,moderate,low,95
+lstm,post_covid,lower95,2,overall,moderate,moderate,8
+lstm,post_covid,lower95,2,overall,moderate,high,0
+lstm,post_covid,lower95,2,overall,moderate,very high,0
+lstm,post_covid,lower95,2,overall,high,low,20
+lstm,post_covid,lower95,2,overall,high,moderate,18
+lstm,post_covid,lower95,2,overall,high,high,0
+lstm,post_covid,lower95,2,overall,high,very high,0
+lstm,post_covid,lower95,2,overall,very high,low,14
+lstm,post_covid,lower95,2,overall,very high,moderate,6
+lstm,post_covid,lower95,2,overall,very high,high,0
+lstm,post_covid,lower95,2,overall,very high,very high,0
+lstm,post_covid,lower95,2,flu_season,low,low,307
+lstm,post_covid,lower95,2,flu_season,low,moderate,0
+lstm,post_covid,lower95,2,flu_season,low,high,0
+lstm,post_covid,lower95,2,flu_season,low,very high,0
+lstm,post_covid,lower95,2,flu_season,moderate,low,69
+lstm,post_covid,lower95,2,flu_season,moderate,moderate,8
+lstm,post_covid,lower95,2,flu_season,moderate,high,0
+lstm,post_covid,lower95,2,flu_season,moderate,very high,0
+lstm,post_covid,lower95,2,flu_season,high,low,20
+lstm,post_covid,lower95,2,flu_season,high,moderate,18
+lstm,post_covid,lower95,2,flu_season,high,high,0
+lstm,post_covid,lower95,2,flu_season,high,very high,0
+lstm,post_covid,lower95,2,flu_season,very high,low,14
+lstm,post_covid,lower95,2,flu_season,very high,moderate,6
+lstm,post_covid,lower95,2,flu_season,very high,high,0
+lstm,post_covid,lower95,2,flu_season,very high,very high,0
+lstm,post_covid,upper95,2,overall,low,low,480
+lstm,post_covid,upper95,2,overall,low,moderate,198
+lstm,post_covid,upper95,2,overall,low,high,49
+lstm,post_covid,upper95,2,overall,low,very high,13
+lstm,post_covid,upper95,2,overall,moderate,low,2
+lstm,post_covid,upper95,2,overall,moderate,moderate,32
+lstm,post_covid,upper95,2,overall,moderate,high,31
+lstm,post_covid,upper95,2,overall,moderate,very high,38
+lstm,post_covid,upper95,2,overall,high,low,0
+lstm,post_covid,upper95,2,overall,high,moderate,0
+lstm,post_covid,upper95,2,overall,high,high,9
+lstm,post_covid,upper95,2,overall,high,very high,29
+lstm,post_covid,upper95,2,overall,very high,low,0
+lstm,post_covid,upper95,2,overall,very high,moderate,1
+lstm,post_covid,upper95,2,overall,very high,high,4
+lstm,post_covid,upper95,2,overall,very high,very high,15
+lstm,post_covid,upper95,2,flu_season,low,low,187
+lstm,post_covid,upper95,2,flu_season,low,moderate,91
+lstm,post_covid,upper95,2,flu_season,low,high,20
+lstm,post_covid,upper95,2,flu_season,low,very high,9
+lstm,post_covid,upper95,2,flu_season,moderate,low,1
+lstm,post_covid,upper95,2,flu_season,moderate,moderate,20
+lstm,post_covid,upper95,2,flu_season,moderate,high,19
+lstm,post_covid,upper95,2,flu_season,moderate,very high,37
+lstm,post_covid,upper95,2,flu_season,high,low,0
+lstm,post_covid,upper95,2,flu_season,high,moderate,0
+lstm,post_covid,upper95,2,flu_season,high,high,9
+lstm,post_covid,upper95,2,flu_season,high,very high,29
+lstm,post_covid,upper95,2,flu_season,very high,low,0
+lstm,post_covid,upper95,2,flu_season,very high,moderate,1
+lstm,post_covid,upper95,2,flu_season,very high,high,4
+lstm,post_covid,upper95,2,flu_season,very high,very high,15
+lstm,post_covid,lower99,2,overall,low,low,740
+lstm,post_covid,lower99,2,overall,low,moderate,0
+lstm,post_covid,lower99,2,overall,low,high,0
+lstm,post_covid,lower99,2,overall,low,very high,0
+lstm,post_covid,lower99,2,overall,moderate,low,103
+lstm,post_covid,lower99,2,overall,moderate,moderate,0
+lstm,post_covid,lower99,2,overall,moderate,high,0
+lstm,post_covid,lower99,2,overall,moderate,very high,0
+lstm,post_covid,lower99,2,overall,high,low,36
+lstm,post_covid,lower99,2,overall,high,moderate,2
+lstm,post_covid,lower99,2,overall,high,high,0
+lstm,post_covid,lower99,2,overall,high,very high,0
+lstm,post_covid,lower99,2,overall,very high,low,20
+lstm,post_covid,lower99,2,overall,very high,moderate,0
+lstm,post_covid,lower99,2,overall,very high,high,0
+lstm,post_covid,lower99,2,overall,very high,very high,0
+lstm,post_covid,lower99,2,flu_season,low,low,307
+lstm,post_covid,lower99,2,flu_season,low,moderate,0
+lstm,post_covid,lower99,2,flu_season,low,high,0
+lstm,post_covid,lower99,2,flu_season,low,very high,0
+lstm,post_covid,lower99,2,flu_season,moderate,low,77
+lstm,post_covid,lower99,2,flu_season,moderate,moderate,0
+lstm,post_covid,lower99,2,flu_season,moderate,high,0
+lstm,post_covid,lower99,2,flu_season,moderate,very high,0
+lstm,post_covid,lower99,2,flu_season,high,low,36
+lstm,post_covid,lower99,2,flu_season,high,moderate,2
+lstm,post_covid,lower99,2,flu_season,high,high,0
+lstm,post_covid,lower99,2,flu_season,high,very high,0
+lstm,post_covid,lower99,2,flu_season,very high,low,20
+lstm,post_covid,lower99,2,flu_season,very high,moderate,0
+lstm,post_covid,lower99,2,flu_season,very high,high,0
+lstm,post_covid,lower99,2,flu_season,very high,very high,0
+lstm,post_covid,upper99,2,overall,low,low,420
+lstm,post_covid,upper99,2,overall,low,moderate,201
+lstm,post_covid,upper99,2,overall,low,high,93
+lstm,post_covid,upper99,2,overall,low,very high,26
+lstm,post_covid,upper99,2,overall,moderate,low,1
+lstm,post_covid,upper99,2,overall,moderate,moderate,24
+lstm,post_covid,upper99,2,overall,moderate,high,31
+lstm,post_covid,upper99,2,overall,moderate,very high,47
+lstm,post_covid,upper99,2,overall,high,low,0
+lstm,post_covid,upper99,2,overall,high,moderate,0
+lstm,post_covid,upper99,2,overall,high,high,5
+lstm,post_covid,upper99,2,overall,high,very high,33
+lstm,post_covid,upper99,2,overall,very high,low,0
+lstm,post_covid,upper99,2,overall,very high,moderate,0
+lstm,post_covid,upper99,2,overall,very high,high,3
+lstm,post_covid,upper99,2,overall,very high,very high,17
+lstm,post_covid,upper99,2,flu_season,low,low,164
+lstm,post_covid,upper99,2,flu_season,low,moderate,89
+lstm,post_covid,upper99,2,flu_season,low,high,38
+lstm,post_covid,upper99,2,flu_season,low,very high,16
+lstm,post_covid,upper99,2,flu_season,moderate,low,1
+lstm,post_covid,upper99,2,flu_season,moderate,moderate,13
+lstm,post_covid,upper99,2,flu_season,moderate,high,20
+lstm,post_covid,upper99,2,flu_season,moderate,very high,43
+lstm,post_covid,upper99,2,flu_season,high,low,0
+lstm,post_covid,upper99,2,flu_season,high,moderate,0
+lstm,post_covid,upper99,2,flu_season,high,high,5
+lstm,post_covid,upper99,2,flu_season,high,very high,33
+lstm,post_covid,upper99,2,flu_season,very high,low,0
+lstm,post_covid,upper99,2,flu_season,very high,moderate,0
+lstm,post_covid,upper99,2,flu_season,very high,high,3
+lstm,post_covid,upper99,2,flu_season,very high,very high,17
+persistence,post_covid,point,2,overall,low,low,691
+persistence,post_covid,point,2,overall,low,moderate,44
+persistence,post_covid,point,2,overall,low,high,5
+persistence,post_covid,point,2,overall,low,very high,0
+persistence,post_covid,point,2,overall,moderate,low,41
+persistence,post_covid,point,2,overall,moderate,moderate,42
+persistence,post_covid,point,2,overall,moderate,high,13
+persistence,post_covid,point,2,overall,moderate,very high,7
+persistence,post_covid,point,2,overall,high,low,3
+persistence,post_covid,point,2,overall,high,moderate,11
+persistence,post_covid,point,2,overall,high,high,16
+persistence,post_covid,point,2,overall,high,very high,8
+persistence,post_covid,point,2,overall,very high,low,2
+persistence,post_covid,point,2,overall,very high,moderate,9
+persistence,post_covid,point,2,overall,very high,high,4
+persistence,post_covid,point,2,overall,very high,very high,5
+persistence,post_covid,point,2,flu_season,low,low,280
+persistence,post_covid,point,2,flu_season,low,moderate,22
+persistence,post_covid,point,2,flu_season,low,high,5
+persistence,post_covid,point,2,flu_season,low,very high,0
+persistence,post_covid,point,2,flu_season,moderate,low,25
+persistence,post_covid,point,2,flu_season,moderate,moderate,32
+persistence,post_covid,point,2,flu_season,moderate,high,13
+persistence,post_covid,point,2,flu_season,moderate,very high,7
+persistence,post_covid,point,2,flu_season,high,low,3
+persistence,post_covid,point,2,flu_season,high,moderate,11
+persistence,post_covid,point,2,flu_season,high,high,16
+persistence,post_covid,point,2,flu_season,high,very high,8
+persistence,post_covid,point,2,flu_season,very high,low,2
+persistence,post_covid,point,2,flu_season,very high,moderate,9
+persistence,post_covid,point,2,flu_season,very high,high,4
+persistence,post_covid,point,2,flu_season,very high,very high,5
+seasonal_naive,post_covid,point,2,overall,low,low,681
+seasonal_naive,post_covid,point,2,overall,low,moderate,45
+seasonal_naive,post_covid,point,2,overall,low,high,11
+seasonal_naive,post_covid,point,2,overall,low,very high,3
+seasonal_naive,post_covid,point,2,overall,moderate,low,36
+seasonal_naive,post_covid,point,2,overall,moderate,moderate,40
+seasonal_naive,post_covid,point,2,overall,moderate,high,11
+seasonal_naive,post_covid,point,2,overall,moderate,very high,16
+seasonal_naive,post_covid,point,2,overall,high,low,3
+seasonal_naive,post_covid,point,2,overall,high,moderate,8
+seasonal_naive,post_covid,point,2,overall,high,high,13
+seasonal_naive,post_covid,point,2,overall,high,very high,14
+seasonal_naive,post_covid,point,2,overall,very high,low,0
+seasonal_naive,post_covid,point,2,overall,very high,moderate,8
+seasonal_naive,post_covid,point,2,overall,very high,high,5
+seasonal_naive,post_covid,point,2,overall,very high,very high,7
+seasonal_naive,post_covid,point,2,flu_season,low,low,258
+seasonal_naive,post_covid,point,2,flu_season,low,moderate,35
+seasonal_naive,post_covid,point,2,flu_season,low,high,11
+seasonal_naive,post_covid,point,2,flu_season,low,very high,3
+seasonal_naive,post_covid,point,2,flu_season,moderate,low,20
+seasonal_naive,post_covid,point,2,flu_season,moderate,moderate,30
+seasonal_naive,post_covid,point,2,flu_season,moderate,high,11
+seasonal_naive,post_covid,point,2,flu_season,moderate,very high,16
+seasonal_naive,post_covid,point,2,flu_season,high,low,3
+seasonal_naive,post_covid,point,2,flu_season,high,moderate,8
+seasonal_naive,post_covid,point,2,flu_season,high,high,13
+seasonal_naive,post_covid,point,2,flu_season,high,very high,14
+seasonal_naive,post_covid,point,2,flu_season,very high,low,0
+seasonal_naive,post_covid,point,2,flu_season,very high,moderate,8
+seasonal_naive,post_covid,point,2,flu_season,very high,high,5
+seasonal_naive,post_covid,point,2,flu_season,very high,very high,7
+xgboost,post_covid,point,2,overall,low,low,719
+xgboost,post_covid,point,2,overall,low,moderate,19
+xgboost,post_covid,point,2,overall,low,high,2
+xgboost,post_covid,point,2,overall,low,very high,0
+xgboost,post_covid,point,2,overall,moderate,low,59
+xgboost,post_covid,point,2,overall,moderate,moderate,29
+xgboost,post_covid,point,2,overall,moderate,high,13
+xgboost,post_covid,point,2,overall,moderate,very high,2
+xgboost,post_covid,point,2,overall,high,low,4
+xgboost,post_covid,point,2,overall,high,moderate,17
+xgboost,post_covid,point,2,overall,high,high,15
+xgboost,post_covid,point,2,overall,high,very high,2
+xgboost,post_covid,point,2,overall,very high,low,1
+xgboost,post_covid,point,2,overall,very high,moderate,11
+xgboost,post_covid,point,2,overall,very high,high,6
+xgboost,post_covid,point,2,overall,very high,very high,2
+xgboost,post_covid,point,2,flu_season,low,low,286
+xgboost,post_covid,point,2,flu_season,low,moderate,19
+xgboost,post_covid,point,2,flu_season,low,high,2
+xgboost,post_covid,point,2,flu_season,low,very high,0
+xgboost,post_covid,point,2,flu_season,moderate,low,34
+xgboost,post_covid,point,2,flu_season,moderate,moderate,28
+xgboost,post_covid,point,2,flu_season,moderate,high,13
+xgboost,post_covid,point,2,flu_season,moderate,very high,2
+xgboost,post_covid,point,2,flu_season,high,low,4
+xgboost,post_covid,point,2,flu_season,high,moderate,17
+xgboost,post_covid,point,2,flu_season,high,high,15
+xgboost,post_covid,point,2,flu_season,high,very high,2
+xgboost,post_covid,point,2,flu_season,very high,low,1
+xgboost,post_covid,point,2,flu_season,very high,moderate,11
+xgboost,post_covid,point,2,flu_season,very high,high,6
+xgboost,post_covid,point,2,flu_season,very high,very high,2
+xgboost,post_covid,lower95,2,overall,low,low,740
+xgboost,post_covid,lower95,2,overall,low,moderate,0
+xgboost,post_covid,lower95,2,overall,low,high,0
+xgboost,post_covid,lower95,2,overall,low,very high,0
+xgboost,post_covid,lower95,2,overall,moderate,low,99
+xgboost,post_covid,lower95,2,overall,moderate,moderate,4
+xgboost,post_covid,lower95,2,overall,moderate,high,0
+xgboost,post_covid,lower95,2,overall,moderate,very high,0
+xgboost,post_covid,lower95,2,overall,high,low,33
+xgboost,post_covid,lower95,2,overall,high,moderate,5
+xgboost,post_covid,lower95,2,overall,high,high,0
+xgboost,post_covid,lower95,2,overall,high,very high,0
+xgboost,post_covid,lower95,2,overall,very high,low,16
+xgboost,post_covid,lower95,2,overall,very high,moderate,4
+xgboost,post_covid,lower95,2,overall,very high,high,0
+xgboost,post_covid,lower95,2,overall,very high,very high,0
+xgboost,post_covid,lower95,2,flu_season,low,low,307
+xgboost,post_covid,lower95,2,flu_season,low,moderate,0
+xgboost,post_covid,lower95,2,flu_season,low,high,0
+xgboost,post_covid,lower95,2,flu_season,low,very high,0
+xgboost,post_covid,lower95,2,flu_season,moderate,low,73
+xgboost,post_covid,lower95,2,flu_season,moderate,moderate,4
+xgboost,post_covid,lower95,2,flu_season,moderate,high,0
+xgboost,post_covid,lower95,2,flu_season,moderate,very high,0
+xgboost,post_covid,lower95,2,flu_season,high,low,33
+xgboost,post_covid,lower95,2,flu_season,high,moderate,5
+xgboost,post_covid,lower95,2,flu_season,high,high,0
+xgboost,post_covid,lower95,2,flu_season,high,very high,0
+xgboost,post_covid,lower95,2,flu_season,very high,low,16
+xgboost,post_covid,lower95,2,flu_season,very high,moderate,4
+xgboost,post_covid,lower95,2,flu_season,very high,high,0
+xgboost,post_covid,lower95,2,flu_season,very high,very high,0
+xgboost,post_covid,upper95,2,overall,low,low,561
+xgboost,post_covid,upper95,2,overall,low,moderate,147
+xgboost,post_covid,upper95,2,overall,low,high,26
+xgboost,post_covid,upper95,2,overall,low,very high,6
+xgboost,post_covid,upper95,2,overall,moderate,low,3
+xgboost,post_covid,upper95,2,overall,moderate,moderate,43
+xgboost,post_covid,upper95,2,overall,moderate,high,32
+xgboost,post_covid,upper95,2,overall,moderate,very high,25
+xgboost,post_covid,upper95,2,overall,high,low,0
+xgboost,post_covid,upper95,2,overall,high,moderate,2
+xgboost,post_covid,upper95,2,overall,high,high,13
+xgboost,post_covid,upper95,2,overall,high,very high,23
+xgboost,post_covid,upper95,2,overall,very high,low,0
+xgboost,post_covid,upper95,2,overall,very high,moderate,1
+xgboost,post_covid,upper95,2,overall,very high,high,7
+xgboost,post_covid,upper95,2,overall,very high,very high,12
+xgboost,post_covid,upper95,2,flu_season,low,low,184
+xgboost,post_covid,upper95,2,flu_season,low,moderate,91
+xgboost,post_covid,upper95,2,flu_season,low,high,26
+xgboost,post_covid,upper95,2,flu_season,low,very high,6
+xgboost,post_covid,upper95,2,flu_season,moderate,low,2
+xgboost,post_covid,upper95,2,flu_season,moderate,moderate,21
+xgboost,post_covid,upper95,2,flu_season,moderate,high,29
+xgboost,post_covid,upper95,2,flu_season,moderate,very high,25
+xgboost,post_covid,upper95,2,flu_season,high,low,0
+xgboost,post_covid,upper95,2,flu_season,high,moderate,2
+xgboost,post_covid,upper95,2,flu_season,high,high,13
+xgboost,post_covid,upper95,2,flu_season,high,very high,23
+xgboost,post_covid,upper95,2,flu_season,very high,low,0
+xgboost,post_covid,upper95,2,flu_season,very high,moderate,1
+xgboost,post_covid,upper95,2,flu_season,very high,high,7
+xgboost,post_covid,upper95,2,flu_season,very high,very high,12
+xgboost,post_covid,lower99,2,overall,low,low,740
+xgboost,post_covid,lower99,2,overall,low,moderate,0
+xgboost,post_covid,lower99,2,overall,low,high,0
+xgboost,post_covid,lower99,2,overall,low,very high,0
+xgboost,post_covid,lower99,2,overall,moderate,low,103
+xgboost,post_covid,lower99,2,overall,moderate,moderate,0
+xgboost,post_covid,lower99,2,overall,moderate,high,0
+xgboost,post_covid,lower99,2,overall,moderate,very high,0
+xgboost,post_covid,lower99,2,overall,high,low,38
+xgboost,post_covid,lower99,2,overall,high,moderate,0
+xgboost,post_covid,lower99,2,overall,high,high,0
+xgboost,post_covid,lower99,2,overall,high,very high,0
+xgboost,post_covid,lower99,2,overall,very high,low,18
+xgboost,post_covid,lower99,2,overall,very high,moderate,2
+xgboost,post_covid,lower99,2,overall,very high,high,0
+xgboost,post_covid,lower99,2,overall,very high,very high,0
+xgboost,post_covid,lower99,2,flu_season,low,low,307
+xgboost,post_covid,lower99,2,flu_season,low,moderate,0
+xgboost,post_covid,lower99,2,flu_season,low,high,0
+xgboost,post_covid,lower99,2,flu_season,low,very high,0
+xgboost,post_covid,lower99,2,flu_season,moderate,low,77
+xgboost,post_covid,lower99,2,flu_season,moderate,moderate,0
+xgboost,post_covid,lower99,2,flu_season,moderate,high,0
+xgboost,post_covid,lower99,2,flu_season,moderate,very high,0
+xgboost,post_covid,lower99,2,flu_season,high,low,38
+xgboost,post_covid,lower99,2,flu_season,high,moderate,0
+xgboost,post_covid,lower99,2,flu_season,high,high,0
+xgboost,post_covid,lower99,2,flu_season,high,very high,0
+xgboost,post_covid,lower99,2,flu_season,very high,low,18
+xgboost,post_covid,lower99,2,flu_season,very high,moderate,2
+xgboost,post_covid,lower99,2,flu_season,very high,high,0
+xgboost,post_covid,lower99,2,flu_season,very high,very high,0
+xgboost,post_covid,upper99,2,overall,low,low,461
+xgboost,post_covid,upper99,2,overall,low,moderate,218
+xgboost,post_covid,upper99,2,overall,low,high,50
+xgboost,post_covid,upper99,2,overall,low,very high,11
+xgboost,post_covid,upper99,2,overall,moderate,low,1
+xgboost,post_covid,upper99,2,overall,moderate,moderate,29
+xgboost,post_covid,upper99,2,overall,moderate,high,39
+xgboost,post_covid,upper99,2,overall,moderate,very high,34
+xgboost,post_covid,upper99,2,overall,high,low,0
+xgboost,post_covid,upper99,2,overall,high,moderate,0
+xgboost,post_covid,upper99,2,overall,high,high,9
+xgboost,post_covid,upper99,2,overall,high,very high,29
+xgboost,post_covid,upper99,2,overall,very high,low,0
+xgboost,post_covid,upper99,2,overall,very high,moderate,0
+xgboost,post_covid,upper99,2,overall,very high,high,3
+xgboost,post_covid,upper99,2,overall,very high,very high,17
+xgboost,post_covid,upper99,2,flu_season,low,low,138
+xgboost,post_covid,upper99,2,flu_season,low,moderate,115
+xgboost,post_covid,upper99,2,flu_season,low,high,43
+xgboost,post_covid,upper99,2,flu_season,low,very high,11
+xgboost,post_covid,upper99,2,flu_season,moderate,low,1
+xgboost,post_covid,upper99,2,flu_season,moderate,moderate,8
+xgboost,post_covid,upper99,2,flu_season,moderate,high,34
+xgboost,post_covid,upper99,2,flu_season,moderate,very high,34
+xgboost,post_covid,upper99,2,flu_season,high,low,0
+xgboost,post_covid,upper99,2,flu_season,high,moderate,0
+xgboost,post_covid,upper99,2,flu_season,high,high,9
+xgboost,post_covid,upper99,2,flu_season,high,very high,29
+xgboost,post_covid,upper99,2,flu_season,very high,low,0
+xgboost,post_covid,upper99,2,flu_season,very high,moderate,0
+xgboost,post_covid,upper99,2,flu_season,very high,high,3
+xgboost,post_covid,upper99,2,flu_season,very high,very high,17
+xgb_severity,post_covid,argmax,2,overall,low,low,687
+xgb_severity,post_covid,argmax,2,overall,low,moderate,48
+xgb_severity,post_covid,argmax,2,overall,low,high,3
+xgb_severity,post_covid,argmax,2,overall,low,very high,2
+xgb_severity,post_covid,argmax,2,overall,moderate,low,34
+xgb_severity,post_covid,argmax,2,overall,moderate,moderate,56
+xgb_severity,post_covid,argmax,2,overall,moderate,high,3
+xgb_severity,post_covid,argmax,2,overall,moderate,very high,10
+xgb_severity,post_covid,argmax,2,overall,high,low,3
+xgb_severity,post_covid,argmax,2,overall,high,moderate,19
+xgb_severity,post_covid,argmax,2,overall,high,high,7
+xgb_severity,post_covid,argmax,2,overall,high,very high,9
+xgb_severity,post_covid,argmax,2,overall,very high,low,1
+xgb_severity,post_covid,argmax,2,overall,very high,moderate,14
+xgb_severity,post_covid,argmax,2,overall,very high,high,3
+xgb_severity,post_covid,argmax,2,overall,very high,very high,2
+xgb_severity,post_covid,argmax,2,flu_season,low,low,261
+xgb_severity,post_covid,argmax,2,flu_season,low,moderate,41
+xgb_severity,post_covid,argmax,2,flu_season,low,high,3
+xgb_severity,post_covid,argmax,2,flu_season,low,very high,2
+xgb_severity,post_covid,argmax,2,flu_season,moderate,low,14
+xgb_severity,post_covid,argmax,2,flu_season,moderate,moderate,50
+xgb_severity,post_covid,argmax,2,flu_season,moderate,high,3
+xgb_severity,post_covid,argmax,2,flu_season,moderate,very high,10
+xgb_severity,post_covid,argmax,2,flu_season,high,low,3
+xgb_severity,post_covid,argmax,2,flu_season,high,moderate,19
+xgb_severity,post_covid,argmax,2,flu_season,high,high,7
+xgb_severity,post_covid,argmax,2,flu_season,high,very high,9
+xgb_severity,post_covid,argmax,2,flu_season,very high,low,1
+xgb_severity,post_covid,argmax,2,flu_season,very high,moderate,14
+xgb_severity,post_covid,argmax,2,flu_season,very high,high,3
+xgb_severity,post_covid,argmax,2,flu_season,very high,very high,2

@@ -48,6 +48,30 @@ BASELINE_SCRIPTS = {
     "arima": ("run_arima.py", ()),
     "lstm": ("run_lstm.py", ()),
     "xgboost": ("run_xgboost.py", ()),
+    # Reference forecasts with no learning: the seasonal curve, and gnn_st's
+    # own origin/seasonal blend with the network switched off. One run writes
+    # both climatology/ and blend_baseline/.
+    "climatology": ("run_climatology.py", ()),
+    "sarima": ("run_arima.py", ("--harmonics", "3")),
+    # Parity arms: each baseline given what gnn_st gets apart from the graph --
+    # its 16-week window, its blend target, its ten-seed ensemble. The gap
+    # between gnn_st and these is the part of its lead that the graph and the
+    # architecture can claim; the gap to the plain rows above is not.
+    "lstm_parity": ("run_lstm.py", ("--name", "lstm_parity", "--lookback", "16",
+                                    "--target", "blend", "--n-seeds", "10")),
+    "xgboost_parity": ("run_xgboost.py", ("--name", "xgboost_parity", "--target", "blend",
+                                          "--n-seeds", "10")),
+    # Luo et al.'s GAT with the registry batch size actually honoured and ten
+    # seeds, instead of the per-sample loop that early-stops by epoch 7.
+    "gat_parity": ("run_gat.py", ("--experiment", "gat", "--name", "gat_parity",
+                                  "--batched", "--n-seeds", "10")),
+    # The strongest committed baseline in Boston's backtest, given the ten-seed
+    # ensemble it never had, at its own committed settings.
+    "lstm_s10": ("run_lstm.py", ("--name", "lstm_s10", "--n-seeds", "10")),
+    # External baselines: an established ILI graph model (our reimplementation
+    # of Cola-GNN) and FluSight's reference forecast.
+    "colagnn": ("run_colagnn.py", ()),
+    "flusight_baseline": ("run_flusight_baseline.py", ()),
 }
 
 
@@ -112,7 +136,11 @@ class Task:
         around exactly that.
         """
         if self.out_root:
-            return Path(self.out_root)
+            # A relative out_root is taken from the repository root, so one task
+            # file works on the laptop and on Explorer. Absolute roots -- what the
+            # ablation lists carry -- are used as they are.
+            root = Path(self.out_root)
+            return root if root.is_absolute() else paths.ROOT / root
         root = paths.city_root(self.city)
         if self.season:
             return paths.backtest_dir(self.season, root) / f"horizon_{self.horizon:02d}"
@@ -140,7 +168,7 @@ class Task:
             # Same city segment as output_dir: checkpoint filenames carry no
             # city, so two cities sharing one directory overwrite each other.
             ck_base = paths.city_root(self.city, paths.CHECKPOINT_DIR)
-            root = (Path(self.out_root.replace("/results/", "/checkpoints/"))
+            root = (Path(str(self.output_dir()).replace("/results/", "/checkpoints/"))
                     if self.out_root else
                     ck_base / (f"backtest_{self.season}" if self.season
                                else f"horizon_{self.horizon:02d}"))

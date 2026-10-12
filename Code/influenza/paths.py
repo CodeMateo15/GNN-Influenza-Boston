@@ -40,6 +40,14 @@ COLUMBUS_DIR = DATA_DIR / "Columbus Influenza Data"
 COLUMBUS_ILI_FILE = COLUMBUS_DIR / "ILI Specified Data-Franklin_final.xlsx"
 COLUMBUS_IAH_FILE = COLUMBUS_DIR / "IAH Data CPH Franklin_final.csv"
 COLUMBUS_COVID_FILE = COLUMBUS_DIR / "COVID Data CPH Franklin_final.csv"
+# Weekly per-area counts built from the three line-level extracts above by
+# Code/scrapers/build_columbus_panel.py. The loader reads only these. Columbus
+# Public Health cleared aggregate data for public release but asked that the
+# line-level extracts stay with the project, so the extracts are gitignored and
+# these aggregates are committed.
+COLUMBUS_ILI_WEEKLY_FILE = COLUMBUS_DIR / "columbus_ili_weekly_counts.csv"
+COLUMBUS_IAH_WEEKLY_FILE = COLUMBUS_DIR / "columbus_iah_weekly_counts.csv"
+COLUMBUS_COVID_WEEKLY_FILE = COLUMBUS_DIR / "columbus_covid_weekly_counts.csv"
 COLUMBUS_ZIP_AREAS_FILE = COLUMBUS_DIR / "Columbus_FC_Zip_Areas_Nov2019.xlsx"
 COLUMBUS_STATIC_FILE = COLUMBUS_DIR / "columbus_area_static.csv"
 COLUMBUS_WEATHER_DIR = DATA_DIR / "Columbus Weather"
@@ -59,6 +67,23 @@ AMBA_REVISION_FILE = AMBA_DIR / "amba_eti_revision.csv"
 AMBA_STATIC_FILE = AMBA_DIR / "amba_partido_static.csv"
 AMBA_EDGES_FILE = AMBA_DIR / "amba_partido_edges.csv"
 AMBA_WEATHER_DIR = DATA_DIR / "Buenos Aires Weather"
+
+# --- Chicago ----------------------------------------------------------------
+# CDPH's "Influenza Risk Level by ZIP Code" from the City of Chicago Data Portal
+# (Socrata 8vvr-jv2g) and the City's ZIP polygons (unjd-c2ca), both keyless.
+# The series is a 1-10 ILI ACTIVITY LEVEL, not a rate, so there is no
+# population denominator file; CHICAGO_STATIC_FILE is ACS demographics only,
+# scraped per ZCTA like Columbus's (see CHICAGO_DATA_NOTES.md).
+CHICAGO_DIR = DATA_DIR / "Chicago"
+CHICAGO_SOURCE_DIR = CHICAGO_DIR / "source"
+CHICAGO_PANEL_FILE = CHICAGO_DIR / "chicago_ili_level_long.csv"
+CHICAGO_WIDE_FILE = CHICAGO_DIR / "chicago_ili_level_wide.csv"
+CHICAGO_COVERAGE_FILE = CHICAGO_DIR / "chicago_zip_coverage.csv"
+CHICAGO_BOUNDARIES_FILE = CHICAGO_DIR / "chicago_zip_boundaries.geojson"
+CHICAGO_EDGES_FILE = CHICAGO_DIR / "chicago_zip_edges.csv"
+CHICAGO_CENTROIDS_FILE = CHICAGO_DIR / "chicago_zip_centroids.csv"
+CHICAGO_STATIC_FILE = CHICAGO_DIR / "chicago_zip_static.csv"
+CHICAGO_WEATHER_DIR = DATA_DIR / "Chicago Weather"
 
 # Where long-running scripts tee their stdout and where run_progress.py looks
 # by default. Override with GNNFLU_LOG_DIR; otherwise a per-user temp folder,

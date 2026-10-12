@@ -32,11 +32,20 @@ the node aggregation and the population denominator all have to be constructed.
 
 ## Source inventory
 
+**Release terms.** Columbus Public Health cleared these data for public release
+at the aggregate level, but asked that the line-level extracts stay with the
+project. So the three extracts below are gitignored, and only
+`Code/scrapers/build_columbus_panel.py` reads them. It writes the weekly
+per-area counts that the loader and every model use, and those counts are
+committed. Rebuilding the counts reproduces the loader's output exactly, and was
+checked frame-for-frame when the split was made (October 2026).
+
 | file | resolution | coverage | geography | notes |
 |---|---|---|---|---|
 | `ILI Specified Data-Franklin_final.xlsx` | **line-level**, minute timestamps | 2022-01-01 → 2026-07-27, 63,103 rows | 44 ZIPs | the target series; `Syndrome` is constant `ILISpecified` |
 | `IAH Data CPH Franklin_final.csv` | line-level, MMWR year/week | 2022-W01 → 2026-W28, 3,713 rows | 41 ZIPs (`ZIP5`) | flu hospitalisations; **Boston has no equivalent** |
 | `COVID Data CPH Franklin_final.csv` | line-level, MMWR year/week | 2021-W52 → **2025-W43**, 220,555 rows | 59 ZIPs (`zip_5`) | ends inside the evaluation window |
+| `columbus_ili_weekly_counts.csv`, `columbus_iah_weekly_counts.csv`, `columbus_covid_weekly_counts.csv` | weekly × 17 areas | as the extracts above | 17 areas | **generated** from the three extracts by `build_columbus_panel.py`; what the loader reads |
 | `Columbus_FC_Zip_Areas_Nov2019.xlsx` | static | Nov 2019 | 49 ZIPs → 17 areas | header on row 2; see below |
 | `columbus_area_geography.csv` | static | — | 17 areas | **generated**, `scrape_gazetteer_columbus.py`, keyless |
 | `columbus_area_static.csv` | static | ACS 2023 5-year | 17 areas | **generated**, `scrape_acs_columbus.py`, needs an API key |

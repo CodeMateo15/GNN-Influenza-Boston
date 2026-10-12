@@ -1,0 +1,117 @@
+{
+  "model": "colagnn__cfg07",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-09-25T15:53:36",
+  "model_class": "ColaGNN (reimplementation of Deng et al. 2020, CIKM)",
+  "target_kind": "level",
+  "normalize": "train",
+  "window": {
+    "lookback": 12,
+    "horizons": [
+      4
+    ],
+    "test_start": "2023-06-01",
+    "test_end": "2024-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 227,
+    "n_val": 40,
+    "n_test": 52,
+    "first_test_target": "2023-06-04",
+    "last_test_target": "2024-05-26"
+  },
+  "hidden": 16,
+  "conv_channels": 16,
+  "dropout": 0.4,
+  "lr": 0.001,
+  "weight_decay": 0.0,
+  "epochs": 100,
+  "batch_size": 32,
+  "n_seeds": 1,
+  "seeds": [
+    42
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 7,
+      "best_val_mse": 1.144239902496338
+    }
+  ],
+  "n_params": 11876,
+  "adjacency": "geographic borders between scored nodes, row-normalised, self-loops",
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "4": 0.0
+    },
+    "beta": {
+      "4": 67.86274589996988
+    },
+    "kappa": {
+      "4": 0.5264362690125954
+    },
+    "n_validation": 554,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "4": [
+        -0.6854236506772142,
+        -0.5906285251941843,
+        -0.47514515860359247,
+        -0.352248300628375,
+        -0.30027539046594953,
+        -0.25265221193898935,
+        -0.22181808653406448,
+        -0.18042610384760185,
+        -0.13265312288515477,
+        -0.09097055494209012,
+        -0.04789392007298129,
+        -0.012053228504165374,
+        0.023985705938160094,
+        0.062281605437773516,
+        0.12318456617121014,
+        0.18067196228556934,
+        0.26567466924269795,
+        0.3335149827411738,
+        0.45593520349310596,
+        0.6967786135832663,
+        1.0278760475867728,
+        1.4077541795589148,
+        1.7388914349297875
+      ]
+    },
+    "scale_floor": {
+      "4": 2.903707665089122
+    }
+  },
+  "test_interval_coverage": 99.29577464788733
+}

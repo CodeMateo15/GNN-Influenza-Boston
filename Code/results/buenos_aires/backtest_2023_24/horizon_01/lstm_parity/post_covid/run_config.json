@@ -1,0 +1,182 @@
+{
+  "model": "lstm_parity",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-25T14:16:55",
+  "target_kind": "blend",
+  "normalize": "train",
+  "window": {
+    "lookback": 16,
+    "horizons": [
+      1
+    ],
+    "test_start": "2023-12-01",
+    "test_end": "2024-11-30",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 49,
+    "n_val": 8,
+    "n_test": 52,
+    "first_test_target": "2023-12-03",
+    "last_test_target": "2024-11-24"
+  },
+  "hidden_size": 64,
+  "dropout": 0.0,
+  "lr": 0.001,
+  "weight_decay": 1e-05,
+  "epochs": 120,
+  "batch_size": 32,
+  "seed": 42,
+  "n_seeds": 10,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 43,
+      "best_val_mse": 0.11103188246488571
+    },
+    {
+      "seed": 43,
+      "best_epoch": 49,
+      "best_val_mse": 0.11109195649623871
+    },
+    {
+      "seed": 44,
+      "best_epoch": 43,
+      "best_val_mse": 0.11043443530797958
+    },
+    {
+      "seed": 45,
+      "best_epoch": 46,
+      "best_val_mse": 0.1109180822968483
+    },
+    {
+      "seed": 46,
+      "best_epoch": 40,
+      "best_val_mse": 0.11301883310079575
+    },
+    {
+      "seed": 47,
+      "best_epoch": 43,
+      "best_val_mse": 0.11041174083948135
+    },
+    {
+      "seed": 48,
+      "best_epoch": 36,
+      "best_val_mse": 0.11361852288246155
+    },
+    {
+      "seed": 49,
+      "best_epoch": 36,
+      "best_val_mse": 0.11481510102748871
+    },
+    {
+      "seed": 50,
+      "best_epoch": 36,
+      "best_val_mse": 0.11195800453424454
+    },
+    {
+      "seed": 51,
+      "best_epoch": 46,
+      "best_val_mse": 0.11146999150514603
+    }
+  ],
+  "climatology": {
+    "n_harmonics": 3,
+    "n_train_rows": 66,
+    "n_terms": 7,
+    "fallback_nodes": []
+  },
+  "blend_share": [
+    0.9177654981613159
+  ],
+  "best_epoch": 43,
+  "best_val_mse": 0.11187685504555703,
+  "n_params": 22996,
+  "imputed_feature_cells": 36,
+  "checkpoint": "checkpoints/buenos_aires/backtest_2023_24/lstm_parity_post_covid.pt",
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 2.764337114540011
+    },
+    "kappa": {
+      "1": 0.9577002230129644
+    },
+    "n_validation": 151,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.6797236563476938,
+        -1.517800341448015,
+        -1.4319151396578493,
+        -1.1727191760175582,
+        -1.0175741567700294,
+        -0.8973435307449826,
+        -0.7142588181304788,
+        -0.5920372958951206,
+        -0.5183599373557191,
+        -0.3972891606063678,
+        -0.2905579456324041,
+        -0.17980533035796337,
+        -0.04175567208188436,
+        0.059897360661631524,
+        0.13197822529084613,
+        0.3358909671278386,
+        0.5408036175845564,
+        0.6762355078371598,
+        0.8467910491099897,
+        1.4184772727024255,
+        1.8358356212006253,
+        2.2404190974543896,
+        4.386151766603227
+      ]
+    },
+    "scale_floor": {
+      "1": 0.8808746174938893
+    }
+  },
+  "test_interval_coverage": 84.46502057613169
+}

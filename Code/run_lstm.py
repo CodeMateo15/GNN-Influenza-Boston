@@ -5,6 +5,13 @@ cross-neighborhood information but has no graph structure to guide it -- which
 is the point of comparing it against the GNNs.
 
     python Code/run_lstm.py --variant post_covid
+
+The defaults reproduce the committed leaderboard run: one seed, an 8-week
+window, a plain level target. The parity arm gives the LSTM what `gnn_st` gets
+apart from the graph and the covariates -- the same 16-week window, the same
+seasonal blend target, the same ten-seed ensemble:
+
+    python Code/run_lstm.py --variant post_covid --lookback 16 --target blend --n-seeds 10
 """
 
 from __future__ import annotations
@@ -45,6 +52,7 @@ from influenza import (
 )
 from influenza.cli import (add_common_args, city_output_dirs, resolve_city,
                           resolve_variants, resolve_window, run_tag)
+from influenza.climatology import fit_climatology
 from influenza.intervals import attach_intervals, empirical_coverage, fit_intervals
 
 MODEL = "lstm"
@@ -53,23 +61,40 @@ PATIENCE = 25
 
 
 class MultivariateLSTM(nn.Module):
-    def __init__(self, n_inputs: int, n_horizons: int, hidden_size: int = HIDDEN_SIZE) -> None:
+    def __init__(self, n_inputs: int, n_horizons: int, hidden_size: int = HIDDEN_SIZE,
+                 dropout: float = 0.0, blend_init: tuple[float, ...] | None = None) -> None:
         super().__init__()
         self.n_inputs = n_inputs
         self.n_horizons = n_horizons
         self.lstm = nn.LSTM(input_size=n_inputs, hidden_size=hidden_size, batch_first=True)
+        # Identity at 0 rather than Dropout(0.0), so the default path draws no
+        # random numbers and reproduces the committed run bit for bit.
+        self.dropout = nn.Dropout(dropout) if dropout > 0 else nn.Identity()
         self.output = nn.Linear(hidden_size, n_inputs * n_horizons)
+        # The same blend head as models.SpatioTemporalGNN: one sigmoid share per
+        # horizon between the origin level and the seasonal curve, with the
+        # network predicting the residual. None keeps the plain level target.
+        self.blend_logit = (None if blend_init is None else
+                            nn.Parameter(torch.tensor(blend_init, dtype=torch.float32)))
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, clim: torch.Tensor | None = None) -> torch.Tensor:
         encoded, _ = self.lstm(x)
-        return self.output(encoded[:, -1]).view(-1, self.n_horizons, self.n_inputs)
+        out = self.output(self.dropout(encoded[:, -1])).view(-1, self.n_horizons, self.n_inputs)
+        if self.blend_logit is None:
+            return out
+        share = torch.sigmoid(self.blend_logit)[None, :, None]
+        origin = x[:, -1, :][:, None, :]
+        return share * origin + (1.0 - share) * clim + out
 
 
-def arrays(features: pd.DataFrame, targets: pd.DataFrame, positions: list[int], mean, std, window: Window):
-    """Sliding-window tensors of normalized rates.
+def arrays(features: pd.DataFrame, targets: pd.DataFrame, positions: list[int], mean, std,
+           window: Window, clim_rate: np.ndarray | None = None):
+    """Sliding-window tensors of normalized rates, plus the normalized seasonal curve.
 
     `features` is causally imputed so inputs are finite; `targets` keeps NaN for
     suppressed weeks so the loss can mask them instead of learning fake zeros.
+    `clim_rate` is (weeks, nodes) in rate units; its values at each target week
+    come back normalized like the targets, or as zeros when it is None.
     """
     x_source = (features.to_numpy(dtype=np.float32) - mean) / std
     y_source = (targets.to_numpy(dtype=np.float32) - mean) / std
@@ -77,7 +102,14 @@ def arrays(features: pd.DataFrame, targets: pd.DataFrame, positions: list[int], 
     y = np.stack([
         np.stack([y_source[t + h] for h in window.horizons]) for t in positions
     ]).astype(np.float32)
-    return x, y
+    if clim_rate is None:
+        clim = np.zeros_like(y)
+    else:
+        c_source = (clim_rate.astype(np.float32) - mean) / std
+        clim = np.stack([
+            np.stack([c_source[t + h] for h in window.horizons]) for t in positions
+        ]).astype(np.float32)
+    return x, y, clim
 
 
 def masked_mse(prediction: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
@@ -89,20 +121,25 @@ def masked_mse(prediction: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
     return diff.mean()
 
 
-def train_model(x_train, y_train, x_val, y_val, device, epochs, batch_size, window,
-                n_series):
+def train_model(train, val, device, args, window, n_series, seed, blend_init):
     # n_series is the city's scored-node count: the LSTM takes all of them as one
     # input vector, so it is 14 for Boston and 17 for Columbus.
-    model = MultivariateLSTM(n_series, len(window.horizons)).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
+    x_train, y_train, c_train = train
+    x_val, y_val, c_val = val
+    epochs, batch_size = args.epochs, args.batch_size
+    model = MultivariateLSTM(n_series, len(window.horizons), hidden_size=args.hidden_size,
+                             dropout=args.dropout, blend_init=blend_init).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     criterion = masked_mse
-    generator = torch.Generator().manual_seed(SEED)
+    generator = torch.Generator().manual_seed(seed)
     loader = DataLoader(
-        TensorDataset(torch.from_numpy(x_train), torch.from_numpy(y_train)),
+        TensorDataset(torch.from_numpy(x_train), torch.from_numpy(y_train),
+                      torch.from_numpy(c_train)),
         batch_size=batch_size, shuffle=True, generator=generator,
     )
     val_x = torch.from_numpy(x_val).to(device)
     val_y = torch.from_numpy(y_val).to(device)
+    val_c = torch.from_numpy(c_val).to(device)
 
     best_state, best_loss, best_epoch, patience = None, np.inf, 0, 0
     train_history: list[float] = []
@@ -110,17 +147,17 @@ def train_model(x_train, y_train, x_val, y_val, device, epochs, batch_size, wind
     for epoch in range(1, epochs + 1):
         model.train()
         epoch_loss = 0.0
-        for xb, yb in loader:
-            xb, yb = xb.to(device), yb.to(device)
+        for xb, yb, cb in loader:
+            xb, yb, cb = xb.to(device), yb.to(device), cb.to(device)
             optimizer.zero_grad()
-            loss = criterion(model(xb), yb)
+            loss = criterion(model(xb, cb), yb)
             loss.backward()
             nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
             epoch_loss += float(loss.item()) * len(xb)
         model.eval()
         with torch.no_grad():
-            val_loss = float(criterion(model(val_x), val_y).item())
+            val_loss = float(criterion(model(val_x, val_c), val_y).item())
         train_history.append(epoch_loss / len(x_train))
         val_history.append(val_loss)
 
@@ -140,6 +177,17 @@ def train_model(x_train, y_train, x_val, y_val, device, epochs, batch_size, wind
     return model, best_epoch, best_loss, train_history, val_history
 
 
+def _blend_init(horizons) -> tuple[float, ...]:
+    """The same starting logits as run_gnn._blend_init, so both begin from one prior."""
+    scale = {1: 2.5, 2: 1.5, 3: 0.8, 4: 0.0}
+    return tuple(scale.get(int(h), -1.5) for h in horizons)
+
+
+def _blend_shares(model: MultivariateLSTM) -> list[float]:
+    """Learned origin-level share per horizon, from the last seed."""
+    return torch.sigmoid(model.blend_logit.detach()).cpu().tolist()
+
+
 def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
                 args: argparse.Namespace, city) -> None:
     results_root, checkpoint_root = city_output_dirs(args, city)
@@ -153,36 +201,58 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
           f"{imputed.size} feature cells (suppressed neighborhood-weeks).")
 
     mean, std = normalization(rates, split, mode="train")
-    x_train, y_train = arrays(features, rates, split.train, mean, std, window)
-    x_val, y_val = arrays(features, rates, split.val, mean, std, window)
-    x_test, _ = arrays(features, rates, split.test, mean, std, window)
-
-    random.seed(SEED)
-    np.random.seed(SEED)
-    torch.manual_seed(SEED)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(SEED)
+    clim_rate, climatology = None, None
+    if args.target == "blend":
+        # Train-only, with the same cutoff as xgboost and gnn_st: the fit sees
+        # exactly the weeks the training targets already revealed.
+        climatology = fit_climatology(rates, end=split.train[-1] + window.max_horizon + 1)
+        clim_rate = climatology.level(rates.index)
+    train = arrays(features, rates, split.train, mean, std, window, clim_rate)
+    val = arrays(features, rates, split.val, mean, std, window, clim_rate)
+    x_test, _, c_test = arrays(features, rates, split.test, mean, std, window, clim_rate)
+    x_val, c_val = val[0], val[2]
+    blend_init = _blend_init(window.horizons) if args.target == "blend" else None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     print(f"\n{'=' * 72}\nLSTM | {variant} | device={device}\n{'=' * 72}")
     print(f"Train: {len(split.train)} | Validation: {len(split.val)} | Test: {len(split.test)}")
+    print(f"Target: {args.target} | lookback {window.lookback} | seeds {args.n_seeds}")
     first_target, last_target = split.test_target_span()
     print(f"Test targets: {first_target.date()} -> {last_target.date()}")
 
     # Tracking wraps only the modelling work, so the measured energy is training
     # and inference rather than CSV writing. It must also close before
     # finish_run, which serialises the emissions summary.
-    with track_emissions(run_tag(MODEL, variant, window), enabled=not args.no_carbon) as carbon:
-        model, best_epoch, best_loss, train_history, val_history = train_model(
-            x_train, y_train, x_val, y_val, device, args.epochs, args.batch_size, window,
-            city.n_neigh,
-        )
-        model.eval()
-        with torch.no_grad():
-            normalized_pred = model(torch.from_numpy(x_test).to(device)).cpu().numpy()
-            normalized_val = model(torch.from_numpy(x_val).to(device)).cpu().numpy()
-        predicted = np.maximum(0.0, normalized_pred * std[:, None, :] + mean[:, None, :])
-        val_predicted = np.maximum(0.0, normalized_val * std[:, None, :] + mean[:, None, :])
+    seeds = [SEED + i for i in range(args.n_seeds)]
+    print(f"Budget: {args.epochs} epochs x {len(seeds)} seeds", flush=True)
+    per_seed: list[dict] = []
+    test_draws, val_draws = [], []
+    with track_emissions(run_tag(args.name, variant, window), enabled=not args.no_carbon) as carbon:
+        for i, seed in enumerate(seeds, start=1):
+            print(f"--- seed {seed} ({i}/{len(seeds)}) ---", flush=True)
+            random.seed(seed)
+            np.random.seed(seed)
+            torch.manual_seed(seed)
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(seed)
+            model, best_epoch, best_loss, train_history, val_history = train_model(
+                train, val, device, args, window, city.n_neigh, seed, blend_init,
+            )
+            model.eval()
+            with torch.no_grad():
+                normalized_pred = model(torch.from_numpy(x_test).to(device),
+                                        torch.from_numpy(c_test).to(device)).cpu().numpy()
+                normalized_val = model(torch.from_numpy(x_val).to(device),
+                                       torch.from_numpy(c_val).to(device)).cpu().numpy()
+            test_draws.append(normalized_pred * std[:, None, :] + mean[:, None, :])
+            val_draws.append(normalized_val * std[:, None, :] + mean[:, None, :])
+            per_seed.append({"seed": seed, "best_epoch": best_epoch, "best_val_mse": best_loss})
+        # The ensemble is the mean over seeds, as for gnn_st, clipped at zero
+        # after averaging so a single seed's negative draw cannot bias it upward.
+        predicted = np.maximum(0.0, np.mean(test_draws, axis=0))
+        val_predicted = np.maximum(0.0, np.mean(val_draws, axis=0))
+    best_epoch = int(np.median([r["best_epoch"] for r in per_seed]))
+    best_loss = float(np.mean([r["best_val_mse"] for r in per_seed]))
 
     records: list[dict] = []
     for sample_idx, position in enumerate(split.test):
@@ -208,7 +278,10 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
             target_date = split.index[position + horizon]
             for node, neighborhood in enumerate(city.node_names):
                 val_rows.append({
+                    "origin_date": split.index[position],
+                    "target_date": target_date,
                     "horizon": horizon,
+                    "neighborhood": neighborhood,
                     "actual": float(rates.at[target_date, neighborhood]),
                     "predicted": float(val_predicted[sample_idx, h_idx, node]),
                 })
@@ -216,7 +289,7 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
 
     print(f"Best epoch: {best_epoch} | validation MSE: {best_loss:.6f}")
 
-    checkpoint_path = checkpoint_root / f"{MODEL}_{variant}.pt"
+    checkpoint_path = checkpoint_root / f"{args.name}_{variant}.pt"
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "model_state_dict": model.state_dict(),
@@ -225,7 +298,8 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
         "neighborhoods": list(city.node_names),
         "horizons": list(window.horizons),
         "lookback": window.lookback,
-        "hidden_size": HIDDEN_SIZE,
+        "hidden_size": args.hidden_size,
+        "target": args.target,
         "best_epoch": best_epoch,
         "best_val_mse": best_loss,
     }, checkpoint_path)
@@ -241,18 +315,26 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
           f"test coverage {coverage:.1f}%")
 
     out = finish_run(
-        model=MODEL,
+        model=args.name,
         variant=variant,
         predictions=predictions,
         config={
-            "target_kind": "level",
+            "target_kind": args.target,
             "normalize": "train",
             "window": window.to_json(),
             "split": split.to_json(),
-            "hidden_size": HIDDEN_SIZE,
+            "hidden_size": args.hidden_size,
+            "dropout": args.dropout,
+            "lr": args.lr,
+            "weight_decay": args.weight_decay,
             "epochs": args.epochs,
             "batch_size": args.batch_size,
             "seed": SEED,
+            "n_seeds": len(seeds),
+            "seeds": seeds,
+            "per_seed": per_seed,
+            **({"climatology": climatology.to_json(),
+                "blend_share": _blend_shares(model)} if climatology is not None else {}),
             "best_epoch": best_epoch,
             "best_val_mse": best_loss,
             "n_params": sum(p.numel() for p in model.parameters()),
@@ -265,20 +347,34 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
         carbon=carbon,
         results_root=results_root,
         city=city,
+        # Held-out forecasts for tune.py, which selects on validation only.
+        extra_tables={"predictions_val": validation},
     )
     save_loss_curve(train_history, val_history, out / "loss_curve.png",
-                    title=f"LSTM ({variant}) training")
+                    title=f"LSTM ({variant}) training, last seed")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    add_common_args(parser)
+    add_common_args(parser, variants=("all", "exclude_covid", "post_covid", "full"))
+    parser.add_argument("--name", default=MODEL,
+                        help="Results directory name, so a parity arm does not overwrite "
+                             "the committed lstm run.")
     parser.add_argument("--epochs", type=int, default=120)
     parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument("--hidden-size", type=int, default=HIDDEN_SIZE)
+    parser.add_argument("--dropout", type=float, default=0.0)
+    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--weight-decay", type=float, default=1e-5)
+    parser.add_argument("--target", choices=("level", "blend"), default="level",
+                        help="'blend' predicts a residual from the same origin/seasonal "
+                             "blend gnn_st uses, so the two differ only in architecture.")
+    parser.add_argument("--n-seeds", type=int, default=1,
+                        help="Ensemble size. gnn_st uses 10; 1 reproduces the committed run.")
     args = parser.parse_args()
-    if args.epochs < 1 or args.batch_size < 1:
-        parser.error("--epochs and --batch-size must be positive")
+    if args.epochs < 1 or args.batch_size < 1 or args.n_seeds < 1:
+        parser.error("--epochs, --batch-size and --n-seeds must be positive")
     return args
 
 

@@ -5,6 +5,15 @@ validation RMSE, then the fitted state is rolled forward one observed week at a
 time across the test window.
 
     python Code/run_arima.py --variant post_covid
+    python Code/run_arima.py --variant post_covid --harmonics 3 --name sarima
+
+Plain ARIMA has no seasonal term, so at four weeks ahead it can only mean-revert.
+`--harmonics K` adds the annual cycle as K sin/cos pairs on the day-of-year angle
+-- the same encoding as influenza/climatology.py -- entered as exogenous
+regressors (dynamic harmonic regression). That is the usual seasonal ARIMA for
+weekly data: a lag-52 SARIMA term needs several full seasons to identify and the
+post-COVID slice has three. The regressors are a function of the calendar only,
+so their future values are known at the origin and nothing leaks.
 """
 
 from __future__ import annotations
@@ -54,6 +63,31 @@ DIVERGENCE_FACTOR = 10.0
 DIVERGENCE_FLOOR = 10.0
 
 
+# Parameter standard errors are never used here -- only point forecasts are -- and
+# computing them hung Explorer for hours: statsmodels' outer-product covariance
+# calls numpy's SVD, which loops forever in that cluster's LAPACK build on the
+# near-singular matrices Chicago's 1-10 index produces (ZIP 60607, ARIMA(3,0,3)).
+# Skipping the step leaves every forecast bit-identical.
+FIT_COV = "none"
+
+# Number of annual sin/cos pairs entered as exogenous regressors; 0 = plain ARIMA.
+# Set once from --harmonics in main() -- every fit in a run uses the same design.
+HARMONICS = 0
+
+
+def seasonal_exog(index: pd.DatetimeIndex) -> np.ndarray | None:
+    """Day-of-year harmonics for `index`, without the intercept ARIMA already has."""
+    if HARMONICS <= 0:
+        return None
+    angle = 2.0 * np.pi * index.dayofyear.to_numpy(dtype=np.float64) / 365.2425
+    return np.column_stack([f(k * angle) for k in range(1, HARMONICS + 1)
+                            for f in (np.sin, np.cos)])
+
+
+def future_index(end: pd.Timestamp, steps: int) -> pd.DatetimeIndex:
+    return pd.DatetimeIndex([end + pd.Timedelta(weeks=k) for k in range(1, steps + 1)])
+
+
 def forecast_bound(history: pd.Series) -> float:
     """Largest forecast value considered a prediction rather than a divergence."""
     observed = history.dropna()
@@ -74,9 +108,12 @@ def safe_forecast(history: pd.Series, order: tuple[int, int, int], steps: int) -
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            fitted = ARIMA(history, order=order, enforce_stationarity=False,
-                           enforce_invertibility=False).fit()
-            values = np.asarray(fitted.forecast(steps=steps), dtype=float)
+            fitted = ARIMA(history, exog=seasonal_exog(history.index), order=order,
+                           enforce_stationarity=False, enforce_invertibility=False).fit(
+                               cov_type=FIT_COV)
+            values = np.asarray(fitted.forecast(
+                steps=steps, exog=seasonal_exog(future_index(history.index[-1], steps))),
+                dtype=float)
         return _check(values, steps, forecast_bound(history)), False
     except Exception:
         observed = history.dropna()
@@ -99,16 +136,20 @@ def walk_forward_forecasts(
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            result = ARIMA(series.loc[:first_end], order=order, enforce_stationarity=False,
-                           enforce_invertibility=False).fit()
+            history = series.loc[:first_end]
+            result = ARIMA(history, exog=seasonal_exog(history.index), order=order,
+                           enforce_stationarity=False, enforce_invertibility=False).fit(
+                               cov_type=FIT_COV)
         last_end = first_end
         for origin in origins:
             new_values = series.loc[(series.index > last_end) & (series.index <= origin)]
             if len(new_values):
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")
-                    result = result.append(new_values, refit=False)
-            values = np.asarray(result.forecast(steps=steps), dtype=float)
+                    result = result.append(new_values, exog=seasonal_exog(new_values.index),
+                                           refit=False)
+            values = np.asarray(result.forecast(
+                steps=steps, exog=seasonal_exog(future_index(origin, steps))), dtype=float)
             forecasts.append(_check(values, steps, bound))
             last_end = origin
     except Exception:
@@ -188,14 +229,16 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
     val_dates = split.origin_dates(split.val)
     test_dates = split.origin_dates(split.test)
 
-    print(f"\n{'=' * 72}\nARIMA | {variant}\n{'=' * 72}")
+    print(f"\n{'=' * 72}\n{args.name.upper()} | {variant} | harmonics {HARMONICS}\n{'=' * 72}")
     print(f"Train origins: {len(split.train)} | Validation: {len(split.val)} | Test: {len(split.test)}")
     first_target, last_target = split.test_target_span()
     print(f"Test targets: {first_target.date()} -> {last_target.date()}")
 
     # Tracking covers only the fitting work, and must close before finish_run,
     # which serialises the emissions summary.
-    with track_emissions(run_tag(MODEL, variant, window), enabled=not args.no_carbon) as carbon:
+    print(f"Budget: {city.n_neigh} epochs x 1 seeds", flush=True)
+    print("--- seed 0 (1/1) ---", flush=True)
+    with track_emissions(run_tag(args.name, variant, window), enabled=not args.no_carbon) as carbon:
         records: list[dict] = []
         val_records: list[dict] = []
         fallback_count = 0
@@ -208,6 +251,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
             order = select_order(series, train_dates, val_dates, window, max_d=args.max_d)
             selected[neighborhood] = order
             print(f"[{idx + 1:02d}/{city.n_neigh}] {city.short_names[idx]:12s} selected ARIMA{order}")
+            print(f"Epoch {idx + 1} | {city.short_names[idx]} order {order}", flush=True)
 
             # Validation forecasts with the *selected* order, so the predictive
             # interval is calibrated on the same held-out weeks every other model
@@ -274,7 +318,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
               file=sys.stderr)
 
     finish_run(
-        model=MODEL,
+        model=args.name,
         variant=variant,
         predictions=predictions,
         config={
@@ -283,6 +327,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
             "window": window.to_json(),
             "split": split.to_json(),
             "order_grid": {"p": MAX_P - 1, "d": args.max_d - 1, "q": MAX_Q - 1},
+            "seasonal_harmonics": HARMONICS,
             "selected_orders": {n: str(o) for n, o in selected.items()},
             "fallback_forecasts": fallback_count,
             "fallback_share": fallback_share,
@@ -302,20 +347,30 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    add_common_args(parser)
+    add_common_args(parser, variants=("all", "exclude_covid", "post_covid", "full"))
     parser.add_argument("--max-d", type=int, default=MAX_D,
                         help="Exclusive upper bound on the differencing order d. "
                              "Default 2 (so d in {0,1}). At long horizons d=1 already "
                              "extrapolates a straight line for the whole forecast, so "
                              "capping it is the cheapest guard against divergence.")
+    parser.add_argument("--harmonics", type=int, default=0,
+                        help="Annual sin/cos pairs as exogenous regressors (0 = plain "
+                             "ARIMA, the committed run). 3 matches the climatology.")
+    parser.add_argument("--name", default=None,
+                        help="Results directory name (default arima, or sarima with "
+                             "--harmonics).")
     args = parser.parse_args()
+    if args.name is None:
+        args.name = "sarima" if args.harmonics > 0 else MODEL
     if not 1 <= args.max_d <= MAX_D:
         parser.error(f"--max-d must be between 1 and {MAX_D}")
     return args
 
 
 def main() -> None:
+    global HARMONICS
     args = parse_args()
+    HARMONICS = args.harmonics
     window = resolve_window(args, Window(), resolve_city(args))
     city = resolve_city(args)
     rates = city.loaders.load_rates()

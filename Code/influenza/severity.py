@@ -321,6 +321,25 @@ def fit_thresholds(
     return fitted
 
 
+def citywide_thresholds(city, rates: pd.DataFrame, *,
+                        reference_seasons: str = "post_covid") -> Thresholds:
+    """One set of cut points for every neighborhood-week: the citywide one.
+
+    fit_thresholds' docstring argues for per-neighborhood thresholds, and for
+    scoring alerts that argument stands. The classification view in
+    compare_classification.py and run_severity_classifier.py deliberately uses a
+    single x / y / z instead, so a band means the same rate everywhere. Both
+    scripts call this, so the labels a classifier trains on and the labels it is
+    scored against cannot drift apart.
+    """
+    test_start, _ = city.evaluation_window()
+    return fit_thresholds(
+        rates, reference_seasons=REFERENCE_SEASON_SETS[reference_seasons],
+        threshold_end=test_start, levels=CDC_LEVELS,
+        season_start_month=city.season_start_month,
+    )[CITYWIDE]
+
+
 def thresholds_frame(fitted: dict[str, Thresholds]) -> pd.DataFrame:
     """Long-form threshold table, one row per (indicator, level)."""
     rows = []

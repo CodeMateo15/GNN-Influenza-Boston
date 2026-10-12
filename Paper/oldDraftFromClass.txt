@@ -1,0 +1,342 @@
+\documentclass{sigchi}
+\pagenumbering{arabic}
+
+% Load basic packages
+\usepackage{balance}       % to better equalize the last page
+\usepackage{graphics}      % for EPS, load graphicx instead 
+\usepackage[T1]{fontenc}   % for umlauts and other diaeresis
+\usepackage{txfonts}
+\usepackage{mathptmx}
+\usepackage[pdflang={en-US},pdftex]{hyperref}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage[
+  backend=biber,
+  style=acmnumeric,
+  maxbibnames=3,
+  minbibnames=1
+]{biblatex}
+
+\addbibresource{bibliography.bib}
+
+\def\bibliofont{\normalfont}
+
+
+% Some optional stuff you might like/need.
+\usepackage{microtype}        % Improved Tracking and Kerning
+% \usepackage[all]{hypcap}    % Fixes bug in hyperref caption linking
+\usepackage{ccicons}          % Cite your images correctly!
+% \usepackage[utf8]{inputenc} % for a UTF8 editor only
+
+% If you want to use todo notes, marginpars etc. during creation of
+% your draft document, you have to enable the "chi_draft" option for
+% the document class. To do this, change the very first line to:
+% "\documentclass[chi_draft]{sigchi}". You can then place todo notes
+% by using the "\todo{...}"  command. Make sure to disable the draft
+% option again before submitting your final document.
+\usepackage{todonotes}
+
+% Paper metadata
+\def\plaintitle{Neighborhood-Level Influenza Forecasting in Boston Using a Mobility-Aware Graph Neural Network}
+\def\plainauthor{}
+\def\emptyauthor{}
+\def\plainkeywords{}
+\def\plaingeneralterms{}
+
+% llt: Define a global style for URLs, rather that the default one
+\makeatletter
+\def\url@leostyle{%
+  \@ifundefined{selectfont}{
+    \def\UrlFont{\sf}
+  }{
+    \def\UrlFont{\small\bf\ttfamily}
+  }}
+\makeatother
+\urlstyle{leo}
+
+% To make various LaTeX processors do the right thing with page size.
+\def\pprw{8.5in}
+\def\pprh{11in}
+\special{papersize=\pprw,\pprh}
+\setlength{\paperwidth}{\pprw}
+\setlength{\paperheight}{\pprh}
+\setlength{\pdfpagewidth}{\pprw}
+\setlength{\pdfpageheight}{\pprh}
+
+% Make sure hyperref comes last of your loaded packages, to give it a
+% fighting chance of not being over-written, since its job is to
+% redefine many LaTeX commands.
+\definecolor{linkColor}{RGB}{6,125,233}
+\hypersetup{%
+  pdftitle={\plaintitle},
+% Use \plainauthor for final version.
+%  pdfauthor={\plainauthor},
+  pdfauthor={\emptyauthor},
+  pdfkeywords={\plainkeywords},
+  pdfdisplaydoctitle=true, % For Accessibility
+  bookmarksnumbered,
+  pdfstartview={FitH},
+  colorlinks,
+  citecolor=black,
+  filecolor=black,
+  linkcolor=black,
+  urlcolor=linkColor,
+  breaklinks=true,
+  hypertexnames=false
+}
+
+%% remove the copyright box
+\makeatletter
+\def\@copyrightspace{\relax}
+\makeatother
+
+% create a shortcut to typeset table headings
+% \newcommand\tabhead[1]{\small\textbf{#1}}
+
+% End of preamble. Here it comes the document.
+\begin{document}
+
+\title{\plaintitle}
+
+\numberofauthors{1}
+\author{%
+  \alignauthor{Mateo Biggs\\
+    \email{biggs.m@northeastern.edu}}}
+    
+\maketitle
+
+\section{Introduction}
+
+Seasonal influenza imposes an average annual economic burden of \$11.2 billion in the United States, with direct medical costs of \$3.2 billion and indirect costs of \$8.0 billion from lost productivity~\cite{Wayan2018}. The disease causes approximately 26.2 million cases, 247,000 hospitalizations, and 36,300 deaths annually, with lost lifetime earnings from deaths representing the largest cost component. Despite this substantial public health burden, local health departments lack tools to predict which neighborhoods will experience outbreaks one to two weeks in advance, limiting their ability to deploy targeted interventions such as mobile vaccination clinics or focused outreach campaigns before transmission accelerates. Current population-wide vaccination recommendations provide general guidance but do not support the kind of localized proactive actions that could reduce transmission in high-risk communities.
+
+Recent graph neural network approaches for influenza forecasting have pursued data minimalism to avoid challenges and what has been termed "data hubris" (the misguided belief that big data can replace, rather than support, traditional methods)~\cite{Luo2025, Lazer2014}. These approaches use only influenza-like illness rates as node features, inferring spatial relationships through statistical correlations of case patterns rather than integrating external variables. While this philosophy aims to create robust models that are independent of exogenous data sources, it limits the information available for prediction and operates primarily at regional, county, or state scales focused on measuring accuracy rather than enabling public health decision-making. Yet the limitations of alternative approaches are equally instructive: Google Flu Trends initially demonstrated that alternative data sources could provide faster estimates with high correlation to CDC surveillance, but the system failed systematically after 2011 due to algorithm changes and overfitting~\cite{Ginsberg2009, Lazer2014}. These challenges highlight the need for forecasting approaches that can leverage stable, diverse data sources while generating predictions at actionable spatial and temporal scales.
+
+We propose that embracing a data-maximalist approach by integrating multiple stable public health data streams as node features and using physical mobility networks to define connectivity can enable actionable neighborhood-level forecasting. We consider stable public health sources to be the City of Boston Planning Department, the Boston Public Health Commission, and the Massachusetts Department of Public Health. Rather than avoiding external variables, our approach deliberately incorporates wastewater surveillance, emergency department visits, transit ridership, weather patterns, and vaccination data to capture the diverse factors that influence disease transmission in urban environments. By defining functional connectivity through actual human mobility via public transportation, we can model the physical pathways through which influenza spreads between neighborhoods. This shift from data minimalism to data maximalism enables predictions that support proactive public health responses: identifying which neighborhoods need resources before case counts peak.
+
+Our approach applies graph neural networks to Boston neighborhoods with multi-modal node features and dual-topology edges that capture both geographic proximity and functional connectivity. We construct two complementary graph structures: a geographic topology where edge weights reflect spatial distance and a functional topology based on transit ridership flows that represent actual human movement patterns. This architecture moves beyond the single-variable approach of data-minimalist models to capture the complex, multi-factorial nature of influenza transmission in urban neighborhoods~\cite{Luo2025}. Also, by incorporating stable public health infrastructure data rather than commercial platform data, our approach avoids the instability that plagued earlier attempts at using alternative data sources for disease surveillance~\cite{Lazer2014}.
+
+We validate our approach by measuring forecast accuracy against actual neighborhood-level influenza case data and comparing performance to baseline methods. The key evaluation criterion is not only prediction accuracy, but also lead time. Whether forecasts arrive early enough to enable public health actions in neighborhoods predicted to experience surges. We assess how well predictions generalize across multiple flu seasons to ensure the model learns robust transmission patterns rather than overfitting to specific local anomalies. By comparing our multi-modal approach against simpler baselines that use fewer data sources, we can quantify the value added by integrating diverse urban data streams. Success in this evaluation demonstrates that the complexity of data-maximalist modeling is justified by its utility for public health decision-making.
+
+This work demonstrates that incorporating diverse urban data infrastructure into graph-based epidemic models can shift forecasting from data-minimalist regional accuracy benchmarks to data-rich operational tools. By explicitly modeling neighborhood connectivity through transit networks and integrating multiple surveillance data streams, our approach enables neighborhoods to receive targeted resources before outbreaks peak rather than reacting after transmission has already accelerated. The methods developed here have potential applications beyond seasonal influenza to other respiratory diseases that spread through similar transmission pathways, and could be adapted to other cities with comparable public health data infrastructure. More broadly, this work suggests that the field should reconsider the trade-off between model simplicity and predictive utility when the goal is decision support for public health departments.
+
+\section{Related Work}
+
+\subsection{Graph Neural Networks for Disease Forecasting}
+
+Graph Neural Networks (GNNs) have become useful tools for modeling urban systems with spatial and temporal patterns~\cite{jin2023}. Graph Attention Networks (GANs) allow nodes to weight their neighbors differently, which has proven effective for various prediction tasks on graph-structured data~\cite{veličković_casanova_liò_cucurull_romero_bengio_2018}. Recent work has applied these methods to disease forecasting, with one study showing that GNNs can capture both geographic proximity and functional connections between regions for influenza prediction in Taiwan~\cite{Luo2025}. Surveys of epidemic forecasting highlight the growing role of machine learning approaches alongside traditional models~\cite{Rodriguez2022}. However, most prior GNN work has focused on transportation applications like traffic prediction~\cite{jin2023}, and disease forecasting studies have targeted regional or county-level predictions aimed at measuring accuracy rather than supporting decision-making~\cite{Luo2025}. This work adapts these graph-based methods to neighborhood-level forecasting in Boston to generate actionable one-to-two week ahead predictions~\cite{Grohskopf2016, Paula2026}. Accurate neighborhood-level forecasts would enable Boston Public Health to implement community outreach programs in neighborhoods predicted to experience surges.
+
+\subsection{Alternative Data Sources for Disease Surveillance}
+
+Digital data sources initially seemed promising for improving disease tracking. Google Flu Trends showed that search query patterns could estimate influenza-like illness with high correlation to CDC reports and provide estimates one to two weeks faster than the standard passive surveillance approach~\cite{Ginsberg2009}. However, this approach failed systematically, overestimating flu prevalence for 100 out of 108 weeks starting in 2011 due to algorithm changes and overfitting~\cite{Lazer2014}. Transportation networks have also been used for epidemic modeling, with airline connectivity data helping explain global pandemic spread patterns, though this work examined city-to-city transmission rather than spread within cities~\cite{Colizza2006}. School-based surveillance systems like ORCHARDS have shown that automated absenteeism monitoring combined with specimen collection can provide early warning signals~\cite{Temte2022}, while contact network studies have demonstrated that measuring actual interaction patterns improves transmission modeling and vaccination strategies~\cite{Marcel2010}. Prior work has explored single alternative data sources like search queries or transportation networks, but these either suffered from platform instability and overfitting~\cite{Lazer2014} or operated at the wrong spatial scale~\cite{Colizza2006}. School-based surveillance captures detailed data but only covers children in limited areas~\cite{Temte2022}. Our approach combines multiple stable public health data streams, avoiding sole dependence on commercial platforms while capturing different transmission pathways in an urban setting.
+
+\subsection{Classical Epidemiological Models and Their Limitations}
+
+Traditional compartmental models for epidemic spread, beginning with the foundational SIR framework, have provided theoretical understanding of disease dynamics by modeling transitions between Susceptible, Infected, and Recovered (SIR) populations~\cite{Kermack1927}. These models established key concepts such as threshold population densities below which epidemics cannot sustain transmission. Recent outbreak management frameworks emphasize the combination of multiple models through structured expert elicitation to take advantage of diverse modeling insights while avoiding bias~\cite{Katriona2020}. Traditional epidemiological models assume homogeneous population mixing and rely on aggregate population-level parameters~\cite{Kermack1927}, while recent approaches advocate for combining multiple mechanistic models through expert elicitation~\cite{Katriona2020}. However, these methods struggle to capture spatial heterogeneity in urban environments where neighborhoods differ substantially in demographics, mobility patterns, and healthcare access. This paper's graph-based approach explicitly models neighborhood connectivity through transit and socioeconomic ties, enabling data-driven learning of transmission patterns without requiring manual parameter tuning or homogeneity assumptions that may not hold in diverse urban settings.
+
+\subsection{Urban Mobility and Disease Transmission}
+
+Public transportation systems play a significant role in urban disease transmission by facilitating contact between individuals from different neighborhoods. Recent work has incorporated mobility data into epidemic models, with studies using subway ridership as a proxy for overall city mobility to improve COVID-19 forecasting accuracy~\cite{Malik2022}. This approach demonstrated that mobility-dependent infection rates and inter-borough mixing through transit networks better captured dual-peak patterns than standard models. Agent-based simulations have explored transmission dynamics within transit systems themselves, tracking individual passenger routes and carriage occupancy to understand how disease spreads during commutes~\cite{Guo2023}. These detailed microsimulations found that the majority of infections occurred through public transportation in hypothetical scenarios with uniform populations. Prior work has treated transit data either as a modifier for infection rates in aggregate city-wide models~\cite{Malik2022} or as the primary infection site in detailed individual-level simulations~\cite{Guo2023}. However, these approaches operated at either coarse spatial scales (borough-level) or in theoretical scenarios with uniform populations, and focused on retrospective fitting rather than operational forecasting. Our work uses transit connectivity as one component of neighborhood relationships within a graph structure, combining it with other public health data sources. Rather than treating mobility as the infection mechanism itself, we can use transit patterns to define functional connections between diverse neighborhoods with varying demographics and healthcare access.
+
+\section{Proposed Solution}
+
+Our approach builds on the dual-topology graph neural network framework from Luo et al.~\cite{Luo2025} but diverges from their data-minimalist philosophy by incorporating multi-modal node features and mobility-based connectivity.
+
+\subsection{Graph Construction}
+
+We represent Boston using 14 neighborhoods defined by the Boston Public Health and City of Boston Planning Development: Allston/Brighton, Back Bay–Beacon Hill–Downtown–North End–West End, Charlestown, Dorchester, East Boston, Fenway, Hyde Park, Jamaica Plain, Mattapan, Roslindale, Roxbury, South Boston, South End, and West Roxbury. Each neighborhood is a node $v \in V$ in graph $G = (V, E)$.
+
+We construct two edge sets. \textbf{Geographic edges ($G_{geo}$)} connect neighborhoods based on spatial adjacency, with weights reflecting distance: adjacent neighborhoods get weight 1, neighborhoods separated by one area get weight 2, $j$ if separated by $j - 1$ areas. \textbf{Functional edges ($G_{func}$)} use MBTA ridership flows rather than statistical correlation~\cite{Luo2025}:
+
+\begin{equation}
+w_{ij} = \frac{\text{average weekly commuters from } i \text{ to } j}{\text{total weekly commuters from } i}
+\end{equation}
+
+\subsection{Data Sources and Features}
+
+Our model integrates three sources standardized to weekly resolution: Boston Public Health Commission (case rates, ED visits, wastewater viral concentrations)~\cite{bostonSeasonalInfluenza, bostonBostonWastewater}, Massachusetts Department of Public Health (vaccination rates by demographics)~\cite{fluShots}, and City of Boston Planning Development (demographics, socioeconomic factors, commute patterns)~\cite{bostonplansExploringNeighborhood}.
+
+Each neighborhood node has features including weekly case rates, ED visits, wastewater viral levels, age distribution, population density, poverty rates, housing tenure, vehicle availability, and MBTA entry/exit counts. City-wide covariates include vaccination rates by age group, confirmed cases for city-wide demographics, and weather data.
+
+Unlike prior work that uses only influenza-like illness (ILI) rates to avoid external variable dependencies~\cite{Luo2025}, we deliberately incorporate diverse data streams to capture the varied nature of urban transmission
+
+\subsection{Model Architecture}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{architecture.png}
+\caption{End-to-end architecture for influenza forecasting. 
+The model processes node features through parallel geographic and functional graph convolutions, 
+fuses outputs, integrates global covariates (vaccination, weather, ED visits), and predicts case rates 1-2 weeks ahead.}
+\label{fig:arch}
+\end{figure}
+
+\textbf{Temporal extraction:} 1D causal convolutional layers process each neighborhood's 8-week lookback window.
+
+\textbf{Spatial convolution:} We process geographic and functional topologies in parallel using graph convolution:
+
+\begin{equation}
+\mathbf{X}_{ST} = \text{ReLU}(\mathbf{D}^{-1/2}\mathbf{A}\mathbf{D}^{-1/2} \cdot \mathbf{X}_T \cdot \Theta)
+\end{equation}
+
+where $\Theta$ is the learnable weight matrix, $\mathbf{D}^{-1/2}\mathbf{A}\mathbf{D}^{-1/2}$ is the symmetric normalized adjacency matrix, and $\mathbf{X}_T$ is the input feature matrix from temporal convolution~\cite{Luo2025}.
+
+\textbf{Topology fusion:} Outputs from both spatial streams are concatenated and passed through fully connected layers that learn to weight geographic versus functional connectivity.
+
+\textbf{Global integration:} City-wide vaccination rates and weather are concatenated to fused neighborhood features.
+
+\textbf{Output:} The model predicts case rates per 100,000 residents at 1 and 2 weeks ahead: $\hat{\mathbf{y}}_i^{t+1}$ and $\hat{\mathbf{y}}_i^{t+2}$.
+
+\subsection{Training}
+
+We train using mean squared error loss with L2 regularization on data from 2018-2024. The temporal split uses 2018-2024 for training, 2024-2025 for validation, and 2025-2026 for testing, preventing data leakage and mimicking operational forecasting.
+
+\subsection{Key Contributions}
+
+The key contributions are mobility-based functional topology using MBTA flows, multi-modal node features integrating wastewater and socioeconomic factors, and city-wide vaccination and weather as global covariates.
+
+\section{Evaluation Plan}
+
+\subsection{Part a: Thesis}
+
+Integrating multiple stable public health data streams as node features within a graph neural network framework that explicitly models neighborhood connectivity through transit networks can generate actionable neighborhood-level influenza forecasts that enable proactive public health interventions.
+
+\subsection{Part b: Claim}
+
+A data-maximalist GNN approach using multi-modal features (wastewater, ED visits, MBTA ridership, demographics, vaccination) and mobility-based functional connectivity produces more accurate and actionable neighborhood-level influenza forecasts (1-2 weeks ahead) compared to data-minimalist approaches that use only case data.
+
+\subsection{Part c: Evaluation Design}
+
+\subsubsection{Dependent Variables (DVs)}
+
+\textbf{Forecast Accuracy Metrics:}
+\begin{itemize}
+    \item Mean Absolute Error (MAE) of predicted vs. actual case rates per 100,000 residents
+    \item Root Mean Squared Error (RMSE)
+    \item Pearson Correlation between predicted and actual cases
+\end{itemize}
+
+\textbf{Operational Utility Metrics:}
+\begin{itemize}
+    \item Lead time: Number of days before outbreak peak that model provides accurate warning
+    \item Precision/Recall for outbreak detection: Binary classification of whether a neighborhood will exceed a threshold (ex. 50 cases/100k) in 1-2 weeks
+    \item Rank correlation: Spearman correlation between predicted and actual neighborhood rankings (which neighborhoods are highest risk)
+\end{itemize}
+
+\subsubsection{Independent Variables (IVs)}
+
+We manipulate the model variant used for forecasting:
+
+\begin{enumerate}
+    \item \textbf{Full model (Data-Maximalist):} Multi-modal features + dual topology (geographic + MBTA mobility)
+    \item \textbf{Baseline 1 (Data-Minimalist):} ILI rates only + correlation-based functional topology (replicating Taiwan approach)
+    \item \textbf{Baseline 2 (Single-Topology):} Multi-modal features + geographic topology only (no functional edges)
+    \item \textbf{Baseline 3 (Single-Topology):} Multi-modal features + MBTA topology only (no geographic edges)
+    \item \textbf{Baseline 4 (Traditional):} ARIMA time series for each neighborhood independently (no spatial modeling)
+\end{enumerate}
+
+\subsubsection{Task}
+
+\textbf{Temporal forecasting task:} For each week $t$ in the test period (2025-2026 flu season), predict neighborhood-level influenza case rates at horizons $t+1$ (1 week ahead) and $t+2$ (2 weeks ahead) using only data available up to week $t$.
+
+\textbf{Specific evaluation protocol:}
+\begin{itemize}
+    \item Training data: 2018-2024 (6-7 flu seasons)
+    \item Validation data: 2024-2025 (1 flu season for hyperparameter tuning)
+    \item Test data: 2025-2026 (1 flu season for final evaluation)
+    \item Rolling evaluation: Generate predictions for each week in test period and measure accuracy
+\end{itemize}
+
+\subsubsection{Threats to Validity}
+
+\textbf{1. Temporal validity:}
+\begin{itemize}
+    \item The model may overfit to specific seasonal patterns in training years
+    \item COVID-19 disrupted normal flu patterns 2020-2022; data from these years may not represent typical transmission
+    \item \textit{Mitigation:} Evaluate performance separately on pre-COVID (2018-2019) and post-COVID (2023-2025) seasons
+\end{itemize}
+
+\textbf{2. Data availability and quality:}
+\begin{itemize}
+    \item Wastewater surveillance only available from 2024 onward in some neighborhoods
+    \item MBTA ridership dropped dramatically during COVID and may not reflect current patterns
+    \item Missing or delayed reporting in some neighborhoods creates incomplete data
+    \item \textit{Mitigation:} Test model robustness to missing features; evaluate performance with/without wastewater
+\end{itemize}
+
+\textbf{3. Spatial generalization:}
+\begin{itemize}
+    \item Model trained on Boston may not generalize to other cities
+    \item Neighborhood definitions are somewhat arbitrary and may affect results
+    \item \textit{Mitigation:} Sensitivity analysis with different neighborhood aggregations
+\end{itemize}
+
+\textbf{4. Lead time measurement:}
+\begin{itemize}
+    \item Defining "outbreak peak" and measuring lead time is subjective
+    \item \textit{Mitigation:} Use multiple definitions (absolute peak, first week exceeding threshold, sustained elevation)
+\end{itemize}
+
+\subsubsection{Why This Design Tests the Thesis}
+
+The thesis claims that \textit{data-maximalism + mobility-based connectivity} enables actionable forecasts. This evaluation directly tests this by:
+
+\begin{enumerate}
+    \item \textbf{Comparing data-maximalist vs. data-minimalist models} (IV: Full model vs. Baseline 1) measures whether integrating multiple data streams improves accuracy, testing "integrating multiple stable public health data streams"
+    
+    \item \textbf{Comparing dual-topology vs. single-topology models} (IV: Full model vs. Baselines 2-3) isolates the contribution of mobility-based functional connectivity, testing "explicitly models neighborhood connectivity through transit networks"
+    
+    \item \textbf{Measuring both accuracy and operational metrics} (DV: MAE/RMSE + lead time + outbreak detection) tests whether forecasts are "actionable" rather than just accurate retrospectively, testing "enable proactive public health interventions"
+    
+    \item \textbf{Testing across multiple flu seasons} (Task: rolling evaluation 2024-2025) ensures the model generalizes rather than overfitting to one season
+\end{enumerate}
+
+\textbf{Possible outcomes and interpretation:}
+\begin{itemize}
+    \item \textbf{If Full model $\gg$ Baselines 1-3:} Thesis supported---both data-maximalism AND mobility edges contribute
+    \item \textbf{If Full model $\approx$ Baseline 1:} Thesis rejected---data-maximalism doesn't help
+    \item \textbf{If Full model $\approx$ Baseline 2:} Mobility edges don't contribute; geographic proximity sufficient
+    \item \textbf{If lead time $<$ 3 days:} Even if accurate, not actionable for public health (vaccines need $\sim$7-14 days)
+\end{itemize}
+
+\section{Timeline and Project Status}
+
+This project will be completed over a 10-week period during summer 2026. All pre-project data collection has been completed, including BPHC surveillance data (ILI cases, ED visits, wastewater)~\cite{bostonSeasonalInfluenza,bostonBostonWastewater}, Mass DPH vaccination records (2023-2026 seasons)~\cite{fluShots}, and City of Boston demographic datasets~\cite{bostonplansExploringNeighborhood}. The 14-neighborhood schema has been defined and literature review is complete, establishing the conceptual foundation for a data-maximalist GNN with mobility-based edges and global covariate fusion.
+
+The project is organized into three phases. Each week will have time set aside to re-vector and update log with new goals. \textbf{Phase 1 (Weeks 1-5): Data Engineering and Graph Construction} will focus on building the complete data pipeline from raw sources to model-ready tensors. This includes the already cleaned and standardized datasets to weekly temporal resolution, engineering node features (case rates, wastewater, demographics, socioeconomic indicators, MBTA activity), constructing dual-topology graphs (geographic adjacency and MBTA mobility edges), and integrating global covariates (vaccination rates, weather). Test how to improve current metrics. Week 4 will include experimentation with edge weighting schemes and implementation of the spatial anchor background node representing Boston Harbor and surrounding suburbs. By the end of Phase 1, the complete end-to-end pipeline will be validated with train/validation/test splits (2018-2022 train, 2022-2023 validation, 2023-2024 test) that preserve temporal ordering and prevent data leakage.
+
+\textbf{Phase 2 (Weeks 6-7): Model Development and Training} will implement baseline models (ARIMA, LSTM) and the full GNN architecture with temporal feature extraction, dual-topology spatial convolution, and global covariate fusion. Week 6 focuses on initial implementation, debugging gradient flow, and establishing experiment tracking. Week 7 conducts systematic hyperparameter tuning (learning rate, hidden dimensions, number of layers, dropout) and ablation studies to isolate the contribution of each data stream. This phase will evaluate both 1-week and 2-week forecast horizons and test model robustness to missing data through cross-validation across multiple flu seasons.
+
+\textbf{Phase 3 (Weeks 8-10): Evaluation and Dissemination} will compare the full GNN against all baselines across forecast accuracy metrics (MAE, RMSE, Pearson correlation) and operational utility metrics (lead time, outbreak detection precision/recall, neighborhood ranking). Week 8 focuses on spatial analysis to understand which neighborhoods are predicted well versus poorly, generating attention/edge weight visualizations to interpret learned transmission pathways, and producing forecast maps for selected outbreak weeks. Weeks 9-10 are dedicated to manuscript writing, covering all sections from introduction through discussion with emphasis on public health implications and comparison to the Taiwan study's data-minimalist approach. The final week includes preparing a reproducible code repository with full documentation, creating presentation materials, and submitting the final paper to a journal. Key risks include potential overfitting to COVID-disrupted training data (2020-2022) and limited wastewater availability before 2024, which will be addressed through sensitivity analyses and feature ablation studies throughout Phases 2 and 3.
+
+\clearpage
+
+
+% BALANCE COLUMNS
+\balance{}
+
+% REFERENCES FORMAT
+% References must be the same font size as other body text.
+\printbibliography
+
+
+\newpage
+
+\section{Changelog}
+\textbf{Introduction: }Cut out awkward sections and stuck with 1st noted section of listed data. Also, removed an unsourced section and added a transition phrase. 
+
+\textbf{Related Works: }Removed My and added Our. Shortened the first section up. And removed repeated parts. Explained the acronym of SIR more. Added more context to traditional methods.
+
+\textbf{Solution: }Added architecture of the GNN as an image. Wording might be too small let me know. Added 4 citations to the websites. And explained what ILI was, influenza-like illness.
+
+\textbf{Evaluation: }Keeping it the same.
+
+\textbf{10-week plan: }I am still planning to work this amount and believe it is capable.
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

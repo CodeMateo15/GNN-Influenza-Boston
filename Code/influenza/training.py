@@ -82,8 +82,17 @@ def train_gcn(
     device: torch.device,
     n_neigh: int,
     verbose: bool = True,
+    batch_size: int | None = None,
 ) -> TrainResult:
-    """Per-sample training over the full graph, matching the notebook loop."""
+    """Training over the full graph, one sample per step unless `batch_size` is set.
+
+    The default is the per-sample loop the original notebook used, kept so
+    committed runs reproduce. That loop ignores TrainSpec.batch_size, and at
+    lr 3e-3 on ~85 samples it takes ~85 noisy Adam steps per epoch and
+    early-stops within a handful of epochs -- the underfitting METHODS.md blames
+    for the retired GCN. `batch_size` averages the loss over that many samples
+    per step instead, which is what the registry's batch_size=26 always meant.
+    """
     optimizer = torch.optim.Adam(model.parameters(), lr=spec.lr, weight_decay=spec.weight_decay)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, patience=spec.plateau_patience, factor=spec.plateau_factor
@@ -102,15 +111,21 @@ def train_gcn(
     for epoch in range(1, spec.epochs + 1):
         model.train()
         total = 0.0
-        for idx in np.random.permutation(len(tensors)):
-            X, g, y = tensors[idx]
+        order = np.random.permutation(len(tensors))
+        step = batch_size or 1
+        for start in range(0, len(order), step):
+            batch = order[start:start + step]
             optimizer.zero_grad()
-            prediction = model(X, edge_index, g, edge_weight)
-            loss = masked_mse(prediction[:n_neigh], y)
+            losses = []
+            for idx in batch:
+                X, g, y = tensors[idx]
+                prediction = model(X, edge_index, g, edge_weight)
+                losses.append(masked_mse(prediction[:n_neigh], y))
+            loss = torch.stack(losses).mean()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=spec.grad_clip)
             optimizer.step()
-            total += float(loss.item())
+            total += float(loss.item()) * len(batch)
         train_losses.append(total / max(len(tensors), 1))
 
         model.eval()
@@ -164,6 +179,8 @@ class Prediction:
     lower: np.ndarray
     upper: np.ndarray
     actual: np.ndarray   # NaN where suppressed
+    # (S, n_neigh, n_horizons, 23) at intervals.QUANTILE_LEVELS, or None.
+    quantiles: np.ndarray | None = None
 
 
 def mc_dropout_forward(
@@ -241,9 +258,11 @@ def calibrate_intervals(
         model = IntervalModel(fitted=False, note="no validation split available")
 
     lower, upper = model.bounds(mean.ravel(), horizon_grid.ravel(), epistemic=epistemic.ravel())
+    quantiles = model.quantiles(mean.ravel(), horizon_grid.ravel(), epistemic=epistemic.ravel())
     return (
         Prediction(mean=mean, lower=lower.reshape(mean.shape),
-                   upper=upper.reshape(mean.shape), actual=np.empty(0)),
+                   upper=upper.reshape(mean.shape), actual=np.empty(0),
+                   quantiles=quantiles.reshape(*mean.shape, -1)),
         model,
     )
 

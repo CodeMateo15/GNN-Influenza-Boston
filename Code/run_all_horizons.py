@@ -67,6 +67,10 @@ class Job:
     extra: tuple[str, ...] = field(default_factory=tuple)
     # dualtopo's Window carries lookback=52 of its own; leave it alone.
     native_lookback: int | None = None
+    # Results parent under the horizon root. The severity classifier writes to
+    # `_severity_classifier/`, which compare_models.py never globs, because its
+    # predictions.csv holds bands, not rates.
+    subdir: str = ""
 
     @property
     def key(self) -> str:
@@ -93,6 +97,10 @@ def build_matrix(variants: tuple[str, ...], city: City) -> tuple[Job, ...]:
         # Boosted trees over the same per-node columns the graph model reads, with
         # no edges. The strongest non-graph baseline at four weeks.
         jobs.append(Job("xgboost", "run_xgboost.py", variant))
+        # Same trees and inputs, trained to output the severity band instead of
+        # the rate. Scored by compare_classification.py, not compare_models.py.
+        jobs.append(Job("xgb_severity", "run_severity_classifier.py", variant,
+                        subdir="_severity_classifier"))
 
     # The headline arm. 16-week lookback natively, and its 10-seed ensemble makes
     # it roughly 10x the cost of a baseline -- which is why the sweep is a
@@ -164,7 +172,8 @@ def run_job(job: Job, horizon: int, args: argparse.Namespace, log_dir: Path) -> 
     job is still running. Capturing it in memory, as this used to, meant a
     ten-seed gnn_st job was a single silent hour.
     """
-    out_dir = paths.horizon_dir(horizon, args.results_dir) / job.model / job.variant
+    out_dir = (paths.horizon_dir(horizon, args.results_dir) / job.subdir
+               / job.model / job.variant)
     if args.skip_existing and is_complete(out_dir, horizon):
         return {"status": "skipped", "seconds": 0.0, "returncode": 0, "stderr": "",
                 "log": ""}

@@ -1,0 +1,97 @@
+{
+  "model": "gat_tuned",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-10T18:32:33",
+  "model_class": "GATBaseline",
+  "paper": "Luo et al. 2025, BMC Public Health 25:408 (comparison model)",
+  "paper_reported_corr": 0.5994,
+  "paper_gaps_filled": {
+    "n_layers": 2,
+    "hidden": 64,
+    "heads": 8,
+    "activation": "ELU",
+    "readout": "linear",
+    "edge_weight": "passed as a 1-d edge feature (edge_dim=1)",
+    "note": "The paper specifies only a standard multi-head attention network over the topology; these are our choices."
+  },
+  "target_kind": "level",
+  "split": {
+    "n_train": 119,
+    "n_val": 20,
+    "n_test": 52,
+    "first_test_target": "2023-06-04",
+    "last_test_target": "2024-05-26"
+  },
+  "graph_counts": {
+    "geo_1hop": 115,
+    "anchor_edges": 2,
+    "corr": 2
+  },
+  "n_node_features": 52,
+  "n_params": 8129,
+  "best_epoch": 7,
+  "best_val_mse": 0.599041897058487,
+  "n_seeds": 10,
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 6,
+      "best_val_mse": 0.5829268231987953
+    },
+    {
+      "seed": 43,
+      "best_epoch": 20,
+      "best_val_mse": 0.6179974332451821
+    },
+    {
+      "seed": 44,
+      "best_epoch": 6,
+      "best_val_mse": 0.5974959313869477
+    },
+    {
+      "seed": 45,
+      "best_epoch": 7,
+      "best_val_mse": 0.6002502605319023
+    },
+    {
+      "seed": 46,
+      "best_epoch": 9,
+      "best_val_mse": 0.5956639662384987
+    },
+    {
+      "seed": 47,
+      "best_epoch": 32,
+      "best_val_mse": 0.5995947569608688
+    },
+    {
+      "seed": 48,
+      "best_epoch": 8,
+      "best_val_mse": 0.5952251359820366
+    },
+    {
+      "seed": 49,
+      "best_epoch": 18,
+      "best_val_mse": 0.5883130475878715
+    },
+    {
+      "seed": 50,
+      "best_epoch": 7,
+      "best_val_mse": 0.5877942875027656
+    },
+    {
+      "seed": 51,
+      "best_epoch": 7,
+      "best_val_mse": 0.599041897058487
+    }
+  ],
+  "batched": true,
+  "train": {
+    "lr": 0.003,
+    "weight_decay": 1e-05,
+    "dropout": 0.2,
+    "batch_size": 26
+  },
+  "test_interval_coverage": 95.59018567639257,
+  "city": "chicago"
+}

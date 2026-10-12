@@ -1,0 +1,22 @@
+Call for Papers on Artificial Intelligence in Health: From Pattern Discovery to Population Inference
+The American Journal of Epidemiology is the oldest and one of the premier epidemiologic journals devoted to the publication of empirical research findings, opinion pieces, and methodological developments in the field of epidemiologic research. It is a peer-reviewed journal aimed at both fellow epidemiologists and those who use epidemiologic data, including public health workers and clinicians.
+
+Guest Editors:
+Li Shen, Ph.D., FAIMBE, FACMI, FAMIA, Perelman School of Medicine, University of Pennsylvania
+
+Haochang Shou, Ph.D, University of Pennsylvania Perelman School of Medicine
+
+Submission deadline: October 30, 2026
+About the Special Collection:
+Artificial intelligence (AI) and machine learning have rapidly demonstrated significant promises in advancing health research and innovation, with applications spanning disease surveillance and forecasting, risk prediction, therapeutic discovery, healthcare research, and large-scale analysis of electronic health records and real-world data. While these approaches offer the ability to analyze high-dimensional and complex data at unprecedented scale, their integration and direct application into biomedical and population health research requires necessary examinations on fundamental issues, including study design, causal inference, missing data, bias, interpretability, and reproducibility. 
+
+This special collection in the American Journal of Epidemiology brings together methodological and applied work that critically examines the role of AI in epidemiologic science. Rather than viewing AI as a replacement for established epidemiologic principles, this collection emphasizes AI as a complementary tool—one that can support hypothesis generation, enhance measurement, uncover heterogeneity, and extend the reach of population-based research when appropriately embedded within rigorous epidemiologic frameworks. 
+
+We invite contributions with novel methodological developments, rigorous empirical studies, critical reviews, and perspectives that clarify the opportunities and limitations of AI in population and precision health research. Of particular interest are studies that explicitly engage with issues of bias, confounding, generalizability, and interpretability, and that articulate how AI-derived insights can inform valid inference and meaningful public health action. 
+
+Collectively, this collection aims to clarify when, how, and to what extent artificial intelligence can strengthen epidemiologic research, while reinforcing the central role of epidemiologic reasoning in an era of increasingly data-driven science.
+
+How to submit to the special collection:
+Authors should follow the Author Guidelines regarding the manuscript format requested by the American Journal of Epidemiology. Submit your manuscript through ScholarOne Manuscripts.
+
+Submissions are encouraged before the closed date of October 30, 2026.

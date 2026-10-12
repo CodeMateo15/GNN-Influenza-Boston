@@ -1,0 +1,326 @@
+{
+  "model": "gnn_st_nograph",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-25T14:14:43",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 115,
+    "n_val": 20,
+    "n_test": 53,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-31"
+  },
+  "graph_counts": {},
+  "n_nodes": 17,
+  "edge_weight_range": [
+    0.0,
+    0.0
+  ],
+  "n_node_features": 46,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "temp_mean_c",
+    "temp_max_c",
+    "temp_min_c",
+    "relative_humidity_mean",
+    "precipitation_sum_mm",
+    "wind_speed_max_kmh",
+    "pop_density",
+    "poverty_rate",
+    "transit_share",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate",
+    "no_vehicle_rate",
+    "nonwhite_share"
+  ],
+  "global_names": [],
+  "n_params": 13876,
+  "best_epoch": 13,
+  "best_val_mse": 1.5167921781539917,
+  "epochs_run": 120,
+  "checkpoint": "checkpoints/columbus/backtest_2025_26/gnn_st_nograph_post_covid.pt",
+  "experiment": {
+    "name": "gnn_st_nograph",
+    "model": "stgnn",
+    "variant": "post_covid",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "none",
+      "geo": false,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": false,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 0.003,
+      "epochs": 120,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.25,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": false,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        1
+      ],
+      "test_start": "2025-06-01",
+      "test_end": "2026-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Genuinely no spatial term: no hand-built edges AND no adaptive adjacency, so each neighborhood is forecast from its own history with shared weights. The honest floor for 'does the graph help at all', and the number that decides whether this is a graph problem. Removing the hand-built edges alone does not get here -- the adaptive adjacency would still be a learned graph."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 7.548147039646115
+    },
+    "kappa": {
+      "1": 0.7474332971712481
+    },
+    "n_validation": 340,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.236114658795389,
+        -1.0913378343279068,
+        -0.9070600187337216,
+        -0.6836789358073482,
+        -0.5667255965708166,
+        -0.44554405682081466,
+        -0.36426972544798564,
+        -0.2796354109913053,
+        -0.19751918462170062,
+        -0.13935227911649697,
+        -0.05346050261167546,
+        0.014349794567924023,
+        0.10510171521443801,
+        0.2208000281114956,
+        0.30564160288995673,
+        0.4392326172233236,
+        0.5480108686434947,
+        0.7614657216189518,
+        0.9543138831719603,
+        1.1946835563831288,
+        1.463135115935447,
+        1.7936672767920387,
+        2.223676313055133
+      ]
+    },
+    "scale_floor": {
+      "1": 1.3382217738872506
+    }
+  },
+  "test_interval_coverage": 97.2253052164262,
+  "city": "columbus",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "n_seeds": 10,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 1.6347354650497437,
+    "43": 1.5167921781539917,
+    "44": 1.5935970544815063,
+    "45": 1.6226587295532227,
+    "46": 1.5764285326004028,
+    "47": 1.5556871891021729,
+    "48": 1.6524381637573242,
+    "49": 1.5953319072723389,
+    "50": 1.6120483875274658,
+    "51": 1.6277071237564087
+  },
+  "per_seed_best_epoch": {
+    "42": 15,
+    "43": 13,
+    "44": 2,
+    "45": 12,
+    "46": 3,
+    "47": 1,
+    "48": 1,
+    "49": 4,
+    "50": 3,
+    "51": 2
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 14,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "1": 0.8991
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 1.0
+    },
+    {
+      "all": 1.0
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.8991
+    ],
+    "43": [
+      0.903
+    ],
+    "44": [
+      0.9208
+    ],
+    "45": [
+      0.9035
+    ],
+    "46": [
+      0.9191
+    ],
+    "47": [
+      0.9224
+    ],
+    "48": [
+      0.9225
+    ],
+    "49": [
+      0.9173
+    ],
+    "50": [
+      0.9192
+    ],
+    "51": [
+      0.9207
+    ]
+  }
+}

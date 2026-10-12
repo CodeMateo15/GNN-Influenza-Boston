@@ -16,12 +16,19 @@ then let the model separate it.
 
     python Code/run_xgboost.py --variant post_covid --horizons 2
     python Code/run_xgboost.py --target level        # predict the rate directly
+    python Code/run_xgboost.py --target blend --n-seeds 10   # gnn_st's target and ensemble
 
 Default target is the residual from the train-only harmonic climatology, for the
 same reason the GNN uses a baseline and with one extra: trees cannot extrapolate
 beyond the range they were trained on, so asking them for a level in a season
 higher than any in training guarantees a flat-topped forecast. Subtracting the
 seasonal curve first turns that into an anomaly problem, which trees handle.
+
+`--target blend` subtracts gnn_st's baseline instead: s_h * origin level +
+(1 - s_h) * climatology. gnn_st learns s_h by gradient; trees cannot, so here it
+is the least-squares share on the TRAINING rows, clipped to [0, 1] -- the best
+fixed blend the training targets support. Validation stays untouched for early
+stopping and the interval fit.
 """
 
 from __future__ import annotations
@@ -45,11 +52,12 @@ except ImportError as exc:  # pragma: no cover
         "run_xgboost.py needs xgboost. pip install xgboost"
     ) from exc
 
-from influenza import finish_run, paths, split_origins, track_emissions, valid_origins, variant_data
+from influenza import (finish_run, impute_causal, paths, split_origins, track_emissions,
+                       valid_origins, variant_data)
 from influenza.cli import add_common_args, city_output_dirs, resolve_city, resolve_window, run_tag
 from influenza.climatology import fit_climatology
 from influenza.config import EXPERIMENTS
-from influenza.intervals import empirical_coverage, fit_intervals
+from influenza.intervals import empirical_coverage, fit_intervals, quantile_record
 from influenza.samples import build_samples, load_dataset, positions_to_rows
 
 DEFAULT_PARAMS = dict(
@@ -89,13 +97,25 @@ def main() -> None:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     add_common_args(parser, variants=("exclude_covid", "post_covid", "full"))
     parser.add_argument("--name", default="xgboost")
-    parser.add_argument("--target", choices=("climatology", "level"), default="climatology")
+    parser.add_argument("--target", choices=("climatology", "level", "blend"),
+                        default="climatology")
     parser.add_argument("--features-from", default="gnn_st",
                         help="Registry arm whose FeatureSpec supplies the columns, so "
                              "the baseline reads the same inputs as the graph model.")
     parser.add_argument("--n-estimators", type=int, default=DEFAULT_PARAMS["n_estimators"])
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--n-seeds", type=int, default=1,
+                        help="Boosters per horizon, seeds seed..seed+n-1, averaged. The row "
+                             "and column subsampling make seeds differ; gnn_st uses 10.")
+    for key in ("learning_rate", "max_depth", "min_child_weight", "reg_lambda",
+                "subsample", "colsample_bytree"):
+        kind = int if key == "max_depth" else float
+        parser.add_argument(f"--{key.replace('_', '-')}", type=kind, default=DEFAULT_PARAMS[key])
     args = parser.parse_args()
+    params = {**DEFAULT_PARAMS, **{k: getattr(args, k) for k in (
+        "learning_rate", "max_depth", "min_child_weight", "reg_lambda",
+        "subsample", "colsample_bytree")}, "n_estimators": args.n_estimators}
+    seeds = [args.seed + i for i in range(args.n_seeds)]
 
     city = resolve_city(args)
     results_root, checkpoint_root = city_output_dirs(args, city)
@@ -129,6 +149,8 @@ def main() -> None:
     end = split.train[-1] + window.max_horizon + 1
     climatology = fit_climatology(dataset.rates, end=end)
     clim_rate = climatology.level(dataset.week_index)
+    # Origin level for the blend, causally imputed as every model's inputs are.
+    origin_rate = impute_causal(dataset.rates)[0].to_numpy(dtype=np.float64)
 
     X_all, meta = flatten(samples, n_neigh)
     print(f"Pooled design matrix: {X_all.shape[0]} rows x {X_all.shape[1]} columns "
@@ -139,34 +161,57 @@ def main() -> None:
     test_rows = positions_to_rows(samples, split.test)
 
     records: list[dict] = []
+    val_records: list[dict] = []
+    blend_shares: dict[int, float] = {}
+    best_iterations: dict[int, list[int]] = {}
+    print(f"Budget: {len(window.horizons) * len(seeds)} epochs x 1 seeds", flush=True)
+    print("--- seed 0 (1/1) ---", flush=True)
+    step = 0
     with track_emissions(run_tag(args.name, args.variant, window),
                          enabled=not args.no_carbon) as carbon:
         for h_idx, horizon in enumerate(window.horizons):
             # Targets in RATE units, so the climatology offset is interpretable.
             y_rate = np.full(len(meta), np.nan, dtype=np.float64)
             base = np.zeros(len(meta), dtype=np.float64)
+            origin = np.zeros(len(meta), dtype=np.float64)
             for r, (s, node) in enumerate(meta):
                 position = samples.positions[s]
                 actual = norm.to_level(samples.y[s:s + 1])[0, node, h_idx]
                 y_rate[r] = actual
                 base[r] = clim_rate[position + horizon, node]
+                origin[r] = origin_rate[position, node]
 
-            target = y_rate - base if args.target == "climatology" else y_rate
-            observed = np.isfinite(target)
+            observed = np.isfinite(y_rate)
 
             def mask(rowset):
                 idx = [r for r, (s, _) in enumerate(meta) if s in rowset]
                 return [r for r in idx if observed[r]]
 
             tr, va = mask(train_rows), mask(val_rows)
-            model = xgb.XGBRegressor(**{**DEFAULT_PARAMS,
-                                        "n_estimators": args.n_estimators,
-                                        "random_state": args.seed,
-                                        "early_stopping_rounds": 50})
-            model.fit(X_all[tr], target[tr], eval_set=[(X_all[va], target[va])], verbose=False)
+            if args.target == "blend":
+                # Least-squares share of the origin level in y - clim = s (origin - clim),
+                # on training rows only, clipped so the blend stays a convex mix.
+                gap = origin[tr] - base[tr]
+                share = float(np.clip((gap @ (y_rate[tr] - base[tr])) / max(gap @ gap, 1e-12),
+                                      0.0, 1.0))
+                blend_shares[horizon] = share
+                base = share * origin + (1.0 - share) * base
+                print(f"  h={horizon}: origin-level share of the blend {share:.3f}")
+            target = y_rate if args.target == "level" else y_rate - base
+
+            boosters = []
+            for seed in seeds:
+                model = xgb.XGBRegressor(**{**params, "random_state": seed,
+                                            "early_stopping_rounds": 50})
+                model.fit(X_all[tr], target[tr], eval_set=[(X_all[va], target[va])],
+                          verbose=False)
+                boosters.append(model)
+                step += 1
+                print(f"Epoch {step} | h={horizon} seed={seed} best_iteration="
+                      f"{model.best_iteration} val RMSE={model.best_score:.4f}", flush=True)
+            best_iterations[horizon] = [int(m.best_iteration) for m in boosters]
+            model = boosters[0]
             best = model.best_iteration
-            print(f"  h={horizon}: best_iteration={best} of {args.n_estimators}, "
-                  f"val RMSE={model.best_score:.4f}")
 
             # Persist the booster. Trees are the one model family with an exact,
             # instant Shapley method (TreeExplainer), and until now this script
@@ -192,8 +237,8 @@ def main() -> None:
                 "best_iteration": int(best),
             }, indent=2))
 
-            prediction = model.predict(X_all)
-            if args.target == "climatology":
+            prediction = np.mean([m.predict(X_all) for m in boosters], axis=0)
+            if args.target != "level":
                 prediction = prediction + base
             prediction = np.maximum(prediction, 0.0)
 
@@ -204,7 +249,19 @@ def main() -> None:
             interval = fit_intervals(prediction[va_all], y_rate[va_all], horizon_col,
                                      two_sided=args.two_sided_intervals)
             lower, upper = interval.bounds(prediction, np.full(len(meta), horizon))
+            quantiles = interval.quantiles(prediction, np.full(len(meta), horizon))
 
+            for r in va_all:
+                s, node = meta[r]
+                position = samples.positions[s]
+                val_records.append({
+                    "origin_date": split.index[position],
+                    "target_date": split.index[position + horizon],
+                    "horizon": horizon,
+                    "neighborhood": city.node_names[node],
+                    "actual": float(y_rate[r]),
+                    "predicted": float(prediction[r]),
+                })
             for r, (s, node) in enumerate(meta):
                 if s not in set(test_rows):
                     continue
@@ -219,6 +276,7 @@ def main() -> None:
                     "error": float(prediction[r] - y_rate[r]),
                     "lower": float(lower[r]),
                     "upper": float(upper[r]),
+                    **quantile_record(quantiles[r]),
                 })
 
     predictions = pd.DataFrame(records)
@@ -234,8 +292,12 @@ def main() -> None:
             "features_from": args.features_from,
             "n_node_features": samples.n_feat,
             "pooled_rows": int(X_all.shape[0]),
-            "params": {**DEFAULT_PARAMS, "n_estimators": args.n_estimators,
-                       "random_state": args.seed},
+            "params": {**params, "random_state": args.seed},
+            "n_seeds": len(seeds),
+            "seeds": seeds,
+            "best_iterations": {str(k): v for k, v in best_iterations.items()},
+            **({"blend_share": {str(k): v for k, v in blend_shares.items()}}
+               if blend_shares else {}),
             "split": split.to_json(),
             "climatology": climatology.to_json(),
             "test_interval_coverage": coverage,
@@ -246,6 +308,7 @@ def main() -> None:
         },
         extras=True, bands=True, carbon=carbon,
         results_root=results_root, city=city,
+        extra_tables={"predictions_val": pd.DataFrame(val_records)},
     )
 
 

@@ -1,0 +1,502 @@
+{
+  "ALMIRANTE BROWN": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "ALMIRANTE BROWN",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 41.17173870254385,
+      "0.9": 52.61510279367244,
+      "0.98": 61.55211704822225
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 41.17173870254385,
+    "log_sd": 0.1839689320745736,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "AVELLANEDA": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "AVELLANEDA",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 208.73388615718477,
+      "0.9": 316.6852693534172,
+      "0.98": 413.4579829069824
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 208.73388615718477,
+    "log_sd": 0.31268817852083153,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "EZEIZA": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "EZEIZA",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 125.34504445823369,
+      "0.9": 155.13383001924447,
+      "0.98": 177.8033789436083
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 125.34504445823369,
+    "log_sd": 0.1599399906736478,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "FLORENCIO VARELA": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "FLORENCIO VARELA",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 84.10560003896187,
+      "0.9": 119.7898198620846,
+      "0.98": 150.20030226543196
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 84.10560003896187,
+    "log_sd": 0.26529326235956496,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "GENERAL SAN MART\u00cdN": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "GENERAL SAN MART\u00cdN",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 62.94357580282927,
+      "0.9": 87.84610585912769,
+      "0.98": 108.72489155068412
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 62.94357580282927,
+    "log_sd": 0.2500524016913596,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "JOS\u00c9 C. PAZ": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "JOS\u00c9 C. PAZ",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 162.05760719178474,
+      "0.9": 231.10011116889018,
+      "0.98": 289.99716006121906
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 162.05760719178474,
+    "log_sd": 0.2662185959283294,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "LA MATANZA": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "LA MATANZA",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 15.595244032401345,
+      "0.9": 26.87752576199027,
+      "0.98": 38.07208236678499
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 15.595244032401345,
+    "log_sd": 0.4083112193291849,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "LAN\u00daS": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "LAN\u00daS",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 129.61603079302927,
+      "0.9": 183.00128145139817,
+      "0.98": 228.17839738132122
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 129.61603079302927,
+    "log_sd": 0.25873051995612795,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "LOMAS DE ZAMORA": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "LOMAS DE ZAMORA",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 8.448346615777158,
+      "0.9": 12.361227054219592,
+      "0.98": 15.768609213972924
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 8.448346615777158,
+    "log_sd": 0.2854929308780879,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "MALVINAS ARGENTINAS": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "MALVINAS ARGENTINAS",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 14.497112373879832,
+      "0.9": 66.74495179348585,
+      "0.98": 177.2599382942163
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 14.497112373879832,
+    "log_sd": 1.1453872747747997,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "MERLO": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "MERLO",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 88.06216459272338,
+      "0.9": 172.37280327638155,
+      "0.98": 264.87976619443657
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 88.06216459272338,
+    "log_sd": 0.5037962000334409,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "MORENO": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "MORENO",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 64.82659264284624,
+      "0.9": 203.22026317297218,
+      "0.98": 422.0681952250535
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 64.82659264284624,
+    "log_sd": 0.8570733624355489,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "MOR\u00d3N": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "MOR\u00d3N",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 18.530398050015474,
+      "0.9": 27.419855809604055,
+      "0.98": 35.23103010747278
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 18.530398050015474,
+    "log_sd": 0.2939400296185306,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "QUILMES": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "QUILMES",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 51.7913005733493,
+      "0.9": 77.41362510859695,
+      "0.98": 100.11046193306022
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 51.7913005733493,
+    "log_sd": 0.30150557225893465,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "SAN ISIDRO": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "SAN ISIDRO",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 34.586503106420345,
+      "0.9": 47.69883489792593,
+      "0.98": 58.587791610027544
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 34.586503106420345,
+    "log_sd": 0.24112266692327075,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "SAN MIGUEL": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "SAN MIGUEL",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 35.7812319737353,
+      "0.9": 44.995693945489464,
+      "0.98": 52.09891106716523
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 35.7812319737353,
+    "log_sd": 0.1718860353670694,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "TIGRE": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "TIGRE",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 21.538864449203043,
+      "0.9": 51.73495201655758,
+      "0.98": 90.61907026336435
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 21.538864449203043,
+    "log_sd": 0.657315251306918,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "TRES DE FEBRERO": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "TRES DE FEBRERO",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 78.47525720044257,
+      "0.9": 134.31199270087936,
+      "0.98": 189.4102484370197
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 78.47525720044257,
+    "log_sd": 0.4031035172237517,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "VICENTE L\u00d3PEZ": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "VICENTE L\u00d3PEZ",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 78.81811105509067,
+      "0.9": 119.11982212004747,
+      "0.98": 155.13682192890488
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 78.81811105509067,
+    "log_sd": 0.3097918106381679,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  },
+  "CITYWIDE": {
+    "method": "MEM intensity thresholds, one-sided log-normal upper limits",
+    "indicator": "CITYWIDE",
+    "levels": [
+      0.5,
+      0.9,
+      0.98
+    ],
+    "thresholds": {
+      "0.5": 66.94363363101115,
+      "0.9": 90.45315295195974,
+      "0.98": 109.65753364361528
+    },
+    "reference_seasons": [
+      "2022-23",
+      "2023-24"
+    ],
+    "values_per_season": 15,
+    "n_pooled": 30,
+    "geometric_mean": 66.94363363101115,
+    "log_sd": 0.22577334844966412,
+    "use_t": true,
+    "fitted_through": "2023-12-01",
+    "underpowered": false
+  }
+}
