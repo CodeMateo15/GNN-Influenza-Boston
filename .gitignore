@@ -32,3 +32,12 @@ Code/sweep/tasks.jsonl
 # uses the derived amba_*.csv files beside them, which ARE committed. Re-download
 # from the national open-data portal to rebuild the panel.
 Data/Buenos Aires Acute Respiratory Infections/informacion-publica-respiratorias-*.xlsx
+
+# Columbus Public Health line-level extracts (one row per ED visit, hospitalisation
+# or COVID case, with home ZIP). CPH cleared the data for public release at the
+# aggregate level but asked that the line-level files stay with the project.
+# Only Code/scrapers/build_columbus_panel.py reads them; the loader uses the
+# committed weekly aggregates beside them (columbus_*_weekly_counts.csv).
+Data/Columbus Influenza Data/ILI Specified Data-Franklin_final.xlsx
+Data/Columbus Influenza Data/IAH Data CPH Franklin_final.csv
+Data/Columbus Influenza Data/COVID Data CPH Franklin_final.csv

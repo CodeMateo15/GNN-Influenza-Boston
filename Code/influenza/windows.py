@@ -222,5 +222,24 @@ def normalization(
     else:
         raise ValueError(f"Unknown normalization mode: {mode!r}")
     mean = np.nanmean(rows, axis=0, keepdims=True)
-    std = np.nanstd(rows, axis=0, keepdims=True) + 1e-8
-    return mean, std
+    return mean, safe_scale(np.nanstd(rows, axis=0, keepdims=True))
+
+
+def safe_scale(std: np.ndarray) -> np.ndarray:
+    """A z-score divisor that is never ~0.
+
+    A column with no variation over the reference rows is scaled by 1, not by
+    a tiny epsilon. Chicago's ZIP 60707 reported level 1 in every week before
+    June 2022, so its 2022-23 fold had a training std of exactly 0; with the old
+    `std + 1e-8` the first non-1 test week became ~1e9 and graph models carried
+    it to every neighbour. No Boston or Columbus fold has such a column, so
+    their scaling is unchanged -- bit for bit, since a column with spread keeps
+    the old `std + 1e-8`.
+    """
+    scale = std + 1e-8                      # exactly the old expression
+    flat = ~(np.isfinite(std) & (std > 1e-6))
+    if np.ndim(scale) == 0:
+        return type(scale)(1.0) if flat else scale
+    scale = np.array(scale, copy=True)
+    scale[flat] = 1.0
+    return scale

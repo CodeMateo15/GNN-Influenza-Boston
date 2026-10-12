@@ -1,0 +1,47 @@
+{
+  "model": "xgboost__cfg03",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-09T16:29:47",
+  "model_class": "xgboost.XGBRegressor",
+  "target_kind": "climatology",
+  "features_from": "gnn_st",
+  "n_node_features": 46,
+  "pooled_rows": 16124,
+  "params": {
+    "n_estimators": 600,
+    "learning_rate": 0.03,
+    "max_depth": 4,
+    "subsample": 0.6,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 4.0,
+    "reg_lambda": 2.0,
+    "objective": "reg:squarederror",
+    "random_state": 42
+  },
+  "n_seeds": 1,
+  "seeds": [
+    42
+  ],
+  "best_iterations": {
+    "2": [
+      93
+    ]
+  },
+  "split": {
+    "n_train": 193,
+    "n_val": 33,
+    "n_test": 52,
+    "first_test_target": "2024-06-02",
+    "last_test_target": "2025-05-25"
+  },
+  "climatology": {
+    "n_harmonics": 3,
+    "n_train_rows": 211,
+    "n_terms": 7,
+    "fallback_nodes": []
+  },
+  "test_interval_coverage": 93.00397877984085,
+  "city": "chicago",
+  "note": "One pooled model over all nodes with the node index as a feature. No edges reach the model; it reads the same per-node columns the graph model does."
+}

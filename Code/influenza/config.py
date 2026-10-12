@@ -637,6 +637,16 @@ def _experiments() -> dict[str, Experiment]:
         graph=replace(st.graph, corr=False, demo=False),
         note=st.note + " Geographic edges only -- shared borders, hop-decayed to 3 "
              "hops. The floor the other three edge types are measured against.")
+    # The map test: borders only, and no learned adjacency to paper over a wrong
+    # border. Run on `boston` (hand-coded map) and on `boston_geo_tract` /
+    # `boston_geo_land` (polygon-derived), the gap between them is exactly how
+    # much the result depends on who drew the map.
+    registry["gnn_st_geofixed"] = replace(
+        st, name="gnn_st_geofixed",
+        graph=replace(st.graph, corr=False, demo=False),
+        train=replace(st.train, adaptive=False),
+        note=st.note + " Geographic edges and anchors only, adaptive adjacency off, "
+             "so the border map is the model's only spatial information.")
     # Removing the hand-built edges is NOT enough to make the model graph-free:
     # the adaptive adjacency is itself a learned dense graph, so an arm with
     # geo/corr/demo all off still does spatial mixing. These two arms
@@ -659,6 +669,20 @@ def _experiments() -> dict[str, Experiment]:
              "help at all', and the number that decides whether this is a graph "
              "problem. Removing the hand-built edges alone does not get here -- "
              "the adaptive adjacency would still be a learned graph.")
+
+    # --- timing interventions, October 2026 ---------------------------------
+    # The lag fingerprint sits at about -0.8 for every arm above (METHODS.md,
+    # "Timing"). Squared and Huber losses price height, not timing, so a
+    # smoothed, slightly late forecast is the cheap hedge. Pinball loss at the
+    # median is the WIS's own point component and does not reward smoothing
+    # toward the mean the same way. huber_delta 0.01 in normalised units is L1
+    # for every residual that matters; the Pearson term is dropped because it
+    # rewards co-movement, which a lagged forecast already has.
+    registry["gnn_st_median"] = replace(
+        st, name="gnn_st_median",
+        train=replace(st.train, huber_delta=0.01, pearson_weight=0.0),
+        note=st.note + " Median (L1/pinball) loss instead of Huber + Pearson, "
+             "to test whether the training loss drives the forecast lag.")
 
     registry["gnn_st_nodemofeat"] = replace(
         st, name="gnn_st_nodemofeat",

@@ -1,0 +1,125 @@
+{
+  "model": "arima",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-25T14:15:55",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1
+    ],
+    "test_start": "2025-06-01",
+    "test_end": "2026-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 122,
+    "n_val": 21,
+    "n_test": 53,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-31"
+  },
+  "order_grid": {
+    "p": 3,
+    "d": 1,
+    "q": 3
+  },
+  "seasonal_harmonics": 0,
+  "selected_orders": {
+    "Agler/Cassidy": "(1, 1, 0)",
+    "Bexley": "(3, 0, 0)",
+    "Clintonville/Near North": "(2, 0, 0)",
+    "Dublin": "(0, 1, 0)",
+    "Eastside": "(1, 0, 0)",
+    "Far East": "(1, 0, 0)",
+    "Far South": "(0, 1, 0)",
+    "Far Southeast": "(0, 1, 0)",
+    "Far Southwest": "(2, 0, 1)",
+    "Hilliard": "(1, 0, 0)",
+    "Linden": "(0, 1, 0)",
+    "NE Suburban": "(2, 0, 0)",
+    "Northland": "(2, 0, 0)",
+    "UA/Grandview": "(2, 0, 0)",
+    "West": "(1, 0, 0)",
+    "Westerville": "(3, 0, 1)",
+    "Worthington": "(0, 1, 0)"
+  },
+  "fallback_forecasts": 0,
+  "fallback_share": 0.0,
+  "selection_horizon": 1,
+  "missing_target_cells": 0,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 7.286101330077089
+    },
+    "kappa": {
+      "1": 0.7876415333617665
+    },
+    "n_validation": 357,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.3667738892567287,
+        -1.172517471489979,
+        -0.9323459811862713,
+        -0.7440889595444812,
+        -0.6080324784410343,
+        -0.5266782366926178,
+        -0.4460625813245509,
+        -0.36279284273879747,
+        -0.2714217787242404,
+        -0.1948779664438503,
+        -0.126048368820705,
+        -0.003573764910294841,
+        0.07315012592960685,
+        0.14586888766525288,
+        0.25320049838519093,
+        0.3571753559877264,
+        0.438911677504352,
+        0.6544605863800834,
+        0.9368884003794545,
+        1.183716573217918,
+        1.5212772205315452,
+        1.8375642597734911,
+        2.0560048707793985
+      ]
+    },
+    "scale_floor": {
+      "1": 1.343393984612442
+    }
+  },
+  "test_interval_coverage": 96.44839067702553
+}

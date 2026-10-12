@@ -215,6 +215,21 @@ def load_ed_metrics(week_index: pd.DatetimeIndex) -> pd.DataFrame:
     return _carry_forward(_align_weekly(wide, week_index), "ED visit metrics")
 
 
+# A monthly figure is not known on the first day of its month: the month has to
+# end, and then the dashboard has to publish it. Stamping it at
+# date_value_start -- as both monthly loaders used to -- let every week of month
+# m see month m's full total, up to ~4 weeks plus the publication delay ahead of
+# a real forecaster. The BPHC dashboards do not record release dates, so the
+# delay below is an assumption, chosen on the conservative side of what the
+# weekly BPHC files show (about one to two weeks behind the week they describe).
+MONTHLY_RELEASE_DELAY = pd.Timedelta(days=14)
+
+
+def monthly_release_dates(month_starts: pd.DatetimeIndex) -> pd.DatetimeIndex:
+    """First date a month's figure could have been read: month end plus the release delay."""
+    return pd.DatetimeIndex(month_starts) + pd.offsets.MonthBegin(1) + MONTHLY_RELEASE_DELAY
+
+
 def load_monthly_cases(week_index: pd.DatetimeIndex) -> pd.Series:
     """City-wide monthly confirmed flu cases (Gender total), broadcast to weeks."""
     file = paths.require(paths.FLU_DEMOGRAPHICS_FILE, "Influenza demographics")
@@ -223,6 +238,7 @@ def load_monthly_cases(week_index: pd.DatetimeIndex) -> pd.Series:
     frame["value_num"] = pd.to_numeric(frame["value"], errors="coerce")
     gender = frame.loc[frame["demographic_category"].eq("Gender")].dropna(subset=["date", "value_num"])
     monthly = gender.groupby("date")["value_num"].sum().sort_index()
+    monthly.index = monthly_release_dates(monthly.index)
     aligned = _align_weekly(monthly.to_frame("monthly_cases"), week_index)
     return _carry_forward(aligned, "monthly demographic cases")["monthly_cases"]
 
@@ -500,7 +516,9 @@ def load_monthly_neighborhood(
 
     monthly = frame.groupby(["date", "node"])["value_num"].mean().unstack("node")
     monthly = monthly.reindex(columns=range(N_NEIGH))
-    # Hold each month's value flat over its weeks; ffill is the step function.
+    # Available from its release date, not its first day; see MONTHLY_RELEASE_DELAY.
+    monthly.index = monthly_release_dates(monthly.index)
+    # Hold each month's value flat until the next release; ffill is the step function.
     stepped = monthly.reindex(monthly.index.union(week_index)).sort_index().ffill()
     aligned = stepped.reindex(week_index)
     aligned.columns = NEIGHBORHOODS

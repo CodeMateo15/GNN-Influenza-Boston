@@ -1,0 +1,87 @@
+{
+  "model": "xgb_severity",
+  "variant": "post_covid",
+  "git_sha": "636c49b",
+  "created": "2026-09-24T16:42:19",
+  "model_class": "xgboost.XGBClassifier",
+  "features_from": "gnn_st",
+  "window": {
+    "lookback": 16,
+    "horizons": [
+      2
+    ],
+    "test_start": "2024-11-03",
+    "test_end": "2025-11-02",
+    "val_fraction": 0.15,
+    "val_mode": "tail"
+  },
+  "split": {
+    "n_train": 89,
+    "n_val": 15,
+    "n_test": 53,
+    "first_test_target": "2024-11-03",
+    "last_test_target": "2025-11-02"
+  },
+  "params": {
+    "n_estimators": 600,
+    "learning_rate": 0.03,
+    "max_depth": 4,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 4,
+    "reg_lambda": 2.0,
+    "objective": "multi:softprob",
+    "eval_metric": "mlogloss"
+  },
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "best_iterations": {
+    "h2": [
+      595,
+      599,
+      599,
+      598,
+      599
+    ]
+  },
+  "class_weight": "balanced",
+  "cut_points": {
+    "IT50": 77.06642887231719,
+    "IT90": 97.46007981062509,
+    "IT98": 113.25281678189309
+  },
+  "cut_points_fitted_through": "2024-11-03",
+  "reference_seasons": [
+    "2022-23",
+    "2023-24",
+    "2024-25"
+  ],
+  "class_counts": {
+    "h2": {
+      "train": [
+        1408,
+        65,
+        40,
+        157
+      ],
+      "val": [
+        242,
+        9,
+        4,
+        30
+      ],
+      "test": [
+        792,
+        49,
+        34,
+        117
+      ]
+    }
+  },
+  "city": "buenos_aires"
+}

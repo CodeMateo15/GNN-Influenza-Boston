@@ -87,6 +87,9 @@ def resolve_experiment(args: argparse.Namespace) -> Experiment:
         train_changes["epochs"] = args.epochs
     if args.seed is not None:
         train_changes["seed"] = args.seed
+    for key in ("lr", "weight_decay"):
+        if getattr(args, key) is not None:
+            train_changes[key] = getattr(args, key)
 
     return replace(
         experiment,
@@ -142,74 +145,85 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
 
     with track_emissions(run_tag(experiment.name, experiment.variant, window),
                          enabled=not args.no_carbon) as carbon:
-        seed_everything(experiment.train.seed)
-        model = DualTopoSTGCN(
-            n_nodes=graph.n_nodes,
-            n_neigh=graph.n_neigh,
-            input_window=window.lookback,
-            spatial_channels=experiment.train.hidden[0],
-            out_channels=experiment.train.hidden[1],
-            n_horizons=len(window.horizons),
-            fusion=args.fusion,
-        ).to(device)
-        print(f"Parameters: {sum(p.numel() for p in model.parameters()):,} | "
-              f"time axis before readout: {model.time_out}")
+        seeds = [experiment.train.seed + i for i in range(args.n_seeds)]
+        print(f"Budget: {experiment.train.epochs} epochs x {len(seeds)} seeds", flush=True)
+        test_parts, val_parts, per_seed = [], [], []
+        for i_seed, seed in enumerate(seeds, start=1):
+            print(f"--- seed {seed} ({i_seed}/{len(seeds)}) ---", flush=True)
+            seed_everything(seed)
+            model = DualTopoSTGCN(
+                n_nodes=graph.n_nodes,
+                n_neigh=graph.n_neigh,
+                input_window=window.lookback,
+                spatial_channels=experiment.train.hidden[0],
+                out_channels=experiment.train.hidden[1],
+                n_horizons=len(window.horizons),
+                fusion=args.fusion,
+            ).to(device)
+            print(f"Parameters: {sum(p.numel() for p in model.parameters()):,} | "
+                  f"time axis before readout: {model.time_out}")
 
-        optimizer = torch.optim.Adam(model.parameters(), lr=experiment.train.lr,
-                                     weight_decay=experiment.train.weight_decay)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, mode="min", factor=experiment.train.plateau_factor,
-            patience=experiment.train.plateau_patience)
+            optimizer = torch.optim.Adam(model.parameters(), lr=experiment.train.lr,
+                                         weight_decay=experiment.train.weight_decay)
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                optimizer, mode="min", factor=experiment.train.plateau_factor,
+                patience=experiment.train.plateau_patience)
 
-        batch_size = experiment.train.batch_size or 26
-        x_train, y_train = tensors["train"]
-        x_val, y_val = tensors["val"]
-        train_losses, val_losses = [], []
-        best_val, best_state, best_epoch, patience = np.inf, None, 0, 0
-        epoch = 0
+            batch_size = experiment.train.batch_size or 26
+            x_train, y_train = tensors["train"]
+            x_val, y_val = tensors["val"]
+            train_losses, val_losses = [], []
+            best_val, best_state, best_epoch, patience = np.inf, None, 0, 0
+            epoch = 0
 
-        for epoch in range(1, experiment.train.epochs + 1):
-            model.train()
-            order = torch.randperm(len(x_train), device=device)
-            total = 0.0
-            for start in range(0, len(order), batch_size):
-                idx = order[start:start + batch_size]
-                optimizer.zero_grad()
-                prediction = model(x_train[idx], a_geo, a_corr)[:, :graph.n_neigh]
-                loss = masked_mse(prediction, y_train[idx])
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(model.parameters(), experiment.train.grad_clip)
-                optimizer.step()
-                total += float(loss.item()) * len(idx)
-            train_losses.append(total / max(len(x_train), 1))
+            for epoch in range(1, experiment.train.epochs + 1):
+                model.train()
+                order = torch.randperm(len(x_train), device=device)
+                total = 0.0
+                for start in range(0, len(order), batch_size):
+                    idx = order[start:start + batch_size]
+                    optimizer.zero_grad()
+                    prediction = model(x_train[idx], a_geo, a_corr)[:, :graph.n_neigh]
+                    loss = masked_mse(prediction, y_train[idx])
+                    loss.backward()
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), experiment.train.grad_clip)
+                    optimizer.step()
+                    total += float(loss.item()) * len(idx)
+                train_losses.append(total / max(len(x_train), 1))
 
+                model.eval()
+                with torch.no_grad():
+                    val_loss = float(masked_mse(
+                        model(x_val, a_geo, a_corr)[:, :graph.n_neigh], y_val).item())
+                val_losses.append(val_loss)
+                scheduler.step(val_loss)
+
+                if val_loss < best_val:
+                    best_val, best_epoch = val_loss, epoch
+                    best_state = copy.deepcopy(model.state_dict())
+                    patience = 0
+                else:
+                    patience += 1
+                if epoch == 1 or epoch % 10 == 0:
+                    print(f"Epoch {epoch:3d} | train MSE {train_losses[-1]:.6f} | "
+                          f"val MSE {val_loss:.6f} | lr {optimizer.param_groups[0]['lr']:.6f}")
+                if patience >= experiment.train.early_stop_patience:
+                    print(f"Early stopping at epoch {epoch}")
+                    break
+
+            if best_state is not None:
+                model.load_state_dict(best_state)
             model.eval()
+            x_test, _ = tensors["test"]
             with torch.no_grad():
-                val_loss = float(masked_mse(
-                    model(x_val, a_geo, a_corr)[:, :graph.n_neigh], y_val).item())
-            val_losses.append(val_loss)
-            scheduler.step(val_loss)
-
-            if val_loss < best_val:
-                best_val, best_epoch = val_loss, epoch
-                best_state = copy.deepcopy(model.state_dict())
-                patience = 0
-            else:
-                patience += 1
-            if epoch == 1 or epoch % 10 == 0:
-                print(f"Epoch {epoch:3d} | train MSE {train_losses[-1]:.6f} | "
-                      f"val MSE {val_loss:.6f} | lr {optimizer.param_groups[0]['lr']:.6f}")
-            if patience >= experiment.train.early_stop_patience:
-                print(f"Early stopping at epoch {epoch}")
-                break
-
-        if best_state is not None:
-            model.load_state_dict(best_state)
-        model.eval()
-        x_test, _ = tensors["test"]
-        with torch.no_grad():
-            normalized = model(x_test, a_geo, a_corr)[:, :graph.n_neigh].cpu().numpy()
-            normalized_val = model(x_val, a_geo, a_corr)[:, :graph.n_neigh].cpu().numpy()
+                normalized = model(x_test, a_geo, a_corr)[:, :graph.n_neigh].cpu().numpy()
+                normalized_val = model(x_val, a_geo, a_corr)[:, :graph.n_neigh].cpu().numpy()
+            test_parts.append(normalized)
+            val_parts.append(normalized_val)
+            per_seed.append({"seed": seed, "best_epoch": best_epoch, "best_val_mse": float(best_val)})
+        # Ensemble mean in normalised units; one seed reproduces the committed run.
+        normalized = np.mean(test_parts, axis=0)
+        normalized_val = np.mean(val_parts, axis=0)
 
     test_rows = rows["test"]
     anchors = samples.anchors[test_rows][:, :, None]
@@ -231,6 +245,18 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     interval_model = fit_intervals(np.maximum(val_pred, 0.0).ravel(),
                                    val_actual.ravel(), val_horizon.ravel(),
                                    two_sided=args.two_sided_intervals)
+
+    val_predictions = pd.DataFrame([
+        {"origin_date": split.index[position],
+         "target_date": split.index[position + horizon],
+         "horizon": horizon,
+         "neighborhood": neighborhood,
+         "actual": float(val_actual[sample_idx, node, h_idx]),
+         "predicted": max(0.0, float(val_pred[sample_idx, node, h_idx]))}
+        for sample_idx, position in enumerate(split.val)
+        for h_idx, horizon in enumerate(window.horizons)
+        for node, neighborhood in enumerate(city.node_names)
+    ])
 
     records = []
     for sample_idx, position in enumerate(split.test):
@@ -283,6 +309,8 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
             "best_epoch": best_epoch,
             "best_val_mse": best_val,
             "epochs_run": epoch,
+            "n_seeds": len(seeds),
+            "per_seed": per_seed,
             "paper": "Luo et al. 2025, BMC Public Health 25:408",
             "paper_gaps_filled": {
                 "fusion_operator": args.fusion,
@@ -299,6 +327,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         carbon=carbon,
         results_root=results_root,
         city=city,
+        extra_tables={"predictions_val": val_predictions},
     )
     save_loss_curve(train_losses, val_losses, out / "loss_curve.png",
                     title=f"{experiment.name} ({experiment.variant}) training")
@@ -312,6 +341,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--name", default=None)
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--n-seeds", type=int, default=1,
+                        help="Ensemble size, seeds seed..seed+n-1, averaged. gnn_st uses 10.")
+    parser.add_argument("--lr", type=float, default=None)
+    parser.add_argument("--weight-decay", type=float, default=None)
     parser.add_argument("--corr-threshold", type=float, default=None)
     parser.add_argument("--anchors", choices=["none", "single", "seven"], default=None)
     parser.add_argument("--fusion", choices=["concat", "mean", "max"], default="concat",

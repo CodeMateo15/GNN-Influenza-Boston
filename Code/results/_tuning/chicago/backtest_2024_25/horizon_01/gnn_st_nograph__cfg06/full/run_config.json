@@ -1,0 +1,272 @@
+{
+  "model": "gnn_st_nograph__cfg06",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-09T16:29:01",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 193,
+    "n_val": 34,
+    "n_test": 52,
+    "first_test_target": "2024-06-02",
+    "last_test_target": "2025-05-25"
+  },
+  "graph_counts": {},
+  "n_nodes": 58,
+  "edge_weight_range": [
+    0.0,
+    0.0
+  ],
+  "n_node_features": 46,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "temp_mean_c",
+    "temp_max_c",
+    "temp_min_c",
+    "relative_humidity_mean",
+    "precipitation_sum_mm",
+    "wind_speed_max_kmh",
+    "pop_density",
+    "poverty_rate",
+    "transit_share",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate",
+    "no_vehicle_rate",
+    "nonwhite_share"
+  ],
+  "global_names": [],
+  "n_params": 24132,
+  "best_epoch": 32,
+  "best_val_mse": 0.8410959243774414,
+  "epochs_run": 80,
+  "checkpoint": "checkpoints/_tuning/chicago/backtest_2024_25/horizon_01/gnn_st_nograph__cfg06_full.pt",
+  "experiment": {
+    "name": "gnn_st_nograph__cfg06",
+    "model": "stgnn",
+    "variant": "full",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "none",
+      "geo": false,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": false,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.01,
+      "weight_decay": 0.003,
+      "epochs": 80,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.1,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 32,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": false,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 1,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        1
+      ],
+      "test_start": "2024-06-01",
+      "test_end": "2025-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Genuinely no spatial term: no hand-built edges AND no adaptive adjacency, so each neighborhood is forecast from its own history with shared weights. The honest floor for 'does the graph help at all', and the number that decides whether this is a graph problem. Removing the hand-built edges alone does not get here -- the adaptive adjacency would still be a learned graph."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 5.921861911332935
+    },
+    "beta": {
+      "1": 0.17531813106909075
+    },
+    "kappa": {
+      "1": 1.0233256427338846
+    },
+    "n_validation": 1972,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.906194727788376,
+        -1.5744872645304737,
+        -1.2978798665322462,
+        -0.9365490102427912,
+        -0.7356801502906023,
+        -0.5923015456869443,
+        -0.49527959119422127,
+        -0.3995820092968543,
+        -0.31006267365323015,
+        -0.23191834068504347,
+        -0.1167864305952623,
+        0.011521275276801721,
+        0.13938406989645305,
+        0.27685725345341716,
+        0.414575530949381,
+        0.5325207245101565,
+        0.6936576235730448,
+        0.9027907889683735,
+        1.127347512498486,
+        1.436769159499347,
+        1.9252357930438995,
+        2.500441370415024,
+        3.056957735719094
+      ]
+    },
+    "scale_floor": {
+      "1": 0.2577711369093981
+    }
+  },
+  "test_interval_coverage": 93.79973474801061,
+  "city": "chicago",
+  "seeds": [
+    42
+  ],
+  "n_seeds": 1,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.8410959243774414
+  },
+  "per_seed_best_epoch": {
+    "42": 32
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 14,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "1": 0.6759
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 1.0
+    },
+    {
+      "all": 1.0
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.6759
+    ]
+  }
+}

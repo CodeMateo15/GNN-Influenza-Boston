@@ -146,11 +146,13 @@ def _read_ili(path=None) -> pd.DataFrame:
     return frame
 
 
-def load_counts(path=None) -> pd.DataFrame:
-    """Weekly ILI ED-visit COUNTS, one column per area.
+def build_counts(path=None) -> pd.DataFrame:
+    """Weekly ILI ED-visit COUNTS per area, built from the line-level extract.
 
     Returns a (weeks x 17) frame on a contiguous Sunday-start index. Missing
     (week, area) combinations become 0.0, not NaN: see this module's docstring.
+    Only Code/scrapers/build_columbus_panel.py calls this; models read the
+    committed aggregate through load_counts().
     """
     frame = _read_ili(path)
     span_start, span_end = frame["Date"].min(), frame["Date"].max()
@@ -163,6 +165,23 @@ def load_counts(path=None) -> pd.DataFrame:
     # Reindex to every area and every week, then fill: a zero here is an
     # observed absence of qualifying visits, which is a real measurement.
     return panel.reindex(index=index, columns=areas).fillna(0.0).astype(float)
+
+
+def _read_weekly(path, what: str) -> pd.DataFrame:
+    """A committed weekly aggregate: week_start index, one column per area."""
+    file = paths.require(path, what)
+    frame = pd.read_csv(file, comment="#", index_col="week_start", parse_dates=["week_start"])
+    frame.index.name = None
+    frame.columns.name = "area"
+    return frame
+
+
+def load_counts(path=None) -> pd.DataFrame:
+    """Weekly ILI ED-visit COUNTS, one column per area (the committed aggregate)."""
+    counts = _read_weekly(path or paths.COLUMBUS_ILI_WEEKLY_FILE,
+                          "Columbus weekly ILI counts (run Code/scrapers/build_columbus_panel.py)")
+    counts.index.freq = "7D"
+    return counts.reindex(columns=crosswalk.area_names()).astype(float)
 
 
 def load_area_population(path=None) -> pd.Series:
@@ -235,6 +254,26 @@ def _read_line_level_weekly(path, what: str, zip_column: str) -> pd.DataFrame:
     return frame.dropna(subset=["area"])
 
 
+def build_weekly_cases(kind: str, path=None) -> pd.DataFrame:
+    """Weekly per-area case counts from a line-level MMWR extract.
+
+    `kind` is "iah" (influenza-associated hospitalisations) or "covid". Weeks
+    with no case anywhere are absent, and an area with no case in a week that
+    exists is NaN -- exactly the panel the loaders below used to build inline,
+    so they can apply their own fill unchanged.
+    """
+    if kind == "iah":
+        frame = _read_line_level_weekly(
+            path or paths.COLUMBUS_IAH_FILE, "Columbus IAH data", "ZIP5")
+    elif kind == "covid":
+        frame = _read_line_level_weekly(
+            path or paths.COLUMBUS_COVID_FILE, "Columbus COVID data", "zip_5")
+    else:
+        raise ValueError(f"Unknown line-level extract {kind!r}; expected 'iah' or 'covid'.")
+    panel = frame.groupby(["week", "area"]).size().unstack("area")
+    return panel.reindex(columns=crosswalk.area_names()).astype(float)
+
+
 def load_hospitalizations(week_index: pd.DatetimeIndex, path=None) -> pd.DataFrame:
     """Weekly influenza-associated hospitalisation counts per area.
 
@@ -244,26 +283,21 @@ def load_hospitalizations(week_index: pd.DatetimeIndex, path=None) -> pd.DataFra
     ILI series but the hospitalisations-per-ILI-visit ratio moves season to
     season, peaking in 2024-25.
     """
-    frame = _read_line_level_weekly(
-        path or paths.COLUMBUS_IAH_FILE, "Columbus IAH data", "ZIP5")
-    panel = frame.groupby(["week", "area"]).size().unstack("area")
+    panel = _read_weekly(path or paths.COLUMBUS_IAH_WEEKLY_FILE,
+                         "Columbus weekly IAH counts (run Code/scrapers/build_columbus_panel.py)")
     return panel.reindex(index=week_index, columns=crosswalk.area_names()).fillna(0.0)
 
 
 def load_covid_counts(week_index: pd.DatetimeIndex, path=None) -> pd.DataFrame:
     """Weekly COVID case counts per area.
 
-    Note the column is `zip_5` here and `ZIP5` in the IAH file -- same meaning,
-    two spellings, which is why the reader takes the name as an argument.
-
     This series ends in MMWR 2025 week 43, roughly five months into the
     evaluation window, so it cannot support an honest Columbus counterpart to
     a Boston arm enabling `use_covid_cases` / `use_rsv_cases`. The loader does
     not carry it forward: that decision belongs to the caller, visibly.
     """
-    frame = _read_line_level_weekly(
-        path or paths.COLUMBUS_COVID_FILE, "Columbus COVID data", "zip_5")
-    panel = frame.groupby(["week", "area"]).size().unstack("area")
+    panel = _read_weekly(path or paths.COLUMBUS_COVID_WEEKLY_FILE,
+                         "Columbus weekly COVID counts (run Code/scrapers/build_columbus_panel.py)")
     return panel.reindex(index=week_index, columns=crosswalk.area_names())
 
 

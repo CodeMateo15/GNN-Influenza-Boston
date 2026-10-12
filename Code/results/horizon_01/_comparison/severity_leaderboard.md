@@ -353,4 +353,3 @@ Per neighborhood-season, over the neighborhood indicators. Negative onset error 
 
 - 6 forecast rows had a zero-width interval, so their exceedance probability is a hard 0 or 1 rather than a distribution.
 - IT98 was crossed on only 2 neighborhood-weeks in this window, so its scores are reported but not ranked.
-- --plot-models listed 7 models but only 4 validated colours exist; plotting the first 4.

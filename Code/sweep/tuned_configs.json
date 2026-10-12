@@ -1,0 +1,3104 @@
+{
+  "boston": {
+    "2022_23": {
+      "1": {
+        "gnn_st": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 7.596172591096564,
+          "default_val_mae": 7.887034443857498,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.65821896683589,
+          "default_val_mae": 8.695174278073411,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 7.7486800363748385,
+          "default_val_mae": 8.586130060535847,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 10,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 9.016412244827272,
+          "default_val_mae": 11.715352737050852,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "16",
+            "--lookback",
+            "12",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.786464087679835,
+          "default_val_mae": 9.73625907000929,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "64",
+            "--heads",
+            "8",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 9.101281913532608,
+          "default_val_mae": 9.127640800229434,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0001",
+            "--epochs",
+            "200",
+            "--fusion",
+            "concat"
+          ],
+          "val_mae": 11.733441356954904,
+          "default_val_mae": 11.74011928048627,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 9.928575039195787,
+          "default_val_mae": 10.869829305927816,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 10.849541292201987,
+          "default_val_mae": 10.88835935055209,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 9.519283662810183,
+          "default_val_mae": 10.292989577515291,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 10,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 11.320249944788491,
+          "default_val_mae": 14.077450898621734,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.0005",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "32",
+            "--lookback",
+            "12",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 10.70425890778551,
+          "default_val_mae": 13.437433124178707,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 14.411776701037546,
+          "default_val_mae": 14.441687518172413,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 14.331876251623212,
+          "default_val_mae": 14.581529042703643,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.25",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "8",
+            "--epochs",
+            "200",
+            "--target",
+            "level"
+          ],
+          "val_mae": 11.31860085501529,
+          "default_val_mae": 11.440028944109926,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 7,
+          "flags": [
+            "--learning-rate",
+            "0.01",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "1.0",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "0.5",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 14.587471927512727,
+          "default_val_mae": 16.97578647071728,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.0005",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "32",
+            "--lookback",
+            "12",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 11.474683400900059,
+          "default_val_mae": 14.161535440813196,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    },
+    "2023_24": {
+      "1": {
+        "gnn_st": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 9.189519317225034,
+          "default_val_mae": 9.329041999721703,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 10.0033630454386,
+          "default_val_mae": 10.015283826538903,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "64",
+            "--lookback",
+            "8",
+            "--epochs",
+            "80",
+            "--target",
+            "level"
+          ],
+          "val_mae": 9.607674128552315,
+          "default_val_mae": 9.930212407229748,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 2,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "2.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 10.702500089268925,
+          "default_val_mae": 13.726848241195292,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "16",
+            "--lookback",
+            "12",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 9.765978287655217,
+          "default_val_mae": 10.33681690208826,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "32",
+            "--heads",
+            "8",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 10.258843471333542,
+          "default_val_mae": 10.566339904107705,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--epochs",
+            "200",
+            "--fusion",
+            "mean"
+          ],
+          "val_mae": 18.290081316522514,
+          "default_val_mae": 19.047707331861048,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 11.807448322363129,
+          "default_val_mae": 11.945425194865454,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 12.4259703674951,
+          "default_val_mae": 12.956728042824652,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.0",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "26",
+            "--epochs",
+            "120",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 12.08846947952285,
+          "default_val_mae": 12.503662393758146,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 10,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 13.174123803544019,
+          "default_val_mae": 16.585531043488658,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 8,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.0005",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "16",
+            "--lookback",
+            "12",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 12.340547395612075,
+          "default_val_mae": 12.843621661767106,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 15.557905427188839,
+          "default_val_mae": 15.557905427188839,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 16.045878272400326,
+          "default_val_mae": 16.704283638494072,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.0",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "26",
+            "--epochs",
+            "120",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 15.691387168984663,
+          "default_val_mae": 16.65725066870974,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 10,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 18.630218443798867,
+          "default_val_mae": 20.87045246261929,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 15.394073192975673,
+          "default_val_mae": 16.222106727057263,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    },
+    "2024_25": {
+      "1": {
+        "gnn_st": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 7.535222537780809,
+          "default_val_mae": 7.740943477461535,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 7.909800646279129,
+          "default_val_mae": 8.056181245421177,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "64",
+            "--lookback",
+            "8",
+            "--epochs",
+            "80",
+            "--target",
+            "level"
+          ],
+          "val_mae": 8.002705160043957,
+          "default_val_mae": 8.05165867684187,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 3,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "4",
+            "--min-child-weight",
+            "4",
+            "--subsample",
+            "0.6",
+            "--colsample-bytree",
+            "0.8",
+            "--reg-lambda",
+            "2.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 7.806945049592888,
+          "default_val_mae": 7.880781959698836,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.005",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "16",
+            "--lookback",
+            "20",
+            "--epochs",
+            "150"
+          ],
+          "val_mae": 7.766966393414664,
+          "default_val_mae": 8.024647421905081,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "64",
+            "--heads",
+            "8",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.578441185860642,
+          "default_val_mae": 8.646226397450107,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--epochs",
+            "100",
+            "--fusion",
+            "mean"
+          ],
+          "val_mae": 8.661993444274744,
+          "default_val_mae": 9.215671639780101,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.014719662362273,
+          "default_val_mae": 8.244242035582499,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.351173859176518,
+          "default_val_mae": 8.420894702893579,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "64",
+            "--lookback",
+            "8",
+            "--epochs",
+            "80",
+            "--target",
+            "level"
+          ],
+          "val_mae": 8.376364151813648,
+          "default_val_mae": 8.70577189137712,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 1,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "3",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "1.0",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "2.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 8.040964623849261,
+          "default_val_mae": 8.154385339020655,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.0005",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "32",
+            "--lookback",
+            "12",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 8.379949951929962,
+          "default_val_mae": 8.977980227690242,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 4,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.375789881123355,
+          "default_val_mae": 8.490180074890516,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.713363039363784,
+          "default_val_mae": 8.835441525950216,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 8,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.0",
+            "--hidden-size",
+            "64",
+            "--lookback",
+            "16",
+            "--epochs",
+            "200",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 9.05403123614076,
+          "default_val_mae": 9.382117898897691,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 4,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "4",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.8",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 8.668462888069334,
+          "default_val_mae": 8.754156946058837,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.0005",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "32",
+            "--lookback",
+            "12",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 9.074148520556363,
+          "default_val_mae": 9.323829495442379,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    }
+  },
+  "columbus": {
+    "2024_25": {
+      "1": {
+        "gnn_st": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 3.789078312761643,
+          "default_val_mae": 3.883807967106501,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 4.044263337464893,
+          "default_val_mae": 4.159242727008521,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 3.7247623072277167,
+          "default_val_mae": 4.97350102773657,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 5,
+          "flags": [
+            "--learning-rate",
+            "0.01",
+            "--max-depth",
+            "3",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 4.032642742308907,
+          "default_val_mae": 4.0530663466665064,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0005",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "150"
+          ],
+          "val_mae": 3.165893476759165,
+          "default_val_mae": 3.2923985159666915,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "32",
+            "--heads",
+            "4",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 3.3456044502618933,
+          "default_val_mae": 3.6220573016575406,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 3.2253564475965097,
+          "default_val_mae": 3.2253564475965097,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 3.935891156687456,
+          "default_val_mae": 4.0390551145754605,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 3.9161689424631643,
+          "default_val_mae": 4.208935211394348,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 4.024513814463082,
+          "default_val_mae": 5.181565100333209,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 2,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "2.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 3.9854838018048393,
+          "default_val_mae": 4.069059910769477,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "16",
+            "--lookback",
+            "12",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 3.204205933945539,
+          "default_val_mae": 3.635715573507273,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 3.955921661327867,
+          "default_val_mae": 4.352513172462875,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 3.8883026908425724,
+          "default_val_mae": 4.235018269104116,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "32",
+            "--lookback",
+            "8",
+            "--epochs",
+            "120",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 3.768927525094172,
+          "default_val_mae": 5.178911029645386,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 10,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 3.987185730888726,
+          "default_val_mae": 4.051241099716451,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 3.2357919538474187,
+          "default_val_mae": 3.2428277342469727,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    }
+  },
+  "buenos_aires": {
+    "2023_24": {
+      "1": {
+        "gnn_st": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 6.118547444114621,
+          "default_val_mae": 6.150409485330645,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 6.126617747883232,
+          "default_val_mae": 6.306811966643428,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.0",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "26",
+            "--epochs",
+            "120",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 6.004711217543219,
+          "default_val_mae": 10.96098851970231,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 2,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "2.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 10.191860267868659,
+          "default_val_mae": 13.839413656556264,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 6.436628056856837,
+          "default_val_mae": 6.95909137981389,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 4,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "32",
+            "--heads",
+            "8",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 10.534086781953063,
+          "default_val_mae": 11.138668592487063,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--epochs",
+            "100",
+            "--fusion",
+            "mean"
+          ],
+          "val_mae": 8.822318954127175,
+          "default_val_mae": 17.200197543416703,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 6.799280457938743,
+          "default_val_mae": 7.413800661927027,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 6.57687847839286,
+          "default_val_mae": 7.28591179531931,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.0",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "26",
+            "--epochs",
+            "120",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 5.81960949269261,
+          "default_val_mae": 11.888062821815218,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 2,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "2.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 12.684665441547917,
+          "default_val_mae": 14.430510020441666,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 7.317931300168238,
+          "default_val_mae": 8.930685499747671,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 10.98289294629697,
+          "default_val_mae": 11.365144206198636,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 10.668518672321017,
+          "default_val_mae": 11.491457575204356,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.0",
+            "--hidden-size",
+            "64",
+            "--lookback",
+            "26",
+            "--epochs",
+            "80",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 6.771921214001091,
+          "default_val_mae": 18.35529941165815,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 2,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "2.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 13.084071023401822,
+          "default_val_mae": 14.337068879351543,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.658887360103577,
+          "default_val_mae": 9.975856661391674,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    }
+  },
+  "chicago": {
+    "2022_23": {
+      "1": {
+        "gnn_st": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.3100279903046472,
+          "default_val_mae": 1.3100279903046472,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.3929891579452602,
+          "default_val_mae": 1.4294465144817856,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 1.4505182462904989,
+          "default_val_mae": 1.531529851643176,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 7,
+          "flags": [
+            "--learning-rate",
+            "0.01",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "1.0",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "0.5",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 1.4552776046020006,
+          "default_val_mae": 1.6463329543173322,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.4511648175017586,
+          "default_val_mae": 1.6725048835806806,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "64",
+            "--heads",
+            "8",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.7050054176100369,
+          "default_val_mae": 1.7112249066405967,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0001",
+            "--epochs",
+            "200",
+            "--fusion",
+            "max"
+          ],
+          "val_mae": 1.7320371416424567,
+          "default_val_mae": 1.7777854369394974,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.364607265740062,
+          "default_val_mae": 1.3802137479928263,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.482448433836301,
+          "default_val_mae": 1.493196159943767,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.25",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "8",
+            "--epochs",
+            "200",
+            "--target",
+            "level"
+          ],
+          "val_mae": 1.5155806823408808,
+          "default_val_mae": 1.5995033238211582,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 2,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "2.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 1.529953363459536,
+          "default_val_mae": 1.721065791520803,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.005",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "16",
+            "--lookback",
+            "20",
+            "--epochs",
+            "150"
+          ],
+          "val_mae": 1.4507981659523372,
+          "default_val_mae": 1.6353078452420646,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.6295298217471075,
+          "default_val_mae": 1.7558446092052935,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.672972635633644,
+          "default_val_mae": 1.7278072857993774,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "64",
+            "--lookback",
+            "8",
+            "--epochs",
+            "80",
+            "--target",
+            "level"
+          ],
+          "val_mae": 1.5264094317139223,
+          "default_val_mae": 1.6255970901713288,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 7,
+          "flags": [
+            "--learning-rate",
+            "0.01",
+            "--max-depth",
+            "6",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "1.0",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "0.5",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 1.7618201155100468,
+          "default_val_mae": 2.100316893484842,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "16",
+            "--lookback",
+            "20",
+            "--epochs",
+            "150"
+          ],
+          "val_mae": 1.5453525861917898,
+          "default_val_mae": 1.8822093369631931,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    },
+    "2023_24": {
+      "1": {
+        "gnn_st": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.8433363235676636,
+          "default_val_mae": 1.868321500264049,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.8996822490734826,
+          "default_val_mae": 1.9595351097833573,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 1.9404191074186359,
+          "default_val_mae": 2.121060470697181,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 10,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 2.047320999691795,
+          "default_val_mae": 2.10750058846108,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.0005",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "32",
+            "--lookback",
+            "12",
+            "--epochs",
+            "100"
+          ],
+          "val_mae": 1.8747988452856568,
+          "default_val_mae": 1.8791759633298577,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.801245230076642,
+          "default_val_mae": 1.801245230076642,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0001",
+            "--epochs",
+            "200",
+            "--fusion",
+            "concat"
+          ],
+          "val_mae": 1.8438269403987917,
+          "default_val_mae": 1.9411077963380978,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.9285150157282775,
+          "default_val_mae": 1.989270854257146,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 4,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.061798435821141,
+          "default_val_mae": 2.0628272480768612,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 2.1871718119016323,
+          "default_val_mae": 2.275821522905909,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 5,
+          "flags": [
+            "--learning-rate",
+            "0.01",
+            "--max-depth",
+            "3",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 2.154877059340631,
+          "default_val_mae": 2.1604004058610795,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.9056400456733402,
+          "default_val_mae": 1.9056400456733402,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 2.176309448110646,
+          "default_val_mae": 2.253957055766007,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.2391090058869327,
+          "default_val_mae": 2.2655466211664264,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.0",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "26",
+            "--epochs",
+            "120",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 2.2650742535961084,
+          "default_val_mae": 2.47155588051711,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 6,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "4",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.8",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 2.2631377668908814,
+          "default_val_mae": 2.2782746511447214,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "0.005",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "64",
+            "--lookback",
+            "26",
+            "--epochs",
+            "150"
+          ],
+          "val_mae": 1.9887112711781059,
+          "default_val_mae": 2.0993951890060956,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    },
+    "2024_25": {
+      "1": {
+        "gnn_st": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.817711058936061,
+          "default_val_mae": 1.817711058936061,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.920370751685835,
+          "default_val_mae": 1.9567569123985318,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.8489136894008722,
+          "default_val_mae": 1.8489136894008722,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 8,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "3",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "0.6",
+            "--colsample-bytree",
+            "1.0",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 1.9259602677981853,
+          "default_val_mae": 1.9348638354143197,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.7882041406079099,
+          "default_val_mae": 1.8273320380469849,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.1",
+            "--hidden",
+            "64",
+            "--heads",
+            "8",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.8372949427498386,
+          "default_val_mae": 1.8885860980804918,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--epochs",
+            "100",
+            "--fusion",
+            "mean"
+          ],
+          "val_mae": 1.809980722080017,
+          "default_val_mae": 1.9862283493938118,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.8819915442382031,
+          "default_val_mae": 1.8819915442382031,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 2.0164040475616636,
+          "default_val_mae": 2.0574929431750357,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 1.9362439844307715,
+          "default_val_mae": 1.9775231115455771,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 8,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "3",
+            "--min-child-weight",
+            "8",
+            "--subsample",
+            "0.6",
+            "--colsample-bytree",
+            "1.0",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 1.9974149838531108,
+          "default_val_mae": 2.0082273972487097,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0",
+            "--dropout",
+            "0.4",
+            "--hidden",
+            "16",
+            "--lookback",
+            "20",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.9107356304302812,
+          "default_val_mae": 1.9747730963060568,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 2.046136224842869,
+          "default_val_mae": 2.1176644531910696,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.053540663067699,
+          "default_val_mae": 2.137062804514587,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.0003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.25",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "8",
+            "--epochs",
+            "200",
+            "--target",
+            "level"
+          ],
+          "val_mae": 2.0271424980962585,
+          "default_val_mae": 2.081860694841578,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 9,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.6",
+            "--colsample-bytree",
+            "0.8",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 2.0772507748263767,
+          "default_val_mae": 2.109846134021232,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0005",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "16",
+            "--lookback",
+            "26",
+            "--epochs",
+            "150"
+          ],
+          "val_mae": 2.039047520575595,
+          "default_val_mae": 2.1751151832848272,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    },
+    "2025_26": {
+      "1": {
+        "gnn_st": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.8263675420599088,
+          "default_val_mae": 1.8263675420599088,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.9323474870097046,
+          "default_val_mae": 1.9970293995008637,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 1.9604048379536332,
+          "default_val_mae": 2.003088747838448,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 10,
+          "flags": [
+            "--learning-rate",
+            "0.03",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "1",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.6",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 2.09065534415831,
+          "default_val_mae": 2.1473900823742165,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.91677258836812,
+          "default_val_mae": 1.91677258836812,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gat": {
+          "config": 4,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0001",
+            "--dropout",
+            "0.2",
+            "--hidden",
+            "32",
+            "--heads",
+            "8",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.028171135184009,
+          "default_val_mae": 2.06525291912561,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "dualtopo": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.0001",
+            "--epochs",
+            "200",
+            "--fusion",
+            "concat"
+          ],
+          "val_mae": 2.081272049596483,
+          "default_val_mae": 2.2414181271846267,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "2": {
+        "gnn_st": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.9247468719721041,
+          "default_val_mae": 1.9247468719721041,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.081017311527711,
+          "default_val_mae": 2.1217708040476846,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "128",
+            "--lookback",
+            "16",
+            "--epochs",
+            "120",
+            "--target",
+            "level"
+          ],
+          "val_mae": 2.099616824758464,
+          "default_val_mae": 2.1451426124264454,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 6,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "4",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.8",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 2.2198878561674857,
+          "default_val_mae": 2.269849391672795,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 2.0018900134697044,
+          "default_val_mae": 2.0018900134697044,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      },
+      "4": {
+        "gnn_st": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 2.126766345649331,
+          "default_val_mae": 2.163098570827279,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nograph": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.2020331334927383,
+          "default_val_mae": 2.2735494919641366,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "lstm": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "1e-05",
+            "--dropout",
+            "0.1",
+            "--hidden-size",
+            "32",
+            "--lookback",
+            "8",
+            "--epochs",
+            "120",
+            "--target",
+            "blend"
+          ],
+          "val_mae": 2.4470007449362154,
+          "default_val_mae": 2.516137456546095,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "xgboost": {
+          "config": 6,
+          "flags": [
+            "--learning-rate",
+            "0.1",
+            "--max-depth",
+            "2",
+            "--min-child-weight",
+            "4",
+            "--subsample",
+            "0.8",
+            "--colsample-bytree",
+            "0.8",
+            "--reg-lambda",
+            "8.0",
+            "--target",
+            "climatology"
+          ],
+          "val_mae": 2.4146645103593936,
+          "default_val_mae": 2.4503126933002473,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "colagnn": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 2.183054729149892,
+          "default_val_mae": 2.183054729149892,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        }
+      }
+    }
+  }
+}

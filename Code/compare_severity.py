@@ -32,6 +32,7 @@ try:
     import numpy as np
     import pandas as pd
     from matplotlib.lines import Line2D
+    from matplotlib.ticker import MaxNLocator
 except ImportError as exc:  # pragma: no cover
     raise SystemExit(f"Missing dependency: {exc.name}. Install pandas numpy matplotlib scipy.") from exc
 
@@ -62,7 +63,7 @@ from plot_forecasts import load_predictions, style_dates
 SHORT = dict(zip(NEIGHBORHOODS, SHORT_NAMES))
 
 # Four models, because palette.series_colour raises beyond four validated slots.
-DEFAULT_PLOT_MODELS = ["persistence", "seasonal_naive", "arima", "gnn_st"]
+DEFAULT_PLOT_MODELS = ["persistence", "arima", "lstm", "gnn_st"]
 
 ALL_SEGMENTS = "overall,flu_season"
 CITY = None  # the City being analysed; set in main()
@@ -296,6 +297,12 @@ def timing(bands: pd.DataFrame, fitted: dict[str, severity.Thresholds], *,
 
 # --- plots -------------------------------------------------------------------
 
+def _display(series: str) -> str:
+    """Model name without its variant. Safe on the figures because main() plots
+    one variant per model, so the bare names stay unique."""
+    return series.split("/")[0]
+
+
 def plot_bands(rates: pd.DataFrame, fitted: dict[str, severity.Thresholds],
                path: Path, *, test_start: pd.Timestamp, test_end: pd.Timestamp,
                reference_note: str, standardise: bool = True) -> None:
@@ -394,7 +401,7 @@ def plot_skill(long: pd.DataFrame, path: Path, *, scope: str, segment: str,
                         "!", ha="center", fontsize=8, color=INK_MUTED)
     ax.axhline(0.0, color=INK_SECONDARY, lw=1.0)
     ax.set_xticks(np.arange(len(order)))
-    ax.set_xticklabels(order, rotation=18, ha="right", fontsize=8)
+    ax.set_xticklabels([_display(m) for m in order], rotation=18, ha="right", fontsize=8)
     ax.set_ylabel(metric, color=INK_SECONDARY, fontsize=9)
     ax.set_title(f"{metric} by intensity threshold — {SCOPE_LABELS[scope]}, "
                  f"{SEGMENT_LABELS.get(segment, segment)}", fontsize=11, color=INK_PRIMARY)
@@ -431,7 +438,7 @@ def plot_reliability(bands: dict[str, pd.DataFrame], models: list[str], path: Pa
         curve = curve.loc[curve["n_obs"] > 0]
         ax.plot(curve["mean_forecast"], curve["observed_frequency"],
                 color=series_colour(index), lw=LINE_WIDTH, marker=marker(index),
-                ms=5, markeredgewidth=0, label=model, zorder=3)
+                ms=5, markeredgewidth=0, label=_display(model), zorder=3)
         drawn = True
     if not drawn:
         plt.close(fig)
@@ -468,13 +475,22 @@ def plot_timing(frame: pd.DataFrame, path: Path, *, level: float, models: list[s
         ax.plot([np.median(values)], [index], "|", color=INK_PRIMARY, ms=22, mew=2, zorder=4)
     ax.axvline(0.0, color=INK_SECONDARY, lw=1.0)
     ax.set_yticks(np.arange(len(order)))
-    ax.set_yticklabels(order, fontsize=8)
+    ax.set_yticklabels([_display(m) for m in order], fontsize=8)
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_xlabel("Onset error in weeks  (negative = warned early, positive = late)",
                   color=INK_SECONDARY, fontsize=9)
     ax.set_title(f"When did the forecast first cross IT{level * 100:g}?", fontsize=11,
                  color=INK_PRIMARY)
     style_axes(ax, grid_axis="x")
-    # Caption printed rather than drawn: plain figures carry no paragraphs.
+    # A key rather than a caption paragraph: the bar was unreadable without one.
+    # Outside the axes, because the dots can sit anywhere along the row.
+    ax.legend(handles=[
+        Line2D([0], [0], marker="o", ls="none", color=INK_MUTED, ms=5,
+               label="one neighborhood-season"),
+        Line2D([0], [0], marker="|", ls="none", color=INK_PRIMARY, ms=14, mew=2,
+               label="median"),
+        Line2D([0], [0], color=INK_SECONDARY, lw=1.0, label="on time (0)"),
+    ], loc="upper left", bbox_to_anchor=(1.01, 1.0), fontsize=8, frameon=False)
     print(f"note ({path.name}): " + "One point per neighborhood-season. The bar is the median. "
                         "Neighborhood-seasons where neither series crossed are omitted.", file=sys.stderr)
     _save(fig, path)
@@ -722,6 +738,8 @@ def parse_args() -> argparse.Namespace:
                         choices=["correlated", "independent"])
     parser.add_argument("--plot-models", default=",".join(DEFAULT_PLOT_MODELS),
                         help="Up to four models for the comparison figures.")
+    parser.add_argument("--plot-variant", default="post_covid",
+                        help="Which variant to draw for a model run under several.")
     parser.add_argument("--per-neighborhood-scale", action="store_true",
                         help="Draw severity_bands.png with each panel on its own scale and "
                              "its own thresholds, instead of one shared set. Affects the "
@@ -875,9 +893,15 @@ def main() -> None:
     # --- figures ------------------------------------------------------------
     requested = [m.strip() for m in args.plot_models.split(",") if m.strip()]
     available = list(dict.fromkeys(long["series"]))
-    # A requested model expands to one series per variant it was run with.
-    plot_models = [s for m in requested for s in available
-                   if s == m or s.startswith(f"{m}/")]
+    # One series per requested model. A model run under several variants
+    # expands to 'model/variant' series; taking all of them used to fill the
+    # four colour slots with persistence x2 and seasonal_naive x2 and silently
+    # drop every later model, so only the --plot-variant one is kept.
+    plot_models = []
+    for m in requested:
+        matches = [s for s in available if s == m or s.startswith(f"{m}/")]
+        preferred = [s for s in matches if s == f"{m}/{args.plot_variant}"]
+        plot_models += preferred or matches[:1]
     if len(plot_models) > len(SERIES):
         warnings.append(f"--plot-models listed {len(plot_models)} models but only "
                         f"{len(SERIES)} validated colours exist; plotting the first "

@@ -1,0 +1,119 @@
+{
+  "model": "lstm",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-25T14:11:01",
+  "target_kind": "level",
+  "normalize": "train",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1
+    ],
+    "test_start": "2025-06-01",
+    "test_end": "2026-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 122,
+    "n_val": 21,
+    "n_test": 53,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-31"
+  },
+  "hidden_size": 64,
+  "dropout": 0.0,
+  "lr": 0.001,
+  "weight_decay": 1e-05,
+  "epochs": 120,
+  "batch_size": 32,
+  "seed": 42,
+  "n_seeds": 1,
+  "seeds": [
+    42
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 42,
+      "best_val_mse": 2.59873104095459
+    }
+  ],
+  "best_epoch": 42,
+  "best_val_mse": 2.59873104095459,
+  "n_params": 22353,
+  "imputed_feature_cells": 0,
+  "checkpoint": "checkpoints/columbus/backtest_2025_26/lstm_post_covid.pt",
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 23.594352754300708
+    },
+    "kappa": {
+      "1": 0.5972437701900969
+    },
+    "n_validation": 357,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -0.7125105901451866,
+        -0.5259719033854999,
+        -0.4403987564622475,
+        -0.3655184033979906,
+        -0.2830937985294732,
+        -0.21312933779330667,
+        -0.15431833030177342,
+        -0.12121613714608809,
+        -0.0656421529491659,
+        -0.027948369281309865,
+        0.01169922788397594,
+        0.08487089831993007,
+        0.13360134093125633,
+        0.18692639733091274,
+        0.24723206851701282,
+        0.3260732957717808,
+        0.4336701631776781,
+        0.5192254104380061,
+        0.6920394185630606,
+        0.8812379937375601,
+        1.1705762887968632,
+        1.5549258060319935,
+        1.7874308693507763
+      ]
+    },
+    "scale_floor": {
+      "1": 1.8030492574801258
+    }
+  },
+  "test_interval_coverage": 99.44506104328525
+}

@@ -17,7 +17,7 @@ from .config import FeatureSpec
 from .constants import WEATHER_COLS
 from .data import impute_causal
 from .graphs import Graph
-from .windows import Split, Window, normalization
+from .windows import Split, Window, normalization, safe_scale
 
 # Anchor nodes carry no data. Temporal features are zero and static features sit
 # at the midpoint of the normalised range, so an anchor is a neutral boundary
@@ -136,7 +136,7 @@ def _zscore(values: np.ndarray, *, end: int | None, per_column: bool) -> np.ndar
     reference = values if end is None else values[:end]
     axis = 0 if per_column else None
     mean = np.nanmean(reference, axis=axis, keepdims=per_column)
-    std = np.nanstd(reference, axis=axis, keepdims=per_column) + 1e-8
+    std = safe_scale(np.nanstd(reference, axis=axis, keepdims=per_column))
     return (values - mean) / std
 
 

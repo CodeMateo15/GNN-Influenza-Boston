@@ -1,0 +1,173 @@
+{
+  "model": "lstm_tuned",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-11T04:30:17",
+  "target_kind": "level",
+  "normalize": "train",
+  "window": {
+    "lookback": 16,
+    "horizons": [
+      1
+    ],
+    "test_start": "2022-06-01",
+    "test_end": "2023-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 105,
+    "n_val": 18,
+    "n_test": 52,
+    "first_test_target": "2022-06-05",
+    "last_test_target": "2023-05-28"
+  },
+  "hidden_size": 128,
+  "dropout": 0.1,
+  "lr": 0.003,
+  "weight_decay": 1e-05,
+  "epochs": 120,
+  "batch_size": 32,
+  "seed": 42,
+  "n_seeds": 10,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 15,
+      "best_val_mse": 0.3545037508010864
+    },
+    {
+      "seed": 43,
+      "best_epoch": 14,
+      "best_val_mse": 0.3508839011192322
+    },
+    {
+      "seed": 44,
+      "best_epoch": 11,
+      "best_val_mse": 0.35401543974876404
+    },
+    {
+      "seed": 45,
+      "best_epoch": 11,
+      "best_val_mse": 0.3576752543449402
+    },
+    {
+      "seed": 46,
+      "best_epoch": 12,
+      "best_val_mse": 0.35335904359817505
+    },
+    {
+      "seed": 47,
+      "best_epoch": 14,
+      "best_val_mse": 0.3505405783653259
+    },
+    {
+      "seed": 48,
+      "best_epoch": 12,
+      "best_val_mse": 0.3466704785823822
+    },
+    {
+      "seed": 49,
+      "best_epoch": 13,
+      "best_val_mse": 0.35797929763793945
+    },
+    {
+      "seed": 50,
+      "best_epoch": 13,
+      "best_val_mse": 0.34375283122062683
+    },
+    {
+      "seed": 51,
+      "best_epoch": 13,
+      "best_val_mse": 0.3509002923965454
+    }
+  ],
+  "best_epoch": 13,
+  "best_val_mse": 0.35202808678150177,
+  "n_params": 103738,
+  "imputed_feature_cells": 1103,
+  "checkpoint": "checkpoints/chicago/backtest_2022_23/lstm_tuned_full.pt",
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 1.526241319525392
+    },
+    "kappa": {
+      "1": 0.9484186312037016
+    },
+    "n_validation": 1044,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.448613352320607,
+        -1.2934804462163108,
+        -1.0931914393377289,
+        -0.9149855395498748,
+        -0.7627049004195264,
+        -0.6476901519711928,
+        -0.5603315190627952,
+        -0.4645747092766512,
+        -0.3819506769407185,
+        -0.31613763023341246,
+        -0.2771953949111945,
+        -0.21576176073512074,
+        -0.16233863534558432,
+        -0.11164511183374907,
+        -0.04274266758921309,
+        0.011781509907516712,
+        0.23453584810865402,
+        0.4841957739688285,
+        0.8472865273570838,
+        1.230408133410481,
+        1.8588663740885318,
+        2.555230347817522,
+        3.50352397394662
+      ]
+    },
+    "scale_floor": {
+      "1": 0.1988920096212314
+    }
+  },
+  "test_interval_coverage": 92.44031830238727
+}

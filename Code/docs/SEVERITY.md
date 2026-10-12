@@ -15,8 +15,8 @@ you how close the number was. It does not tell you whether the model would have
 triggered an alert in the week that mattered, and a model can be good at one and
 bad at the other. Section 8 shows this happening.
 
-Everything below is measured on the 2025-26 season, one seed, horizon 1 unless
-stated. Read section 9 before quoting any of it.
+Everything below is measured on the 2025-26 season, horizon 1 unless stated,
+with `gnn_st` a ten-seed ensemble and every other model a single run. Read section 9 before quoting any of it.
 
 ## 1. The method, exactly
 
@@ -341,6 +341,56 @@ Timing at IT50, median over neighborhood-seasons: most models cross **one week
 late**, which is what a one-week-ahead forecast tracking a rising curve does.
 `seasonal_naive` is four weeks late. `dualtopo` never crosses, so it has no
 timing at all — a blank, not a zero.
+
+### Bands as a classification problem: classify the week, or forecast the rate?
+
+`compare_classification.py` scores every forecast as a four-band classifier
+(accuracy, macro precision / recall / F1, ROC-AUC, PR-AUC, confusion matrix),
+and `run_severity_classifier.py` trains a model that outputs the band directly —
+XGBoost on the same inputs as `xgboost`, class-balanced, five seeds averaged. It
+is scored on the same weeks.
+
+**Unlike the rest of this document, these use one citywide set of cut points for
+every neighborhood** (IT50 60.2, IT90 98.2, IT98 134.2), so a band means the same
+rate everywhere. Test window: 580 low, 28 moderate, 9 high, 10 very high
+neighborhood-weeks. The high and very-high counts are small enough that every
+number below carries a few weeks' worth of noise.
+
+"Macro F1" asks how often the band was right, with the four bands weighted
+equally. Always saying "low" scores 0.92 accuracy and 0.24 macro F1.
+
+| model | h=1 | h=2 | h=4 |
+| --- | --- | --- | --- |
+| gnn_st (binned) | **0.716** | **0.532** | 0.297 |
+| arima (binned) | 0.639 | 0.460 | 0.298 |
+| persistence (binned) | 0.638 | 0.458 | 0.280 |
+| lstm (binned) | 0.602 | 0.404 | **0.388** |
+| xgboost (binned) | 0.546 | 0.385 | 0.324 |
+| xgb_severity (direct) | 0.393 | 0.313 | 0.334 |
+
+**Forecasting the rate and binning it beats classifying directly.** At h=1 and
+h=2 the direct classifier comes last among the real models, below even
+persistence. The fair comparison is against `xgboost`, which has the same trees
+and inputs, and the direct route loses to it on ranking weeks by severity too
+(PR-AUC for "moderate or worse": 0.683 vs 0.778 at h=1, 0.563 vs 0.597 at h=2,
+0.426 vs 0.496 at h=4). The one place the direct route draws level is h=4 macro
+F1, and only because every model has collapsed toward "low" there.
+
+Two reasons. First, the rate target uses the whole curve: a week at 59 and a
+week at 5 are both "low" to the classifier, but the regression learns from the
+difference. Second, the bands above low have 141 training rows between them, so
+the classifier sees very little of what it is asked to find.
+
+**The interval edges trade recall for precision, as they should, but they rarely
+improve the balance.** For `gnn_st`, banding the 95% upper edge raises recall for
+"moderate or worse" from 0.68 to 0.94 at h=2, but precision drops from 0.78 to
+0.36. The 95% lower edge is the mirror image. At h=4 the upper edge does beat
+the point forecast on macro F1 (0.366 vs 0.297), because the point forecast
+under-calls there. The 99% edges are the 95% band stretched under a Gaussian
+reading, not separately calibrated.
+
+Full tables: `results/horizon_0X/_comparison/classification_leaderboard.md` and
+`results/_comparison_horizons/classification_by_horizon.md`.
 
 ## 9. Honest limitations
 

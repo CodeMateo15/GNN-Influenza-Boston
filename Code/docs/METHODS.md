@@ -13,14 +13,28 @@ this repository asks is whether **the structure connecting neighborhoods** —
 shared borders, correlated histories, similar demographics —
 carries forecasting signal beyond each neighborhood's own history.
 
-The answer, on the corrected data, is **yes at one and two weeks ahead in all
-three cities tested, and city-dependent at four.** Against the four original
-baselines (persistence, seasonal naive, ARIMA, LSTM) the margin widens with
-horizon. Against boosted trees it does not reliably: at h=4 `gnn_st` is tied
-with `xgboost` in Boston (macro RMSE 19.63 vs 19.81), behind it in Columbus
-(9.03 vs 8.68), and ahead in Buenos Aires (23.05 vs 29.01). See
-[Cities](#cities) for the full tables and [Results](#results) for Boston in
-detail.
+The answer, on seasons the design never saw and with every learned model tuned
+the same way, is **yes within the model and no against strong baselines.**
+Adding the graph reliably improves `gnn_st` in Boston (all three seasons at one
+week, two of three at two and four). But a tuned multivariate LSTM and a tuned
+Cola-GNN match it at one week, and its lead over them at two and four weeks is
+ahead in 5 of 6 comparisons (2022-23 at two weeks went the other way) but clear
+in only one season of three. Columbus shows
+the within-model effect at one week only; Buenos Aires shows none. The
+single-season leaderboards under [Results](#results) and [Cities](#cities) are
+from the 2025-26 development season and rank designs; they do not by
+themselves support a margin.
+
+**The 2025-26 season is a development season**, because the design was chosen
+on it (see [What counts as evidence here](#what-counts-as-evidence-here)), so
+the answer rests on a frozen rolling-origin backtest over seasons the design
+never saw, against baselines given the same window, seasonal prior and seed
+ensemble. There, the graph holds up **in Boston at one and two weeks** (lower
+weighted interval score than the same model without the graph in every unseen
+fold, clear after multiple-comparison correction at h=1 in all three) and
+**in Columbus at one week**. It is weak at four weeks, and **in Buenos Aires
+`gnn_st` is indistinguishable from persistence**. See
+[The backtest verdict](#the-backtest-verdict).
 
 Two caveats belong next to that sentence rather than at the bottom. First, five
 data defects were fixed in September 2026, and two of them were the largest
@@ -241,13 +255,13 @@ threshold (we reuse 0.85), and the optimizer (we use Adam).
 
 ## Evaluation
 
-One window, **2025-05-31 → 2026-05-31**, giving 48 target weeks from 2025-06-01
-to 2026-04-26. Predictions are generated once and then sliced into segments, so
+One window, **2025-05-31 → 2026-05-31**, giving 49 target weeks from 2025-06-01
+to 2026-05-03. Predictions are generated once and then sliced into segments, so
 nothing is retrained per segment:
 
-- `overall` — all 48 weeks
+- `overall` — all 49 weeks
 - `flu_season` — target month in Oct–Mar (26 weeks)
-- `off_season` — target month in Apr–Sep (22 weeks)
+- `off_season` — target month in Apr–Sep (23 weeks)
 
 Every model reports the same four metrics — **RMSE, MAPE, MAE and Pearson
 correlation (Corr)** — at four aggregation scopes: `neighborhood`, `macro`
@@ -256,7 +270,7 @@ the model rank the neighborhoods correctly within a week?). The GNNs additionall
 report R², Spearman, Lin's CCC and 95% interval coverage.
 
 `n_obs` is always reported alongside, because suppressed neighborhood-weeks are
-dropped rather than scored: 614 of 672 cells are real at horizon 1.
+dropped rather than scored: 627 of 686 cells are real at every horizon.
 
 **Off-season MAPE is not a ranking metric.** The off-season mean rate is about 5
 per 100,000, so percentage errors there are large and unstable by construction.
@@ -354,10 +368,21 @@ grading its own homework:
 3. A per-horizon scalar rescales the band to hit 95% coverage on validation, so
    nothing depends on the residuals being Gaussian.
 
-`CI_coverage` in `metrics.csv` is then the honest out-of-sample check. It is
-revealing: the baselines land at 94–97%, but the GNNs only reach 83–91%. Their
-validation residuals systematically understate their test residuals — the same
-generalisation gap that shows up in the point metrics, seen from a second angle.
+`CI_coverage` in `metrics.csv` is then the honest out-of-sample check. At h=2
+the baselines land at 94–97% and `gnn_st` at 95.5%, but the paper's two graph
+models only reach 87–89% (`gat` 88.8%, `dualtopo` 87.1%). Their validation
+residuals understate their test residuals — the underfitting described under
+[Is the comparison fair?](#is-the-comparison-fair-the-models-do-not-see-the-same-data),
+seen from a second angle. Coverage still under-shoots on rising weeks for every
+model; see the two-sided option below.
+
+**The full distribution, not just one band.** The same fit also stores, per
+horizon, the validation quantiles of the residual divided by the fitted scale,
+and every run now writes 23 predictive quantiles (`q0.010` … `q0.990`, FluSight's
+levels) to `predictions.csv`. That is what the weighted interval score in
+`influenza/scoring.py` is computed from. Runs committed before this change carry
+only the 95% band, and are scored with the one-band version (WIS-95) instead;
+the two scales are not comparable and the scripts never mix them.
 
 ### Forecast timing: the models are late
 
@@ -414,6 +439,36 @@ each one rules out an explanation:
 | **`gnn_st_slopeweight`** — weight the loss by how far the epidemic moved | **Worse.** One week late became two; RMSE 17.21 → 18.37, macro Corr 0.802 → 0.785. Its learned origin share *rose* to 0.713: charging more for the moving cells made it lean harder on persistence. |
 | **`gnn_st_trendblend`** — extrapolate the anchor along the recent trend | **Null.** Fingerprint −0.807 against −0.801, still one week late, RMSE 17.39 against 17.21. The sigmoid bound worked as designed: the model learned a trend share of only **0.167**, i.e. it declined. Consistent with the separate finding that adding the observed slope to the forecast directly makes RMSE worse at every weight (19.1 → 20.5 → 24.0 per 100,000 as the weight goes 0 → 0.5 → 1.0) — the weekly difference is mostly Poisson noise and suppression. |
 | **regional surveillance as a leading indicator** | **Not built, because it does not lead.** Over 436 shared weeks, CDC FluView ILINet correlates with Boston's citywide curve best at **zero** lag — HHS Region 1 r=0.927, Massachusetts r=0.887 — and falls away symmetrically on both sides. FluView also publishes about a week behind, so at a given origin it would arrive as a *lagged* copy of a synchronous signal. It carries level information, not phase information, which is why the ridge row above gains only 0.740 → 0.765 from it. |
+
+### Timing interventions, October 2026
+
+Two more levers were tested on the unseen backtest folds. Each was judged
+against `gnn_st_tuned` on Boston's 3 unseen seasons × 3 horizons, with the
+per-fold tuned settings and 10 seeds. The arms are `gnn_st_rt_tuned` and
+`gnn_st_median_tuned` (Explorer job 10819560, `Code/sweep/tasks_timing.jsonl`).
+
+- **`gnn_st_rt`** adds the causal Rt growth index (`--rt`, `influenza/rt.py`). It
+  had never been measured on gnn_st. Growth rate is the one input that could
+  in principle signal a turn before the level does.
+- **`gnn_st_median`** trains on median (L1/pinball) loss instead of Huber +
+  Pearson. Pinball loss is the WIS's own point component, and it does not
+  reward a smoothed mean.
+
+| arm | WIS change vs `gnn_st_tuned`, h=1 / 2 / 4 (mean of 3 seasons) | clearly better / worse (Holm, 18 tests) | weeks late, h=1 / 2 / 4 | fingerprint, h=1 / 2 / 4 |
+|---|---|---|---|---|
+| `gnn_st_tuned` (reference) | — | — | 1 / 2 / 4 | −0.86 / −0.64 / −0.49 |
+| `gnn_st_rt` | −0.6% / −0.5% / +2.9% | 0 / 1 (2023-24, h=4: +5.5%) | 1 / 2 / 4 | −0.85 / −0.62 / −0.48 |
+| `gnn_st_median` | +0.7% / −1.6% / +1.8% | 0 / 1 (2023-24, h=4: +2.9%) | 1 / 2 / 4 | −0.87 / −0.63 / −0.49 |
+
+**Both are nulls on timing.** Weeks late is unchanged in all 18 cells, and so is
+the median peak offset (h weeks late). Accuracy is within ±2% on average, and
+each arm is clearly worse in one cell and clearly better in none. Neither is
+promoted.
+
+The same diagnostic on the tuned comparison models shows the pattern is not
+specific to gnn_st. `lstm_tuned` and `colagnn_tuned` are also exactly h weeks
+late at h=1 and h=2, as persistence is by construction. Their advantage over
+persistence is in the size of the curve, not its timing.
 
 The honest summary is that the lag is not a bug in any one component. It is what
 this loss, on this information set, is choosing — and the information that would
@@ -618,7 +673,8 @@ PSS (Peirce skill score) is 0 for both a never-alert and an always-alert forecas
 
 Method, the reference-season sensitivity and the limitations are in
 [`Code/docs/SEVERITY.md`](../../Code/docs/SEVERITY.md). Read the limitations before
-quoting the numbers: one test season, one seed, and IT98 is crossed twice.
+quoting the numbers: one test season, one run of every model except `gnn_st`
+(ten seeds), and IT98 is crossed twice.
 
 ### Looking at the forecasts
 
@@ -683,7 +739,8 @@ the markers that used to compensate were removed.
 
 <!-- BEGIN LEADERBOARD -->
 `variant=post_covid`, `segment=overall`, 627 neighborhood-weeks, test targets
-2025-06-01 to 2026-05-03. Graph models are 10-seed ensembles. **macro** is the
+2025-06-01 to 2026-05-03. `gnn_st` is a 10-seed ensemble; every other row,
+including `gat` and `dualtopo`, is a single run. **macro** is the
 mean of the 14 per-neighborhood correlations and is the metric comparable to Luo
 et al.'s 0.8202; **pooled** is higher by construction because it also gets credit
 for knowing which neighborhoods are busy -- a model predicting each
@@ -701,11 +758,17 @@ neighborhood's flat historical average scores pooled 0.402 and macro 0.000.
 | seasonal_naive | 0.296 | 39.84 | 0.296 | 39.84 | 0.296 | 39.84 |
 
 **Horizon 2 is the defensible headline.** The margin over the best baseline is
-**+0.117 macro** there (0.801 against the LSTM's 0.684), far outside the ±0.015
-noise floor. At horizon 1 no model can win by much -- citywide persistence
-already correlates 0.906 with next week -- and at horizon 4 the margin over
-`xgboost` is **+0.003**, deep *inside* that horizon's ±0.05 floor, so h=4 is a
-dead tie with a gradient booster rather than a win. An earlier draft of this
+**+0.117 macro** there (0.801 against the LSTM's 0.684), far outside the 0.006
+seed-noise floor measured for ten-seed ensembles under [Ablations](#ablations).
+That floor measures how much `gnn_st` moves between seed blocks; it does not
+measure how much the *gap* moves between seasons. Tested week by week
+(`compare_significance.py`: moving-block bootstrap and Diebold-Mariano, Holm
+across the seven baselines), the h=2 lead over the LSTM, XGBoost and persistence
+has bootstrap intervals that exclude zero but a Holm-adjusted p of 0.092. It is a
+consistent lead on this season, not yet an established one. At horizon 1 no model
+can win by much -- citywide persistence already correlates 0.906 with next week --
+and at horizon 4 the margin over `xgboost` is **+0.003**, inside that horizon's
+0.031 floor, so h=4 is a dead tie with a gradient booster rather than a win. An earlier draft of this
 section claimed +0.112 at h=4; that was measured against `dualtopo` before a
 competent tabular baseline existed.
 
@@ -1377,7 +1440,10 @@ against the pre-change working tree).
 
 Macro correlation and macro RMSE (per-node metrics, then averaged — the
 comparable columns across cities; see the pooled-Corr warning below), overall
-segment, `post_covid`, one run per arm from the Explorer sweeps:
+segment, `post_covid`, one run per arm from the Explorer sweeps. Boston's `gnn_st`
+h=4 reads 0.582 here against 0.598 in the Boston leaderboard above: the two are
+the same configuration on different seed blocks, and 0.016 is inside that
+horizon's 0.031 seed floor.
 
 | macro Corr | Boston h1 | h2 | h4 | Columbus h1 | h2 | h4 |
 |---|---|---|---|---|---|---|
@@ -1464,6 +1530,109 @@ Earlier, from a 10-seed h=2 comparison: the leaner `gnn_st_minimal` (no
 demographics, no city-wide covariate) was the top arm in Columbus and within
 noise of `gnn_st` in Boston — the same direction the Boston ablations point.
 
+### Portability: does the model need a hand-drawn map, and does it travel?
+
+Two tests, both on the rolling-origin backtest with configurations frozen.
+
+**1. The graph can come from boundary files.** Boston's 23 neighborhood and 21
+anchor edges were hand-coded. `scrapers/derive_boston_adjacency.py` now derives
+them from polygons with the rule Columbus and Buenos Aires already use (two
+areas are adjacent when they share at least two boundary vertices), in two
+versions, because Boston's water admits two defensible answers:
+
+- `boston_geo_tract`: neighborhoods approximated by 2020 Census tracts, and
+  TIGER towns for the anchors. Exact shared vertices, with the same result at
+  4-6 decimal places. Water tracts ride with their neighborhood, which keeps
+  harbor and river crossings but adds artefacts (Fenway "borders" Watertown
+  through the Charles River tract).
+- `boston_geo_land`: the official BPDA land boundaries between neighborhoods,
+  and a 100 m snapping tolerance to the towns, because the two sources share no
+  exact vertices. The anchor count moves with that tolerance: 8 pairs at ~1 m,
+  18 at ~10 m, 23 at ~100 m.
+
+Against both, the hand-coded map had 18-19 of its 23 neighborhood edges right.
+It invented Allston-Back Bay, Allston-Jamaica Plain, Dorchester-South End and
+Fenway-South End, and missed about five, which is the same ~85% accuracy
+measured for Columbus's hand-coding. The two water anchors (Charles River,
+Harbor) are in no land polygon source and stay hand-coded in every version.
+Columbus now reads its derived edge file at import, as Buenos Aires does; the
+old hand-synced literal was identical (39 area and 9 anchor pairs), so nothing
+moved.
+
+Results do not depend on the map. `gnn_st`, and `gnn_st_geofixed` (borders
+only, no learned adjacency, so the map is its only spatial information), were
+run on all three Boston maps over the three unseen folds. Mean WIS:
+
+| | hand | land | tract |
+| --- | --- | --- | --- |
+| `gnn_st`, h=1 / 2 / 4 | 5.02 / 6.28 / 8.31 | 5.04 / 6.24 / 8.26 | 5.03 / 6.39 / 8.26 |
+| `gnn_st_geofixed`, h=1 / 2 / 4 | 5.10 / 6.38 / 8.40 | 5.13 / 6.39 / 8.35 | 5.07 / 6.33 / 8.29 |
+
+Of 36 week-level comparisons (derived map against the hand map, per fold,
+horizon and model), 33 are ties, 2 favour a derived map and 1 favours the hand
+map. A new city can take its graph from its boundary files.
+
+**2. A model trained in one city helps another only where it has no data of
+its own.** `gnn_st_noadapt` (no per-node learned adjacency, so every weight has
+the same shape in every city) was trained on one city and applied to the other
+through `run_gnn.py --init-from`. It was applied with no local training
+(`--zero-shot`), and also fine-tuned, and both were compared with the same model
+trained from scratch on the target city. The source is trained only on weeks
+before the target's test season. Buenos Aires is not included: it has 5
+demographic columns against 8, so its static layer does not transfer.
+
+| target, unseen fold, mean WIS h=1 / 2 / 4 | from scratch | zero-shot | fine-tuned | persistence |
+| --- | --- | --- | --- | --- |
+| Columbus 2024-25, from Boston | 4.11 / 5.18 / 6.49 | 3.90 / 5.08 / 6.45 | 4.10 / 5.09 / 6.49 | 4.67 / 5.89 / 8.45 |
+| Boston 2024-25, from Columbus | 4.88 / 6.15 / 8.25 | 5.28 / 7.11 / 10.07 | 4.78 / 6.27 / 8.37 | 6.36 / 8.95 / 14.07 |
+| Chicago 2024-25, from Boston (levels) | 1.09 / 1.12 / 1.25 | 1.16 / 1.24 / 1.29 | 1.08 / 1.12 / 1.23 | 1.35 / 1.42 / 1.52 |
+| Boston 2024-25, from Chicago | 4.88 / 6.15 / 8.25 | 5.15 / 6.86 / 10.36 | 4.87 / 6.12 / 8.41 | 6.36 / 8.95 / 14.07 |
+
+Chicago rows were added 2026-10-10 (jobs 10945308, 10945488, 10974863). All
+27 of 27 tensors load across cities, because `gnn_st` uses no city-wide inputs
+and each area is z-scored on its own training weeks, so a rate-trained model
+can forecast Chicago's index. Week-level tests compare zero-shot and fine-tuned
+against the from-scratch model, with Holm adjustment within each target-source
+pair (`_comparison/significance_transfer*.csv`):
+
+- **Boston to Chicago, zero-shot** is clearly worse than from scratch at h=1
+  and h=2 (p < .001, .004) and tied at h=4. Chicago had nearly 5 years of its
+  own history before the fold.
+- **Chicago to Boston, zero-shot** is worse at every horizon, but clearly so
+  only at h=4 (p = .041), the same pattern as Columbus to Boston (h=4 p = .014).
+- **Fine-tuning** is tied with from scratch in all 12 comparisons across the
+  four directions.
+
+- **Zero-shot WIS is below persistence's in every cell**, including the
+  2025-26 development season in both directions (compared on the mean, not
+  tested week by week). A city with no training history at all
+  would still get a useful forecaster from another city's model.
+- **Boston to Columbus, zero-shot is as good as training locally.** It ties the
+  Columbus-trained model on the week-level test at every horizon of the unseen
+  fold, and is numerically ahead at all three. Before that fold, Boston has
+  about 3.4 times Columbus's training history.
+- **Columbus to Boston, zero-shot is worse** at h=2 and h=4. The smaller city's
+  model does not carry enough to a larger one.
+- **Fine-tuning adds nothing.** On the unseen fold it is not clearly different
+  from training from scratch in any of the 6 comparisons (the earlier "10 of 12"
+  count included the development season), so once a city has its own data,
+  starting from another city's weights neither helps nor hurts.
+
+**What this supports.** The pipeline ports by data alone: nodes, edges from
+polygons, a season and a loader. A model trained in a data-rich city is a
+reasonable forecaster for a data-poor one before it has any history of its own.
+What does not transfer is the graph's *advantage*: that is Boston-specific at one
+week (see [The backtest verdict](#the-backtest-verdict)).
+
+**What did not work.**
+- Automatic derivation needs a rule for water, and Boston's two water anchors
+  still come from a map.
+- Cross-source boundaries need a snapping tolerance that changes the answer.
+- The earlier `xcity_*` arms were not transfer tests: they train the retired
+  `gcn_fusion` model separately in each city on a shared feature set.
+- Buenos Aires cannot take part in weight transfer without a static layer that
+  handles a different number of demographic columns.
+
 ### Where the per-city artifacts are
 
 ```
@@ -1482,6 +1651,160 @@ Data-layer checks run before any training:
 (41 assertions, including "July is colder than January" as a hemisphere check).
 
 ---
+
+## What counts as evidence here
+
+**How the design was chosen.** Every default in `gnn_st` was set by looking at
+the 2025-26 test season: the ablations that removed the city-wide covariates,
+the calendar feature and the relation types read test-season `metrics.csv`; the
+V2 training settings were promoted on "RMSE improved in 4 of 4" test-season
+cells; the blend target was motivated by test-season correlations
+(`influenza/climatology.py`); and the two-sided interval was tuned on odd test
+weeks. Each step was reasonable, and each spends the test season a little. The
+cumulative effect is that 2025-26 is now a **development season**. Numbers on it
+rank designs; they do not certify a margin over a baseline that was not tuned
+against it.
+
+**What replaces it.** `run_backtest.py` re-runs a frozen set of arms --
+`gnn_st`, `gnn_st_nograph`, the parity baselines, the no-learning references and
+the committed baselines -- on each earlier season, with the configuration fixed
+before the first fold is scored:
+
+| city | unseen folds (evidence) | development fold | variant |
+| --- | --- | --- | --- |
+| Boston | 2022-23, 2023-24, 2024-25 | 2025-26 | `full` |
+| Columbus | 2024-25 | 2025-26 | `post_covid` |
+| Buenos Aires | 2023-24 | 2024-25 | `post_covid` |
+
+Columbus and Buenos Aires have one unseen fold each, because their histories
+start in 2022. The multi-city result is therefore one season per city, which is
+a limit to state, not to hide.
+
+**Fair baselines.** The committed baselines differ from `gnn_st` in more than
+architecture (see [Is the comparison fair?](#is-the-comparison-fair-the-models-do-not-see-the-same-data)).
+The parity arms give each what `gnn_st` gets apart from the graph:
+`lstm_parity` (16-week window, blend target, 10 seeds), `xgboost_parity` (same
+46 columns, blend target, 10 seeds), and `gat_parity` (the registry batch size
+actually honoured, 10 seeds, scored at h=1 only, the paper's setting). Two
+no-learning references show how much is prior rather than model:
+`climatology` and `blend_baseline`, `gnn_st`'s own origin/seasonal blend with the
+network switched off. `sarima` is ARIMA with the annual cycle as harmonic
+regressors. On the development season, at h=2 in Boston, these move the
+picture a lot: `lstm_parity` scores RMSE 18.69 and macro Corr 0.804 (committed
+`lstm`: 21.36, 0.731), `sarima` 19.29 and 0.808, and `blend_baseline` 20.50 with
+no training at all -- against `gnn_st`'s 17.20 and 0.840. On the unseen folds
+they matter less (below): `lstm_parity` is in fact *worse* than the plain `lstm`
+in Boston's backtest, whose `full`-variant training series is long enough that
+the extra prior no longer pays.
+
+### The backtest verdict
+
+Mean over the three unseen Boston folds (2022-23, 2023-24, 2024-25), `full`
+variant. WIS is the 23-quantile weighted interval score, rate per 100,000,
+lower is better; "vs persistence" is the ratio of WIS to persistence's.
+
+| horizon | `gnn_st` MAE / WIS | `gnn_st_nograph` | best other baseline | WIS vs persistence |
+| --- | --- | --- | --- | --- |
+| 1 | **7.70 / 5.02** | 8.48 / 5.54 | `gat_parity` 8.27 / 5.37 | 0.80 |
+| 2 | **9.54 / 6.28** | 10.12 / 6.71 | `lstm` 10.16 / 6.83 | 0.79 |
+| 4 | **12.09 / 8.31** | 12.52 / 8.65 | `lstm` 12.97 / 8.96 | 0.73 |
+
+Fold by fold, with the week-level tests (95% block-bootstrap interval on the WIS
+difference, and a Diebold-Mariano test Holm-adjusted across the baselines):
+
+- **Boston.** Against its own no-graph arm, `gnn_st` has the lower WIS in all
+  nine fold-horizon cells; the interval excludes zero in eight and the Holm test
+  clears 0.05 in six (every h=1 fold, h=2 in 2023-24 and 2024-25, h=4 in
+  2023-24). Against the plain LSTM, the strongest baseline, it is tied in
+  2022-23 at every horizon and in 2023-24 at h=2. **The graph earns its place in
+  Boston at one and two weeks; at four the direction is consistent but the
+  evidence is weak.**
+- **Columbus (one unseen fold, 2024-25).** Clear at h=1 against everything
+  except persistence on WIS; at h=2 and h=4 tied with its no-graph arm, the
+  blend baseline, SARIMA and `xgboost_parity`.
+- **Buenos Aires (one unseen fold, 2023-24).** Tied with persistence, with the
+  no-learning blend baseline and with its own no-graph arm at every horizon. It
+  clearly beats only the weaker learned baselines (plain LSTM, XGBoost, SARIMA), which fail on this series. **There
+  is no evidence here that the graph, or the network, adds anything over
+  persistence.**
+
+The 2025-26 development fold agrees with Boston's direction and is not counted.
+
+### With every model tuned the same way
+
+The comparison above still gave `gnn_st` its design history and the baselines
+fixed settings. `tune.py` removes that: every learned model -- `gnn_st`, its
+no-graph arm, the LSTM, XGBoost, Cola-GNN (our reimplementation of Deng et al.
+2020), GAT and Dual-Topo -- got 12 configurations (its default plus 11 random
+draws from a space of comparable breadth), each trained once per unseen fold,
+with the lowest validation MAE on that fold's pre-test weeks chosen and re-run
+with ten seeds. On validation, tuning gained the LSTM 18%, Dual-Topo 12%,
+XGBoost 11%, Cola-GNN 9% and `gnn_st` only 3% -- the baselines had been the
+under-tuned side. Two further references were added: `lstm_s10`, the committed
+LSTM with ten seeds, and `flusight_baseline`, FluSight's reference forecast
+(latest value, bands from past changes).
+
+Boston, mean WIS over the three unseen folds (lower is better):
+
+| | h=1 | h=2 | h=4 |
+| --- | --- | --- | --- |
+| `gnn_st_tuned` | **5.13** | **6.47** | **8.22** |
+| `lstm_tuned` | 5.18 | 6.83 | 9.16 |
+| `colagnn_tuned` | 5.35 | 7.61 | 8.77 |
+| `gnn_st_nograph_tuned` | 5.69 | 6.72 | 8.68 |
+| `persistence` | 6.24 | 7.94 | 11.44 |
+
+Week-level tests, `gnn_st_tuned` against each tuned model on each fold
+(`_comparison/significance_tuned.md`):
+
+- **Against its own no-graph arm** it wins at h=1 in all three Boston folds with
+  the Holm test clearing 0.05, and at h=2 and h=4 in two of three. The graph
+  still earns its place *inside this architecture*.
+- **Against the tuned LSTM and tuned Cola-GNN** it is **tied at h=1 in all three
+  Boston folds**. At h=2 it beats the LSTM clearly in one fold of three and ties
+  Cola-GNN in all three; at h=4 it is ahead of both in two of three, but clearly
+  only against the LSTM, in one. A tuned multivariate LSTM, which sees all 14 series but no graph,
+  matches it at one week.
+- **Columbus** (one fold): at h=1 ahead of every model except persistence
+  (tied), but past the Holm test only against GAT, Dual-Topo, SARIMA and the
+  ten-seed LSTM -- the no-graph arm is behind on the bootstrap interval, not on
+  the Holm test. At h=2 and h=4 it is tied with the no-graph arm, the blend
+  baseline and XGBoost.
+- **Buenos Aires** (one fold): tied with persistence, the FluSight baseline, the
+  blend baseline and the no-graph arm at every horizon, as before.
+- **Chicago** (four folds, all evidence; tuned 2026-10-10/11 with the same
+  procedure, after the 2022-23 scaling fix in `CHICAGO_DATA_NOTES.md`):
+  - Relative WIS 0.81 / 0.83 / 0.83, lowest at every horizon.
+  - Ahead of every comparison in all 12 season-horizon cells, except SARIMA in
+    one cell, and never clearly behind.
+  - Clear wins:
+    - over persistence in 11 of 12;
+    - over the no-graph arm at h=1 in all 4 folds and at h=2 in 2, none at h=4;
+    - over the tuned LSTM in 7 of 12 and the tuned Cola-GNN in 5 of 12,
+      including h=1 in 3 of 4 folds for each.
+  - The LSTM tie seen at h=1 in Boston does not hold in Chicago (58 nodes).
+
+**What this supports.** Adding the graph to `gnn_st` reliably improves it at one
+week and usually at two and four. It does not make `gnn_st` reliably better
+than the best tuned non-graph model: the lead over the tuned LSTM and Cola-GNN
+is ahead in 5 of 6 comparisons at two and four weeks in Boston but clears the
+week-level test in only one of three seasons (and never against Cola-GNN), and
+is absent at one week. The
+paper's defensible claim is therefore the within-architecture graph effect,
+plus a modest, seasonal-dependent edge over strong baselines at 2-4 weeks in
+Boston -- not a wide margin.
+
+**Run-to-run noise.** The backtest was run twice, the second time after fixing
+the quantile scale floor (`intervals.SCALE_FLOOR_FRACTION`). Point metrics for
+the non-neural arms reproduced exactly; `gnn_st`'s moved by up to 0.03 MAE
+(7.444 → 7.415, Boston 2024-25 h=1) -- same code and seeds on different cluster
+nodes. That is an order of magnitude below the gaps quoted above.
+
+**What a claim needs.** "`gnn_st` beats X" is stated only where the week-level
+bootstrap interval on the MAE difference excludes zero on the unseen folds, and
+the headline is the `gnn_st` vs `gnn_st_nograph` gap -- same pipeline, graph
+removed -- because that is the question this repository asks. Each fold's
+`_comparison/significance.md` carries the test.
 
 ## Honest limitations
 
@@ -1505,8 +1828,16 @@ Data-layer checks run before any training:
   not separable from seed and configuration noise, so treat 'a third of the quality'
   as unsupported. Leak-free normalisation is still the right default; the case
   for it is methodological, not empirical.
-- **One seed.** Section 11 of the notes puts the noise floor at 0.2–0.5 MAE.
-  Differences smaller than that mean nothing, which includes the Rt result.
+- **Unequal seeds and tuning.** `gnn_st` is a ten-seed ensemble chosen after
+  ~25 ablation arms; every baseline is one run at fixed settings. An ensemble
+  mean has lower variance than any single member, so part of the headline gap is
+  the ensemble, not the model. The parity arms (`lstm_parity`, `xgboost_parity`,
+  `gat_parity`, all ten seeds) remove that asymmetry.
+- **The test season also chose the design.** See
+  [What counts as evidence here](#what-counts-as-evidence-here).
+- **Point-forecast scoring only, until now.** The leaderboard ranks on RMSE and
+  Corr. The weighted interval score and week-level significance tests exist
+  (`compare_significance.py`) but are not yet the headline.
 - **Three post-COVID seasons.** 201 weeks, 121 training origins at an 8-week
   lookback. This is a small-data problem and behaves like one.
 - **Citywide covariates run out mid-evaluation.** The ED file ends 2026-01-04 and
@@ -1516,8 +1847,16 @@ Data-layer checks run before any training:
   interpolated weekly rate. See [`Code/docs/RT_CAVEATS.md`](../../Code/docs/RT_CAVEATS.md).
 - **`dualtopo` is scored on 627 cells, not 614**, because a horizon-1-only model
   keeps one extra origin. `compare_models.py` flags this; it is about 2%.
-- **COVID and RSV neighborhood data is monthly**, held flat across weeks. The
-  resolution mismatch is why those features default to off despite helping.
+- **COVID and RSV neighborhood data is monthly**, held flat across weeks. Those
+  features are off because, re-measured after the data fixes, they hurt (see the
+  retraction under [Results](#results)). Monthly figures are now stamped at their
+  assumed release date -- month end plus 14 days -- rather than the first day of
+  the month they describe, which had let each week see its whole month's total.
+- **Real-time reporting delay is not simulated in the inputs.** Every model reads
+  the fully revised series. For Buenos Aires, whose feed is 0% complete at lag 0,
+  an h-week forecast made with an L-week delay is the (h+L)-week forecast from the
+  last complete week, so the h=4 rows are the honest stand-in for a real-time
+  h=1 or h=2 forecast there.
 
 ---
 

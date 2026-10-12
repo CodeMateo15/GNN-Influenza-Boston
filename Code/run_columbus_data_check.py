@@ -10,6 +10,10 @@ no torch, no graph, no training.
 
 Checks that need the ACS denominator (rates, static demographics) are reported
 as SKIP rather than failing, so this is runnable before a Census API key exists.
+
+The row-accounting check reads the line-level ILI extract, which Columbus Public
+Health asked to keep with the project (it is gitignored). Without it that check
+is skipped; everything else runs on the committed weekly aggregates.
 """
 
 from __future__ import annotations
@@ -85,6 +89,10 @@ def check_week_grid(checks: Checks, counts: pd.DataFrame) -> None:
 
 def check_row_accounting(checks: Checks, counts: pd.DataFrame) -> None:
     print("\nRow accounting")
+    if not paths.COLUMBUS_ILI_FILE.exists():
+        checks.record(SKIP, "line-level ILI extract not present",
+                      "it is private to the project; the models use the weekly aggregate")
+        return
     raw = cbus._read_ili()
     total = len(raw)
     anchors = set(crosswalk.load_anchor_zips())

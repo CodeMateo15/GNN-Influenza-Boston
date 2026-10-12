@@ -12,6 +12,9 @@ Code/docs/COLUMBUS_DATA_NOTES.md.
 
 from __future__ import annotations
 
+import csv
+
+from .. import paths
 from . import City
 
 # Alphabetical, fixing graph indices 0..16. Must match
@@ -94,37 +97,26 @@ EXCLUDED_ZIPS = {
 
 BACKGROUND_SHORT = "Background"
 
-# --- Geographic adjacency, hand-coded from the Franklin County map ----------
-# 38 area-area pairs. Hand-coded rather than derived from a ZCTA shapefile
-# because geopandas/shapely are not installed in this project's environment;
-# Boston's 23 pairs were hand-coded the same way. Density is higher than
-# Boston's (average degree 4.5 against 3.3) because Franklin County is a
-# contiguous inland partition, whereas Boston's harbour and river cut real
-# adjacencies out of its map.
-GEO_EDGES_AREA: list[tuple[str, str]] = [
-    ("Agler", "Bexley"), ("Agler", "Clinton+"), ("Agler", "Eastside"),
-    ("Agler", "FarEast"), ("Agler", "Linden"), ("Agler", "NESub"),
-    ("Agler", "Northland"), ("Bexley", "Eastside"), ("Bexley", "FarEast"),
-    ("Bexley", "FarSouth"), ("Clinton+", "Eastside"),
-    ("Clinton+", "FarSouth"), ("Clinton+", "Linden"),
-    ("Clinton+", "Northland"), ("Clinton+", "UA/Grand"),
-    ("Clinton+", "West"), ("Clinton+", "Worthing."), ("Dublin", "Hilliard"),
-    ("Dublin", "UA/Grand"), ("Dublin", "Worthing."),
-    ("Eastside", "FarSouth"), ("FarEast", "FarSE"), ("FarEast", "FarSouth"),
-    ("FarEast", "NESub"), ("FarSE", "FarSW"), ("FarSE", "FarSouth"),
-    ("FarSW", "Hilliard"), ("FarSW", "West"), ("FarSouth", "West"),
-    ("Hilliard", "UA/Grand"), ("Hilliard", "West"), ("Linden", "Northland"),
-    ("NESub", "Northland"), ("NESub", "Wville"), ("Northland", "Worthing."),
-    ("Northland", "Wville"), ("UA/Grand", "West"), ("UA/Grand", "Worthing."),
-    ("Worthing.", "Wville"),
-]
+# --- Geographic adjacency, derived -------------------------------------------
+# From Code/scrapers/derive_columbus_adjacency.py (Census TIGERweb ZCTA polygons,
+# two areas adjacent when they share >= 2 boundary vertices), read at import --
+# the same arrangement as Buenos Aires. This used to be a hand-synced literal
+# copy of the CSV; the two were identical (39 area pairs, 9 anchor pairs) when
+# the literal was retired, so no result moves. One source, no sync step.
 
-# 10 anchor pairs: each anchor -> the areas on the county edge it borders.
-GEO_EDGES_ANCHOR: list[tuple[str, str]] = [
-    ("Dublin", "Amlin"), ("Dublin", "LewisCtr"), ("FarSE", "Orient"),
-    ("FarSW", "Orient"), ("FarSW", "W.Jeff"), ("Hilliard", "Amlin"),
-    ("Worthing.", "LewisCtr"), ("Wville", "LewisCtr"), ("Wville", "Polaris"),
-]
+
+def _load_edges() -> tuple[list[tuple[str, str]], list[tuple[str, str]]]:
+    """(area-area pairs, area-anchor pairs) on SHORT names, from the derived CSV."""
+    areas: list[tuple[str, str]] = []
+    anchors: list[tuple[str, str]] = []
+    with open(paths.COLUMBUS_AREA_EDGES_FILE, newline="") as handle:
+        rows = csv.DictReader(line for line in handle if not line.startswith("#"))
+        for row in rows:
+            (areas if row["kind"] == "area" else anchors).append((row["a"], row["b"]))
+    return sorted(areas), sorted(anchors)
+
+
+GEO_EDGES_AREA, GEO_EDGES_ANCHOR = _load_edges()
 
 # Single-background scheme, kept only so the geo-only arm stays runnable.
 GEO_EDGES_BACKGROUND: list[tuple[str, str]] = [

@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import influenza.threads  # noqa: F401  (import for its side effect)
 
 import argparse
+from pathlib import Path
 from dataclasses import replace
 
 try:
@@ -48,10 +49,10 @@ from influenza.cli import (add_common_args, check_experiment_supported,
                           resolve_window, run_tag)
 from influenza.config import EXPERIMENTS, Experiment
 from influenza.graphs import build_graph
-from influenza.intervals import empirical_coverage
+from influenza.intervals import empirical_coverage, quantile_record
 from influenza.models import InfluenzaGNN, SpatioTemporalGNN
 from influenza.samples import build_samples, load_dataset, positions_to_rows
-from influenza.training import mc_dropout_stgnn, train_stgnn
+from influenza.training import TrainResult, mc_dropout_stgnn, train_stgnn
 
 
 def _blend_init(horizons) -> tuple[float, ...]:
@@ -132,6 +133,11 @@ def resolve_experiment(args: argparse.Namespace) -> Experiment:
         train_changes["n_seeds"] = args.n_seeds
     if args.seed is not None:
         train_changes["seed"] = args.seed
+    # Exposed for tune.py, which searches every learned model over a space of
+    # comparable breadth with the same budget. None keeps the registry value.
+    for key in ("lr", "weight_decay", "dropout", "channels"):
+        if getattr(args, key, None) is not None:
+            train_changes[key] = getattr(args, key)
 
     experiment = replace(
         experiment,
@@ -249,18 +255,47 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     seeds = [experiment.train.seed + i for i in range(max(1, experiment.train.n_seeds))]
     members: list[dict] = []
 
+    # Cross-city transfer: start every member from a model trained in another
+    # city. Only parameters whose shapes match are loaded; the per-node adaptive
+    # embeddings are the only city-sized ones, and a transfer arm should run with
+    # adaptive=False so that nothing is left at random.
+    source_members = None
+    if args.init_from is not None:
+        checkpoint = torch.load(args.init_from, map_location="cpu", weights_only=False)
+        source_members = checkpoint.get("member_state_dicts") or [checkpoint["model_state_dict"]]
+        print(f"Transfer: {len(source_members)} source member(s) from {args.init_from}"
+              f"{' | zero-shot, no training on this city' if args.zero_shot else ' | fine-tuning'}")
+    elif args.zero_shot:
+        raise SystemExit("--zero-shot needs --init-from: there is nothing to apply untrained.")
+
     with track_emissions(run_tag(experiment.name, experiment.variant, window),
                          enabled=not args.no_carbon) as carbon:
         for member, seed in enumerate(seeds):
             seed_everything(seed)
             model = build_model()
+            if source_members is not None:
+                source = source_members[member % len(source_members)]
+                own = model.state_dict()
+                loadable = {k: v for k, v in source.items()
+                            if k in own and tuple(v.shape) == tuple(own[k].shape)}
+                skipped = sorted(set(own) - set(loadable))
+                model.load_state_dict(loadable, strict=False)
+                if member == 0:
+                    print(f"Transfer: loaded {len(loadable)} of {len(own)} tensors"
+                          + (f"; left at initialisation: {skipped}" if skipped else ""))
             _assert_mc_dropout_valid(model)
             if member == 0:
                 print(f"Parameters: {sum(p.numel() for p in model.parameters()):,}")
             if len(seeds) > 1:
                 print(f"\n--- seed {seed} ({member + 1}/{len(seeds)}) ---")
 
-            if experiment.model == "stgnn":
+            if args.zero_shot:
+                result = TrainResult(best_epoch=0, best_val_loss=float("inf"),
+                                     train_losses=[], val_losses=[], epochs_run=0)
+                mc_kwargs = dict(relations=relations, norm=norm, n_neigh=graph.n_neigh,
+                                 device=device, target=experiment.target)
+                forward = mc_dropout_stgnn
+            elif experiment.model == "stgnn":
                 result = train_stgnn(
                     model, train_set, val_set, relations=relations,
                     spec=experiment.train, device=device, n_neigh=graph.n_neigh,
@@ -328,6 +363,8 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
                                    - test_actual[sample_idx, node, h_idx]),
                     "lower": float(prediction.lower[sample_idx, node, h_idx]),
                     "upper": float(prediction.upper[sample_idx, node, h_idx]),
+                    **(quantile_record(prediction.quantiles[sample_idx, node, h_idx])
+                       if prediction.quantiles is not None else {}),
                 })
 
     predictions = pd.DataFrame(records)
@@ -360,6 +397,9 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
         "model_state_dict": model.state_dict(),
+        # Every ensemble member, so another city can start from the whole
+        # ensemble rather than from member 0 alone (run_gnn.py --init-from).
+        "member_state_dicts": [m["model"].state_dict() for m in members],
         "experiment": experiment.to_json(),
         "edge_index": edge_index,
         "edge_weight": edge_weight,
@@ -408,8 +448,9 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         extra_tables={**_seed_spread_table(members),
                       "predictions_val": val_predictions},
     )
-    save_loss_curve(result.train_losses, result.val_losses, out / "loss_curve.png",
-                    title=f"{experiment.name} ({experiment.variant}) training")
+    if result.val_losses:  # a zero-shot transfer run never trained, so has no curve
+        save_loss_curve(result.train_losses, result.val_losses, out / "loss_curve.png",
+                        title=f"{experiment.name} ({experiment.variant}) training")
 
 
 
@@ -514,6 +555,17 @@ def parse_args() -> argparse.Namespace:
                         help="Ensemble members, seeds seed..seed+n-1. Overrides the "
                              "registry. Ablations only need enough seeds to rank, "
                              "not the 10 the headline arm uses.")
+    parser.add_argument("--lr", type=float, default=None)
+    parser.add_argument("--weight-decay", type=float, default=None)
+    parser.add_argument("--dropout", type=float, default=None)
+    parser.add_argument("--channels", type=int, default=None,
+                        help="Temporal-block width (SpatioTemporalGNN only).")
+    parser.add_argument("--init-from", type=Path, default=None,
+                        help="Checkpoint from another city to start every member from "
+                             "(cross-city transfer). Shape-mismatched tensors are skipped.")
+    parser.add_argument("--zero-shot", action="store_true",
+                        help="With --init-from: apply the source model with no training "
+                             "on this city at all.")
     parser.add_argument("--rt", action="store_true", help="Add the Rt growth-index feature.")
     parser.add_argument("--seasonality", action="store_true",
                         help="Add sin/cos of the target week's calendar position.")

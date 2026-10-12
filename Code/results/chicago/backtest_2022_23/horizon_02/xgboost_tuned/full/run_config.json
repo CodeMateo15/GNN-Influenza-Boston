@@ -1,0 +1,68 @@
+{
+  "model": "xgboost_tuned",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-11T04:31:55",
+  "model_class": "xgboost.XGBRegressor",
+  "target_kind": "blend",
+  "features_from": "gnn_st",
+  "n_node_features": 46,
+  "pooled_rows": 10092,
+  "params": {
+    "n_estimators": 600,
+    "learning_rate": 0.1,
+    "max_depth": 6,
+    "subsample": 0.8,
+    "colsample_bytree": 0.6,
+    "min_child_weight": 8.0,
+    "reg_lambda": 2.0,
+    "objective": "reg:squarederror",
+    "random_state": 42
+  },
+  "n_seeds": 10,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "best_iterations": {
+    "2": [
+      25,
+      29,
+      30,
+      22,
+      16,
+      45,
+      16,
+      31,
+      22,
+      21
+    ]
+  },
+  "blend_share": {
+    "2": 0.5916422402809808
+  },
+  "split": {
+    "n_train": 104,
+    "n_val": 18,
+    "n_test": 52,
+    "first_test_target": "2022-06-05",
+    "last_test_target": "2023-05-28"
+  },
+  "climatology": {
+    "n_harmonics": 3,
+    "n_train_rows": 122,
+    "n_terms": 7,
+    "fallback_nodes": []
+  },
+  "test_interval_coverage": 91.57824933687002,
+  "city": "chicago",
+  "note": "One pooled model over all nodes with the node index as a feature. No edges reach the model; it reads the same per-node columns the graph model does."
+}

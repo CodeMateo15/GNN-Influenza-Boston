@@ -1,0 +1,171 @@
+{
+  "model": "colagnn_tuned",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-10T18:36:25",
+  "model_class": "ColaGNN (reimplementation of Deng et al. 2020, CIKM)",
+  "target_kind": "level",
+  "normalize": "train",
+  "window": {
+    "lookback": 26,
+    "horizons": [
+      4
+    ],
+    "test_start": "2024-06-01",
+    "test_end": "2025-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 182,
+    "n_val": 32,
+    "n_test": 52,
+    "first_test_target": "2024-06-02",
+    "last_test_target": "2025-05-25"
+  },
+  "hidden": 16,
+  "conv_channels": 16,
+  "dropout": 0.2,
+  "lr": 0.001,
+  "weight_decay": 0.0005,
+  "epochs": 150,
+  "batch_size": 32,
+  "n_seeds": 10,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 19,
+      "best_val_mse": 0.8365169167518616
+    },
+    {
+      "seed": 43,
+      "best_epoch": 6,
+      "best_val_mse": 0.8889632225036621
+    },
+    {
+      "seed": 44,
+      "best_epoch": 12,
+      "best_val_mse": 0.9573847651481628
+    },
+    {
+      "seed": 45,
+      "best_epoch": 8,
+      "best_val_mse": 0.9263539910316467
+    },
+    {
+      "seed": 46,
+      "best_epoch": 10,
+      "best_val_mse": 0.910243570804596
+    },
+    {
+      "seed": 47,
+      "best_epoch": 18,
+      "best_val_mse": 0.9309292435646057
+    },
+    {
+      "seed": 48,
+      "best_epoch": 19,
+      "best_val_mse": 0.8552396893501282
+    },
+    {
+      "seed": 49,
+      "best_epoch": 16,
+      "best_val_mse": 0.8369640707969666
+    },
+    {
+      "seed": 50,
+      "best_epoch": 3,
+      "best_val_mse": 0.9997888803482056
+    },
+    {
+      "seed": 51,
+      "best_epoch": 43,
+      "best_val_mse": 0.9062266945838928
+    }
+  ],
+  "n_params": 29424,
+  "adjacency": "geographic borders between scored nodes, row-normalised, self-loops",
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "4": 5.475249120208815
+    },
+    "beta": {
+      "4": 0.4816270522832622
+    },
+    "kappa": {
+      "4": 1.018664337536165
+    },
+    "n_validation": 1856,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "4": [
+        -1.372664731833474,
+        -1.1549905884514975,
+        -1.0388278867646146,
+        -0.8832796635805382,
+        -0.7671934513414722,
+        -0.6669108987519392,
+        -0.5597651747875351,
+        -0.4611636333338348,
+        -0.3591569191524946,
+        -0.23861880016790663,
+        -0.10248791730732328,
+        -0.0017866817209720672,
+        0.1366284651584728,
+        0.26812837809368334,
+        0.44931785810774016,
+        0.6447225560174792,
+        0.858391074209346,
+        1.1170658698100235,
+        1.3372902930826467,
+        1.602488320095304,
+        1.996545429654732,
+        2.40710406945856,
+        3.01232627135597
+      ]
+    },
+    "scale_floor": {
+      "4": 0.27181906387770066
+    }
+  },
+  "test_interval_coverage": 94.1976127320955
+}

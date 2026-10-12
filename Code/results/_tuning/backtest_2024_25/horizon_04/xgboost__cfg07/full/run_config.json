@@ -1,0 +1,50 @@
+{
+  "model": "xgboost__cfg07",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-09-25T16:02:16",
+  "model_class": "xgboost.XGBRegressor",
+  "target_kind": "blend",
+  "features_from": "gnn_st",
+  "n_node_features": 46,
+  "pooled_rows": 5138,
+  "params": {
+    "n_estimators": 600,
+    "learning_rate": 0.01,
+    "max_depth": 6,
+    "subsample": 1.0,
+    "colsample_bytree": 0.6,
+    "min_child_weight": 1.0,
+    "reg_lambda": 0.5,
+    "objective": "reg:squarederror",
+    "random_state": 42
+  },
+  "n_seeds": 1,
+  "seeds": [
+    42
+  ],
+  "best_iterations": {
+    "4": [
+      101
+    ]
+  },
+  "blend_share": {
+    "4": 0.47580021971633635
+  },
+  "split": {
+    "n_train": 268,
+    "n_val": 47,
+    "n_test": 52,
+    "first_test_target": "2024-06-02",
+    "last_test_target": "2025-05-25"
+  },
+  "climatology": {
+    "n_harmonics": 3,
+    "n_train_rows": 288,
+    "n_terms": 7,
+    "fallback_nodes": []
+  },
+  "test_interval_coverage": 88.77400295420975,
+  "city": "boston",
+  "note": "One pooled model over all nodes with the node index as a feature. No edges reach the model; it reads the same per-node columns the graph model does."
+}

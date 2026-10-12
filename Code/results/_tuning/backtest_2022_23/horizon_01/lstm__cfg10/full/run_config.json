@@ -1,0 +1,119 @@
+{
+  "model": "lstm__cfg10",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-09-25T15:39:06",
+  "target_kind": "level",
+  "normalize": "train",
+  "window": {
+    "lookback": 26,
+    "horizons": [
+      1
+    ],
+    "test_start": "2022-06-01",
+    "test_end": "2023-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 174,
+    "n_val": 30,
+    "n_test": 52,
+    "first_test_target": "2022-06-05",
+    "last_test_target": "2023-05-28"
+  },
+  "hidden_size": 64,
+  "dropout": 0.0,
+  "lr": 0.0003,
+  "weight_decay": 0.001,
+  "epochs": 80,
+  "batch_size": 32,
+  "seed": 42,
+  "n_seeds": 1,
+  "seeds": [
+    42
+  ],
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 26,
+      "best_val_mse": 0.31440505385398865
+    }
+  ],
+  "best_epoch": 26,
+  "best_val_mse": 0.31440505385398865,
+  "n_params": 21390,
+  "imputed_feature_cells": 427,
+  "checkpoint": "checkpoints/_tuning/backtest_2022_23/horizon_01/lstm__cfg10_full.pt",
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 11.231430806427042
+    },
+    "kappa": {
+      "1": 0.7476014707147614
+    },
+    "n_validation": 404,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.4470256289041874,
+        -1.3003103859399014,
+        -1.104259633365859,
+        -0.9054733684297727,
+        -0.7619903527879555,
+        -0.6439257357378625,
+        -0.5379077647675702,
+        -0.45385985197873235,
+        -0.3686097906009938,
+        -0.2985246161266691,
+        -0.2088305382899424,
+        -0.11176725843356367,
+        -0.0524319273154641,
+        0.033458255750167705,
+        0.15190388424737128,
+        0.30185613867866373,
+        0.4481776427233593,
+        0.6199404794246387,
+        0.7576723681646104,
+        0.9377791390254889,
+        1.2940393361465876,
+        1.7254567978051762,
+        2.171402800007503
+      ]
+    },
+    "scale_floor": {
+      "1": 1.3789937537412724
+    }
+  },
+  "test_interval_coverage": 94.55307262569832
+}

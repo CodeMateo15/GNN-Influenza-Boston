@@ -1,0 +1,102 @@
+{
+  "model": "seasonal_naive",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-06T02:15:42",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1
+    ],
+    "test_start": "2022-06-01",
+    "test_end": "2023-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 112,
+    "n_val": 19,
+    "n_test": 52,
+    "first_test_target": "2022-06-05",
+    "last_test_target": "2023-05-28"
+  },
+  "season_lag_weeks": 52,
+  "nearest_tolerance_weeks": 2,
+  "prediction_sources": {
+    "lag": 3016
+  },
+  "n_params": 0,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 1.3937655556385402
+    },
+    "beta": {
+      "1": 4.74987516170003
+    },
+    "kappa": {
+      "1": 1.235066240817852
+    },
+    "n_validation": 1102,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -0.7963855393074297,
+        -0.5056669214333116,
+        -0.30298139761344683,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.4034475616030534,
+        0.48683100808482754,
+        0.8068951232061068,
+        1.2103426848091603,
+        1.328641630815137,
+        1.9973028657818037,
+        2.4206853696183206,
+        3.227580492824427,
+        3.631028054427481
+      ]
+    },
+    "scale_floor": {
+      "1": 0.2756118420484032
+    }
+  },
+  "test_interval_coverage": 91.44562334217507
+}

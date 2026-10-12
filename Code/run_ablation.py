@@ -290,13 +290,19 @@ def report(table: pd.DataFrame, horizon: int, noise: float | None, source: str,
             lines.append(f"Reference ensembles at this horizon scored {spread}.")
     lines.append("")
 
+    # Holm across every arm tested at this horizon: ~25 arms each tested at 0.05
+    # would hand out one "significant" arm by chance alone.
+    from influenza.scoring import holm
+    tested = [arm for arm, (_, p) in paired.items() if p is not None]
+    adjusted = dict(zip(tested, holm([paired[a][1] for a in tested])))
+
     for label, arms in GROUPS.items():
         subset = table[table["arm"].isin(arms)]
         if subset.empty:
             continue
         lines += [f"### {label}", "",
-                  "| arm | macro | Δ macro | pooled | RMSE | nbhds improved | p | verdict |",
-                  "| --- | --- | --- | --- | --- | --- | --- | --- |"]
+                  "| arm | macro | Δ macro | pooled | RMSE | nbhds improved | p | p (Holm) | verdict |",
+                  "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
         ordered = subset.assign(_d=subset["Corr_macro"] - base_macro).sort_values("_d")
         for _, row in ordered.iterrows():
             d_macro = row["Corr_macro"] - base_macro
@@ -318,9 +324,11 @@ def report(table: pd.DataFrame, horizon: int, noise: float | None, source: str,
                            else "**better without it**")
             share, p = paired.get(row["arm"], ("", None))
             p_text = "" if p is None else (f"{p:.3f}" if p >= 0.001 else "<0.001")
+            q = adjusted.get(row["arm"])
+            q_text = "" if q is None else (f"{q:.3f}" if q >= 0.001 else "<0.001")
             lines.append(f"| `{row['arm']}` | {row['Corr_macro']:.3f} | {d_macro:+.3f} | "
                          f"{row['Corr_pooled']:.3f} | "
-                         f"{row['RMSE_pooled']:.2f} | {share} | {p_text} | {verdict} |")
+                         f"{row['RMSE_pooled']:.2f} | {share} | {p_text} | {q_text} | {verdict} |")
         lines.append("")
 
     lines += ["`Δ macro` is this arm minus the reference. In a **leave-one-out** row "
@@ -332,7 +340,11 @@ def report(table: pd.DataFrame, horizon: int, noise: float | None, source: str,
               "beat the reference in, and `p` is a Wilcoxon signed-rank test on those "
               "paired per-neighborhood differences. A verdict backed by a lopsided "
               "count and a small p is worth more than one that rests on the macro "
-              "average alone, because the macro average can be moved by one node.", ""]
+              "average alone, because the macro average can be moved by one node.", "",
+              "`p (Holm)` adjusts `p` for the number of arms tested at this horizon. Both "
+              "treat the neighborhoods as independent, which they are not -- they share "
+              "one epidemic -- so even the Holm value overstates the evidence. The "
+              "week-level tests in compare_significance.py do not make that assumption.", ""]
     return "\n".join(lines)
 
 

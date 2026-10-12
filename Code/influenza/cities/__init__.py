@@ -199,7 +199,11 @@ class City:
 # that had to be edited together; adding a third city is exactly the moment
 # that kind of duplication bites.
 _CITY_MODULES = (("boston", "BOSTON"), ("columbus", "COLUMBUS"),
-                 ("buenos_aires", "BUENOS_AIRES"))
+                 ("buenos_aires", "BUENOS_AIRES"), ("chicago", "CHICAGO"),
+                 # Boston with polygon-derived edges, for the portability test
+                 # that the model does not depend on a hand-drawn map.
+                 ("boston_geo_tract", "BOSTON_GEO_TRACT"),
+                 ("boston_geo_land", "BOSTON_GEO_LAND"))
 
 
 def get(name: str) -> City:

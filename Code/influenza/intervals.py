@@ -89,13 +89,28 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import numpy as np
+from scipy.stats import norm
 
 Z95 = 1.959964
+
+# FluSight's 23 quantile levels: the median plus 11 central intervals. Scored
+# with the weighted interval score in influenza/scoring.py.
+QUANTILE_LEVELS = (0.01, 0.025, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
+                   0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 0.975, 0.99)
+QUANTILE_COLUMNS = tuple(f"q{tau:.3f}" for tau in QUANTILE_LEVELS)
 TARGET_COVERAGE = 0.95
 # Ceiling on the calibration scale. Reaching it means the two-sided fit
 # degenerated, not that the residuals are genuinely that wide, so the fit is
 # abandoned for that horizon rather than scaled up without limit.
 MAX_KAPPA = 16.0
+# Floor on the quantile scale, as a fraction of the validation RMSE at that
+# horizon. Without it, a fit with alpha = 0 gives scale ~ 0 wherever the
+# predicted level is ~ 0 -- a flat off-season week, a zero-count partido -- and a
+# residual divided by that scale is astronomically large. One such validation
+# row set the 99% quantile of z to ~1e6 and put q0.990 at 10^7 per 100,000 in 21
+# backtest runs, every one of them a baseline. The 95% band is unaffected: it
+# is calibrated by kappa on |z|, not on its extreme quantiles.
+SCALE_FLOOR_FRACTION = 0.1
 
 
 @dataclass
@@ -111,6 +126,13 @@ class IntervalModel:
     # what `two_sided=False` still reproduces exactly.
     upper_coef: dict[int, list[float]] = field(default_factory=dict)
     lower_coef: dict[int, list[float]] = field(default_factory=dict)
+    # Per-horizon empirical quantiles, at QUANTILE_LEVELS, of the validation
+    # residual divided by the fitted scale sqrt(alpha + beta * level [+ epistemic]).
+    # A full predictive distribution from the same variance model as the 95%
+    # band, with its SHAPE taken from validation rather than assumed Gaussian.
+    z_quantiles: dict[int, list[float]] = field(default_factory=dict)
+    # Per-horizon lower bound on that scale; see SCALE_FLOOR_FRACTION.
+    scale_floor: dict[int, float] = field(default_factory=dict)
     n_validation: int = 0
     fitted: bool = True
     note: str = ""
@@ -134,6 +156,10 @@ class IntervalModel:
             "fitted": self.fitted,
             "note": self.note,
         }
+        if self.z_quantiles:
+            payload["quantile_levels"] = list(QUANTILE_LEVELS)
+            payload["z_quantiles"] = {str(k): v for k, v in self.z_quantiles.items()}
+            payload["scale_floor"] = {str(k): v for k, v in self.scale_floor.items()}
         if self.two_sided:
             payload["edge_terms"] = ["const", "level"]
             payload["upper_coef"] = {str(k): v for k, v in self.upper_coef.items()}
@@ -168,6 +194,45 @@ class IntervalModel:
         half_width = scale * Z95 * np.sqrt(np.maximum(variance, 0.0))
         # ILI rates cannot be negative, so the lower bound is clipped at zero.
         return np.maximum(0.0, predicted - half_width), predicted + half_width
+
+    def _scale(self, predicted, horizon, epistemic=None) -> np.ndarray:
+        """sqrt of the fitted residual variance, before any kappa -- the unit z is in."""
+        variance = np.zeros_like(predicted)
+        for h in np.unique(horizon):
+            mask = horizon == h
+            key = int(h)
+            alpha = self.alpha.get(key, float(np.nanvar(predicted[mask])) or 1.0)
+            variance[mask] = alpha + self.beta.get(key, 0.0) * np.maximum(predicted[mask], 0.0)
+        if epistemic is not None:
+            variance = variance + np.clip(np.asarray(epistemic, dtype=float), 0.0, None)
+        scale = np.sqrt(np.maximum(variance, 1e-12))
+        for h in np.unique(horizon):
+            mask = horizon == h
+            scale[mask] = np.maximum(scale[mask], self.scale_floor.get(int(h), 0.0))
+        return scale
+
+    def quantiles(self, predicted, horizon, epistemic=None) -> np.ndarray:
+        """Predictive quantiles at QUANTILE_LEVELS, shape (n, 23).
+
+        q_tau = predicted + scale * z_tau, with z_tau the validation quantile of
+        the standardised residual for that horizon. A horizon fitted on too few
+        validation rows falls back to Gaussian z scaled by kappa, i.e. the
+        distribution the symmetric 95% band already implies. Quantiles are made
+        non-decreasing and clipped at zero, as the band is.
+        """
+        predicted = np.asarray(predicted, dtype=float)
+        horizon = np.asarray(horizon)
+        scale = self._scale(predicted, horizon, epistemic)
+        out = np.empty((predicted.size, len(QUANTILE_LEVELS)))
+        gaussian = norm.ppf(QUANTILE_LEVELS)
+        for h in np.unique(horizon):
+            mask = horizon == h
+            key = int(h)
+            z = self.z_quantiles.get(key)
+            z = np.asarray(z, float) if z is not None else self.kappa.get(key, 1.0) * gaussian
+            out[mask] = predicted[mask, None] + scale[mask, None] * z[None, :]
+        out = np.maximum.accumulate(out, axis=1)
+        return np.maximum(out, 0.0)
 
     def _two_sided_bounds(self, predicted, horizon, epistemic):
         """The skewed band: each edge from its own fitted quantile."""
@@ -334,6 +399,18 @@ def fit_intervals(predicted, actual, horizon, *, epistemic=None,
         model.alpha[key] = alpha
         model.beta[key] = beta
 
+        # The full distribution: quantiles of the residual in units of the
+        # fitted scale. Independent of kappa and of the two-sided option, so
+        # every model gets its quantiles by one rule whatever its band is.
+        model.scale_floor[key] = SCALE_FLOOR_FRACTION * float(np.sqrt(squared.mean()))
+        scale = np.maximum(np.sqrt(np.maximum(alpha + beta * level
+                                              + (0.0 if epistemic is None
+                                                 else np.clip(epistemic[mask], 0.0, None)),
+                                              1e-12)),
+                           model.scale_floor[key])
+        standardised = (actual[mask] - predicted[mask]) / scale
+        model.z_quantiles[key] = np.quantile(standardised, QUANTILE_LEVELS).tolist()
+
         if two_sided:
             # Signed, not squared: which side of the forecast the truth fell on
             # is the whole point, and it is exactly what the variance recipe
@@ -378,14 +455,20 @@ def empirical_coverage(actual, lower, upper) -> float:
     return float(((actual[keep] >= lower[keep]) & (actual[keep] <= upper[keep])).mean() * 100)
 
 
+def quantile_record(values) -> dict[str, float]:
+    """One row's quantiles as predictions.csv columns, q0.010 ... q0.990."""
+    return {name: float(v) for name, v in zip(QUANTILE_COLUMNS, values)}
+
+
 def attach_intervals(predictions, model: IntervalModel, *, epistemic=None):
-    """Add `lower`/`upper` columns to a long-form predictions frame."""
-    lower, upper = model.bounds(
-        predictions["predicted"].to_numpy(),
-        predictions["horizon"].to_numpy(),
-        epistemic=epistemic,
-    )
+    """Add `lower`/`upper` and the q0.010 ... q0.990 columns to a long-form predictions frame."""
+    predicted = predictions["predicted"].to_numpy()
+    horizon = predictions["horizon"].to_numpy()
+    lower, upper = model.bounds(predicted, horizon, epistemic=epistemic)
     out = predictions.copy()
     out["lower"] = lower
     out["upper"] = upper
+    quantiles = model.quantiles(predicted, horizon, epistemic=epistemic)
+    for i, name in enumerate(QUANTILE_COLUMNS):
+        out[name] = quantiles[:, i]
     return out

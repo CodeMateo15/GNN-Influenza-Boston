@@ -50,7 +50,7 @@ from influenza.cli import (add_common_args, check_experiment_supported,
                            resolve_window, run_tag)
 from influenza.config import EXPERIMENTS
 from influenza.graphs import build_graph
-from influenza.intervals import empirical_coverage
+from influenza.intervals import empirical_coverage, quantile_record
 from influenza.models import GATBaseline
 from influenza.samples import build_samples, load_dataset, positions_to_rows
 from influenza.training import (calibrate_intervals, mc_dropout_forward,
@@ -66,6 +66,17 @@ def main() -> None:
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--heads", type=int, default=None)
+    parser.add_argument("--hidden", type=int, default=None)
+    parser.add_argument("--lr", type=float, default=None)
+    parser.add_argument("--weight-decay", type=float, default=None)
+    parser.add_argument("--dropout", type=float, default=None)
+    parser.add_argument("--batched", action="store_true",
+                        help="Honour the registry batch_size (26) instead of per-sample "
+                             "updates. Off by default so the committed run reproduces; "
+                             "see training.train_gcn.")
+    parser.add_argument("--n-seeds", type=int, default=1,
+                        help="Ensemble size; MC draws from every seed are pooled. "
+                             "gnn_st uses 10.")
     args = parser.parse_args()
 
     if args.experiment not in EXPERIMENTS:
@@ -82,8 +93,12 @@ def main() -> None:
         train_changes["epochs"] = args.epochs
     if args.seed is not None:
         train_changes["seed"] = args.seed
-    if args.heads is not None:
-        train_changes["hidden"] = (experiment.train.hidden[0], args.heads)
+    if args.heads is not None or args.hidden is not None:
+        train_changes["hidden"] = (args.hidden or experiment.train.hidden[0],
+                                   args.heads or experiment.train.hidden[1])
+    for key in ("lr", "weight_decay", "dropout"):
+        if getattr(args, key) is not None:
+            train_changes[key] = getattr(args, key)
     experiment = replace(
         experiment,
         name=args.name or experiment.name,
@@ -133,23 +148,38 @@ def main() -> None:
     hidden, heads = experiment.train.hidden[0], experiment.train.hidden[1]
     with track_emissions(run_tag(experiment.name, experiment.variant, window),
                          enabled=not args.no_carbon) as carbon:
-        seed_everything(experiment.train.seed)
-        model = GATBaseline(lookback=window.lookback, hidden=hidden, heads=heads,
-                            n_horizons=len(window.horizons),
-                            dropout=experiment.train.dropout).to(device)
-        print(f"Parameters: {sum(p.numel() for p in model.parameters()):,} "
-              f"({hidden} hidden, {heads} heads)")
+        seeds = [experiment.train.seed + i for i in range(args.n_seeds)]
+        print(f"Budget: {experiment.train.epochs} epochs x {len(seeds)} seeds", flush=True)
+        test_parts, val_parts, per_seed = [], [], []
+        for i, seed in enumerate(seeds, start=1):
+            print(f"--- seed {seed} ({i}/{len(seeds)}) ---", flush=True)
+            seed_everything(seed)
+            model = GATBaseline(lookback=window.lookback, hidden=hidden, heads=heads,
+                                n_horizons=len(window.horizons),
+                                dropout=experiment.train.dropout).to(device)
+            print(f"Parameters: {sum(p.numel() for p in model.parameters()):,} "
+                  f"({hidden} hidden, {heads} heads)")
 
-        result = train_gcn(model, train_set, val_set, edge_index=edge_index,
-                           edge_weight=edge_weight, spec=experiment.train,
-                           device=device, n_neigh=graph.n_neigh)
+            result = train_gcn(model, train_set, val_set, edge_index=edge_index,
+                               edge_weight=edge_weight, spec=experiment.train,
+                               device=device, n_neigh=graph.n_neigh,
+                               batch_size=experiment.train.batch_size if args.batched else None)
+            per_seed.append({"seed": seed, "best_epoch": result.best_epoch,
+                             "best_val_mse": result.best_val_loss})
 
-        torch.manual_seed(experiment.train.mc_seed)
-        mc_kwargs = dict(edge_index=edge_index, edge_weight=edge_weight, norm=norm,
-                         n_neigh=graph.n_neigh, device=device,
-                         n_mc=experiment.train.mc_samples, target=experiment.target)
-        test_draws, test_actual = mc_dropout_forward(model, test_set, **mc_kwargs)
-        val_draws, val_actual = mc_dropout_forward(model, val_set, **mc_kwargs)
+            # One seed keeps the historical MC seed so the committed run reproduces.
+            torch.manual_seed(experiment.train.mc_seed + (i - 1))
+            mc_kwargs = dict(edge_index=edge_index, edge_weight=edge_weight, norm=norm,
+                             n_neigh=graph.n_neigh, device=device,
+                             n_mc=experiment.train.mc_samples, target=experiment.target)
+            draws, test_actual = mc_dropout_forward(model, test_set, **mc_kwargs)
+            test_parts.append(draws)
+            draws, val_actual = mc_dropout_forward(model, val_set, **mc_kwargs)
+            val_parts.append(draws)
+        # Pooling every seed's MC draws makes the mean the ensemble mean and the
+        # variance include the between-seed spread.
+        test_draws = np.concatenate(test_parts, axis=0)
+        val_draws = np.concatenate(val_parts, axis=0)
 
     prediction, interval_model = calibrate_intervals(
         test_draws, val_draws, val_actual, window.horizons,
@@ -171,9 +201,24 @@ def main() -> None:
                                    - test_actual[sample_idx, node, h_idx]),
                     "lower": float(prediction.lower[sample_idx, node, h_idx]),
                     "upper": float(prediction.upper[sample_idx, node, h_idx]),
+                    **(quantile_record(prediction.quantiles[sample_idx, node, h_idx])
+                       if prediction.quantiles is not None else {}),
                 })
 
     predictions = pd.DataFrame(records)
+
+    val_mean = val_draws.mean(axis=0)
+    val_predictions = pd.DataFrame([
+        {"origin_date": split.index[position],
+         "target_date": split.index[position + horizon],
+         "horizon": horizon,
+         "neighborhood": neighborhood,
+         "actual": float(val_actual[sample_idx, node, h_idx]),
+         "predicted": max(0.0, float(val_mean[sample_idx, node, h_idx]))}
+        for sample_idx, position in enumerate(val_set.positions)
+        for h_idx, horizon in enumerate(window.horizons)
+        for node, neighborhood in enumerate(city.node_names)
+    ])
     coverage = empirical_coverage(predictions["actual"], predictions["lower"],
                                   predictions["upper"])
     print(f"95% interval test coverage {coverage:.1f}%")
@@ -206,11 +251,18 @@ def main() -> None:
             "n_params": sum(p.numel() for p in model.parameters()),
             "best_epoch": result.best_epoch,
             "best_val_mse": result.best_val_loss,
+            "n_seeds": len(seeds),
+            "per_seed": per_seed,
+            "batched": bool(args.batched),
+            "train": {"lr": experiment.train.lr, "weight_decay": experiment.train.weight_decay,
+                      "dropout": experiment.train.dropout,
+                      "batch_size": experiment.train.batch_size if args.batched else 1},
             "test_interval_coverage": coverage,
             "city": city.name,
         },
         extras=True, bands=True, carbon=carbon,
         results_root=results_root, city=city,
+        extra_tables={"predictions_val": val_predictions},
     )
     save_loss_curve(result.train_losses, result.val_losses, out / "loss_curve.png",
                     title=f"{experiment.name} ({experiment.variant}) training")

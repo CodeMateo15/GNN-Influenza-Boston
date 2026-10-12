@@ -1,0 +1,561 @@
+Author guidelines
+How we publish
+American Journal of Epidemiology is a peer-reviewed journal publishing 12 issues per year online and in print.
+
+Once a paper is accepted and the publishing agreement is signed, the Journal will publish the Accepted Manuscript version of the paper (before copyediting and review of the final proof) within one week on the Advance articles page. This will be replaced in Advance articles with the Version of Record of the paper (after copyediting and the proof review process) when it is available. The Version of Record will be removed from Advance articles when it is published in an issue. Substantial changes to the published Accepted Manuscript may require a correction notice. The Version of Record requires a correction notice for any changes after it is published, even if it is not yet placed in an issue. See the definitions of the Version of Record and other versions of the paper for more details.
+
+Submitting
+American Journal of Epidemiology is owned by the Johns Hopkins Bloomberg School of Public Health and is an official journal of the Society for Epidemiologic Research. To publish the Journal, the Johns Hopkins Bloomberg School of Public Health partners with Oxford University Press (OUP), a not-for-profit publisher and a department of the University of Oxford. Learn more about how publishing with OUP reinvests in the scholarly community on the OUP For Authors page.
+
+After preparing your manuscript according to the guidance in the Preparing your manuscript section, you can submit your work through the Journal’s online submission site. If you have not used our submission site before, you will need to create an account. Additional help and instructions are available on the submission site as you go through the process. Please contact us with any questions about submitting your manuscript.
+
+Peer review process
+The Journal conducts double-anonymized peer review, meaning that the identities of the authors are hidden from reviewers, and the reviewers’ identities are hidden from the authors. The editors know the identity of both the reviewers and the authors.
+
+During peer review, reviewers communicate directly with the editors but not the authors or other reviewers.
+
+Once a submitted manuscript passes initial assessment by the Journal’s Editor-in-Chief, it will then be passed to a handling editor, who will oversee peer review and recommend a final decision. The Editor-in-Chief makes the final decision on the submitted manuscript. 
+
+Editors and reviewers must not handle manuscripts if they have a conflict of interest with an author or the content. Editors make every effort to avoid potential conflicts of interest in the assignment of other editors and peer reviewers. For more information, please see the section on Disclosure of potential conflicts of interest. During the peer review phase, your manuscript is typically sent to 2 reviewers. 
+
+You may suggest potential reviewers at submission. However, there is no guarantee the suggested reviewers will be selected by the Journal. Recommended reviewers should be experts in their field and able to provide an objective assessment of your manuscript without financial or interpersonal conflicts of interest with any authors. We encourage you to consider reviewers from a diverse range of backgrounds, including those from under-represented communities. 
+
+At the time of submission, you may request that specific individuals are not used as reviewers of your manuscript. Please indicate any opposed reviewer(s) when asked during the submission. You may also be asked to provide a brief explanation of why you oppose them. Please note there is no guarantee these individuals will be excluded by the Journal.
+
+Statistical methods should be rigorous, and reporting of statistical findings should be accurate and complete. Editors may request an expert statistical review of any submission containing statistical analysis. 
+
+If your manuscript is accepted for publication, no information about the review process or editorial decision process is published, unless one of the authors has a role on the journal. See the Disclosure of potential conflicts of interest section for more information in that case.
+
+For full details about the peer review process, see Fair editing and peer review. 
+
+Manuscript transfers
+In some cases, the editorial team of the Journal may offer you the option of transferring your manuscript to Epidemiologic Reviews, AJE Advances: Research in Epidemiology or Research Connections. If you accept this offer, the manuscript files and any reviewer reports from consenting reviewers will be sent to Epidemiologic Reviews, AJE Advances: Research in Epidemiology or Research Connections. The editorial team of the receiving journal may choose to seek additional peer review. A decision will be made on the manuscript based on the feedback from all reviewers and the judgment of the receiving journal's editorial team.
+
+Screening for misconduct
+Manuscripts will be screened using iThenticate to help detect publication misconduct including plagiarism and redundant publication.
+
+Manuscripts may also be screened, including with services provided by third parties, to help detect integrity issues such as inappropriate image alteration and papermill activity.
+
+Reviewer locator
+The Journal uses the Web of Science Reviewer Locator to assist the editors in finding appropriate reviewers.
+
+Appeals and complaints
+Authors may appeal an editorial decision. To do so, please contact the editorial office at ajepid.editorialoffice@technicaeditorial.com, providing as much specific detail as possible about why the original decision should be reconsidered. Every appeal will receive a response within a reasonable timeframe. Please do not resubmit your manuscript in the interim.
+
+To register a complaint regarding non-editorial decisions, the Journal’s policies and procedures, editors, or staff, please contact us. Complaints will be taken seriously and will be carried forward following COPE guidelines and processes and/or sanctions will be enacted if deemed appropriate.
+
+Publication and research ethics
+Authorship
+Authorship is limited to those who have made a significant contribution to the design and execution of the work described. Any contributors whose participation does not meet the criteria for authorship should be acknowledged but not listed as an author. The Journal will contact all listed authors at the point of submission to confirm their role. For a detailed definition of authorship, please see the International Committee of Medical Journal Editors (ICMJE) definitions of authors and contributors.
+
+The Journal does not allow ghost authorship, where an unnamed author prepares the article with no credit, or guest/gift authorship, where an author who made little or no contribution is listed as an author. The Journal follows Committee on Publication Ethics (COPE) guidance on ghost, guest, or gift authorship. For more information, please see our Publication Ethics page.
+
+Authorship changes
+After manuscript submission, no authorship changes (including the authorship list, author order, and who is designated as the corresponding author) should be made unless there is a substantive reason to do so. The editor and all co-authors must agree on the change(s), and neither the Journal nor the publisher mediates authorship disputes. If individuals cannot agree on the authorship of a submitted manuscript, contact the editorial office at ajepid.editorialoffice@technicaeditorial.com. The dispute must be resolved among the individuals and their institution(s) before the manuscript can be accepted for publication. If an authorship dispute or change arises after a paper is accepted, contact our Author Support team. COPE provides guidance for authors on resolving authorship disputes.
+
+After submission, changing who is designated as the corresponding author will be permitted only where there is a substantive reason to do so. For the avoidance of doubt, changing the corresponding author in order to access Read and Publish funding is not permissible. For more information on Read and Publish funding, see the Open access charges section.
+
+ORCID
+Authors are encouraged to provide their ORCID iDs (Open Researcher and Contributor iDs) at submission and take advantage of the benefits of participating in ORCID. If you do not already have an ORCID iD, you can register for free via the ORCID website. 
+
+As ORCID identifiers are collected, they are displayed in both the online and PDF versions of the publication, in compliance with recommended practice issued by ORCID.
+
+ORCID functionality online allows users to link to the ORCID website to view an author’s profile and list of publications. ORCID iDs are displayed on web pages and are sent downstream to third parties in data feeds, where supported.
+
+If you have registered with ORCID, you can associate your ORCID iD with your submission system account by going to your account details, entering your ORCID iD, and validating your details. Learn more about ORCID and how to link it to your account.
+
+CRediT
+The Journal uses the contributor roles taxonomy (CRediT), which allows authors to describe the contributor roles in a standardized, transparent, and accurate way. Authors should choose from the contributor roles outlined on the CRediT website and supply this information upon submission. You may choose multiple contributor roles per author. Any other individuals who do not meet the authorship criteria and made less substantive contributions should be listed in your manuscript as non-author contributors with their contributions clearly described. Following manuscript submission, any changes to contributor roles require the approval of the editor.
+
+Reviewers
+Individuals who have a conflict of interest relating to a submitted manuscript should recuse themselves and will not be assigned to oversee, handle, or peer review the manuscript.
+
+If during peer review an editor, reviewer, or author becomes aware of a conflict of interest that was not previously known or disclosed they must inform the Editor-in-Chief or Editorial Office immediately.
+
+Editors and editorial board members
+At initial submission, the corresponding author must declare if the Editor-in-Chief, an editor, or an editorial board member of the Journal is an author of or contributor to the manuscript. Another editor without a conflict of interest will oversee the peer review and decision-making process. If accepted, a statement will be published in the paper describing how the manuscript was handled. The statement will read “[Author name] holds the position of [role] for American Journal of Epidemiology and has not peer reviewed or made any editorial decisions for this paper."
+
+Crossref funding data registry 
+In order to meet your funding requirements authors are required to name their funding sources, or state if there are none, during the submission process. For further information on this process or to find out more about CHORUS, visit the CHORUS initiative.
+
+CONSORT guidelines
+For papers in which results of randomized trials are reported, the Journal encourages authors to follow the CONSORT guidelines. Please note that the CONSORT guidelines help to guarantee that the paper has the information necessary for the integration of the trial into meta-analyses and systematic reviews.
+
+Previously published material
+You should only submit your manuscript(s) to the Journal if:
+
+It is original work by you and your co-author(s).
+It is not under consideration, in peer review, or accepted for publication in any other publication  whilst under consideration in this journal.
+It has not been published in any other publication.
+It contains nothing abusive, defamatory, derogatory, obscene, fraudulent, or illegal.
+The submitting author must disclose in their cover letter and provide copies of all related or similar preprints, dissertations, manuscripts, published papers, and reports by the same authors (i.e., those containing substantially similar content or using the same, similar, or a subset of data) that have been previously published or posted electronically or are under consideration elsewhere at the time of manuscript submission. You must also provide a concise explanation of how the submitted manuscript differs from these related manuscripts and papers. All related previously published papers should be cited as references and described in the submitted manuscript.
+
+The Journal does not discourage you from presenting your findings at conferences or scientific meetings but recommends that you refrain from distributing complete copies of your manuscripts, which might later be published elsewhere without your knowledge.
+
+For previously published materials including tables and figures, please see the Reusing copyrighted material section.
+
+Preprints
+As an author, you retain the right to make an Author’s Original Version (preprint) available through various channels and this does not prevent submission to the Journal. If accepted, you are required to update the status of any preprint, including adding your published paper’s DOI. For full details on allowed channels and updating your preprint, please see our Author self-archiving policy.
+
+Reusing copyrighted material
+As an author, you must obtain permission for any material used within your manuscript for which you are not the rightsholder, including quotations, tables, figures, images, data, or software. In seeking permissions for published materials, first contact the publisher rather than the author. For unpublished materials, start by contacting the creator. Copies of each grant of permission should be provided to the editorial office of the Journal. The permissions agreement must include the following:
+
+Non-exclusive rights to reproduce the material in your paper in American Journal of Epidemiology
+Rights for use in print and electronic format at a minimum, and preferably for use in any form or medium
+Lifetime rights to use the material
+Worldwide English-language rights
+If you have chosen to publish under an open access license but have not obtained open access re-use permissions for third-party material contained within the manuscript, this must be stated clearly by supplying a credit line alongside the material with the following information:
+
+[Title of content]
+[Author], [Original publication], [year of original publication], by permission of [rights holder]
+This image/content is not covered by the terms of the Creative Commons license of this publication. For permission to reuse, please contact the rights holder.
+Refer to a summary of rights and permissions information for authors or see our detailed Copyright and Permissions Guidelines. 
+
+Misconduct
+Authors should observe high standards with respect to research integrity and publication ethics as set out by the Committee on Publication Ethics (COPE). Falsification or fabrication of data including inappropriate image manipulation, plagiarism, including duplicate publication of the author's own work without proper citation, and misappropriation of work are all unacceptable practices. Allegations of ethical misconduct, both directly and through social media, are treated seriously and will be investigated in accordance with the relevant COPE guidance and the Journal may publish an Expression of Concern to inform readers about an ongoing matter in a published article.
+
+If misconduct has been established beyond reasonable doubt, this may result in one or more of the following outcomes, among others:
+
+If a submitted manuscript is still under consideration, it may be rejected and returned to the author.
+If a paper has already been published online, depending on the nature and severity of the infraction, either a correction notice will be published and linked to the paper, or retraction of the paper will occur, following the COPE Retraction Guidelines.
+The relevant party’s institution(s) and/or other journals may be informed.
+Manuscripts submitted to the Journal may be screened with plagiarism-detection software. Any manuscript may be screened, especially if there is reason to suppose that part or all of the manuscript has been previously published.
+
+COPE defines plagiarism as:
+
+“when somebody presents the work of others (data, words or theories) as if they were their own and without proper acknowledgment.”
+
+COPE defines redundant/overlapping publication as: 
+
+“when a published work (or substantial sections from a published work) is/are published more than once (in the same or another language) without adequate acknowledgment of the source/cross-referencing/justification,
+or
+when the same (or substantially overlapping) data is presented in more than one publication without adequate cross-referencing/justification, particularly when this is done in such a way that reviewers/readers are unlikely to realise that most or all the findings have been published before.”
+
+COPE defines citation manipulation as: 
+
+“behaviours intended to inflate citation counts for personal gain, such as: excessive self-citation of an authors’ own work, excessive citation to the journal publishing the citing article, and excessive citation between journals in a coordinated manner.”
+
+Data fabrication is defined as intentionally creating fake data or misrepresenting research results. An example includes making up data sets.
+
+Data falsification is defined as manipulating research data with the purpose of intentionally giving a false representation. This can apply to images, research materials, equipment, or processes. Examples include cropping of gels/images to change context and omission of selected data.
+
+If notified of a potential breach of research conduct or publication ethics, the Journal editor and editorial office staff may inform the publisher and/or the author’s institutional affiliation(s). Authors should be prepared to provide additional information on request. 
+
+Ethical research
+The Journal takes research integrity seriously, and all research published in the Journal must have been conducted in a fair and ethical manner. Wherever appropriate, the Journal requires that all research be done according to international and local guidelines.
+
+Human participants
+When reporting on human participants, you should indicate whether the procedures followed were in accordance with the ethical standards of the Helsinki Declaration, which were developed by the World Medical Association. For non-interventional studies, where ethical approval is not required or where a study has been granted an exemption by an ethics committee, this should be stated within the manuscript with a full explanation. Otherwise, manuscripts must include a statement in the Methods section that the research was performed after approval by a local ethics committee, institutional review board and/or local licensing committee, or that such approval was not required. The name of the authorizing body and any reference/permit numbers (where available) should also be stated there. Please be prepared to provide further information to the editorial office upon request.
+
+Human participants must give written informed consent, or if they are minors or incapacitated, such consent must be obtained from their parents or guardians. Consent forms should cover not only study participation but also the publication of the data collected and deposition in databases and/or biobanks. Also, any patient or provider information should be anonymized to the extent possible; names and ID numbers should not be used in the text and must be removed from any images (X-rays, photographs, etc.). Please note blanking out an individual’s eyes in a photograph is not an effective way to conceal their identity. In studies where verbal, rather than written, informed consent was obtained, this must be explained and stated within the manuscript. If informed consent is not required or where a study has been granted an exemption, this must be included in the Methods section along with the name of the authorizing body. The Journal does not routinely collect consent forms, but authors should be prepared to provide written consent forms signed by the participants or other appropriate documentation to the editorial office upon request. For further guidance and examples, please refer to COPE’s guidance on consent.
+
+Clinical trials
+Clinical trials should be registered before enrollment of the first participant in accordance with the criteria outlined by the International Committee of Medical Journal Editors (ICMJE). When reporting primary or secondary analyses from a clinical trial, follow these criteria:
+
+Provide the trial registration number at the end of the Abstract.
+When the trial acronym is first used in the manuscript, provide the registration number and a link to the trial registration, which should be cited as a reference.
+If your data have been deposited in a public repository and/or are being used in a secondary analysis, please state at the end of the Abstract the unique, persistent data set identifier, and repository name and number.
+When submitting the manuscript, you must disclose any protocol alterations and all posting of results of the submitted work or closely related work in registries.
+In reporting randomized clinical trials, you must comply with published CONSORT guidelines.
+
+Where available, registration numbers should be provided not only for the trial you are reporting but also for any other trial mentioned in the manuscript. When the trial acronym is first used in the manuscript, provide the registration number and a link to the trial registration, which should be cited as a reference. 
+
+Inclusive language and images
+As defined by the Linguistic Society of America: 
+
+“Inclusive language acknowledges diversity, conveys respect to all people, is sensitive to differences, and promotes equal opportunities”
+
+We encourage you to consider using inclusive language and images when preparing your manuscript. For guidelines, please see the Joint Statement of Principles of C4DISC.
+
+Availability of data and materials
+Where ethically feasible, the Journal strongly encourages authors to make all data and software code on which the conclusions of the paper rely available to readers. Authors are required to include a data availability statement in their paper. When data and software underlying the research article are available in an online source, authors should include a full citation in their reference list. For details of the minimum information to be included in data and software citations see our guidance on citing research data and software.
+
+Whenever possible, data should be presented in the main manuscript or additional supporting files or deposited in a public repository. Visit our Research data page for information on general repositories for all data types, and resources for selecting repositories by subject area.
+
+Data availability statement
+The inclusion of a data availability statement is a requirement for papers published in the Journal. Data availability statements provide a standardized format for readers to understand the availability of original and third-party data underlying the research results described in the paper. The statement should describe and provide means of access, where possible, by linking to the data or providing the required unique identifier.
+
+More information and example data availability statements.
+
+Submitting your preprint to the journal
+You can submit your preprint directly from the server to American Journal of Epidemiology. To do this, visit the Author Area in and select American Journal of Epidemiology from the list of options.
+
+This will transfer all manuscript files and author information to American Journal of Epidemiology. You will then receive an email with a link to your submission in American Journal of Epidemiology, where you will need to answer some additional questions and approve the manuscript for submission.
+
+Authors submitting their preprint to American Journal of Epidemiology should refer to the section on Preprints. In particular, you should note the following:
+
+You should not submit your preprint to more than one journal simultaneously.
+If your paper is accepted for publication in American Journal of Epidemiology, you are responsible for ensuring that the preprint is updated with the DOI of and a link to the published paper. does this automatically for most papers, but the process is imperfect, particularly if the preprint and paper titles are different.
+For details on updating your preprint, please see our Author self-archiving policy.
+Digital preservation
+Content published in the Journal will automatically be deposited into digital preservation services, including CLOCKSS, the Global LOCKSS Network, and Portico. This ensures the long-term preservation of your work. Through LOCKSS, participating institutions can sustain access to content if the Journal were to otherwise be unavailable, even for a short period of time. Should the Journal ever cease to publish, or content otherwise become permanently unavailable, long-term access to the archives of CLOCKSS and Portico would be triggered. Until such a trigger event were to occur, this content is not available to the public through CLOCKSS and Portico.
+
+Self-archiving
+Self-archiving refers to posting a copy of your work on a publicly accessible website or repository. Under certain circumstances, you may self-archive versions of your work on your own webpages, on institutional webpages, and in other repositories. For information about the Journal's policy, and to learn which version(s) of your paper are acceptable for self-archiving, please see our Author self-archiving policy.
+
+Publishing agreement and charges
+Authors, please read each section on the publishing agreement and charges carefully. Even if your publishing agreement (also called a license) does not carry a charge, page charges will apply.
+
+If you have any questions relating to your publishing agreement or charges, please contact OUP Support.
+
+Publishing agreement
+After your manuscript is accepted, you will be asked to sign a license to publish through our licencing and payment portal, SciPris. The Journal offers the option of publishing under either a non-open access (standard) license or an open access (Creative Commons) license. There is a charge to publish under an open access license, which allows your paper to be freely accessible to all readers immediately upon online publication. Editorial decisions occur prior to this step and are not influenced by payment or ability to pay. The standard license makes your paper available only to Journal subscribers and there is no license charge. This license grants OUP an exclusive license to publish and distribute the content. There is no transfer of ownership of the copyright. You, the author, retain copyright for the content.
+
+Papers can be published under the following:
+
+Creative Commons Attribution license (CC BY)
+Creative Commons Attribution Non-Commercial license (CC BY-NC)
+Please see our guidance on Licenses, copyright, and re-use rights for more information regarding these publishing agreement options.
+
+Complying with funder mandates
+Please note that some funders require open access publication as a condition of funding. If you are unsure whether you are required to publish open access, please clarify any such requirements with your funder or institution before selecting your license.
+
+Further information on funder mandates and direct links to a range of funder policies.
+
+Charges
+Open access charges
+Please see the details of open access licenses and charges. If you select an open access license, you must pay the open access charge or request to use an institutional agreement to pay the open access charge through our licensing and payment portal, SciPris.
+
+Please note that prices are subject to change. All stated charges are exclusive of any applicable value added tax, goods and services tax and any similar sales or excise taxes (Sales Taxes). Any Sales Taxes will be added to the invoiced charge at the prevailing rate, as applicable.
+
+The fee may be paid in other currencies at a rate determined when you sign the publishing agreement for your manuscript.
+
+OUP has a growing number of open access agreements with institutions and consortia, which provide funding for open access publishing (also known as Read and Publish agreements). This means corresponding authors from participating institutions can publish open access, and the institution may pay the charge. Find out if your institution has an open access agreement.
+
+To be eligible for one of OUP’s Read and Publish agreements, the corresponding author must provide their qualifying institution as their primary affiliation when they submit their manuscript. After submission, changing the corresponding author in order to access Read and Publish funding is not permissible.
+
+Color charges
+The Journal does not charge for color.
+
+Page charges
+You must pay any applicable page charges through our licencing and payment portal, SciPris, when production of your manuscript is complete.
+
+The Journal charges $95 per page. The price is exclusive of value added tax, goods and services tax, and any similar sales or excise taxes. Any applicable taxes will be added to the invoiced charge at the prevailing rate.
+
+If you choose to publish under an open access publishing agreement, page charges do not apply.
+
+Member discounts
+Corresponding authors who are members of Society for Epidemiologic Research members may be eligible for discounts on publication charges. Please provide your member identifier when prompted as you submit your manuscript.
+
+Society for Epidemiologic Research members receive a 20% discount.
+
+Changes to published papers
+The Journal will only make changes to published papers if the publication record is seriously affected by the academic accuracy of the published information. Changes to a published paper will be accompanied by a formal correction notice linking to and from the original paper.
+
+As needed, we follow the COPE guidelines on retractions.
+
+For more information and details of how to request changes, including for authors who wish to update their name and/or pronouns, please see our policy on changes to published papers.
+
+Promoting your work
+As the author, you are the best advocate for your work, and we encourage you to be involved in promoting your publication. Sharing your ideas and news about your publication with your colleagues and friends could take as little as 15 minutes and will make a real difference in raising the profile of your research.
+
+You can promote your work by:
+
+Sharing your paper with colleagues and friends. If your paper is published open access, it will always be freely available to all readers, and you can share it without any limitations. Otherwise, use the toll-free link that is emailed to you after publication. It provides permanent, free access to your paper, even if your paper is updated.
+Signing up for an ORCID iD author identifier to distinguish yourself from any other researchers with the same name, create an online profile showcasing all your publications, and increase the visibility of your work.
+Using social media to promote your work. To learn more about self-promotion on social media, see our social media guide for authors.
+Find out how OUP promotes your content. 
+
+Preparing your manuscript
+General guidelines on preparing your manuscript for publication can be found on our Preparing and submitting your manuscript page. Specific instructions for American Journal of Epidemiology can be found below.
+
+Title Page
+To facilitate double-anonymous peer review, the title page should be submitted separately from the rest of the manuscript. The title page is the only document that should reveal the identity of the authors.  
+
+Please include the following:
+
+Manuscript title (avoid abbreviations)
+Full author names and affiliations (department, institution, city, state, country), each author marked indicating their affiliation, corresponding author marked with an asterisk
+Corresponding author email and full mailing address
+Dual lead authorship, where applicable 
+Acknowledgements
+All funding information relevant to the study, including specific grant numbers
+Disclaimer
+Data availability statement, where applicable
+Text abstracts
+Text abstracts must be written in English.
+
+ Abstracts are limited to 200 words and should be unstructured. For Original Contributions and Practice of Epidemiology articles, abstracts should state concisely the research question that was asked, the methods used, and the results and conclusions of the research. For opinion pieces, it should include a brief summary of the arguments being presented. Because the abstract is used by abstracting services such as MEDLINE and must make sense when read alone, it should not include citations of the scientific literature or figures or tables. However, it should include the study year(s), location, and population studied, if applicable.
+Graphical abstracts
+A graphical abstract is a single figure prepared by the authors that summarizes the key point(s) of an article and serves as a visual introduction to encourage interest in the content. When preparing your graphical abstract, keep in mind that they are ideally suited for promoting your article on social media, so text should be large enough to be read in that context and the image should be oriented in landscape format.
+
+Please also consider the accessibility of your graphical abstract to all readers. See our Guidelines for making figures accessible.
+
+Graphical abstracts are peer reviewed and published as part of the article online and in the PDF. It also appears in the table of contents and some other journal pages including in search results.
+
+Authors of Breakthroughs in Epidemiology, Practice of Epidemiology, Study Design, Novel Methodology, and Systematic Reviews are encouraged to submit a graphical abstract in addition to a text abstract for their manuscript at initial submission.
+
+Study funding
+You must fully declare all funding information relevant to the study, including specific grant numbers, under a separate subheading following the acknowledgements.
+
+Manuscript types
+Manuscript Type
+
+Description
+
+Word Count
+
+Abstract?
+
+1
+Original Contributions
+ 
+
+ 
+
+Breakthroughs in Epidemiology 
+
+Original research that enhances understanding of disease etiology, risk factors, health outcomes, and public health interventions at the population level. Includes field, clinical, laboratory, and mathematical modeling studies, as well as randomized trials, natural experiments, and cohort studies. Contributions must offer generalizable insights beyond individual cases or highly localized settings. 
+
+4,000
+
+Yes
+
+Practice of Epidemiology
+
+Research that improves the conduct, quality, and implementation of epidemiologic studies. Includes novel analytic methods, AI/ML applications, implementation science, validation of instruments, and surveillance or policy-relevant evaluations. 
+
+4,000	Yes
+Study Design
+
+Focused on innovations in sampling, recruitment, retention, and study operations. Encourages the use of hybrid designs, creative data acquisition approaches, and methods that improve participation and data integration. Please include 3-5 bullets that detail lessons learnt. 
+
+4,000
+
+Yes
+
+Novel Methodology 
+
+Papers that introduce new epidemiologic, statistical, or computational methods. Includes innovations in causal inference, bias reduction, and integration of NLP or AI in population health. Submissions should include real-world or illustrative applications. 
+
+4,000
+
+Yes
+
+Systematic Reviews, Meta-Analyses, and Pooled Analyses 
+
+Comprehensive, methodologically sound syntheses of existing literature or data. May focus on substantive topics in epidemiology or address methodological advances in meta-analytic techniques. Submissions must demonstrate rigorous methodology and relevance to public health or population science. 
+
+4,000
+
+Yes
+
+Research Letter
+
+Short reports presenting preliminary findings or methodological observations relevant to population health or epidemiology. Limited to 1 figure and 1 short table. Case reports without population-level relevance will not be considered
+
+1,500
+
+No
+
+2
+Educational Contributions
+ 
+
+ 
+
+The AJE Classroom 
+
+Short, structured, and pedagogical articles explaining novel or foundational methods in an accessible format. Targeted to students, early-career researchers, or non-methodologists. Includes real-world examples when possible. 
+
+1,500
+
+No
+
+Tutorials 
+
+Step-by-step guides to implementing complex epidemiologic, statistical, or computational methods. Authors are encouraged to provide code or supplementary tools to enhance reproducibility and learning. 
+
+3,000-4,000
+
+Yes
+
+3
+Opinion-Based Contributions
+ 	 
+Invited Commentary 
+
+Expert insights on epidemiologic topics, accepted AJE articles, or methods. Solicited by the editorial board to stimulate discourse. 
+
+2,000 each
+
+Yes
+
+Data-Driven Commentary 
+
+Combines evidence synthesis (e.g., meta-analyses, pooled data) with expert interpretation and policy or research implications. Offers a state-of-the-field review. 
+
+4,000
+
+Yes
+
+Point–Counterpoint 
+
+Coordinated submissions presenting opposing viewpoints on debated epidemiologic issues, including interpretations of data, methods, or policy impact. 
+
+2,000 each
+
+Yes
+
+Editorial 
+
+Opinion pieces authored by AJE editors or editorial board members. Addresses current issues in epidemiology, public health, or scientific publishing. 
+
+1,500 
+
+No 
+
+Broadening the Discourse  
+
+Community-submitted responses to editor-issued calls for contributions. Encourages diverse viewpoints on published work or emerging issues. 
+
+2,000 
+
+Yes
+
+Letter to the Editor 
+
+Focused response to a recently published AJE article. Provides clarifications, critiques, or alternative interpretations. Not blinded. Authors of the original article will be invited to reply. 
+
+500-600
+
+No
+
+Multipart papers
+The Journal strongly discourages the submission of multipart papers. If submitted, multipart papers should be prepared so they can be assigned to different editorial board members and independent outside expert reviewers.
+
+Pre-submission language editing
+You may wish to use a language-editing service before submitting to ensure that editors and reviewers understand your manuscript. OUP partners with Enago, a leading provider of author services. Through the OUP-Enago partner page, prospective authors are entitled to a discount for language editing, abstract and layperson summary writing, rejected manuscript editing, and creation of graphical abstracts, illustrations, and videos.
+
+Enago is an independent service provider, and will handle all aspects of this service, including payment. As an author, you are under no obligation to take up this offer. Language editing and other services from Enago are optional and do not guarantee that your manuscript will be accepted. Edited manuscripts will undergo the regular review process of the Journal. For more details and a list of additional resources, please see our page on language services.
+
+Text format and style
+Refer to a current issue of the Journal if you have concerns about the correct format and style. It should be used in conjunction with the AMA Manual of Style, 11th Edition, published by Oxford University Press. Use American English spelling. Follow Webster's Third New International Dictionary or Merriam Webster's Collegiate Dictionary, 11th Edition, for spelling and word division. Follow the Merck Index and Stedman's Medical Dictionary, 26th Edition, for spelling of chemical names and medical terms.
+
+Usage
+The Journal discourages the use of the word “effect(s)” as a proxy for “association(s)” in reports of single observational studies. There are many exceptions to this guideline, such as use of the expression “effect modification” as a proxy for “heterogeneity” and in papers focused on methods. The use of the word “effect” is also warranted when discussing the parameters the authors are trying to estimate. (For example: “The effect we are trying to estimate is the difference in 5-year risk/incidence curves.”) In general, authors should make a good case for why they believe that the use of the word “effect” is justified. Please refer to the editorial “Associations Are Not Effects” (Am J Epidemiol. 1991;133(2):101–102).
+
+Text headings: The main headings used in Original Contributions are Introduction, Methods, Results, and Discussion. (These headings may not apply to statistical papers.) Do not number the sections of the paper.
+
+Trade names: For products used in experiments or methods (particularly those referred to by a trade name), give the manufacturer's full name and location (in parentheses). When possible, use generic names of drugs.
+
+Footnotes to text: Do not use footnotes to the text. Instead, incorporate such material into the text (eg, in parentheses).
+
+Metric system: The Journal strongly encourages authors to use the metric system for all measurements. Where US measurements must be used (e.g., when reporting original measurements used in the study), metric equivalents must be given in parentheses.
+
+P values: In cases in which P values should be reported, please note style for probability: P <.01, with an uppercase italic letter P. P values should not be bolded. Avoid reporting an excessive number of digits beyond the decimal for estimates, especially when the estimate has a wide confidence interval. If P values are given, they should be reported to, at most, 2 digits. They may alternatively be reported as less than some specified value (eg, P <.05 or P <.001). Indicate whether P values are 1 sided or 2 sided.
+
+Statistical notation: Equations can appear within the text or displayed. Whenever possible, mathematical equations should be written on a single line, as a/ (a + b) and exp(x). With proper use of braces, brackets, parentheses, and exponents, even complicated expressions can be put into this form. However, any mathematical expression that contains a character taller than a line of type should be displayed and numbered as an equation. If your manuscript is submitted in Microsoft Word, please ensure that all math is editable with either the Word Math Editor or MathType. If your manuscript is submitted in LaTex, please be sure to include the .tex file.
+
+When referring to an equation in the text, use, for example, "equation 6." 
+
+For multiplication, use a times sign (×) rather than an asterisk or centered dot. For ±, ≤, and ≥, do not use an underline. The underline may be lost during software conversion, changing the meaning of the data from what the authors intended and leading to inaccurate representation.
+
+Regression analyses: When presenting results of regression analyses, regression coefficients should usually be converted into more generally meaningful terms (eg, relative odds instead of ꞵ coefficients). Note that because regression coefficients are unit dependent for continuous variables and category dependent for discrete or ordinal variables, the Journal strongly encourages statements specifying the units or categories, that is, as parenthetical statements in the text or in table footnotes or figure legends.
+
+Table format and style
+Tables should be submitted in the main manuscript file at the end of the document, after the references. Each table must be formatted by using the table feature in Word, and each entry must be in a separate cell. Tables should be numbered (Arabic numerals) in the same consecutive sequence in which they are mentioned in the text. They should be concise and self-explanatory. Avoid internal headings whenever possible. Column headings should be clearly delineated, with straddle rules over pertinent columns to indicate subcategories. Whenever possible, data in vertical columns should have the same unit of measurement. Divide overly long tables into 2 or more tables (eg, one table for women and another for men). Multipart tables (Table 2A and 2B) are not acceptable. For files submitted in LaTex, tables should be included in the PDF and follow the guidelines listed above.
+
+Table titles should give details on the place of the study, the time of the study, and the study population (if applicable). Example, “Baseline characteristics of infants with initial and follow-up screening, London, United Kingdom, 2001–2003.” In the table body, leave blank spaces for no entry; avoid using dashes. Order of footnotes: 1) Abbreviations: (no footnote symbol, listed alphabetically, separated by semicolons); 2) other footnotes as necessary, each preceded by a superscript lowercase letter. Footnotes must be cited in order when reading from left to right and top to bottom.
+
+Requirements for figures
+General figure requirements are provided below. These guidelines have been compiled to ensure maximum clarity and readability in both the full-text XML and PDF versions of the article. However, we are happy to work with authors to determine the format that makes the most sense for each specific figure.
+
+Please format figures so that when they are reduced for print publication, the smallest type size is 8 pt. Note that figures set in portrait mode cannot be wider than 7 inches; those set in landscape mode cannot be wider than 9 inches. The maximum height depends on the length of the legend. We discourage the publication of figures set in landscape mode unless absolutely necessary. Figures should be scaled appropriately for the content.
+
+There are no color figure charges. The Journal encourages the submission of color figures. Authors should submit their figures with the manuscript.
+
+If your figures were created in Word, Excel, or PowerPoint, please submit in that format. For all other programs, please save these figures directly to EPS, PDF, or TIFF files and submit in that format with accompanying PDFs. Vector files are preferred.
+
+On maps, add a scale bar (in kilometers or meters) and an arrow indicating which direction is north. 
+
+All multipanel figures should have locants to identify each panel. Locants should be capital letters followed by a closing parenthesis, such as A), B), and C). Locants should be approximately the same size as the rest of the text in the figure and should appear completely above and to the left of the figure panel.
+
+When plotting relative measures of effect (eg, relative risks, relative odds), a logarithmic scale must be used unless there is a compelling reason to use an arithmetic scale. If bars are used to plot the relative measures, they should start at the baseline level of 1.0 rather than at zero.
+
+The figure titles and legends should be submitted as a single paragraph. The text of figure legends beyond the scale, arrow, panel locant, and axis information should not be included on the figures themselves but should be typed after the reference list. Each legend should be formatted as a separate paragraph and should include details on the place of the study, the time of the study, and the study population (if applicable). Define all figure abbreviations in the legend.
+
+If causal diagrams (eg, causal directed acyclic graphs, single-world intervention graphs) were used to assist in developing the analytic plan, we encourage the authors to state this in the Methods section and to append a copy of the diagram as a (supplemental) figure.
+
+Figure accessibility and alt text
+When submitting your manuscript, we require you to provide alt text (alternative text) descriptions for all images, figures, illustrations, and photographs included in the main article.  
+
+Please consider accessibility when designing each figure, so that all images can be easily understood by visually impaired readers. OUP provides detailed guidance on figure accessibility, including contrast, text accessibility and alt text. It is also best practice for the information or data represented in the image to be fully described by the caption and/or surrounding text.
+
+Please include each alt text description in your main manuscript file, directly under the figure legend for the relevant figure, preceded by ‘Alt text:’.  
+
+Detailed guidance on how to draft and submit alt text.   
+
+Including alt text in your manuscript helps make your work more accessible to all readers. Good alt text ensures that individuals with visual impairments or those using screen readers can understand the content and context of your figures. The aim of alt text is to give concise and informative descriptions of your figures so all readers can understand and benefit from the visuals in your manuscript. Including alt text demonstrates a commitment to accessibility and enhances the overall impact and reach of your work.  
+
+Alt text is only accessible via e-reader and will not appear as part of the typeset article.   
+
+Supplementary data
+Supplementary data can be made available by the publisher as online-only content linked to the online manuscript.
+
+Definition
+Supplementary materials comprise supporting materials that cannot be included in the printed version of the article because of space constraints and that are not necessary in the full text of the manuscript but would nevertheless benefit the reader. They should not be essential to understanding the conclusions of the paper but should contain data that are directly relevant to the article content. Excessively long supplementary data (>50 pages) or those that contain information not directly relevant to the paper will not be accepted. Examples of permissible supplementary materials include more detailed methods, extended data sets/data analysis, tables, questionnaires, or additional figures. These should be named, for example, Appendix S1, Table S1, or Figure S1. Supplementary data should appear in the order cited or by like type content group.
+
+Process
+All material to be considered as supplementary data must be submitted at the same time as the main manuscript for peer review. Note: We cannot guarantee that supplementary material will be peer reviewed. Please indicate clearly the material intended as supplementary data upon submission. Also ensure that the supplementary data are referred to in the main manuscript at an appropriate point in the text. This material must be supplied to the production department with the article for publication, not at a later date. It cannot be altered or replaced after the paper has been accepted for publication.
+
+Files for supplementary data should be clearly marked as such and be accompanied by a summary of the file names and types.
+
+Please note that supplementary data will not be copyedited, so ensure that the material is clearly and succinctly presented and that the style of terms conforms with the rest of the paper. Also ensure that the presentation will be compatible with any Internet browser. 
+
+Acceptable formats
+A maximum of 5 files is acceptable to make up the supplementary data unit for an article. The maximum size per file should not exceed 2 MB (although text files should be a great deal smaller), and files must be as small as possible so they can be downloaded quickly. Supplementary material should include a title page with the article title, the byline, and a list of included materials.
+
+If you require further help or information regarding submission or preparation of supplementary data, please contact the editorial office.
+
+Data collection and codes
+As recommended by the ICMJE, the AJE encourages authors to make their data collection instruments, as well as their data and corresponding codes, available to others as a supplementary appendix.
+
+References
+If you are using a reference management system, please use the American Medical Association (AMA) Manual of Style format.
+
+Number references consecutively in the order in which they are mentioned in the text. Reference numbers in the text are superscript Arabic numerals. For 3 or more consecutive references cited all at once, use, for example, 1–4. 
+
+When directly quoting material in the text, give the reference number followed by the page number(s) of the quotation in parentheses, for example, (p. 65).
+
+Important: All statements of scientific fact should be referenced. Failure to do so may cause considerable delay in processing the manuscript and may necessitate renumbering of the references.
+
+The reference list should be limited to published or "in press" references. References to personal written communications or unpublished data (including manuscripts submitted for publication but not yet accepted) should be inserted in parentheses in the text rather than in the reference list. Give the person's name, institutional affiliation, "personal communication" or “unpublished data,” and the year. Verbal communications are not acceptable as supporting documentation.
+
+References must be verified by the author(s) against the original documents and must give the exact authors' last names, initials, and article title. Please supply the entire page range and issue number (in parentheses); see examples below. For manuscripts accepted (not submitted) but not yet published, designate the journal followed by a period and then “In press.” For references to papers presented at conferences, give the location (city and state or country), month and days, and year of the conference. For references published online in advance of print publication, provide the journal abbreviation followed by the digital object identifier (DOI) number in parentheses.
+
+For articles originally published in a language other than English, indicate the language in parentheses after the article title provided in English.
+
+References to holy books (eg, the Bible, the Quran) should be cited parenthetically in running text. Include the chapter and verse(s).
+
+Examples of correct forms of references follow. Type references double-spaced. The titles of journals should be abbreviated according to the List of Journals Indexed in Index Medicus (published by the National Library of Medicine). For more than 3 authors, list the first 3 and add "et al."
+
+Examples of reference style
+Standard journal article
+Wang G, Hu FB, Mistry KB, et al. Association between maternal prepregnancy body mass index and plasma folate concentrations. JAMA Pediatr. 2016;170(8):525-532. https://doi.org/10.1093/nar/gkab107 
+
+Book
+Rothman KJ, Greenland S, eds. Modern Epidemiology. 2nd ed. Lippincott-Raven Publishers; 1998. 
+
+Chapter in a Book
+Robins JM. Marginal structural models versus structural nested models as tools for causal inference. In: Halloran ME, Berry D, eds. Statistical Models in Epidemiology, the Environment, and Clinical Trials. New York, NY: Springer-Verlag; 1999:95–134.
+
+Dissertation
+Maiti N. Association Between Bullying Behaviors, Health Characteristics, and Injuries Among Adolescents in the United States. Dissertation. Palo Alto University; 2010. 
+
+Electronic article
+Brownstein JS, Wolfe CJ, Mandl KD. Empirical evidence for the effect of airline travel on inter-regional influenza spread in the United States [electronic article]. PLoS Med. 2006;3:e401.
+
+Web page/Web site
+International Society for Infectious Diseases. ProMED-mail. Accessed February 10, 2016. http://www.promedmail.org.
+
+Charlton G. Internal linking for SEO: examples and best practices. SearchEngineWatch. Updated August 11, 2016. Accessed June 18, 2019. https://searchenginewatch.com/sew/how-to/2428041/internal-linking-for-seo-examples-and-best-practices.
+
+Database or database entry
+Black IW, Orange GR. 2019. Data relating to coronary angiographic analysis. Code Ocean. https://doi.org/10.1093/codeocean/abc124. Version no. 123. Date of deposit January 23, 2019. Date accessed February 27, 2019.  
+
+Software manual
+Epi Info. Version 7.1.5. Centers for Disease Control and Prevention; 2015. Accessed March 14, 2016. http://www.cdc.gov/epiinfo.
+
+Revisions
+Revisions should be submitted online to ScholarOne Manuscripts using the same "Contact Author" account that was used for the original submission. At this site, authors will find a link to the current paper and instructions on how to upload the revisions. Authors are requested to upload an anonymized copy showing the changes, deletions, and/or additions that is double spaced and includes page numbers but not line numbers. Along with these copies, responses to the editor's and reviewers' comments are also requested.

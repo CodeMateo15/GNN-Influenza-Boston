@@ -1,0 +1,127 @@
+{
+  "model": "arima",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-09-25T14:32:03",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      2
+    ],
+    "test_start": "2024-12-01",
+    "test_end": "2025-11-30",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 99,
+    "n_val": 17,
+    "n_test": 49,
+    "first_test_target": "2024-12-01",
+    "last_test_target": "2025-11-02"
+  },
+  "order_grid": {
+    "p": 3,
+    "d": 1,
+    "q": 3
+  },
+  "seasonal_harmonics": 0,
+  "selected_orders": {
+    "ALMIRANTE BROWN": "(0, 0, 3)",
+    "AVELLANEDA": "(3, 0, 2)",
+    "EZEIZA": "(3, 0, 3)",
+    "FLORENCIO VARELA": "(1, 0, 0)",
+    "GENERAL SAN MART\u00cdN": "(3, 0, 1)",
+    "JOS\u00c9 C. PAZ": "(0, 1, 3)",
+    "LA MATANZA": "(1, 0, 3)",
+    "LAN\u00daS": "(1, 0, 0)",
+    "LOMAS DE ZAMORA": "(0, 1, 1)",
+    "MALVINAS ARGENTINAS": "(1, 0, 1)",
+    "MERLO": "(3, 1, 0)",
+    "MORENO": "(1, 0, 1)",
+    "MOR\u00d3N": "(1, 0, 0)",
+    "QUILMES": "(0, 1, 2)",
+    "SAN ISIDRO": "(0, 1, 1)",
+    "SAN MIGUEL": "(3, 0, 2)",
+    "TIGRE": "(3, 1, 3)",
+    "TRES DE FEBRERO": "(2, 0, 0)",
+    "VICENTE L\u00d3PEZ": "(2, 0, 0)"
+  },
+  "fallback_forecasts": 0,
+  "fallback_share": 0.0,
+  "selection_horizon": 2,
+  "missing_target_cells": 15,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "2": 0.0
+    },
+    "beta": {
+      "2": 17.15547959701412
+    },
+    "kappa": {
+      "2": 0.5144608696676293
+    },
+    "n_validation": 323,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "2": [
+        -1.2475796000974992,
+        -1.0086551952110567,
+        -0.7909630945048346,
+        -0.6358145325010984,
+        -0.44878876133625845,
+        -0.3829152316765341,
+        -0.291124518070741,
+        -0.23834633287759335,
+        -0.1801025987951936,
+        -0.15360374529587334,
+        -0.11216925911820887,
+        -0.06405179835137627,
+        -0.004686534168638015,
+        0.03959401127221226,
+        0.09161019171373945,
+        0.16176544847532248,
+        0.21836688359583145,
+        0.2850971370643403,
+        0.3302773040077115,
+        0.5017504417253725,
+        0.7480014299833291,
+        0.9918999128150056,
+        1.1856143937997283
+      ]
+    },
+    "scale_floor": {
+      "2": 2.27312977996498
+    }
+  },
+  "test_interval_coverage": 91.26637554585153
+}

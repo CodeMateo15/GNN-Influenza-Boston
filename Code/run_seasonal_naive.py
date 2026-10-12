@@ -172,7 +172,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    add_common_args(parser)
+    add_common_args(parser, variants=("all", "exclude_covid", "post_covid", "full"))
     parser.add_argument("--season-lag", type=int, default=SEASON_LAG_WEEKS,
                         help="Lag in weeks used as the prediction. 52 = same week last "
                              "year (seasonal naive); 1 = persistence.")
