@@ -165,8 +165,7 @@ pip install -r requirements.txt
 ```
 
 This installs the forecasting models from PyPI
-([areaFluForecast](https://pypi.org/project/areaFluForecast/) 1.1.0, pinned so
-results don't change under you).
+([areaFluForecast](https://pypi.org/project/areaFluForecast/) 1.1.0).
 
 **Each week:**
 
