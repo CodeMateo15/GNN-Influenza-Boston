@@ -1,121 +1,109 @@
 # GNN-Influenza-Boston
 
-Week-ahead forecasting of influenza-like illness (ILI) emergency-department visit
-rates for the 14 neighborhoods of Boston, framed as a problem on a graph. The
-question the project asks is whether the structure *connecting* neighborhoods —
-shared borders, correlated histories, similar demographics —
-carries forecasting signal beyond each neighborhood's own history.
+This is the research code behind a 1–4 week flu forecast for Boston's 14
+neighborhoods. The forecast is for flu-like illness emergency-department
+visits per 100,000 residents, using the weekly data the Boston Public Health
+Commission (BPHC) publishes.
 
-## Status: work in progress
+The main question: **if a model knows which neighborhoods border each other,
+does it forecast better than one that looks at each neighborhood on its own?**
+To answer it, the project uses a graph neural network (GNN), a model that is
+given the map of which areas touch.
 
-This is an active research repository, not a finished result or a stable tool.
+If you want to forecast for your own city, use this package instead:
+[areaFluForecast](https://github.com/CodeMateo15/areaFluForecast)
+(`pip install areaFluForecast`). This repository is where the research was done.
 
-- Numbers move as data defects are found and corrected. Five more were found in
-  September 2026 and are recorded as defects 5-9 in
-  [Data notes](Code/docs/DATA_NOTES.md); two of them were the largest single
-  source of error in the graph models, and fixing them moved the then-current
-  graph arm from RMSE 24.90 to 19.12 at one week ahead with no model change at
-  all.
-- **On seasons its design never saw** (a rolling-origin backtest, 2022-25, with
-  every learned model tuned the same way on validation weeks only), adding the
-  graph reliably improves the graph model (`gnn_st`) in Boston: it beats the
-  same model without the graph at one week in all three seasons, and at two and
-  four weeks in two of three. It does **not** reliably beat the best tuned
-  non-graph models. It ties a tuned LSTM and a tuned Cola-GNN at one week, and
-  leads them at two and four weeks in direction, but clearly in only one season
-  of three against the LSTM and never against Cola-GNN. In Columbus it leads only at one week. In Buenos Aires it cannot be
-  told apart from persistence. Its forecast error (weighted interval score) is
-  18-28% below persistence's in Boston. See
-  [Methods § With every model tuned](Code/docs/METHODS.md#with-every-model-tuned-the-same-way).
-- **The pipeline ports by data alone.** A city is a profile (nodes, season,
-  loader) and a graph derived from boundary polygons. Boston's hand-drawn map
-  was ~85% right, and the models score the same on polygon-derived maps (33 of
-  36 week-level comparisons tied). A model trained on Boston and applied to
-  Columbus with no local training matches one trained on Columbus, and a
-  zero-shot model's error is below persistence's in every case tested. The graph's
-  *advantage*, though, is Boston-specific. See
-  [Methods § Portability](Code/docs/METHODS.md#portability-does-the-model-need-a-hand-drawn-map-and-does-it-travel).
-- **A measured ceiling bounds all of it.** Distributing a *perfect* citywide
-  forecast across neighborhoods by their historical shares scores macro Corr
-  0.938. Boston's neighborhoods co-move almost completely, so correlations here
-  should be read against 0.94, not 1.0 — and macro Corr of 0.90 at two to four
-  weeks ahead is not reachable on this data. See
-  [Methods](Code/docs/METHODS.md#how-good-can-any-model-get-here-a-measured-ceiling).
-- Script flags, feature sets and result layouts still change without notice.
+---
+
+## What we found
+
+Each model was tested on past seasons it never saw while being built. It was
+compared with the simplest guess: "next week looks like this week".
+
+- **Boston:** the graph model's error was 18–28% lower than that simple guess.
+  - It beat the same model run without the map at 1 week ahead in all three
+    seasons tested, and at 2 and 4 weeks ahead in two of three.
+  - It tied a well-tuned standard neural network (an LSTM) at 1 week ahead.
+  - It led that network at 2 and 4 weeks ahead, but clearly in only one season
+    of three.
+- **Chicago** (58 ZIP codes, held out the whole time): error was 17–19% lower
+  than the simple guess. The map helped at 1 week ahead in all four seasons
+  tested.
+- **Columbus, Ohio:** error was 12–23% lower on average, but the gap wasn't
+  clear enough to call. The graph model led the other models only at 1 week
+  ahead.
+- **Buenos Aires:** no better than the simple guess.
+
+**Limits:**
+- Every model runs about a week behind the curve for each week ahead it
+  forecasts.
+  - The models are better at predicting how big the flu wave gets than when
+    it turns.
+- Boston's neighborhoods rise and fall almost together, which limits how much
+  any model can gain from the map. Neighborhoods, counties, or nodes with more of a difference can gain more from the model.
+
+The full methods and results are in [Methods](Code/docs/METHODS.md).
+
+---
+
+## What's in this repository
+
+| Folder | What it holds |
+| --- | --- |
+| [`BPHC/`](BPHC/) | **For BPHC:** the latest 2-week forecast, how accurate past forecasts were, and the code to make them each week |
+| `Code/` | The models, the tests on past seasons, and the plots |
+| `Data/` | The weekly data for each city, plus weather and neighborhood data |
+| `Paper/` | The paper draft |
+
+---
 
 ## Data
 
-Weekly resolution, 2017-12-31 through 2026-05, over Boston's 14 BPHC
-neighborhoods plus 7 non-scored "anchor" nodes standing in for the surrounding
-area (Cambridge/Somerville, Brookline, Chelsea/Revere/Winthrop, the suburbs, and
-the water between them).
+| City | Areas | Source |
+| --- | --- | --- |
+| Boston | 14 neighborhoods, weekly since Dec 2017 | BPHC public dashboard |
+| Chicago | 58 ZIP codes, weekly activity level (1–10) | Chicago Department of Public Health |
+| Columbus, Ohio | 17 areas, weekly since Jan 2022 | Columbus Public Health |
+| Buenos Aires | 19 districts | Argentina's Ministry of Health (SNVS) |
 
-| Source | What it is |
-| --- | --- |
-| `Data/BPHC Flu Data/` | **The target series.** Boston Public Health Commission dashboard exports: weekly ILI ED-visit rates per 100,000 by neighborhood (436 weeks, 2017-12-31 → 2026-05-03), plus citywide counts, ILI as a share of ED visits, monthly demographics, and daily flu wastewater by sewershed (2024-08 on). |
-| `Data/BPHC Covid and RSV Data/` | Monthly neighborhood COVID cases and testing, confirmed RSV cases, and COVID/RSV wastewater. Optional covariates. |
-| `Data/Weather/` | Weekly weather per neighborhood — temperature, humidity, precipitation, wind (438 weeks, 2017-12-31 → 2026-05-17). Scraped by `Code/scrapers/scrape_weather.py`. |
-| `Data/Neighborhood Data/` | 22 Boston Indicators / BPDA tables (population, age, poverty, commute mode, housing, education, labor force, …), reduced to eight static per-neighborhood features. |
-| `Data/Mass Flu Vaccination Data/` | Massachusetts dashboard flu vaccination workbooks, 2023-24 through 2025-26. Optional feature. |
+Weather comes from [Open-Meteo](https://open-meteo.com/) (CC BY 4.0).
 
-### Third city: Buenos Aires (AMBA)
+- **Columbus:** Columbus Public Health provided visit-level records. Only the
+  weekly area counts are in this repository; the visit-level records are not
+  shared.
+- **Before using any city's data:** each one has quirks, so read its notes:
+  - [Boston](Code/docs/DATA_NOTES.md)
+  - [Chicago](Code/docs/CHICAGO_DATA_NOTES.md)
+  - [Columbus](Code/docs/COLUMBUS_DATA_NOTES.md)
+  - [Buenos Aires](Code/docs/AMBA_DATA_NOTES.md)
 
-19 partidos of the Buenos Aires conurbano, from Argentina's national
-respiratory surveillance (SNVS) with INDEC 2022 census denominators. Southern
-Hemisphere (flu season April–September) with its own evaluation window,
-because the feed backfills for about four months. Details in
-[AMBA data notes](Code/docs/AMBA_DATA_NOTES.md).
+---
 
-### Second city: Columbus OH
-
-Boston's findings rest on one city and one test season, so a second
-city is being added to test whether the *model ordering* reproduces — not
-whether Columbus forecasts better. Franklin County publishes ILI
-emergency-department surveillance at a sub-city geography with enough history to
-reach Boston's evaluation window.
-
-| Source | What it is |
-| --- | --- |
-| `Data/Columbus Influenza Data/` | Weekly counts per area for **17 areas** and 238 contiguous weeks (2022-01-02 → 2026-07-19): ILI ED visits, flu hospitalisations and COVID cases (`columbus_*_weekly_counts.csv`), plus a ZIP→area crosswalk. They are aggregated by `Code/scrapers/build_columbus_panel.py` from three line-level Columbus Public Health extracts (one row per visit or case, keyed to home ZIP), which are kept private to the project and are not in this repository. |
-| `Data/Columbus Weather/` | Weekly weather per area, from the same Open-Meteo endpoint as Boston's. Generated by `Code/scrapers/scrape_weather_columbus.py`. |
-
-Unlike Boston's, the Columbus target is **constructed**: the extracts carry no
-rate and no population denominator. Read
-[Columbus data notes](Code/docs/COLUMBUS_DATA_NOTES.md) before using any of it —
-in particular, Columbus zeros are real observations whereas Boston's missing
-weeks are suppression, so `n_obs` and MAPE are not comparable across the cities.
-
-Verify the layer with `python Code/run_columbus_data_check.py`.
-
-## Data availability
-
-- **Boston:** rates are published by the Boston Public Health Commission
-  (public dashboard).
-- **Buenos Aires:** data are published by Argentina's Ministry of Health (SNVS).
-- **Columbus:** the data were provided by Columbus Public Health as
-  de-identified visit-level extracts. With their agreement, the weekly
-  area-level counts used in every analysis are public in this repository. The
-  visit-level extracts are available from Columbus Public Health on request.
-- **Weather:** Open-Meteo (CC BY 4.0).
-- **Boundaries:** the City of Boston, the US Census Bureau and Argentina's
-  Instituto Geográfico Nacional.
-
-The forecasting models are also released as an installable package for health
-departments,
-[areaFluForecast](https://github.com/CodeMateo15/areaFluForecast).
-
-## Quickstart
+## Run it
 
 ```bash
 pip install -r requirements.txt
-python Code/run_arima.py --variant post_covid          # a cheap baseline
-python Code/run_gnn.py   --experiment gnn_st          # the current model
+python Code/run_arima.py --variant post_covid    # a quick statistical model
+python Code/run_gnn.py   --experiment gnn_st     # the graph model
 ```
+
+This is a research repository, so script options can change. For a stable
+tool, use [areaFluForecast](https://github.com/CodeMateo15/areaFluForecast).
+
+---
 
 ## More detail
 
-- [Methods, results and limitations](Code/docs/METHODS.md) — models, evaluation, leaderboards, what the numbers actually say
-- [Data notes](Code/docs/DATA_NOTES.md) — per-file quirks and known defects
-- [Columbus data notes](Code/docs/COLUMBUS_DATA_NOTES.md) — the second city: sources, the 17-area geography, and where it cannot match Boston
-- [Graph design](Code/docs/EDGES_AND_NODES_NOTES.txt) — nodes, edge types, weighting
-- [Severity bands](Code/docs/SEVERITY.md) · [Rt caveats](Code/docs/RT_CAVEATS.md)
+- [Methods and results](Code/docs/METHODS.md)
+- [What each score means, in plain language](Code/docs/METRICS_PLAIN.md)
+- [How the neighborhood map was built](Code/docs/EDGES_AND_NODES_NOTES.txt)
+
+## Credits
+
+Supported by the Boston Public Health Commission, Columbus Public Health, the
+PEAK Trailblazer fellowship, Prof. Ariel Hamlin, Prof. Deahan Yu, and Prof. Rajagopal Venkatesaramani (Northeastern University).
+
+## Contact
+
+Mateo Biggs, biggs.m@northeastern.edu
