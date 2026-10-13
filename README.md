@@ -106,4 +106,4 @@ PEAK Trailblazer fellowship, Prof. Ariel Hamlin, Prof. Deahan Yu, and Prof. Raja
 
 ## Contact
 
-Mateo Biggs, biggs.m@northeastern.edu
+Mateo Biggs (biggs.m@northeastern.edu) or Atharva Nilapwar (nilapwar.a@northeastern.edu).
