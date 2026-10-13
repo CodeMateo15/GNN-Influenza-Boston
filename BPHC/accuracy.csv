@@ -1,0 +1,161 @@
+source,season,weeks_ahead,scope,model,n_forecasts,avg_error,wis,wis_vs_last_week,in_95_range,in_50_range
+backtest,2023-24,1,citywide,ARIMA,52,3.069,2.810,0.908,1.000,0.923
+backtest,2023-24,1,citywide,LSTM,52,2.826,2.590,0.837,1.000,0.904
+backtest,2023-24,1,citywide,GNN,52,2.696,2.517,0.814,1.000,0.885
+backtest,2023-24,1,citywide,Average,52,2.658,2.592,0.838,1.000,0.923
+backtest,2023-24,1,citywide,Same as last week,52,3.648,3.093,1.000,1.000,0.904
+backtest,2023-24,1,neighborhoods,ARIMA,710,8.259,5.391,0.920,0.972,0.555
+backtest,2023-24,1,neighborhoods,LSTM,710,7.553,4.847,0.827,0.973,0.572
+backtest,2023-24,1,neighborhoods,GNN,710,7.300,4.679,0.798,0.972,0.558
+backtest,2023-24,1,neighborhoods,Average,710,7.278,4.689,0.800,0.979,0.561
+backtest,2023-24,1,neighborhoods,Same as last week,710,8.949,5.860,1.000,0.972,0.524
+backtest,2023-24,2,citywide,ARIMA,52,3.909,3.484,0.873,1.000,0.923
+backtest,2023-24,2,citywide,LSTM,52,4.513,3.376,0.845,1.000,0.769
+backtest,2023-24,2,citywide,GNN,52,3.938,3.109,0.779,1.000,0.885
+backtest,2023-24,2,citywide,Average,52,3.940,3.253,0.815,1.000,0.904
+backtest,2023-24,2,citywide,Same as last week,52,5.190,3.993,1.000,1.000,0.808
+backtest,2023-24,2,neighborhoods,ARIMA,710,8.707,5.763,0.876,0.994,0.631
+backtest,2023-24,2,neighborhoods,LSTM,710,8.223,5.280,0.802,0.989,0.566
+backtest,2023-24,2,neighborhoods,GNN,710,7.767,5.033,0.765,0.987,0.608
+backtest,2023-24,2,neighborhoods,Average,710,7.806,5.100,0.775,0.993,0.611
+backtest,2023-24,2,neighborhoods,Same as last week,710,9.981,6.579,1.000,0.983,0.534
+backtest,2023-24,3,citywide,ARIMA,52,3.979,4.000,0.808,1.000,0.962
+backtest,2023-24,3,citywide,LSTM,52,5.502,4.065,0.821,1.000,0.769
+backtest,2023-24,3,citywide,GNN,52,4.122,3.492,0.706,1.000,0.923
+backtest,2023-24,3,citywide,Average,52,4.295,3.707,0.749,1.000,0.904
+backtest,2023-24,3,citywide,Same as last week,52,6.828,4.949,1.000,1.000,0.788
+backtest,2023-24,3,neighborhoods,ARIMA,710,8.312,5.715,0.797,0.999,0.727
+backtest,2023-24,3,neighborhoods,LSTM,710,8.739,5.741,0.800,0.996,0.577
+backtest,2023-24,3,neighborhoods,GNN,710,7.949,5.284,0.736,0.994,0.654
+backtest,2023-24,3,neighborhoods,Average,710,7.935,5.338,0.744,0.997,0.666
+backtest,2023-24,3,neighborhoods,Same as last week,710,10.913,7.174,1.000,0.992,0.601
+backtest,2023-24,4,citywide,ARIMA,52,3.975,4.331,0.760,1.000,0.981
+backtest,2023-24,4,citywide,LSTM,52,6.377,4.641,0.814,1.000,0.769
+backtest,2023-24,4,citywide,GNN,52,4.737,3.895,0.683,1.000,0.904
+backtest,2023-24,4,citywide,Average,52,4.644,4.115,0.722,1.000,0.885
+backtest,2023-24,4,citywide,Same as last week,52,8.065,5.700,1.000,1.000,0.769
+backtest,2023-24,4,neighborhoods,ARIMA,710,8.384,5.910,0.747,0.997,0.779
+backtest,2023-24,4,neighborhoods,LSTM,710,9.305,6.176,0.781,0.997,0.589
+backtest,2023-24,4,neighborhoods,GNN,710,8.522,5.652,0.714,0.999,0.642
+backtest,2023-24,4,neighborhoods,Average,710,8.302,5.674,0.717,0.999,0.692
+backtest,2023-24,4,neighborhoods,Same as last week,710,12.080,7.911,1.000,0.996,0.599
+backtest,2024-25,1,citywide,ARIMA,52,6.997,4.738,1.280,0.942,0.519
+backtest,2024-25,1,citywide,LSTM,52,4.758,3.213,0.868,1.000,0.750
+backtest,2024-25,1,citywide,GNN,52,4.095,2.731,0.738,1.000,0.827
+backtest,2024-25,1,citywide,Average,52,4.543,3.191,0.862,1.000,0.788
+backtest,2024-25,1,citywide,Same as last week,52,5.107,3.702,1.000,1.000,0.827
+backtest,2024-25,1,neighborhoods,ARIMA,677,11.132,7.804,1.221,0.867,0.388
+backtest,2024-25,1,neighborhoods,LSTM,677,8.109,5.271,0.825,0.942,0.489
+backtest,2024-25,1,neighborhoods,GNN,677,7.436,4.855,0.760,0.922,0.524
+backtest,2024-25,1,neighborhoods,Average,677,8.234,5.382,0.842,0.922,0.482
+backtest,2024-25,1,neighborhoods,Same as last week,677,9.764,6.392,1.000,0.916,0.480
+backtest,2024-25,2,citywide,ARIMA,52,9.550,6.356,1.010,0.942,0.365
+backtest,2024-25,2,citywide,LSTM,52,8.452,5.739,0.912,0.923,0.615
+backtest,2024-25,2,citywide,GNN,52,5.908,4.004,0.636,0.981,0.808
+backtest,2024-25,2,citywide,Average,52,7.306,5.012,0.797,0.942,0.596
+backtest,2024-25,2,citywide,Same as last week,52,9.346,6.292,1.000,0.923,0.673
+backtest,2024-25,2,neighborhoods,ARIMA,677,12.990,9.198,1.026,0.843,0.350
+backtest,2024-25,2,neighborhoods,LSTM,677,11.029,7.561,0.844,0.883,0.445
+backtest,2024-25,2,neighborhoods,GNN,677,9.290,6.119,0.683,0.904,0.445
+backtest,2024-25,2,neighborhoods,Average,677,10.330,7.027,0.784,0.885,0.451
+backtest,2024-25,2,neighborhoods,Same as last week,677,13.350,8.963,1.000,0.903,0.415
+backtest,2024-25,3,citywide,ARIMA,52,11.350,7.702,0.850,0.865,0.269
+backtest,2024-25,3,citywide,LSTM,52,10.214,7.094,0.783,0.904,0.577
+backtest,2024-25,3,citywide,GNN,52,7.865,5.589,0.617,0.904,0.692
+backtest,2024-25,3,citywide,Average,52,8.981,6.371,0.703,0.904,0.615
+backtest,2024-25,3,citywide,Same as last week,52,12.829,9.059,1.000,0.904,0.615
+backtest,2024-25,3,neighborhoods,ARIMA,677,13.978,10.126,0.872,0.774,0.344
+backtest,2024-25,3,neighborhoods,LSTM,677,12.583,8.854,0.762,0.863,0.436
+backtest,2024-25,3,neighborhoods,GNN,677,11.041,7.630,0.657,0.892,0.452
+backtest,2024-25,3,neighborhoods,Average,677,11.803,8.270,0.712,0.861,0.431
+backtest,2024-25,3,neighborhoods,Same as last week,677,16.467,11.617,1.000,0.858,0.440
+backtest,2024-25,4,citywide,ARIMA,52,12.048,8.354,0.719,0.865,0.250
+backtest,2024-25,4,citywide,LSTM,52,11.264,7.781,0.670,0.923,0.558
+backtest,2024-25,4,citywide,GNN,52,8.414,6.138,0.528,0.885,0.673
+backtest,2024-25,4,citywide,Average,52,9.803,6.937,0.597,0.885,0.519
+backtest,2024-25,4,citywide,Same as last week,52,16.438,11.620,1.000,0.846,0.558
+backtest,2024-25,4,neighborhoods,ARIMA,677,14.812,10.850,0.771,0.764,0.313
+backtest,2024-25,4,neighborhoods,LSTM,677,13.479,9.507,0.676,0.873,0.419
+backtest,2024-25,4,neighborhoods,GNN,677,11.385,8.068,0.573,0.885,0.440
+backtest,2024-25,4,neighborhoods,Average,677,12.531,8.874,0.631,0.857,0.411
+backtest,2024-25,4,neighborhoods,Same as last week,677,19.401,14.068,1.000,0.821,0.431
+backtest,2025-26,1,citywide,ARIMA,53,4.483,3.161,0.891,0.981,0.830
+backtest,2025-26,1,citywide,LSTM,53,3.858,2.745,0.773,0.981,0.774
+backtest,2025-26,1,citywide,GNN,53,3.731,2.543,0.716,1.000,0.774
+backtest,2025-26,1,citywide,Average,53,3.744,2.695,0.759,1.000,0.849
+backtest,2025-26,1,citywide,Same as last week,53,4.945,3.550,1.000,0.981,0.792
+backtest,2025-26,1,neighborhoods,ARIMA,676,7.773,5.131,0.902,0.944,0.496
+backtest,2025-26,1,neighborhoods,LSTM,676,6.928,4.540,0.798,0.957,0.513
+backtest,2025-26,1,neighborhoods,GNN,676,6.570,4.269,0.750,0.957,0.512
+backtest,2025-26,1,neighborhoods,Average,676,6.685,4.399,0.773,0.956,0.540
+backtest,2025-26,1,neighborhoods,Same as last week,676,8.611,5.690,1.000,0.947,0.510
+backtest,2025-26,2,citywide,ARIMA,53,6.460,4.645,0.770,0.925,0.755
+backtest,2025-26,2,citywide,LSTM,53,7.265,5.258,0.871,0.925,0.642
+backtest,2025-26,2,citywide,GNN,53,6.373,4.464,0.739,0.925,0.736
+backtest,2025-26,2,citywide,Average,53,6.324,4.567,0.756,0.925,0.736
+backtest,2025-26,2,citywide,Same as last week,53,8.425,6.037,1.000,0.925,0.717
+backtest,2025-26,2,neighborhoods,ARIMA,676,9.741,6.754,0.834,0.913,0.533
+backtest,2025-26,2,neighborhoods,LSTM,676,9.771,6.921,0.854,0.898,0.493
+backtest,2025-26,2,neighborhoods,GNN,676,8.838,6.112,0.754,0.899,0.482
+backtest,2025-26,2,neighborhoods,Average,676,9.001,6.267,0.773,0.911,0.534
+backtest,2025-26,2,neighborhoods,Same as last week,676,11.661,8.103,1.000,0.926,0.543
+backtest,2025-26,3,citywide,ARIMA,53,8.145,5.846,0.717,0.925,0.679
+backtest,2025-26,3,citywide,LSTM,53,9.395,6.962,0.853,0.887,0.585
+backtest,2025-26,3,citywide,GNN,53,9.266,6.596,0.809,0.906,0.547
+backtest,2025-26,3,citywide,Average,53,8.307,6.134,0.752,0.906,0.717
+backtest,2025-26,3,citywide,Same as last week,53,11.268,8.157,1.000,0.925,0.717
+backtest,2025-26,3,neighborhoods,ARIMA,676,11.092,7.779,0.756,0.922,0.516
+backtest,2025-26,3,neighborhoods,LSTM,676,11.933,8.632,0.839,0.901,0.473
+backtest,2025-26,3,neighborhoods,GNN,676,11.616,8.292,0.806,0.888,0.432
+backtest,2025-26,3,neighborhoods,Average,676,11.076,7.870,0.765,0.908,0.488
+backtest,2025-26,3,neighborhoods,Same as last week,676,14.612,10.283,1.000,0.917,0.497
+backtest,2025-26,4,citywide,ARIMA,53,8.801,6.248,0.644,0.943,0.623
+backtest,2025-26,4,citywide,LSTM,53,10.665,7.797,0.803,0.906,0.509
+backtest,2025-26,4,citywide,GNN,53,10.106,7.425,0.765,0.887,0.566
+backtest,2025-26,4,citywide,Average,53,9.378,6.787,0.699,0.887,0.623
+backtest,2025-26,4,citywide,Same as last week,53,13.680,9.709,1.000,0.906,0.698
+backtest,2025-26,4,neighborhoods,ARIMA,676,11.496,8.056,0.683,0.928,0.488
+backtest,2025-26,4,neighborhoods,LSTM,676,12.955,9.365,0.794,0.898,0.436
+backtest,2025-26,4,neighborhoods,GNN,676,12.622,9.059,0.768,0.886,0.459
+backtest,2025-26,4,neighborhoods,Average,676,11.854,8.429,0.715,0.907,0.479
+backtest,2025-26,4,neighborhoods,Same as last week,676,16.656,11.792,1.000,0.930,0.553
+backtest,all,1,citywide,ARIMA,157,4.848,3.567,1.034,0.975,0.758
+backtest,all,1,citywide,LSTM,157,3.814,2.849,0.826,0.994,0.809
+backtest,all,1,citywide,GNN,157,3.509,2.596,0.753,1.000,0.828
+backtest,all,1,citywide,Average,157,3.649,2.825,0.819,1.000,0.854
+backtest,all,1,citywide,Same as last week,157,4.569,3.449,1.000,0.994,0.841
+backtest,all,1,neighborhoods,ARIMA,2063,9.042,6.098,1.020,0.928,0.481
+backtest,all,1,neighborhoods,LSTM,2063,7.531,4.885,0.817,0.958,0.525
+backtest,all,1,neighborhoods,GNN,2063,7.105,4.602,0.770,0.951,0.532
+backtest,all,1,neighborhoods,Average,2063,7.397,4.822,0.806,0.952,0.528
+backtest,all,1,neighborhoods,Same as last week,2063,9.106,5.979,1.000,0.945,0.505
+backtest,all,2,citywide,ARIMA,157,6.638,4.827,0.887,0.955,0.682
+backtest,all,2,citywide,LSTM,157,6.747,4.794,0.881,0.949,0.675
+backtest,all,2,citywide,GNN,157,5.412,3.863,0.710,0.968,0.809
+backtest,all,2,citywide,Average,157,5.860,4.279,0.786,0.955,0.745
+backtest,all,2,citywide,Same as last week,157,7.658,5.444,1.000,0.949,0.732
+backtest,all,2,neighborhoods,ARIMA,2063,10.451,7.215,0.918,0.918,0.507
+backtest,all,2,neighborhoods,LSTM,2063,9.651,6.566,0.835,0.924,0.502
+backtest,all,2,neighborhoods,GNN,2063,8.618,5.743,0.731,0.931,0.513
+backtest,all,2,neighborhoods,Average,2063,9.026,6.115,0.778,0.931,0.533
+backtest,all,2,neighborhoods,Same as last week,2063,11.637,7.861,1.000,0.938,0.498
+backtest,all,3,citywide,ARIMA,157,7.827,5.849,0.791,0.930,0.637
+backtest,all,3,citywide,LSTM,157,8.377,6.046,0.818,0.930,0.643
+backtest,all,3,citywide,GNN,157,7.098,5.234,0.708,0.936,0.720
+backtest,all,3,citywide,Average,157,7.202,5.409,0.732,0.936,0.745
+backtest,all,3,citywide,Same as last week,157,10.315,7.393,1.000,0.943,0.707
+backtest,all,3,neighborhoods,ARIMA,2063,11.082,7.839,0.812,0.900,0.532
+backtest,all,3,neighborhoods,LSTM,2063,11.047,7.710,0.799,0.921,0.497
+backtest,all,3,neighborhoods,GNN,2063,10.165,7.039,0.729,0.926,0.515
+backtest,all,3,neighborhoods,Average,2063,10.233,7.130,0.739,0.923,0.531
+backtest,all,3,neighborhoods,Same as last week,2063,13.947,9.651,1.000,0.923,0.514
+backtest,all,4,citywide,ARIMA,157,8.278,6.311,0.700,0.936,0.618
+backtest,all,4,citywide,LSTM,157,9.443,6.746,0.748,0.943,0.611
+backtest,all,4,citywide,GNN,157,7.767,5.830,0.647,0.924,0.713
+backtest,all,4,citywide,Average,157,7.951,5.951,0.660,0.924,0.675
+backtest,all,4,citywide,Same as last week,157,12.734,9.014,1.000,0.917,0.675
+backtest,all,4,neighborhoods,ARIMA,2063,11.513,8.234,0.735,0.898,0.531
+backtest,all,4,neighborhoods,LSTM,2063,11.871,8.314,0.742,0.924,0.483
+backtest,all,4,neighborhoods,GNN,2063,10.805,7.561,0.675,0.924,0.516
+backtest,all,4,neighborhoods,Average,2063,10.854,7.627,0.681,0.922,0.530
+backtest,all,4,neighborhoods,Same as last week,2063,15.982,11.203,1.000,0.917,0.529

@@ -1,0 +1,21 @@
+{
+  "origin": "2026-09-27",
+  "city": "Boston",
+  "unit": "ILI emergency-department visits per 100,000 residents",
+  "models": [
+    "ARIMA",
+    "LSTM",
+    "GNN",
+    "Average"
+  ],
+  "issued": "2026-10-06T14:06:43",
+  "notes": [
+    "ARIMA rows were added from forecast_arima.csv, made after the archived forecast from the same data.",
+    "No live forecast has reached its target week yet, so there are no live rows."
+  ],
+  "backtest_seasons": [
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ]
+}
