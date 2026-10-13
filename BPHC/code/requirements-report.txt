@@ -1,0 +1,6 @@
+# Reporting step only: make_bphc.py and bphc_figures.py (reformat forecasts, draw figures).
+# Enough if you only consume forecasts someone else produced.
+# Tested with Python 3.12.
+numpy==1.26.4
+pandas==2.3.2
+matplotlib==3.9.2
