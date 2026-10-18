@@ -144,7 +144,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     }
 
     with track_emissions(run_tag(experiment.name, experiment.variant, window),
-                         enabled=not args.no_carbon) as carbon:
+                         enabled=not args.no_carbon, city=city.name) as carbon:
         seeds = [experiment.train.seed + i for i in range(args.n_seeds)]
         print(f"Budget: {experiment.train.epochs} epochs x {len(seeds)} seeds", flush=True)
         test_parts, val_parts, per_seed = [], [], []
@@ -176,46 +176,48 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
             best_val, best_state, best_epoch, patience = np.inf, None, 0, 0
             epoch = 0
 
-            for epoch in range(1, experiment.train.epochs + 1):
-                model.train()
-                order = torch.randperm(len(x_train), device=device)
-                total = 0.0
-                for start in range(0, len(order), batch_size):
-                    idx = order[start:start + batch_size]
-                    optimizer.zero_grad()
-                    prediction = model(x_train[idx], a_geo, a_corr)[:, :graph.n_neigh]
-                    loss = masked_mse(prediction, y_train[idx])
-                    loss.backward()
-                    torch.nn.utils.clip_grad_norm_(model.parameters(), experiment.train.grad_clip)
-                    optimizer.step()
-                    total += float(loss.item()) * len(idx)
-                train_losses.append(total / max(len(x_train), 1))
+            with carbon.phase("train"):
+                for epoch in range(1, experiment.train.epochs + 1):
+                    model.train()
+                    order = torch.randperm(len(x_train), device=device)
+                    total = 0.0
+                    for start in range(0, len(order), batch_size):
+                        idx = order[start:start + batch_size]
+                        optimizer.zero_grad()
+                        prediction = model(x_train[idx], a_geo, a_corr)[:, :graph.n_neigh]
+                        loss = masked_mse(prediction, y_train[idx])
+                        loss.backward()
+                        torch.nn.utils.clip_grad_norm_(model.parameters(), experiment.train.grad_clip)
+                        optimizer.step()
+                        total += float(loss.item()) * len(idx)
+                    train_losses.append(total / max(len(x_train), 1))
 
-                model.eval()
-                with torch.no_grad():
-                    val_loss = float(masked_mse(
-                        model(x_val, a_geo, a_corr)[:, :graph.n_neigh], y_val).item())
-                val_losses.append(val_loss)
-                scheduler.step(val_loss)
+                    model.eval()
+                    with torch.no_grad():
+                        val_loss = float(masked_mse(
+                            model(x_val, a_geo, a_corr)[:, :graph.n_neigh], y_val).item())
+                    val_losses.append(val_loss)
+                    scheduler.step(val_loss)
 
-                if val_loss < best_val:
-                    best_val, best_epoch = val_loss, epoch
-                    best_state = copy.deepcopy(model.state_dict())
-                    patience = 0
-                else:
-                    patience += 1
-                if epoch == 1 or epoch % 10 == 0:
-                    print(f"Epoch {epoch:3d} | train MSE {train_losses[-1]:.6f} | "
-                          f"val MSE {val_loss:.6f} | lr {optimizer.param_groups[0]['lr']:.6f}")
-                if patience >= experiment.train.early_stop_patience:
-                    print(f"Early stopping at epoch {epoch}")
-                    break
+                    if val_loss < best_val:
+                        best_val, best_epoch = val_loss, epoch
+                        best_state = copy.deepcopy(model.state_dict())
+                        patience = 0
+                    else:
+                        patience += 1
+                    if epoch == 1 or epoch % 10 == 0:
+                        print(f"Epoch {epoch:3d} | train MSE {train_losses[-1]:.6f} | "
+                              f"val MSE {val_loss:.6f} | lr {optimizer.param_groups[0]['lr']:.6f}")
+                    if patience >= experiment.train.early_stop_patience:
+                        print(f"Early stopping at epoch {epoch}")
+                        break
 
+            carbon.add_epochs(epoch)
             if best_state is not None:
                 model.load_state_dict(best_state)
             model.eval()
             x_test, _ = tensors["test"]
-            with torch.no_grad():
+            with carbon.phase("eval"), torch.no_grad():
                 normalized = model(x_test, a_geo, a_corr)[:, :graph.n_neigh].cpu().numpy()
                 normalized_val = model(x_val, a_geo, a_corr)[:, :graph.n_neigh].cpu().numpy()
             test_parts.append(normalized)

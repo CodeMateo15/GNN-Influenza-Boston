@@ -1569,8 +1569,10 @@ run on all three Boston maps over the three unseen folds. Mean WIS:
 | `gnn_st_geofixed`, h=1 / 2 / 4 | 5.10 / 6.38 / 8.40 | 5.13 / 6.39 / 8.35 | 5.07 / 6.33 / 8.29 |
 
 Of 36 week-level comparisons (derived map against the hand map, per fold,
-horizon and model), 33 are ties, 2 favour a derived map and 1 favours the hand
-map. A new city can take its graph from its boundary files.
+horizon and model), counting 95% block-bootstrap intervals that exclude zero,
+33 are ties, 2 favour a derived map and 1 favours the hand map. With the Holm
+adjustment within fold and horizon that the paper uses, none of the 36 is clear
+(Table 3). A new city can take its graph from its boundary files.
 
 **2. A model trained in one city helps another only where it has no data of
 its own.** `gnn_st_noadapt` (no per-node learned adjacency, so every weight has
@@ -1632,6 +1634,50 @@ week (see [The backtest verdict](#the-backtest-verdict)).
   `gcn_fusion` model separately in each city on a shared feature set.
 - Buenos Aires cannot take part in weight transfer without a static layer that
   handles a different number of demographic columns.
+
+### Training on several cities at once (2026-10-14)
+
+**Question.** Does a model trained on 2 or 3 cities together forecast a city
+better than a model trained on it alone, or better than a single-source transfer?
+
+**How it was run.**
+- `run_gnn.py --pool-cities boston:full,columbus:post_covid,chicago:full` →
+  `run_pooled()`, using `train_stgnn_pooled` in `influenza/training.py`.
+  It is allowed only for `gnn_st_noadapt`, the model with no learned links, so
+  its 13,876 parameters are the same in every city.
+- Each city keeps its own graph, per-area scaling, seasonal curve and
+  `pre_test` validation weeks. Every training batch comes from one city.
+- Each city supplies the same number of batches per epoch, so Chicago (about
+  11.2k training cells) does not swamp Boston (3.8k) or Columbus (1.2k).
+- The best epoch is picked on the mean of the per-city validation errors.
+- Sources were trained for 4 designs × h1/2/4, with 10 seeds and 120 epochs,
+  on weeks before 2024-06-01:
+  - `pooled_all3`, which includes each target's own pre-test weeks
+  - `pooled_others_<target>`, which leaves the target out
+- Each source was applied to every target with `--init-from` in two arms:
+  - `transfer_zeroshot_from_pooled_{all3,others}`
+  - `transfer_finetune_from_pooled_{all3,others}`
+- Explorer jobs: 11079720 (sources, `tasks_pooled_sources.jsonl`) and
+  11079723 (targets, `tasks_transfer_pooled.jsonl`). All 36 target runs loaded
+  27 of 27 tensors.
+- Tests: `compare_significance.py --tag transfer_pooled`, with reference
+  `gnn_st_noadapt` and Holm over the 4 pooled arms. A second run,
+  `--tag transfer_pooled_vs_single`, compares the leave-target-out model with
+  the single-source zero-shot. The published `significance_transfer*` files
+  are untouched.
+
+**Result (2024-25, mean WIS; Appendix S1 Table S15).**
+- **Columbus:** every pooled version beat local by 3–8%, none clearly
+  (Holm p .06–.40). Boston + Chicago without Columbus beat the Boston-only
+  zero-shot at every horizon: 3.85 vs 3.90, 4.80 vs 5.08 (p = .006) and
+  5.97 vs 6.45 (p = .06).
+- **Boston and Chicago:** local was best. Zero-shot pooled was worse
+  everywhere, clearly in Chicago (3 of 4 at h1–2); fine-tuned tied in all 12.
+  Two sources did not beat one in Boston (Holm p = 1.0). In Chicago, two
+  sources beat one only at h1 (1.14 vs 1.16, p = .04).
+
+**What this supports.** A short-history city gains from more source cities.
+Once a city has years of its own data, pooling adds nothing.
 
 ### Where the per-city artifacts are
 
@@ -1718,7 +1764,10 @@ difference, and a Diebold-Mariano test Holm-adjusted across the baselines):
   2023-24). Against the plain LSTM, the strongest baseline, it is tied in
   2022-23 at every horizon and in 2023-24 at h=2. **The graph earns its place in
   Boston at one and two weeks; at four the direction is consistent but the
-  evidence is weak.**
+  evidence is weak.** (These are the untuned arms. Under equal tuning, which the
+  paper reports, the map-removed comparison at h=4 goes the other way in
+  2022-23, +0.09, and the lead over the tuned LSTM is not consistent in
+  direction either.)
 - **Columbus (one unseen fold, 2024-25).** Clear at h=1 against everything
   except persistence on WIS; at h=2 and h=4 tied with its no-graph arm, the
   blend baseline, SARIMA and `xgboost_parity`.
@@ -2122,11 +2171,17 @@ Data/                  BPHC, Columbus Public Health and SNVS surveillance,
 Citation Papers/       literature, nearest-neighbour first
 ```
 
-Every run records its own energy use and CO₂ via
-[codecarbon](https://github.com/mlco2/codecarbon), appended to
-`Code/results/_emissions/emissions.csv` and summarised per run in
-`emissions.json`. Tracking degrades gracefully: it never fails a model run, and
-`--no-carbon` disables it.
+Every model run records its wall-clock time (total, per phase, per epoch) and,
+unless `--no-carbon` is passed, its energy use and CO₂ via
+[codecarbon](https://github.com/mlco2/codecarbon), against the Massachusetts
+grid. Serial runs append to `Code/results/_emissions/emissions.csv`; cluster
+array tasks and parallel ablation arms each write their own file under
+`_emissions/tasks/`. Each run directory gets an `emissions.json`, and the run
+ends with a printed receipt. Tracking never fails a model run. Power is
+usually estimated from the CPU's rated wattage rather than read from a
+hardware counter. `Code/compare_compute.py` turns all of this into an
+accuracy-per-energy leaderboard, frontier plot and Appendix S1 table. Fields,
+caveats and the latest numbers are in [COMPUTE.md](COMPUTE.md).
 
 ---
 

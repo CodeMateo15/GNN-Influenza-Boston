@@ -14,7 +14,8 @@
 #       --index-url https://download.pytorch.org/whl/cpu
 #   ~/envs/gnn-flu/bin/python -m pip install "torch-geometric==2.6.1" \
 #       "pandas>=2.0" "numpy<2" "scipy>=1.10" "matplotlib>=3.7" \
-#       "statsmodels>=0.14" "xgboost>=2.0" networkx seaborn requests openpyxl tabulate
+#       "statsmodels>=0.14" "xgboost>=2.0" networkx seaborn requests openpyxl tabulate \
+#       "codecarbon==3.2.5"
 #
 # xgboost is required by run_xgboost.py, which every sweep task list runs.
 #

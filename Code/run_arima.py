@@ -238,7 +238,8 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
     # which serialises the emissions summary.
     print(f"Budget: {city.n_neigh} epochs x 1 seeds", flush=True)
     print("--- seed 0 (1/1) ---", flush=True)
-    with track_emissions(run_tag(args.name, variant, window), enabled=not args.no_carbon) as carbon:
+    with track_emissions(run_tag(args.name, variant, window), enabled=not args.no_carbon,
+                         city=city.name) as carbon:
         records: list[dict] = []
         val_records: list[dict] = []
         fallback_count = 0

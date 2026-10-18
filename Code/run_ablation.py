@@ -350,8 +350,13 @@ def report(table: pd.DataFrame, horizon: int, noise: float | None, source: str,
 
 def train(names: list[tuple[str, str, int | None]], horizon: int, n_seeds: int,
           study: str, jobs: int, log_dir: Path, done: int, total: int,
-          city: str = "boston") -> int:
-    """Launch run_gnn.py per arm, tee-ing stdout so progress stays visible."""
+          city: str = "boston", no_carbon: bool = False) -> int:
+    """Launch run_gnn.py per arm, tee-ing stdout so progress stays visible.
+
+    Arms run `jobs` at a time, so each child gets its own emissions file
+    (results/_emissions/tasks/ablation_*.csv) and process-level metering --
+    concurrent appends to the shared emissions.csv would corrupt it.
+    """
     for start in range(0, len(names), jobs):
         batch = names[start:start + jobs]
         processes = []
@@ -373,14 +378,18 @@ def train(names: list[tuple[str, str, int | None]], horizon: int, n_seeds: int,
                 "--output-dir", str(ablation_root(horizon, n_seeds, study, city)),
                 "--checkpoint-dir",
                 str(paths.city_root(city, paths.CHECKPOINT_DIR) / "ablation" / study
-                    / f"h{horizon:02d}_s{n_seeds}"),
-                "--no-carbon"]
+                    / f"h{horizon:02d}_s{n_seeds}")]
+            if no_carbon:
+                command.append("--no-carbon")
             if seed is not None:
                 command += ["--seed", str(seed)]
             log_dir.mkdir(parents=True, exist_ok=True)
             handle = (log_dir / f"h{horizon:02d}_{name}.log").open("w")
+            env = {**os.environ, "GNNFLU_EMISSIONS_FILE": str(
+                paths.EMISSIONS_DIR / "tasks"
+                / f"ablation_{city}_{study}_h{horizon:02d}_s{n_seeds}_{name}.csv")}
             processes.append((name, handle, subprocess.Popen(
-                command, stdout=handle, stderr=subprocess.STDOUT, text=True)))
+                command, stdout=handle, stderr=subprocess.STDOUT, text=True, env=env)))
         for name, handle, process in processes:
             process.wait()
             handle.close()
@@ -412,6 +421,8 @@ def main() -> None:
     parser.add_argument("--jobs", type=int, default=4,
                         help="Arms to train concurrently. torch is pinned to one "
                              "thread per process, so this scales with cores.")
+    parser.add_argument("--no-carbon", action="store_true",
+                        help="Skip energy metering (wall-clock time is still recorded).")
     parser.add_argument("--no-replicates", action="store_true",
                         help="Skip the two extra reference ensembles. The noise "
                              "floor then falls back to an inferred estimate, "
@@ -464,7 +475,7 @@ def main() -> None:
             print(f"\nh={horizon}: {len(pending)} of {len(jobs)} runs to train "
                   f"({args.n_seeds} seeds each, {args.jobs} at a time)", flush=True)
             done = train(pending, horizon, args.n_seeds, args.study, args.jobs,
-                         log_dir, done, total, city.name)
+                         log_dir, done, total, city.name, no_carbon=args.no_carbon)
 
     for horizon in horizons:
         for name, _, _ in jobs:

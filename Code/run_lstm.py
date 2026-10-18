@@ -227,7 +227,8 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
     print(f"Budget: {args.epochs} epochs x {len(seeds)} seeds", flush=True)
     per_seed: list[dict] = []
     test_draws, val_draws = [], []
-    with track_emissions(run_tag(args.name, variant, window), enabled=not args.no_carbon) as carbon:
+    with track_emissions(run_tag(args.name, variant, window), enabled=not args.no_carbon,
+                         city=city.name) as carbon:
         for i, seed in enumerate(seeds, start=1):
             print(f"--- seed {seed} ({i}/{len(seeds)}) ---", flush=True)
             random.seed(seed)
@@ -235,11 +236,13 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
             torch.manual_seed(seed)
             if torch.cuda.is_available():
                 torch.cuda.manual_seed_all(seed)
-            model, best_epoch, best_loss, train_history, val_history = train_model(
-                train, val, device, args, window, city.n_neigh, seed, blend_init,
-            )
+            with carbon.phase("train"):
+                model, best_epoch, best_loss, train_history, val_history = train_model(
+                    train, val, device, args, window, city.n_neigh, seed, blend_init,
+                )
+            carbon.add_epochs(len(train_history))
             model.eval()
-            with torch.no_grad():
+            with carbon.phase("eval"), torch.no_grad():
                 normalized_pred = model(torch.from_numpy(x_test).to(device),
                                         torch.from_numpy(c_test).to(device)).cpu().numpy()
                 normalized_val = model(torch.from_numpy(x_val).to(device),

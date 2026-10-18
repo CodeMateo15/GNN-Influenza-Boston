@@ -1,0 +1,36 @@
+{
+  "run_name": "lstm:post_covid:h4",
+  "city": "boston",
+  "enabled": true,
+  "kg_co2": 9.142553588284583e-06,
+  "kwh": 2.4540628108167503e-05,
+  "duration_s": 7.666099596768618,
+  "setup_s": 10.455894216895103,
+  "wall_s": 18.12199381366372,
+  "cpu_kwh": 3.4562743470926418e-06,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 2.108435376107486e-05,
+  "phases": {
+    "train": 7.499,
+    "eval": 0.004
+  },
+  "epochs": 76,
+  "seconds_per_epoch": 0.09867424002578973,
+  "region": "massachusetts",
+  "tracking_mode": "process",
+  "measured": "estimated (cpu load x TDP)",
+  "hardware": {
+    "cpu_model": "AMD EPYC 7702 64-Core Processor",
+    "gpu_model": "",
+    "cpu_count": "128",
+    "os": "Linux-5.14.0-362.13.1.el9_3.x86_64-x86_64-with-glibc2.34"
+  },
+  "emissions_file": "/scratch/biggs.m/gnn-flu/Code/results/_emissions/tasks/11056624_12.csv",
+  "slurm_job": "11056624_12",
+  "codecarbon_version": "3.2.5",
+  "cpu_share_correction": null,
+  "raw_kwh": null,
+  "raw_kg_co2": null,
+  "git_sha": null,
+  "note": null
+}

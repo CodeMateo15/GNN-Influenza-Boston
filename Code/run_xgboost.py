@@ -168,7 +168,7 @@ def main() -> None:
     print("--- seed 0 (1/1) ---", flush=True)
     step = 0
     with track_emissions(run_tag(args.name, args.variant, window),
-                         enabled=not args.no_carbon) as carbon:
+                         enabled=not args.no_carbon, city=city.name) as carbon:
         for h_idx, horizon in enumerate(window.horizons):
             # Targets in RATE units, so the climatology offset is interpretable.
             y_rate = np.full(len(meta), np.nan, dtype=np.float64)
@@ -203,8 +203,10 @@ def main() -> None:
             for seed in seeds:
                 model = xgb.XGBRegressor(**{**params, "random_state": seed,
                                             "early_stopping_rounds": 50})
-                model.fit(X_all[tr], target[tr], eval_set=[(X_all[va], target[va])],
-                          verbose=False)
+                with carbon.phase("train"):
+                    model.fit(X_all[tr], target[tr], eval_set=[(X_all[va], target[va])],
+                              verbose=False)
+                carbon.add_epochs(1)
                 boosters.append(model)
                 step += 1
                 print(f"Epoch {step} | h={horizon} seed={seed} best_iteration="

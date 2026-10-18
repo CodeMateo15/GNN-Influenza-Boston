@@ -1,0 +1,36 @@
+{
+  "run_name": "pooled_others_boston:pooled:h4",
+  "city": "columbus",
+  "enabled": true,
+  "kg_co2": 0.012134146441306901,
+  "kwh": 0.032570722430080856,
+  "duration_s": 5509.266126623377,
+  "setup_s": 31.634904991835356,
+  "wall_s": 5540.901031615213,
+  "cpu_kwh": 0.017300730573583046,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 0.015269991856497812,
+  "phases": {
+    "train": 5483.301
+  },
+  "epochs": 1200,
+  "seconds_per_epoch": 4.569417263730429,
+  "region": "massachusetts",
+  "tracking_mode": "process",
+  "measured": "estimated (cpu load x TDP)",
+  "hardware": {
+    "cpu_model": "Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz",
+    "gpu_model": "",
+    "cpu_count": "1",
+    "os": "Linux-5.14.0-362.13.1.el9_3.x86_64-x86_64-with-glibc2.34",
+    "node_physical_cores": "20"
+  },
+  "emissions_file": "/scratch/biggs.m/gnn-flu/Code/results/_emissions/tasks/11079720_9.csv",
+  "slurm_job": "11079720_9",
+  "codecarbon_version": "3.2.5",
+  "cpu_share_correction": 0.05,
+  "raw_kwh": 0.3612846033281586,
+  "raw_kg_co2": 0.13459573373554024,
+  "git_sha": null,
+  "note": null
+}

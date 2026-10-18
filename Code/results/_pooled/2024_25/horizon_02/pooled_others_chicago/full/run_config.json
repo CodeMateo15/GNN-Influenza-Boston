@@ -1,0 +1,142 @@
+{
+  "model": "pooled_others_chicago",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-14T13:25:24",
+  "pooled": true,
+  "pool_cities": {
+    "boston": {
+      "variant": "full",
+      "train": 270,
+      "val": 47,
+      "n_nodes": 21,
+      "n_neigh": 14,
+      "split": {
+        "n_train": 270,
+        "n_val": 47,
+        "n_test": 52,
+        "first_test_target": "2024-06-02",
+        "last_test_target": "2025-05-25"
+      }
+    },
+    "columbus": {
+      "variant": "post_covid",
+      "train": 70,
+      "val": 12,
+      "n_nodes": 22,
+      "n_neigh": 17,
+      "split": {
+        "n_train": 70,
+        "n_val": 12,
+        "n_test": 52,
+        "first_test_target": "2024-06-02",
+        "last_test_target": "2025-05-25"
+      }
+    }
+  },
+  "balancing": "equal batches per city per epoch; selection on the mean per-city val MSE",
+  "n_params": 13876,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "best_epoch": 50,
+  "best_val_mse": 0.3273484855890274,
+  "checkpoint": "Code/checkpoints/transfer/pooled_others_chicago/2024_25/h02/pooled_others_chicago_pooled.pt",
+  "experiment": {
+    "name": "pooled_others_chicago",
+    "model": "stgnn",
+    "variant": "full",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": true,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 0.003,
+      "epochs": 120,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.25,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": false,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        2
+      ],
+      "test_start": "2024-06-01",
+      "test_end": "2025-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Adaptive adjacency removed."
+  }
+}

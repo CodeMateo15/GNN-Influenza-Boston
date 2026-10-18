@@ -52,17 +52,21 @@ source "$ENVDIR/bin/activate"
 export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 export PYTHONHASHSEED=0
 export MPLBACKEND=Agg          # compute nodes have no display
+# Explorer sits in MGHPCC, Holyoke: Massachusetts grid, same as the laptop.
+export GNNFLU_GRID_REGION=massachusetts
 
 mkdir -p "$ROOT/logs"
 cd "$ROOT"
 
-# --no-carbon is MANDATORY here. influenza/carbon.py appends to one shared
-# results/_emissions/emissions.csv; 50 concurrent writers corrupt it. Measure
-# emissions in a single serial local run instead.
+# Emissions are tracked. Inside an array task influenza/carbon.py writes to its
+# own results/_emissions/tasks/<job>_<task>.csv (one task runs its chunk
+# serially, so one writer per file) and meters in process mode, so a shared
+# node does not bill this task for its neighbours. sync.sh pull brings the
+# files back; Code/docs/COMPUTE.md explains them. Pass NO_CARBON=1 to skip.
 python -u Code/sweep.py run \
   --tasks   "$TASKS" \
   --start   "$(( SLURM_ARRAY_TASK_ID * CHUNK ))" \
   --count   "$CHUNK" \
   --log     "$ROOT/logs/task_${SLURM_ARRAY_TASK_ID}.csv" \
-  --no-carbon \
+  ${NO_CARBON:+--no-carbon} \
   --skip-existing
