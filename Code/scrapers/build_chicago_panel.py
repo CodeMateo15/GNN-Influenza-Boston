@@ -87,7 +87,7 @@ def locate_sources(refetch: bool) -> tuple[Path, Path]:
     if refetch:
         ili = download(ILI_DATASET, "csv",
                        {"$limit": 500_000,
-                        "$select": "week_start,zip_code,ili_activity_level"},
+                        "$select": "week_start,week_end,zip_code,ili_activity_level"},
                        source_dir / f"{ILI_DATASET}.csv")
         zips = download(ZIP_DATASET, "geojson", {"$limit": 1000},
                         paths.CHICAGO_BOUNDARIES_FILE)
@@ -99,6 +99,24 @@ def locate_sources(refetch: bool) -> tuple[Path, Path]:
             return ili, zips
     raise SystemExit(f"No cached {ILI_DATASET}.csv / {ZIP_DATASET}.geojson in "
                      f"{PACKAGE_CACHE} or {paths.CHICAGO_DIR}; rerun with --download.")
+
+
+def repair_week_start(raw: pd.DataFrame) -> pd.Series:
+    """week_start as timestamps, rebuilt from week_end where the two disagree.
+
+    The portal has published a mistyped week_start (2514-10-23 for the week
+    ending 2026-10-10); week_end and mmwr_week were right. Copies downloaded
+    before week_end was selected keep their week_start as is.
+    """
+    start = pd.to_datetime(raw["week_start"], errors="coerce")
+    if "week_end" not in raw:
+        return start
+    derived = pd.to_datetime(raw["week_end"]) - pd.Timedelta(days=6)
+    wrong = start.isna() | (start.dt.normalize() != derived.dt.normalize())
+    if wrong.any():
+        bad = sorted(raw.loc[wrong, "week_start"].astype(str).unique())
+        print(f"  {int(wrong.sum())} rows: week_start {bad} rebuilt from week_end")
+    return start.where(~wrong, derived)
 
 
 def to_sunday(stamps: pd.Series) -> pd.Series:
@@ -119,9 +137,12 @@ def main() -> None:
 
     raw = pd.read_csv(ili_path, dtype={"zip_code": str})
     raw["zip_code"] = raw["zip_code"].str.strip().str.zfill(5)
-    raw["week_start"] = to_sunday(raw["week_start"])
-    moved = int((pd.to_datetime(pd.read_csv(ili_path, usecols=["week_start"])
-                                ["week_start"]).dt.normalize() != raw["week_start"]).sum())
+    stamps = repair_week_start(raw)
+    raw["week_start"] = to_sunday(stamps)
+    moved = int((stamps.dt.tz_localize(None).dt.normalize() != raw["week_start"]).sum())
+    if (raw["week_start"] > pd.Timestamp.today()).any():
+        raise SystemExit("week_start later than today: "
+                         f"{sorted(raw.loc[raw.week_start > pd.Timestamp.today(), 'week_start'].unique())}")
     raw = raw.rename(columns={"zip_code": "zip", "ili_activity_level": "ili_level"})
     raw["ili_level"] = pd.to_numeric(raw["ili_level"], errors="coerce")
     duplicated = raw.duplicated(["zip", "week_start"])
