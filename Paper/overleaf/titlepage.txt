@@ -33,27 +33,30 @@ Northeastern University, 360 Huntington Avenue, Boston, MA 02115
 \NOTE{confirm mailing address}. Email: biggs.m@northeastern.edu
 
 \bigskip
+\noindent\textbf{Manuscript type:} Practice of Epidemiology. Submitted to the
+special collection ``Artificial Intelligence in Health: From Pattern Discovery
+to Population Inference'' (guest editors Li Shen and Haochang Shou).
+
+\medskip
 \noindent\textbf{Running head:} Neighborhood influenza forecasting with graphs
 
 \medskip
-\noindent\textbf{Word count:} abstract, \NOTE{n}; text, \NOTE{n}
-\NOTE{fill from texcount before submission; limits are 200 and 4,000}
+\noindent\textbf{Word count:} abstract, 196; text, 3,980 \NOTE{recount with texcount
+once the ethics statement and software versions are final; limit 4,000}
 
 \section*{Acknowledgments}
 
 We thank the Boston Public Health Commission and Columbus Public Health for
 providing and explaining their surveillance data, and Professor Ariel Hamlin
 (Khoury College of Computer Sciences, Northeastern University) for guidance
-throughout the project. This work was
-supported in part by a PEAK Trailblazer fellowship from Northeastern
-University. Computation was performed on the Explorer cluster of Northeastern
-University's research computing service.
+throughout the project. Computation was performed on the Explorer cluster of
+Northeastern University's research computing service.
 
 \section*{Funding}
 
-\NOTE{List each funding source with grant or award numbers, e.g., the PEAK
-Trailblazer award number, or state that the work received no specific
-funding.}
+This work was supported in part by a PEAK Trailblazer fellowship from
+Northeastern University \NOTE{award number; list any other funding sources
+with grant numbers}.
 
 \section*{Conflict of Interest}
 
@@ -75,17 +78,40 @@ Chicago Data Portal (dataset 8vvr-jv2g; ZIP code boundaries, dataset
 unjd-c2ca). Columbus data
 were provided by Columbus Public Health as de-identified visit-level extracts;
 with their agreement, the weekly area-level counts used in every analysis are
-publicly available with the code, and the visit-level extracts are available
+publicly available with the code \NOTE{confirm Columbus Public Health's terms
+permit releasing the weekly counts}, and the visit-level extracts are available
 from Columbus Public Health on request. Weather data come from the Open-Meteo
 archive (CC BY 4.0), and boundary files from the City of Boston, the City of
 Chicago, and the US Census Bureau. All code, frozen model
 configurations, and the scripts that produce every table and figure are
 available at \url{https://github.com/CodeMateo15/GNN-Influenza-Boston}
 \NOTE{tag the release used for this paper, e.g., paper-v1, and cite it or a
-Zenodo DOI here}. The forecasting models are also released as an installable
-Python package for health departments, areaFluForecast
-(\url{https://github.com/CodeMateo15/areaFluForecast}), which reproduces the
-Boston results reported here \NOTE{confirm once the parity check (Gate B)
-passes; add the package's Zenodo DOI}.
+Zenodo DOI here}.
+
+The forecasting models are also released as an open-source Python package for
+health departments, areaFluForecast, version 1.1.0 (MIT license; archived at
+Zenodo, \url{https://doi.org/10.5281/zenodo.23350130}; all versions,
+\url{https://doi.org/10.5281/zenodo.23327108}). It installs with
+\texttt{pip install areaFluForecast} (\url{https://pypi.org/project/areaFluForecast/}),
+runs on a laptop CPU, and is documented at
+\url{https://areafluforecast.readthedocs.io}; source code is at
+\url{https://github.com/CodeMateo15/areaFluForecast}. From a department's weekly
+area-level rates and boundary file, it builds the neighborhood map, scores the
+graph neural network, tuned LSTM, Cola-GNN, and seasonal ARIMA against
+persistence on the department's own past seasons, and then forecasts 1 to 4
+weeks ahead with FluSight-style quantiles. Pretrained Boston models are
+included for cities with short histories. In a parity check on Explorer
+(October 2026), the package reproduced the paper's Boston evaluation: 23 of 27
+model, season, and horizon results were numerically identical, and the other
+4 differed by at most 0.4\% in mean WIS.
+
+Real-time forecasts for the 2026--2027 season, made each week with the same
+models, are posted on the Boston Flu Outlook dashboard
+(\NOTE{Posit Connect Cloud URL}; data and source,
+\url{https://github.com/CodeMateo15/boston-flu-outlook}), which also shows
+Chicago. These are experimental research forecasts, not an official Boston
+Public Health Commission product, and are not part of the evaluation reported
+in this paper: unlike the evaluated models, they are trained on every
+available week.
 
 \end{document}

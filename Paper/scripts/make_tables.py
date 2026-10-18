@@ -150,6 +150,111 @@ def transfer_table() -> None:
     print()
 
 
+# Table S15: the same no-learned-links model trained on several cities at once
+# (run_gnn.py --pool-cities). "All 3" includes the target's own pre-test weeks;
+# "other 2" leaves the target out. A cell is marked when its week-level
+# difference from the locally trained model is clear (significance_transfer_pooled).
+POOLED = ["transfer_zeroshot_from_pooled_all3", "transfer_finetune_from_pooled_all3",
+          "transfer_zeroshot_from_pooled_others", "transfer_finetune_from_pooled_others"]
+SIG_ROOT = {"boston": RESULTS, "columbus": RESULTS / "columbus",
+            "chicago": RESULTS / "chicago"}
+
+
+def pooled_table() -> None:
+    print(f"% Table S15: target & h & local & all3 & all3 fine-tuned & other2 & "
+          f"other2 fine-tuned & persistence, {TRANSFER_SEASON}; ^{{a}} = clear vs local")
+    for target in ("boston", "columbus", "chicago"):
+        d = pd.read_csv(CSV[target])
+        d = d[d.season.eq(TRANSFER_SEASON)].set_index(["arm", "horizon"]).WIS
+        for i, h in enumerate((1, 2, 4)):
+            sig = pd.read_csv(SIG_ROOT[target] / f"backtest_{TRANSFER_SEASON}" / f"horizon_{h:02d}"
+                              / "_comparison" / "significance_transfer_pooled.csv")
+            clear = set(sig.loc[sig.DM_WIS_p_holm < 0.05, "model"])
+            cells = [fmt(d.get(("gnn_st_noadapt", h)))]
+            cells += [fmt(d.get((a, h))) + (r"$^{a}$" if a in clear else "") for a in POOLED]
+            cells.append(fmt(d.get(("persistence", h))))
+            print(f"{target.title() if i == 0 else ''} & {h} & " + " & ".join(cells) + r" \\")
+    print()
+
+
+# Table S16: the development-season ablation study (Code/results/_ablation,
+# study "main", 10 seeds, Boston 2025-26). Each arm is gnn_st with one change.
+# Cells are the change in mean per-neighborhood correlation (arm minus default)
+# with the number of the 14 neighborhoods in which the arm's correlation was
+# higher, as in run_ablation.py's paired_verdict. Transit comes from the
+# archived transit_retirement study, which has no per-neighborhood files here.
+ABLATION = RESULTS / "_ablation"
+ABLATION_ROWS = [
+    ("Removed", [
+        ("gnn_st_nograph", "All links between neighborhoods (map and learned)"),
+        ("gnn_st_adaptiveonly", "Hand-built links, keeping learned links"),
+        ("gnn_st_noadapt", "Learned links, keeping hand-built links"),
+        ("gnn_st_geoonly", "Correlation and demographic links (borders only)"),
+        ("gnn_st_nocorr", "Correlation links"),
+        ("gnn_st_nodemoedge", "Demographic links"),
+        ("gnn_st_nodemofeat", "Demographic measures as inputs"),
+        ("gnn_st_nodemo", "Demographic measures and links"),
+        ("gnn_st_noweather", "Weather"),
+        ("gnn_st_noimputedflag", "Flag for suppressed weeks"),
+        ("gnn_st_lagsonly", "All inputs except past rates"),
+        ("gnn_st_nopearson", "Correlation term in the training loss"),
+    ]),
+    ("Changed", [
+        ("gnn_st_delta", "Baseline: current week only"),
+        ("gnn_st_level", "No baseline"),
+        ("gnn_st_relations", "Link types kept separate"),
+        ("gnn_st_tiny", "Smaller model"),
+    ]),
+    ("Added", [
+        ("gnn_st_wastewater", "Influenza wastewater"),
+        ("gnn_st_vaccination", "Statewide vaccination uptake"),
+        ("gnn_st_globals", "Citywide ILI share"),
+        ("gnn_st_season", "Calendar terms"),
+        ("gnn_st_covid_rsv", "COVID-19 and RSV rates, COVID-19 wastewater"),
+        ("gnn_st_transit", "Transit ridership links"),
+    ]),
+]
+
+
+def _nbhd_corr(arm: str, h: int) -> pd.Series | None:
+    path = ABLATION / "main" / f"h{h:02d}_s10" / arm / "post_covid" / "metrics.csv"
+    if not path.exists():
+        return None
+    m = pd.read_csv(path)
+    m = m[m.segment.eq("overall") & m.scope.eq("neighborhood")]
+    return m.set_index("neighborhood").Corr
+
+
+def ablation_table() -> None:
+    main = pd.read_csv(ABLATION / "ablation_main_s10.csv").set_index(["arm", "horizon"]).Corr_macro
+    transit = pd.read_csv(ABLATION / "transit_retirement" / "transit_retirement_s10.csv")
+    transit = transit.set_index(["arm", "horizon"]).Corr_macro
+    print("% Table S16: change & delta corr (nbhds improved/14) at h1 h2 h4; "
+          "development season 2025-26, 10 seeds")
+    floor = []
+    for h in (1, 2, 4):
+        refs = [main[(a, h)] for a in ("gnn_st", "gnn_st_ref_b", "gnn_st_ref_c")]
+        floor.append(max(refs) - min(refs))
+    print("% default " + " ".join(f"{main[('gnn_st', h)]:.3f}" for h in (1, 2, 4))
+          + " | run-to-run spread " + " ".join(f"{f:.3f}" for f in floor))
+    for group, rows in ABLATION_ROWS:
+        print(rf"\multicolumn{{4}}{{l}}{{\textit{{{group}}}}} \\")
+        for arm, label in rows:
+            cells = []
+            for h in (1, 2, 4):
+                src = transit if arm == "gnn_st_transit" else main
+                d = src[(arm, h)] - src[("gnn_st", h)]
+                cell = ("0.000" if abs(d) < 0.0005 else
+                        f"{d:+.3f}".replace("-", "$-$").replace("+", "$+$"))
+                arm_c, ref_c = _nbhd_corr(arm, h), _nbhd_corr("gnn_st", h)
+                if arm_c is not None and ref_c is not None:
+                    shared = arm_c.index.intersection(ref_c.index)
+                    cell += f" ({int((arm_c[shared] > ref_c[shared]).sum())})"
+                cells.append(cell)
+            print(f"\\quad {label} & " + " & ".join(cells) + r" \\")
+    print()
+
+
 if __name__ == "__main__":
     for c in UNSEEN:
         main_table(c, MAIN)
@@ -160,3 +265,5 @@ if __name__ == "__main__":
     for c in UNSEEN:
         point_metrics(c)
     transfer_table()
+    pooled_table()
+    ablation_table()

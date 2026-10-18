@@ -75,6 +75,34 @@ def locant(ax, letter: str, x: float = -0.12, y: float = 1.04) -> None:
             va="bottom", ha="left")
 
 
+def km_per_degree_lon(lat: float) -> float:
+    """Kilometers per degree of longitude on the WGS84 ellipsoid."""
+    a, e2 = 6378.137, 0.00669438
+    phi = np.deg2rad(lat)
+    return np.pi / 180 * a * np.cos(phi) / np.sqrt(1 - e2 * np.sin(phi) ** 2)
+
+
+def scale_bar(ax, km: float, x: float, y: float, fontsize: float = 6.5) -> None:
+    """Scale bar of `km` kilometers, left end at axes fraction (x, y), on a lon/lat map."""
+    (x0, x1), (y0, y1) = ax.get_xlim(), ax.get_ylim()
+    lon, lat = x0 + x * (x1 - x0), y0 + y * (y1 - y0)
+    width = km / km_per_degree_lon(lat)
+    tick = 0.012 * (y1 - y0)
+    ax.plot([lon, lon + width], [lat, lat], color="black", lw=1.2, solid_capstyle="butt", zorder=5)
+    for xx in (lon, lon + width / 2, lon + width):
+        ax.plot([xx, xx], [lat, lat + tick], color="black", lw=0.8, zorder=5)
+    for xx, lab in ((lon, "0"), (lon + width, f"{km:g} km")):
+        ax.text(xx, lat - tick, lab, ha="center", va="top", fontsize=fontsize)
+
+
+def north_arrow(ax, x: float, y: float, length: float = 0.09, fontsize: float = 7) -> None:
+    """Arrow pointing north (up: these maps are unrotated lon/lat), tip at axes fraction (x, y)."""
+    ax.annotate("", xy=(x, y), xytext=(x, y - length), xycoords="axes fraction",
+                arrowprops=dict(arrowstyle="-|>", color="black", lw=1.0, mutation_scale=8))
+    ax.text(x, y + 0.01, "N", transform=ax.transAxes, ha="center", va="bottom",
+            fontsize=fontsize, fontweight="bold")
+
+
 def save(fig, name: str) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT / f"{name}.pdf", bbox_inches="tight")
@@ -155,6 +183,8 @@ def figure1() -> None:
     ax_map.set_ylim(42.225, 42.40)
     ax_map.set_aspect(1 / np.cos(np.deg2rad(42.3)))
     ax_map.axis("off")
+    north_arrow(ax_map, 0.10, 0.84)
+    scale_bar(ax_map, 5, 0.74, 0.33)
     locant(ax_map, "A", x=0.0, y=0.98)
     sm = plt.cm.ScalarMappable(cmap=matplotlib.colors.LinearSegmentedColormap.from_list(
         "b", [cmap(0.15), cmap(0.95)]), norm=plt.Normalize(vmin, vmax))
@@ -256,13 +286,12 @@ def significance_rows() -> pd.DataFrame:
 
 def figure3() -> pd.DataFrame:
     sig = significance_rows()
-    comps = [("gnn_st_nograph_tuned", "A", "Graph neural network vs the same\nmodel with the map removed"),
-             ("lstm_tuned", "B", "Graph neural network vs tuned LSTM"),
-             ("colagnn_tuned", "C", "Graph neural network vs\ntuned Cola-GNN")]
+    # Panel titles are in the legend (AJE: no text on figures beyond locants and axes).
+    comps = [("gnn_st_nograph_tuned", "A"), ("lstm_tuned", "B"), ("colagnn_tuned", "C")]
     order = [(c, s) for c, ss in UNSEEN.items() for s in ss]
     hcol = {1: "#0072B2", 2: "#E69F00", 4: "#009E73"}
     fig, axes = plt.subplots(1, 3, figsize=(7.0, 3.9), sharey=True)
-    for ax, (other, letter, title) in zip(axes, comps):
+    for ax, (other, letter) in zip(axes, comps):
         ax.axvline(0, color="black", lw=0.7)
         for i, (city, s) in enumerate(order):
             for j, h in enumerate(HORIZONS):
@@ -280,9 +309,8 @@ def figure3() -> pd.DataFrame:
                 ax.errorbar(x, y, xerr=[[x - lo], [hi - x]],
                             fmt="o", ms=3.8, color=hcol[h], mfc=hcol[h] if clear else "white",
                             elinewidth=0.9, capsize=0)
-        ax.text(0.5, 1.02, title, transform=ax.transAxes, ha="center", va="bottom", fontsize=7.5)
         ax.set_xlabel("Difference, % of\ncomparison WIS")
-        locant(ax, letter, x=-0.02 if letter != "A" else -0.45, y=1.12)
+        locant(ax, letter, x=-0.02 if letter != "A" else -0.45, y=1.02)
     axes[0].set_yticks(range(len(order)),
                        [f"{CITY_LABEL[c]} {season_text(c, s)}" for c, s in reversed(order)])
     hz = [Line2D([], [], marker="o", ls="none", color=hcol[h], label=f"{h} week{'s' if h > 1 else ''} ahead")
@@ -309,30 +337,45 @@ def coverage(city: str, arm: str, h: int) -> tuple[float, float]:
 
 
 def figure4() -> pd.DataFrame:
-    fig = plt.figure(figsize=(7.0, 2.8))
-    ax_a = fig.add_axes([0.07, 0.22, 0.52, 0.68])
-    ax_b = fig.add_axes([0.70, 0.22, 0.29, 0.68])
-
-    hood, season, h = "Dorchester", "2024_25", 2
-    g = predictions("boston", season, h, "gnn_st_tuned")
-    g = g[g.neighborhood == hood].sort_values("target_date")
-    p = predictions("boston", season, h, "persistence")
-    p = p[p.neighborhood == hood].sort_values("target_date")
-    ax_a.fill_between(g.target_date, g["q0.025"], g["q0.975"], color=C["graph"], alpha=0.18,
-                      lw=0, label="95% interval")
-    ax_a.fill_between(g.target_date, g["q0.250"], g["q0.750"], color=C["graph"], alpha=0.35,
-                      lw=0, label="50% interval")
-    ax_a.plot(g.target_date, g["q0.500"], color=C["graph"], lw=1.2, label="Graph model (median)")
-    ax_a.plot(p.target_date, p.predicted, color=C["persist"], lw=0.8, ls=":",
-              label="Persistence")
-    ax_a.plot(g.target_date, g.actual, "o", color="black", ms=2.2, label="Observed")
-    ax_a.set_ylabel("ED influenza rate per 100,000")
-    ax_a.set_xlabel("Target week")
-    ax_a.legend(loc="upper left", frameon=False, fontsize=6.8)
+    # Paper Figure 5. A: calibration by horizon. B-D: one neighborhood-season
+    # (Dorchester, the highest-rate neighborhood, 2024-25) at 1, 2 and 4 weeks,
+    # so the reader sees persistence fall further behind as the lead grows.
     import matplotlib.dates as mdates
-    ax_a.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[7, 10, 1, 4]))
-    ax_a.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
-    locant(ax_a, "A", x=-0.1)
+    fig = plt.figure(figsize=(7.0, 5.4))
+    ax_b = fig.add_axes([0.08, 0.10, 0.25, 0.84])
+    axes = [fig.add_axes([0.47, 0.10 + k * 0.29, 0.51, 0.23]) for k in (2, 1, 0)]
+
+    hood, season = "Dorchester", "2024_25"
+    rel = {}
+    for k, (ax_a, h) in enumerate(zip(axes, HORIZONS)):
+        g = predictions("boston", season, h, "gnn_st_tuned")
+        g = g[g.neighborhood == hood].sort_values("target_date")
+        p = predictions("boston", season, h, "persistence")
+        p = p[p.neighborhood == hood].sort_values("target_date")
+        ax_a.fill_between(g.target_date, g["q0.025"], g["q0.975"], color=C["graph"], alpha=0.18,
+                          lw=0, label="95% interval")
+        ax_a.fill_between(g.target_date, g["q0.250"], g["q0.750"], color=C["graph"], alpha=0.35,
+                          lw=0, label="50% interval")
+        ax_a.plot(g.target_date, g["q0.500"], color=C["graph"], lw=1.2, label="Graph model (median)")
+        ax_a.plot(p.target_date, p.predicted, color=C["persist"], lw=0.8, ls=":",
+                  label="Persistence")
+        ax_a.plot(g.target_date, g.actual, "o", color="black", ms=2.0, label="Observed")
+        ax_a.set_ylim(0, 330)
+        ax_a.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[7, 10, 1, 4]))
+        ax_a.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
+        if k < 2:
+            ax_a.tick_params(labelbottom=False)
+        if k == 0:
+            ax_a.legend(loc="upper left", frameon=False, fontsize=6.3)
+        locant(ax_a, "BCD"[k], x=-0.11, y=1.0)
+        gg, pp = g.dropna(subset=["actual"]), p.dropna(subset=["actual"])
+        rel[h] = (wis_from_quantiles(gg.actual, gg[list(QUANTILE_COLUMNS)]).mean()
+                  / wis_from_quantiles(pp.actual, pp[list(QUANTILE_COLUMNS)]).mean())
+    axes[-1].set_xlabel("Target week")
+    fig.text(0.405, 0.10 + 0.29 + 0.115, "ED visits for ILI per 100,000", rotation=90,
+             va="center", ha="center")
+    print("  Figure 5 Dorchester 2024-25 relative WIS:",
+          ", ".join(f"h{h} {v:.2f}" for h, v in rel.items()))
 
     rows = []
     arms = [("gnn_st_tuned", "Graph model", C["graph"]), ("lstm_tuned", "LSTM", C["lstm"]),
@@ -351,10 +394,9 @@ def figure4() -> pd.DataFrame:
     ax_b.set_xticks(range(3), ["1", "2", "4"])
     ax_b.set_xlabel("Weeks ahead")
     ax_b.set_ylabel("Observed values inside interval, %")
-    ax_b.legend(loc="center right", frameon=False, fontsize=6.5, bbox_to_anchor=(1.0, 0.6))
-    ax_b.text(1.5, 96, "95% target", fontsize=6, ha="center", va="bottom")
-    ax_b.text(1.5, 46, "50% target", fontsize=6, ha="center", va="top")
-    locant(ax_b, "B", x=-0.3)
+    ax_b.legend(loc="center right", frameon=False, fontsize=6.5, bbox_to_anchor=(1.0, 0.72))
+    # The legend says the dotted lines mark the stated coverage, so no labels on them.
+    locant(ax_b, "A", x=-0.3, y=1.01)
     save(fig, "figure5_example_and_coverage")
     return pd.DataFrame(rows)
 
@@ -404,10 +446,9 @@ def figure5() -> pd.DataFrame:
         ax.set_ylim(42.225, 42.40)
         ax.set_aspect(1 / np.cos(np.deg2rad(42.3)))
         ax.axis("off")
-        helped = int((ben[h] > 0).sum())
-        ax.text(0.5, 1.0, f"{h} week{'s' if h > 1 else ''} ahead\n(map helped {helped} of 14)",
-                transform=ax.transAxes, ha="center", va="bottom", fontsize=7.5)
-        locant(ax, letter, x=0.0, y=1.13)
+        north_arrow(ax, 0.10, 0.92, length=0.08, fontsize=6.5)
+        scale_bar(ax, 5, 0.62, 0.06, fontsize=6)
+        locant(ax, letter, x=0.0, y=1.0)
     cax = fig.add_axes([0.3, 0.08, 0.4, 0.035])
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax, orientation="horizontal")
     cb.set_label("Less forecast error (WIS) with the map than without, %", fontsize=7)
@@ -520,7 +561,60 @@ def figure_s4_all_neighborhoods() -> None:
     save(fig, "figureS4_all_neighborhoods")
 
 
+SEVERITY = RESULTS / "_severity_backtest"
+BANDS = ["Low", "Moderate", "High", "Very high"]
+
+
+def severity_confusion(arm: str, h: int = 2) -> np.ndarray:
+    """Observed x forecast band counts, Boston unseen seasons, best-guess banding.
+
+    Reads the per-cell bands compare_severity.py wrote for each fold (thresholds
+    fitted only on seasons before it), the same rows Tables S12 and S13 score.
+    """
+    frames = [pd.read_csv(SEVERITY / "boston" / s / f"horizon_{h:02d}" / "severity_bands.csv")
+              for s in UNSEEN["boston"]]
+    d = pd.concat(frames)
+    d = d[(d.model == arm) & (d.indicator != "CITYWIDE")].dropna(subset=["actual"])
+    m = np.zeros((4, 4), dtype=int)
+    for t, p in zip(d.true_band.astype(int), d.pred_band.astype(int)):
+        m[t, p] += 1
+    return m
+
+
+def figure6() -> dict[str, np.ndarray]:
+    """Severity band of each neighborhood-week: observed vs best-guess forecast, 2 weeks ahead."""
+    arms = [("gnn_st_tuned", "A"), ("persistence", "B")]
+    mats = {a: severity_confusion(a) for a, _ in arms}
+    fig, axes = plt.subplots(1, 2, figsize=(6.8, 3.1))
+    cmap = plt.matplotlib.colors.LinearSegmentedColormap.from_list("blues", ["#FFFFFF", C["graph"]])
+    for ax, (arm, letter) in zip(axes, arms):
+        m = mats[arm]
+        share = m / m.sum(axis=1, keepdims=True)  # shade by share of each observed band
+        ax.imshow(share, cmap=cmap, vmin=0, vmax=1)
+        for i in range(4):
+            for j in range(4):
+                ax.text(j, i, f"{m[i, j]:,}", ha="center", va="center", fontsize=7.5,
+                        color="white" if share[i, j] > 0.55 else "black")
+        ax.set_xticks(range(4), BANDS)
+        ax.set_yticks(range(4), BANDS if letter == "A" else [""] * 4)
+        ax.set_xlabel("Forecast band (best guess)")
+        if letter == "A":
+            ax.set_ylabel("Observed band")
+        for s in ax.spines.values():
+            s.set_visible(False)
+        ax.tick_params(length=0)
+        locant(ax, letter, x=-0.32 if letter == "A" else -0.05)
+    fig.tight_layout(w_pad=1.5)
+    save(fig, "figure6_severity_confusion")
+    return mats
+
+
 def main() -> None:
+    only = set(sys.argv[1:])  # e.g. `make_figures.py figure1 figure5` regenerates just those
+    if only:
+        for name in sorted(only):
+            globals()[name]()
+        return
     figure1()
     rel = figure2()
     figure3()
@@ -530,6 +624,7 @@ def main() -> None:
     tune = figure_s2_tuning()
     figure_s3_pit()
     figure_s4_all_neighborhoods()
+    sev = figure6()
     # Numbers the text quotes, printed so the data check can compare against them.
     print("\nRelative WIS (unseen seasons):")
     print(rel.pivot_table(index=["city", "arm"], columns="horizon", values="rel").round(3).to_string())
@@ -541,6 +636,10 @@ def main() -> None:
     print(blend.pivot_table(index=["city", "season"], columns="horizon", values="share").round(2).to_string())
     print("\nMean tuning gain on validation MAE, %:")
     print(tune.to_string())
+    print("\nSeverity bands, Boston unseen seasons, 2 weeks ahead (rows observed, columns forecast):")
+    for arm, m in sev.items():
+        print(arm)
+        print(m)
 
 
 if __name__ == "__main__":
