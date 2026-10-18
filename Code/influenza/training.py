@@ -377,6 +377,43 @@ def _stgnn_tensors(samples: Samples, device: torch.device) -> list[tuple]:
     return out
 
 
+def _stgnn_optimizer(model: torch.nn.Module, spec: TrainSpec):
+    """(optimizer, scheduler, step_on_val) for the SpatioTemporalGNN loops."""
+    if spec.optimizer == "adamw":
+        optimizer = torch.optim.AdamW(model.parameters(), lr=spec.lr,
+                                      weight_decay=spec.weight_decay)
+    else:
+        optimizer = torch.optim.Adam(model.parameters(), lr=spec.lr,
+                                     weight_decay=spec.weight_decay)
+    if spec.schedule == "cosine":
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=spec.epochs)
+        return optimizer, scheduler, False
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, patience=spec.plateau_patience, factor=spec.plateau_factor)
+    return optimizer, scheduler, True
+
+
+def _stgnn_batch(model: torch.nn.Module, tensors: list[tuple], rows, *,
+                 relations: list[tuple], n_neigh: int, blended: bool,
+                 target_kind: str):
+    """(prediction, target, move) for the rows of one batch, scored nodes only."""
+    predictions, targets, moves = [], [], []
+    for idx in rows:
+        X, g, y, anchor, clim, trend = tensors[idx]
+        kwargs = dict(anchor=anchor, clim=clim) if blended else {}
+        if kwargs and target_kind == "trendblend":
+            kwargs["trend"] = trend
+        out = model(X, relations, g, **kwargs)
+        predictions.append(out[:n_neigh])
+        targets.append(y)
+        # How far the epidemic moved from the origin week to the target
+        # week. For the `delta` parameterisation the label already IS that
+        # move; for `blend` and `level` it is the label minus the origin.
+        moves.append(y if target_kind == "delta" else y - anchor.unsqueeze(1))
+    return (torch.cat(predictions, dim=0), torch.cat(targets, dim=0),
+            torch.cat(moves, dim=0))
+
+
 def train_stgnn(
     model: torch.nn.Module,
     train: Samples,
@@ -404,19 +441,7 @@ def train_stgnn(
     restore is kept, so the selected weights are still the best validation epoch
     rather than the last one.
     """
-    if spec.optimizer == "adamw":
-        optimizer = torch.optim.AdamW(model.parameters(), lr=spec.lr,
-                                      weight_decay=spec.weight_decay)
-    else:
-        optimizer = torch.optim.Adam(model.parameters(), lr=spec.lr,
-                                     weight_decay=spec.weight_decay)
-    if spec.schedule == "cosine":
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=spec.epochs)
-        step_on_val = False
-    else:
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, patience=spec.plateau_patience, factor=spec.plateau_factor)
-        step_on_val = True
+    optimizer, scheduler, step_on_val = _stgnn_optimizer(model, spec)
 
     relations = [(name, index.to(device), weight.to(device))
                  for name, index, weight in relations]
@@ -425,21 +450,9 @@ def train_stgnn(
     batch_size = spec.batch_size or 16
 
     def run_batch(rows: list[int], grad: bool):
-        predictions, targets, moves = [], [], []
-        for idx in rows:
-            X, g, y, anchor, clim, trend = tensors[idx] if grad else val_tensors[idx]
-            kwargs = dict(anchor=anchor, clim=clim) if blended else {}
-            if kwargs and target_kind == "trendblend":
-                kwargs["trend"] = trend
-            out = model(X, relations, g, **kwargs)
-            predictions.append(out[:n_neigh])
-            targets.append(y)
-            # How far the epidemic moved from the origin week to the target
-            # week. For the `delta` parameterisation the label already IS that
-            # move; for `blend` and `level` it is the label minus the origin.
-            moves.append(y if target_kind == "delta" else y - anchor.unsqueeze(1))
-        return (torch.cat(predictions, dim=0), torch.cat(targets, dim=0),
-                torch.cat(moves, dim=0))
+        return _stgnn_batch(model, tensors if grad else val_tensors, rows,
+                            relations=relations, n_neigh=n_neigh,
+                            blended=blended, target_kind=target_kind)
 
     train_losses: list[float] = []
     val_losses: list[float] = []
@@ -491,6 +504,129 @@ def train_stgnn(
         model.load_state_dict(best_state)
     return TrainResult(best_epoch=best_epoch, best_val_loss=float(best_val),
                        train_losses=train_losses, val_losses=val_losses, epochs_run=epoch)
+
+
+@dataclass
+class PooledPart:
+    """One city's share of a pooled (multi-city) training run."""
+    name: str
+    train: Samples
+    val: Samples
+    relations: list[tuple]
+    n_neigh: int
+
+
+def train_stgnn_pooled(
+    model: torch.nn.Module,
+    parts: list[PooledPart],
+    *,
+    spec: TrainSpec,
+    device: torch.device,
+    blended: bool,
+    target_kind: str = "blend",
+    verbose: bool = True,
+) -> tuple[TrainResult, dict[str, float]]:
+    """`train_stgnn` over several cities at once, for the pooled transfer arms.
+
+    Works only for a model with no city-sized parameters (adaptive=False), so
+    one set of weights can run on every city's graph. Each sample keeps its own
+    city's relations and node count, and every batch comes from one city, so
+    the batch-level correlation term never correlates across cities.
+
+    Cities are balanced by SAMPLING, not by loss weights: each epoch draws the
+    same number of batches from every city (the total that one pass over all
+    cities would make, split evenly), cycling through fresh permutations of a
+    small city's samples as needed. Without this the city with the most origins
+    would dominate. Weighting the loss instead would interact with gradient
+    clipping and with Adam's step size; equal batch counts keep every batch
+    an ordinary one. Model selection uses the mean of the per-city validation
+    MSEs, each city counted once.
+
+    Returns the TrainResult and the per-city validation MSE at the best epoch.
+    """
+    optimizer, scheduler, step_on_val = _stgnn_optimizer(model, spec)
+    batch_size = spec.batch_size or 16
+    prepared = []
+    for part in parts:
+        prepared.append({
+            "name": part.name,
+            "relations": [(name, index.to(device), weight.to(device))
+                          for name, index, weight in part.relations],
+            "n_neigh": part.n_neigh,
+            "train": _stgnn_tensors(part.train, device),
+            "val": _stgnn_tensors(part.val, device),
+        })
+    full_pass = sum(-(-len(p["train"]) // batch_size) for p in prepared)
+    per_city = max(1, round(full_pass / len(prepared)))
+
+    def city_batches(n: int) -> list[list[int]]:
+        needed = per_city * batch_size
+        draws = np.concatenate([np.random.permutation(n)
+                                for _ in range(-(-needed // n))])[:needed]
+        return [[int(i) for i in draws[s:s + batch_size]]
+                for s in range(0, needed, batch_size)]
+
+    def batch(p: dict, key: str, rows):
+        return _stgnn_batch(model, p[key], rows, relations=p["relations"],
+                            n_neigh=p["n_neigh"], blended=blended,
+                            target_kind=target_kind)
+
+    train_losses: list[float] = []
+    val_losses: list[float] = []
+    best_val, best_state, best_epoch, patience = np.inf, None, 0, 0
+    best_by_city: dict[str, float] = {}
+    epoch = 0
+
+    for epoch in range(1, spec.epochs + 1):
+        model.train()
+        schedule = [(c, rows) for c, p in enumerate(prepared)
+                    for rows in city_batches(len(p["train"]))]
+        total = 0.0
+        for b in np.random.permutation(len(schedule)):
+            c, rows = schedule[int(b)]
+            optimizer.zero_grad()
+            prediction, target, move = batch(prepared[c], "train", rows)
+            loss = composite_loss(prediction, target, huber_delta=spec.huber_delta,
+                                  pearson_weight=spec.pearson_weight,
+                                  weights=slope_weights(move, target, spec.slope_weight))
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=spec.grad_clip)
+            optimizer.step()
+            total += float(loss.item())
+        train_losses.append(total / max(len(schedule), 1))
+
+        model.eval()
+        with torch.no_grad():
+            by_city = {}
+            for p in prepared:
+                prediction, target, _ = batch(p, "val", range(len(p["val"])))
+                by_city[p["name"]] = float(masked_mse(prediction, target).item())
+        val_losses.append(float(np.mean(list(by_city.values()))))
+        scheduler.step(val_losses[-1]) if step_on_val else scheduler.step()
+
+        if val_losses[-1] < best_val:
+            best_val, best_epoch, best_by_city = val_losses[-1], epoch, by_city
+            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+            patience = 0
+        else:
+            patience += 1
+
+        if verbose:
+            cities = " ".join(f"{k} {v:.4f}" for k, v in by_city.items())
+            print(f"Epoch {epoch:3d} | train {train_losses[-1]:.6f} | "
+                  f"val MSE {val_losses[-1]:.6f} ({cities}) | "
+                  f"lr {optimizer.param_groups[0]['lr']:.6f}")
+        if patience >= spec.early_stop_patience:
+            if verbose:
+                print(f"Early stopping at epoch {epoch}")
+            break
+
+    if best_state is not None:
+        model.load_state_dict(best_state)
+    return (TrainResult(best_epoch=best_epoch, best_val_loss=float(best_val),
+                        train_losses=train_losses, val_losses=val_losses,
+                        epochs_run=epoch),
+            best_by_city)
 
 
 def mc_dropout_stgnn(

@@ -43,6 +43,7 @@ import argparse
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -111,7 +112,12 @@ ADDED_ARMS = ("lstm_s10", "flusight_baseline", "gnn_st_tuned", "gnn_st_nograph_t
               "gnn_st_geofixed", "gnn_st_noadapt",
               "transfer_zeroshot_from_boston", "transfer_finetune_from_boston",
               "transfer_zeroshot_from_columbus", "transfer_finetune_from_columbus",
-              "transfer_zeroshot_from_chicago", "transfer_finetune_from_chicago")
+              "transfer_zeroshot_from_chicago", "transfer_finetune_from_chicago",
+              # Pooled sources (run_gnn.py --pool-cities): one model trained on
+              # all three cities, and one trained on the two that are not the
+              # target. Sources: sweep/tasks_pooled_sources.jsonl.
+              "transfer_zeroshot_from_pooled_all3", "transfer_finetune_from_pooled_all3",
+              "transfer_zeroshot_from_pooled_others", "transfer_finetune_from_pooled_others")
 # Every arm the report reads. Tasks are only built from --arms.
 REPORTED_ARMS = FROZEN_ARMS + ADDED_ARMS
 
@@ -269,9 +275,11 @@ def main() -> None:
             if args.dry_run:
                 print(f"[{i}/{len(tasks)}] {task.task_id}\n  {' '.join(command)}")
                 continue
+            started = time.perf_counter()
             completed = subprocess.run(command, stdout=subprocess.DEVNULL)
             status = "ok" if completed.returncode == 0 else f"FAILED ({completed.returncode})"
-            print(f"Epoch {i} | {task.task_id} {status}", flush=True)
+            print(f"Epoch {i} | {task.task_id} {status} "
+                  f"({time.perf_counter() - started:.1f}s)", flush=True)
         if args.dry_run:
             return
 

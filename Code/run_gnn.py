@@ -21,8 +21,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import influenza.threads  # noqa: F401  (import for its side effect)
 
 import argparse
+import json
 from pathlib import Path
-from dataclasses import replace
+from dataclasses import dataclass, replace
 
 try:
     import numpy as np
@@ -153,11 +154,26 @@ def resolve_experiment(args: argparse.Namespace) -> Experiment:
     return experiment
 
 
-def run(experiment: Experiment, args: argparse.Namespace) -> None:
+@dataclass
+class CityData:
+    """Everything one city contributes to a run, up to the model itself."""
+    city: object
+    dataset: object
+    split: object
+    graph: object
+    samples: object
+    norm: object
+    train_set: object
+    val_set: object
+    test_set: object
+    relations: list
+    edge_index: object
+    edge_weight: object
+
+
+def prepare_city(experiment: Experiment, city, device) -> CityData:
+    """Load, split, graph and sample one city. Shared by single-city and pooled runs."""
     window = experiment.window
-    city = resolve_city(args)
-    check_experiment_supported(experiment, city)
-    results_root, checkpoint_root = city_output_dirs(args, city)
     rates = city.loaders.load_rates()
     data = variant_data(rates, experiment.variant)
 
@@ -184,7 +200,6 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
     graph = build_graph(experiment.graph, city=city, flu_history=history,
                         static=graph_static)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"\n{'=' * 72}\n{city.label} | {experiment.name} | {experiment.variant} | "
           f"device={device}\n{'=' * 72}")
     if experiment.note:
@@ -198,11 +213,6 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
                                   target=experiment.target, normalize=experiment.normalize)
     print(f"Node features: {samples.n_feat} | global covariates: {samples.n_global} "
           f"| target: {experiment.target} | normalize: {experiment.normalize}")
-    # Echoed so run_progress.py can compute a percentage without instrumenting
-    # the training loop: it needs the denominator, and the epoch lines only give
-    # the numerator.
-    print(f"Budget: {experiment.train.epochs} epochs x "
-          f"{max(1, experiment.train.n_seeds)} seeds")
 
     train_set = samples.subset(positions_to_rows(samples, split.train))
     val_set = samples.subset(positions_to_rows(samples, split.val))
@@ -218,6 +228,28 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
             "empty relation list would train the model with no spatial term at all, "
             "which reads as 'the graph does not help' rather than as a config error."
         )
+    return CityData(city=city, dataset=dataset, split=split, graph=graph,
+                    samples=samples, norm=norm, train_set=train_set, val_set=val_set,
+                    test_set=test_set, relations=relations, edge_index=edge_index,
+                    edge_weight=edge_weight)
+
+
+def run(experiment: Experiment, args: argparse.Namespace) -> None:
+    window = experiment.window
+    city = resolve_city(args)
+    check_experiment_supported(experiment, city)
+    results_root, checkpoint_root = city_output_dirs(args, city)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    prepared = prepare_city(experiment, city, device)
+    dataset, split, graph = prepared.dataset, prepared.split, prepared.graph
+    samples, norm, relations = prepared.samples, prepared.norm, prepared.relations
+    train_set, val_set, test_set = prepared.train_set, prepared.val_set, prepared.test_set
+    edge_index, edge_weight = prepared.edge_index, prepared.edge_weight
+    # Echoed so run_progress.py can compute a percentage without instrumenting
+    # the training loop: it needs the denominator, and the epoch lines only give
+    # the numerator.
+    print(f"Budget: {experiment.train.epochs} epochs x "
+          f"{max(1, experiment.train.n_seeds)} seeds")
 
     def build_model() -> torch.nn.Module:
         if experiment.model == "stgnn":
@@ -269,7 +301,7 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
         raise SystemExit("--zero-shot needs --init-from: there is nothing to apply untrained.")
 
     with track_emissions(run_tag(experiment.name, experiment.variant, window),
-                         enabled=not args.no_carbon) as carbon:
+                         enabled=not args.no_carbon, city=city.name) as carbon:
         for member, seed in enumerate(seeds):
             seed_everything(seed)
             model = build_model()
@@ -289,29 +321,32 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
             if len(seeds) > 1:
                 print(f"\n--- seed {seed} ({member + 1}/{len(seeds)}) ---")
 
-            if args.zero_shot:
-                result = TrainResult(best_epoch=0, best_val_loss=float("inf"),
-                                     train_losses=[], val_losses=[], epochs_run=0)
-                mc_kwargs = dict(relations=relations, norm=norm, n_neigh=graph.n_neigh,
-                                 device=device, target=experiment.target)
-                forward = mc_dropout_stgnn
-            elif experiment.model == "stgnn":
-                result = train_stgnn(
-                    model, train_set, val_set, relations=relations,
-                    spec=experiment.train, device=device, n_neigh=graph.n_neigh,
-                    blended=experiment.target in ("blend", "trendblend", "cascade"),
-                    target_kind=experiment.target)
-                mc_kwargs = dict(relations=relations, norm=norm, n_neigh=graph.n_neigh,
-                                 device=device, target=experiment.target)
-                forward = mc_dropout_stgnn
-            else:
-                result = train_gcn(model, train_set, val_set, edge_index=edge_index,
-                                   edge_weight=edge_weight, spec=experiment.train,
-                                   device=device, n_neigh=graph.n_neigh)
-                mc_kwargs = dict(edge_index=edge_index, edge_weight=edge_weight,
-                                 norm=norm, n_neigh=graph.n_neigh, device=device,
-                                 target=experiment.target)
-                forward = mc_dropout_forward
+            with carbon.phase("train"):
+                if args.zero_shot:
+                    result = TrainResult(best_epoch=0, best_val_loss=float("inf"),
+                                         train_losses=[], val_losses=[], epochs_run=0)
+                    mc_kwargs = dict(relations=relations, norm=norm, n_neigh=graph.n_neigh,
+                                     device=device, target=experiment.target)
+                    forward = mc_dropout_stgnn
+                elif experiment.model == "stgnn":
+                    result = train_stgnn(
+                        model, train_set, val_set, relations=relations,
+                        spec=experiment.train, device=device, n_neigh=graph.n_neigh,
+                        blended=experiment.target in ("blend", "trendblend", "cascade"),
+                        target_kind=experiment.target)
+                    mc_kwargs = dict(relations=relations, norm=norm, n_neigh=graph.n_neigh,
+                                     device=device, target=experiment.target)
+                    forward = mc_dropout_stgnn
+                else:
+                    result = train_gcn(model, train_set, val_set, edge_index=edge_index,
+                                       edge_weight=edge_weight, spec=experiment.train,
+                                       device=device, n_neigh=graph.n_neigh)
+                    mc_kwargs = dict(edge_index=edge_index, edge_weight=edge_weight,
+                                     norm=norm, n_neigh=graph.n_neigh, device=device,
+                                     target=experiment.target)
+                    forward = mc_dropout_forward
+
+            carbon.add_epochs(result.epochs_run)
 
             # Split the MC budget across members so the total number of draws is
             # unchanged and the pooled spread now also carries seed variance --
@@ -319,8 +354,9 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
             # wider than any architecture change measured.
             per_member = max(1, experiment.train.mc_samples // len(seeds))
             torch.manual_seed(experiment.train.mc_seed + member)
-            test_d, test_actual = forward(model, test_set, n_mc=per_member, **mc_kwargs)
-            val_d, val_actual = forward(model, val_set, n_mc=per_member, **mc_kwargs)
+            with carbon.phase("eval"):
+                test_d, test_actual = forward(model, test_set, n_mc=per_member, **mc_kwargs)
+                val_d, val_actual = forward(model, val_set, n_mc=per_member, **mc_kwargs)
             members.append({"seed": seed, "result": result, "model": model,
                             "test": test_d, "val": val_d})
 
@@ -454,6 +490,180 @@ def run(experiment: Experiment, args: argparse.Namespace) -> None:
 
 
 
+def parse_pool(spec: str, default_variant: str) -> list[tuple[str, str]]:
+    """'boston:full,columbus:post_covid' -> [(city, variant), ...]."""
+    pairs = []
+    for item in (part.strip() for part in spec.split(",")):
+        if not item:
+            continue
+        name, _, variant = item.partition(":")
+        pairs.append((name, variant or default_variant))
+    names = [name for name, _ in pairs]
+    if len(names) < 2 or len(set(names)) != len(names):
+        raise SystemExit(f"--pool-cities needs two or more distinct cities, got {spec!r}")
+    return pairs
+
+
+def run_pooled(experiment: Experiment, args: argparse.Namespace) -> None:
+    """Train one model on several cities' pre-test weeks; write only its checkpoint.
+
+    The source half of the pooled transfer arms. The model is scored by running
+    `--init-from <this checkpoint>` in each target city, with or without
+    `--zero-shot`, exactly as the single-city transfer arms are, so the target's
+    own scaling, intervals and outputs come from the code path every other
+    transfer row uses. Each city keeps its own variant, scaling, seasonal curve,
+    graph and pre_test validation split; nothing is shared but the weights.
+    """
+    from influenza.artifacts import git_sha, run_dir, write_emissions
+    from influenza.cities import get as get_city
+    from influenza.training import PooledPart, train_stgnn_pooled
+
+    if experiment.model != "stgnn" or experiment.train.adaptive:
+        raise SystemExit(
+            f"--pool-cities needs a SpatioTemporalGNN without learned links "
+            f"(e.g. gnn_st_noadapt); {experiment.name!r} has city-sized parameters.")
+    if args.init_from is not None or args.zero_shot:
+        raise SystemExit("--pool-cities trains a source model; it takes no --init-from.")
+    if args.test_start is None or args.test_end is None:
+        raise SystemExit("--pool-cities needs an explicit --test-start and --test-end, "
+                         "so every city is cut at the same date.")
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    window = experiment.window
+    parts: list[CityData] = []
+    variants: dict[str, str] = {}
+    for name, variant in parse_pool(args.pool_cities, experiment.variant):
+        city = get_city(name)
+        if variant not in city.variants:
+            raise SystemExit(f"{city.label} has no variant {variant!r} "
+                             f"(it has {', '.join(city.variants)}).")
+        city_experiment = replace(experiment, variant=variant)
+        check_experiment_supported(city_experiment, city)
+        parts.append(prepare_city(city_experiment, city, device))
+        variants[city.name] = variant
+
+    first = parts[0]
+    shapes = {(p.samples.lookback, p.samples.temporal_channels, p.samples.n_static_feat,
+               p.samples.n_global, tuple(name for name, _, _ in p.relations)) for p in parts}
+    if len(shapes) != 1:
+        raise SystemExit(f"Pooled cities do not share one input shape: {shapes}")
+    for p in parts[1:]:
+        if list(p.samples.feature_names) != list(first.samples.feature_names):
+            print(f"Note: {p.city.label} feature names differ from {first.city.label}'s; "
+                  "the columns line up by position.")
+
+    pool_label = "+".join(p.city.name for p in parts)
+    print(f"\nPooled training on {pool_label}: "
+          + " | ".join(f"{p.city.name} train {len(p.train_set.positions)} "
+                       f"val {len(p.val_set.positions)}" for p in parts))
+    print(f"Budget: {experiment.train.epochs} epochs x "
+          f"{max(1, experiment.train.n_seeds)} seeds")
+
+    _, checkpoint_root = city_output_dirs(args, first.city)
+    results_root = args.output_dir
+    seeds = [experiment.train.seed + i for i in range(max(1, experiment.train.n_seeds))]
+    members: list[dict] = []
+    with track_emissions(run_tag(experiment.name, "pooled", window),
+                         enabled=not args.no_carbon, city=first.city.name) as carbon:
+        for member, seed in enumerate(seeds):
+            seed_everything(seed)
+            model = SpatioTemporalGNN(
+                lookback=first.samples.lookback,
+                temporal_channels=first.samples.temporal_channels,
+                n_static_feat=first.samples.n_static_feat,
+                n_global=first.samples.n_global,
+                n_nodes=first.graph.n_nodes,  # unused without learned links
+                n_horizons=len(window.horizons),
+                relation_names=[name for name, _, _ in first.relations],
+                hidden=experiment.train.channels,
+                dropout=experiment.train.dropout,
+                dilations=experiment.train.dilations,
+                adaptive_dim=0,
+                dropedge=experiment.train.drop_edge,
+                blend_init=_blend_init(window.horizons),
+                horizon_steps=tuple(int(h) for h in window.horizons),
+                trend_anchor=experiment.target == "trendblend",
+                cascade=experiment.target == "cascade",
+                n_blocks=experiment.train.n_blocks,
+                conv=experiment.train.conv,
+                heads=experiment.train.heads,
+            ).to(device)
+            _assert_mc_dropout_valid(model)
+            if member == 0:
+                print(f"Parameters: {sum(p.numel() for p in model.parameters()):,}")
+            if len(seeds) > 1:
+                print(f"\n--- seed {seed} ({member + 1}/{len(seeds)}) ---")
+            with carbon.phase("train"):
+                result, by_city = train_stgnn_pooled(
+                    model,
+                    [PooledPart(name=p.city.name, train=p.train_set, val=p.val_set,
+                                relations=p.relations, n_neigh=p.graph.n_neigh)
+                     for p in parts],
+                    spec=experiment.train, device=device,
+                    blended=experiment.target in ("blend", "trendblend", "cascade"),
+                    target_kind=experiment.target)
+            carbon.add_epochs(result.epochs_run)
+            members.append({"seed": seed, "result": result, "model": model,
+                            "by_city": by_city})
+
+    best = min(members, key=lambda m: m["result"].best_val_loss)
+    print(f"Best epoch: {best['result'].best_epoch} | mean per-city validation MSE: "
+          f"{best['result'].best_val_loss:.6f}")
+
+    checkpoint_path = checkpoint_root / f"{experiment.name}_pooled.pt"
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save({
+        "model_state_dict": members[0]["model"].state_dict(),
+        "member_state_dicts": [m["model"].state_dict() for m in members],
+        "experiment": experiment.to_json(),
+        "pool_cities": dict(variants),
+        "feature_names": first.samples.feature_names,
+        "global_names": first.samples.global_names,
+        "best_epoch": best["result"].best_epoch,
+        "best_val_mse": best["result"].best_val_loss,
+    }, checkpoint_path)
+    print(f"Checkpoint: {checkpoint_path}")
+
+    # A small results directory, so sweep.py --skip-existing can see the task is
+    # done and sync.sh pull brings back what the source model was selected on.
+    # metrics.csv here is per-city validation MSE, not forecast scores: the
+    # forecasts are scored by the target-city runs.
+    out = run_dir(experiment.name, experiment.variant, results_root)
+    rows = [{"seed": m["seed"], "city": name, "best_epoch": m["result"].best_epoch,
+             "val_mse_at_best": value}
+            for m in members for name, value in m["by_city"].items()]
+    pd.DataFrame(rows).to_csv(out / "metrics.csv", index=False)
+    pd.DataFrame([{"seed": m["seed"], "best_epoch": m["result"].best_epoch,
+                   "best_val_mse": m["result"].best_val_loss,
+                   "epochs_run": m["result"].epochs_run} for m in members]
+                 ).to_csv(out / "seed_spread.csv", index=False)
+    sha = git_sha()
+    config = {
+        "model": experiment.name,
+        "variant": experiment.variant,
+        "git_sha": sha,
+        "created": pd.Timestamp.now().isoformat(timespec="seconds"),
+        "pooled": True,
+        "pool_cities": {p.city.name: {"variant": variants[p.city.name],
+                                      "train": len(p.train_set.positions),
+                                      "val": len(p.val_set.positions),
+                                      "n_nodes": p.graph.n_nodes,
+                                      "n_neigh": p.graph.n_neigh,
+                                      "split": p.split.to_json()}
+                        for p in parts},
+        "balancing": "equal batches per city per epoch; selection on the mean per-city val MSE",
+        "n_params": sum(p.numel() for p in members[0]["model"].parameters()),
+        "seeds": seeds,
+        "best_epoch": best["result"].best_epoch,
+        "best_val_mse": best["result"].best_val_loss,
+        "checkpoint": paths.display(checkpoint_path),
+        "experiment": experiment.to_json(),
+    }
+    (out / "run_config.json").write_text(json.dumps(config, indent=2, default=str) + "\n")
+    write_emissions(out, carbon, sha)
+    print(f"Outputs: {out}")
+
+
 def _stgnn_provenance(experiment, members, samples, dataset, split, window) -> dict:
     """Extra run_config fields that make a headline number auditable.
 
@@ -566,6 +776,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--zero-shot", action="store_true",
                         help="With --init-from: apply the source model with no training "
                              "on this city at all.")
+    parser.add_argument("--pool-cities", default=None,
+                        help="Train one source model on several cities, e.g. "
+                             "'boston:full,columbus:post_covid,chicago:full' (a city "
+                             "without ':variant' uses --variant). Writes the checkpoint "
+                             "that --init-from reads, and no forecasts. Needs a model "
+                             "without learned links (gnn_st_noadapt).")
     parser.add_argument("--rt", action="store_true", help="Add the Rt growth-index feature.")
     parser.add_argument("--seasonality", action="store_true",
                         help="Add sin/cos of the target week's calendar position.")
@@ -580,7 +796,11 @@ def main() -> None:
         for name, experiment in EXPERIMENTS.items():
             print(f"{name:26s} [{experiment.model}] {experiment.note}")
         return
-    run(resolve_experiment(args), args)
+    experiment = resolve_experiment(args)
+    if args.pool_cities:
+        run_pooled(experiment, args)
+    else:
+        run(experiment, args)
 
 
 if __name__ == "__main__":
