@@ -77,7 +77,8 @@ evidence.
 
 Every learned model got the same tuning budget: 12 configurations each, chosen on
 validation weeks only, then 10 seeds. Tuning helped the baselines far more than
-the GNN: on validation weeks the LSTM improved 18%, the GNN 3%.
+the GNN: on validation weeks, across the 3 cities, the LSTM improved 7%
+(6.8%), the GNN 2% (2.4%).
 
 Mean WIS in Boston:
 
@@ -121,12 +122,12 @@ Values are for 1 / 2 / 4 weeks ahead.
 
 - **Boston → Columbus** with no local training ties a model trained on Columbus
   itself.
-- **Columbus → Boston** is worse at 2 and 4 weeks. Columbus has about a third of
+- **Columbus → Boston** is worse at every horizon, clearly only at 4 weeks. Columbus has about a third of
   Boston's training history.
 - **Against persistence**, a transferred model with no local training has lower
   error in every case. That comparison is on the mean, not tested week by week.
-- **Fine-tuning** on the target city is tied with training from scratch in 10
-  of 12 comparisons.
+- **Fine-tuning** on the target city is not clearly better or worse than
+  training from scratch in any of the 12 comparisons (unseen 2024-25 fold).
 - **Source:** METHODS § Portability.
 
 ### Claim 5: What does not generalize
