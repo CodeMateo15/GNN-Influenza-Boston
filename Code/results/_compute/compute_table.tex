@@ -1,0 +1,19 @@
+\begin{tabular}{llrrrrrrrrr}
+\toprule
+ & & \multicolumn{3}{c}{$h=1$} & \multicolumn{3}{c}{$h=2$} & \multicolumn{3}{c}{$h=4$} \\
+\cmidrule(lr){3-5} \cmidrule(lr){6-8} \cmidrule(lr){9-11}
+Model & Hardware & Time & Wh & g CO$_2$ & Time & Wh & g CO$_2$ & Time & Wh & g CO$_2$ \\
+\midrule
+gnn\_st\_noglobals & Explorer (Xeon E5-2680 v4) & 23m 58s & 7.27 & 2.71 & 25m 56s & 7.8 & 2.91 & 23m 09s & 7 & 2.61 \\
+gnn\_st & Explorer (Xeon E5-2680 v4) & 22m 54s & 6.87 & 2.56 & 22m 00s & 6.74 & 2.51 & 19m 18s & 5.91 & 2.2 \\
+xgboost & Apple M5 & 1.8s & 0.00227 & 0.000847 & 1.5s & 0.00237 & 0.000884 & 1.7s & 0.00508 & 0.00189 \\
+gnn\_st\_lagsonly & Explorer (Xeon E5-2680 v4) & 23m 36s & 7.08 & 2.64 & 24m 26s & 7.26 & 2.71 & 20m 37s & 6.08 & 2.27 \\
+gnn\_cascade & Explorer (Xeon Platinum 8276) & -- & -- & -- & 15m 21s & 3.99 & 1.49 & -- & -- & -- \\
+lstm & Explorer (Xeon E5-2680 v4) & 23.2s & 0.0489 & 0.0182 & 40.7s & 0.0499 & 0.0186 & 18.1s & 0.0245 & 0.00914 \\
+arima & Apple M5 & 3m 41s & 2.98 & 1.1 & 3m 41s & 2.98 & 1.1 & 3m 38s & 2.94 & 1.09 \\
+persistence & Apple M5 & 34 ms & 0.00045 & 0.000166 & 35 ms & 0.000474 & 0.000175 & 33 ms & 0.000439 & 0.000162 \\
+seasonal\_naive & Apple M5 & 41 ms & 0.000544 & 0.000201 & 40 ms & 0.000534 & 0.000197 & 41 ms & 0.000552 & 0.000204 \\
+gat & – & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+dualtopo & – & -- & -- & -- & -- & -- & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}

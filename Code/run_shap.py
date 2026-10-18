@@ -126,7 +126,8 @@ except ImportError as exc:  # pragma: no cover
     raise SystemExit(f"Missing dependency: {exc.name}. Install torch shap pandas "
                      f"numpy matplotlib.") from exc
 
-from influenza import paths
+from influenza import paths, track_emissions
+from influenza.artifacts import write_emissions
 from influenza.cli import (add_common_args, city_output_dirs, resolve_city,
                            resolve_window)
 from influenza.config import EXPERIMENTS, Experiment
@@ -1218,7 +1219,18 @@ def main() -> None:
     args = parse_args()
     city = resolve_city(args)
     results_root, checkpoint_root = city_output_dirs(args, city)
+    # Attribution is a cost the paper pays too, so it gets a receipt like a
+    # training run: results/_compute/shap/<experiment>/emissions.json.
+    name = "xgboost" if args.name == "xgboost" else args.experiment
+    with track_emissions(f"shap:{name}:{args.variant or 'default'}",
+                         enabled=not args.no_carbon, city=city.name) as carbon:
+        _main(args, city, results_root, checkpoint_root)
+    out = results_root / "_compute" / "shap" / name
+    out.mkdir(parents=True, exist_ok=True)
+    print(carbon.format_report(write_emissions(out, carbon)))
 
+
+def _main(args, city, results_root, checkpoint_root) -> None:
     # Trees get an exact, instant Shapley algorithm of their own; routing them
     # through the coalition enumeration would be slower and no more correct.
     if args.experiment == "xgboost" or args.name == "xgboost":

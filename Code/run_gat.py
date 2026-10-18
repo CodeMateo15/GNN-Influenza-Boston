@@ -147,7 +147,7 @@ def main() -> None:
 
     hidden, heads = experiment.train.hidden[0], experiment.train.hidden[1]
     with track_emissions(run_tag(experiment.name, experiment.variant, window),
-                         enabled=not args.no_carbon) as carbon:
+                         enabled=not args.no_carbon, city=city.name) as carbon:
         seeds = [experiment.train.seed + i for i in range(args.n_seeds)]
         print(f"Budget: {experiment.train.epochs} epochs x {len(seeds)} seeds", flush=True)
         test_parts, val_parts, per_seed = [], [], []
@@ -160,10 +160,12 @@ def main() -> None:
             print(f"Parameters: {sum(p.numel() for p in model.parameters()):,} "
                   f"({hidden} hidden, {heads} heads)")
 
-            result = train_gcn(model, train_set, val_set, edge_index=edge_index,
-                               edge_weight=edge_weight, spec=experiment.train,
-                               device=device, n_neigh=graph.n_neigh,
-                               batch_size=experiment.train.batch_size if args.batched else None)
+            with carbon.phase("train"):
+                result = train_gcn(model, train_set, val_set, edge_index=edge_index,
+                                   edge_weight=edge_weight, spec=experiment.train,
+                                   device=device, n_neigh=graph.n_neigh,
+                                   batch_size=experiment.train.batch_size if args.batched else None)
+            carbon.add_epochs(result.epochs_run)
             per_seed.append({"seed": seed, "best_epoch": result.best_epoch,
                              "best_val_mse": result.best_val_loss})
 
@@ -172,10 +174,11 @@ def main() -> None:
             mc_kwargs = dict(edge_index=edge_index, edge_weight=edge_weight, norm=norm,
                              n_neigh=graph.n_neigh, device=device,
                              n_mc=experiment.train.mc_samples, target=experiment.target)
-            draws, test_actual = mc_dropout_forward(model, test_set, **mc_kwargs)
-            test_parts.append(draws)
-            draws, val_actual = mc_dropout_forward(model, val_set, **mc_kwargs)
-            val_parts.append(draws)
+            with carbon.phase("eval"):
+                draws, test_actual = mc_dropout_forward(model, test_set, **mc_kwargs)
+                test_parts.append(draws)
+                draws, val_actual = mc_dropout_forward(model, val_set, **mc_kwargs)
+                val_parts.append(draws)
         # Pooling every seed's MC draws makes the mean the ensemble mean and the
         # variance include the between-seed spread.
         test_draws = np.concatenate(test_parts, axis=0)

@@ -126,7 +126,8 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
                     })
         return pd.DataFrame(rows)
 
-    with track_emissions(run_tag(model_name, variant, window), enabled=not args.no_carbon) as carbon:
+    with track_emissions(run_tag(model_name, variant, window), enabled=not args.no_carbon,
+                         city=city.name) as carbon:
         validation = forecast(split.val)
         predictions = forecast(split.test)
 

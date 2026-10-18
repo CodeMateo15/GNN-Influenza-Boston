@@ -172,7 +172,7 @@ def train_one(train, val, adjacency, device, args, window, n_nodes, seed):
             break
     if best_state is not None:
         model.load_state_dict(best_state)
-    return model, best_epoch, best_loss
+    return model, best_epoch, best_loss, epoch
 
 
 def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
@@ -197,16 +197,19 @@ def run_variant(all_rates: pd.DataFrame, variant: str, window: Window,
     seeds = [SEED + i for i in range(args.n_seeds)]
     print(f"Budget: {args.epochs} epochs x {len(seeds)} seeds", flush=True)
     test_draws, val_draws, per_seed = [], [], []
-    with track_emissions(run_tag(args.name, variant, window), enabled=not args.no_carbon) as carbon:
+    with track_emissions(run_tag(args.name, variant, window), enabled=not args.no_carbon,
+                         city=city.name) as carbon:
         for i, seed in enumerate(seeds, start=1):
             print(f"--- seed {seed} ({i}/{len(seeds)}) ---", flush=True)
             random.seed(seed)
             np.random.seed(seed)
             torch.manual_seed(seed)
-            model, best_epoch, best_loss = train_one(train, val, adjacency, device, args,
-                                                     window, city.n_neigh, seed)
+            with carbon.phase("train"):
+                model, best_epoch, best_loss, epochs_run = train_one(
+                    train, val, adjacency, device, args, window, city.n_neigh, seed)
+            carbon.add_epochs(epochs_run)
             model.eval()
-            with torch.no_grad():
+            with carbon.phase("eval"), torch.no_grad():
                 test_draws.append(model(torch.from_numpy(x_test).to(device)).cpu().numpy()
                                   * std[:, None, :] + mean[:, None, :])
                 val_draws.append(model(torch.from_numpy(val[0]).to(device)).cpu().numpy()

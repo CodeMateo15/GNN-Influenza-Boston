@@ -39,8 +39,17 @@ case "$MODE" in
       --include 'predictions_val.csv' \
       --include 'run_config.json' \
       --include 'seed_spread.csv' \
+      --include 'emissions.json' \
+      --include '/_emissions/tasks/*.csv' \
       --exclude '*' \
       "$NUID@$HOST:$REMOTE/Code/results/" "$LOCAL/Code/results/"
+    # Per-task wall-clock logs from sweep.py --log, kept beside the per-task
+    # emissions files so compare_compute.py finds both in one place.
+    mkdir -p "$LOCAL/Code/results/_emissions/cluster_logs"
+    rsync -avz \
+      --include 'task_*.csv' \
+      --exclude '*' \
+      "$NUID@$HOST:$REMOTE/logs/" "$LOCAL/Code/results/_emissions/cluster_logs/"
     ;;
   *) echo "usage: sync.sh {push|pull} <nuid>" >&2; exit 2 ;;
 esac

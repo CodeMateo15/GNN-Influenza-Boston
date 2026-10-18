@@ -61,17 +61,19 @@ def finish_run(
                             flu_months=getattr(city, "flu_months", None))
     metrics.to_csv(out / "metrics.csv", index=False)
 
+    sha = git_sha()
     payload = {
         "model": model,
         "variant": variant,
-        "git_sha": git_sha(),
+        "git_sha": sha,
         "created": pd.Timestamp.now().isoformat(timespec="seconds"),
         **config,
     }
     (out / "run_config.json").write_text(json.dumps(payload, indent=2, default=str) + "\n")
 
+    previous = None
     if carbon is not None:
-        (out / "emissions.json").write_text(json.dumps(carbon.to_json(), indent=2) + "\n")
+        previous = write_emissions(out, carbon, sha)
 
     for name, table in (extra_tables or {}).items():
         table.to_csv(out / f"{name}.csv", index=False)
@@ -94,6 +96,19 @@ def finish_run(
     print(f"\nMetrics by segment and scope (horizon{'s' if len(horizons) > 1 else ''} {listed}):")
     print(summary_table(metrics))
     if carbon is not None:
-        print(carbon.format_report())
+        print(carbon.format_report(previous))
     print(f"Outputs: {out}")
     return out
+
+
+def write_emissions(out: Path, carbon: EmissionsSummary, sha: str | None = None) -> dict | None:
+    """Write emissions.json, returning the one it replaced (for the receipt's 'vs last run')."""
+    path = out / "emissions.json"
+    previous = None
+    try:
+        previous = json.loads(path.read_text())
+    except (OSError, ValueError):
+        pass
+    carbon.git_sha = carbon.git_sha or sha or git_sha()
+    path.write_text(json.dumps(carbon.to_json(), indent=2) + "\n")
+    return previous

@@ -65,7 +65,8 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
     print(f"\n{'=' * 72}\nFLUSIGHT-STYLE BASELINE | {city.label} | {variant}\n{'=' * 72}")
     rows: list[dict] = []
     fallbacks = 0
-    with track_emissions(run_tag(MODEL, variant, window), enabled=not args.no_carbon) as carbon:
+    with track_emissions(run_tag(MODEL, variant, window), enabled=not args.no_carbon,
+                         city=city.name) as carbon:
         for position in split.test:
             for horizon in window.horizons:
                 history = observed[:position + 1]

@@ -40,7 +40,7 @@ except ImportError as exc:  # pragma: no cover
     raise SystemExit("run_severity_classifier.py needs xgboost. pip install xgboost") from exc
 
 from influenza import paths, severity, split_origins, track_emissions, valid_origins, variant_data
-from influenza.artifacts import git_sha
+from influenza.artifacts import git_sha, write_emissions
 from influenza.classification import ALERT_LEVELS, band_confusion, band_scores
 from influenza.cli import add_common_args, city_output_dirs, resolve_city, resolve_window, run_tag
 from influenza.config import EXPERIMENTS
@@ -154,7 +154,7 @@ def main() -> None:
     best_iterations: dict[str, list[int]] = {}
     step = 0
     with track_emissions(run_tag(args.name, args.variant, window),
-                         enabled=not args.no_carbon) as carbon:
+                         enabled=not args.no_carbon, city=city.name) as carbon:
         for h_idx, horizon in enumerate(window.horizons):
             y_rate = np.array([norm.to_level(samples.y[s:s + 1])[0, node, h_idx]
                                for s, node in meta], dtype=np.float64)
@@ -174,9 +174,11 @@ def main() -> None:
             probability = np.zeros((len(meta), N_BANDS))
             best_iterations[f"h{horizon}"] = []
             for seed in seeds:
-                model, member, loss = fit_one(X_all, y_band, tr, va, seed=seed,
-                                              n_estimators=args.n_estimators,
-                                              weighted=args.class_weight == "balanced")
+                with carbon.phase("train"):
+                    model, member, loss = fit_one(X_all, y_band, tr, va, seed=seed,
+                                                  n_estimators=args.n_estimators,
+                                                  weighted=args.class_weight == "balanced")
+                carbon.add_epochs(1)
                 probability += member / len(seeds)
                 best_iterations[f"h{horizon}"].append(int(model.best_iteration))
                 step += 1
@@ -243,11 +245,11 @@ def main() -> None:
         "city": city.name,
     }
     (out / "run_config.json").write_text(json.dumps(config, indent=2, default=str) + "\n")
+    previous = write_emissions(out, carbon, config["git_sha"])
 
     with pd.option_context("display.width", 160, "display.max_columns", 30):
         print("\n" + metrics.round(3).to_string(index=False))
-    if carbon is not None:
-        print(carbon.format_report())
+    print(carbon.format_report(previous))
     print(f"Outputs: {paths.display(out)}", flush=True)
 
 

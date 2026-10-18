@@ -88,7 +88,7 @@ def run_variant(rates: pd.DataFrame, variant: str, window: Window,
     print(f"Train origins: {len(split.train)} | Validation: {len(split.val)} | Test: {len(split.test)}")
 
     with track_emissions(run_tag("climatology", variant, window),
-                         enabled=not args.no_carbon) as carbon:
+                         enabled=not args.no_carbon, city=city.name) as carbon:
         validation = frame(split, split.val, window, city, actual, clim_rate, origin_rate)
         test = frame(split, split.test, window, city, actual, clim_rate, origin_rate)
         shares = fit_share(validation)

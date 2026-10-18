@@ -1,0 +1,32 @@
+{
+  "run_name": "xgboost:post_covid:h2",
+  "city": "boston",
+  "enabled": true,
+  "kg_co2": 8.836790886261534e-07,
+  "kwh": 2.3719893650640088e-06,
+  "duration_s": 0.17640325002139434,
+  "setup_s": 1.3202171250013635,
+  "wall_s": 1.4966203750227578,
+  "cpu_kwh": 2.078704018357611e-06,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 2.932853467063978e-07,
+  "phases": {
+    "train": 0.149
+  },
+  "epochs": 1,
+  "seconds_per_epoch": 0.1494649170199409,
+  "region": "massachusetts",
+  "tracking_mode": "machine",
+  "measured": "estimated (constant TDP)",
+  "hardware": {
+    "cpu_model": "Apple M5",
+    "gpu_model": "",
+    "cpu_count": "10",
+    "os": "macOS-27.0-arm64-arm-64bit"
+  },
+  "emissions_file": "/Users/mateobiggs/GNN-Influenza-Boston/Code/results/_emissions/emissions.csv",
+  "slurm_job": null,
+  "codecarbon_version": "3.2.5",
+  "git_sha": "8fd5290c",
+  "note": null
+}
