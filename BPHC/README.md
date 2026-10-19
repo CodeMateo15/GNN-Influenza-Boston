@@ -50,8 +50,12 @@ when rates can turn quickly.
     then the middle is closer to the truth. That doesn't always happen.
     `accuracy.csv` shows whether it did.
 
-All three models retrain from scratch every week on every week of data BPHC has
-published since 2018.
+ARIMA and LSTM retrain every week on every week of data BPHC has published
+since 2018. The GNN is trained once a season, on every week before the season
+opens (June 1), and saved in `models/`; each week it is loaded and fed that
+week's data. This is how the accuracy in `accuracy.csv` was measured (one model
+per past season, trained before it opened), and loading the saved GNN gives
+exactly the forecast that retraining it from scratch would.
 
 ## How "Citywide" is calculated
 
@@ -150,8 +154,8 @@ There are three steps. Only the middle one is heavy.
 ```
 1. BPHC dashboard export        bphc_export_to_city.py   (seconds, any computer)
         │
-2. Train + forecast             live_forecast.py         (about 4 CPU-hours: ~1 hour per
-        │                                                 week ahead; can run in parallel)
+2. Train + forecast             live_forecast.py         (about 30 CPU-minutes with the
+        │                                                 saved GNN in models/; mostly ARIMA)
         ▼
 3. Tables + figures             make_bphc.py             (seconds, any computer)
 ```
@@ -165,7 +169,8 @@ pip install -r requirements.txt
 ```
 
 This installs the forecasting models from PyPI
-([areaFluForecast](https://pypi.org/project/areaFluForecast/) 1.1.0).
+([areaFluForecast](https://pypi.org/project/areaFluForecast/) 1.2.0 or newer;
+loading saved models needs 1.2.0).
 
 **Each week:**
 
@@ -173,9 +178,12 @@ This installs the forecasting models from PyPI
 # 1. Download "Influenza Neighborhood" from the BPHC dashboard, then:
 python bphc_export_to_city.py --export "BPHC Dashboard Influenza Neighborhood.csv" --out live/boston
 
-# 2. Train and forecast. Archives the forecast under live/<season>/boston/<week>/.
-#    The first run also backtests 3 past seasons (about 12 CPU-hours, once).
-python live_forecast.py run --city boston --models gnn_st lstm arima
+# 2. Forecast, loading this season's saved GNN. Archives the forecast under
+#    live/<season>/boston/<week>/. The first run also backtests 3 past seasons
+#    (about 12 CPU-hours, once). --jobs 2 runs two weeks-ahead at a time if the
+#    computer has 2+ cores free (same numbers, about half the time).
+python live_forecast.py run --city boston --models gnn_st lstm arima \
+    --models-dir ../models/2026_27/boston
 
 # 3. Build this folder's tables and figures from that week's forecast
 python make_bphc.py --origin live/2026_27/boston/<week> --out ..
@@ -186,6 +194,18 @@ lacks, if they were made later from the same data. The current folder used it
 once: the 2026-09-27 forecast predates ARIMA, so ARIMA's rows for that week
 were made afterwards from that week's exact data. `forecast_info.json` records
 this. New weeks include all three models and don't need it.
+
+**Once a season** (we normally do this and send you the new `models/<season>/`
+folder; it is about 2 CPU-hours):
+
+```bash
+python live_forecast.py train --city boston --models gnn_st --out ../models/2026_27/boston
+```
+
+Step 2 stops with a message, rather than quietly retraining, if the saved models
+are for another season, are missing a week ahead, or were trained on data that
+BPHC has since revised. Leave out `--models-dir` to retrain the GNN every week
+instead (about 4 CPU-hours).
 
 To check step 2 end to end before a long run, set `AREAFLU_QUICK=1`. This makes
 every model tiny; the numbers are meaningless but every file gets written.

@@ -1,0 +1,18 @@
+{
+  "city": "boston",
+  "season": "2026_27",
+  "anchor": "2026-06-01",
+  "trained_through": "2026-10-04",
+  "models": [
+    "gnn_st"
+  ],
+  "package_version": "1.1.0",
+  "quick": false,
+  "files": {
+    "gnn_st_h1.pt": "6af5ad7078d4d7b1a2b534feac0b4910d3c1736b7f3436d47da5ffa6727c7175",
+    "gnn_st_h2.pt": "2bc5c9ec2970d7c5d779027cf215edd6fc659a4c49c02595a4dea447fb512bb8",
+    "gnn_st_h3.pt": "f63e09e776f3d6c85376fe8ae5124731c0657fc5d20b4377c1d9ed6fb1223311",
+    "gnn_st_h4.pt": "456fee1c6c2290e9e0cc5bebea5d86775135d3c34b76d72e735186a8eb70b76a"
+  },
+  "updated": "2026-10-16T16:39:57"
+}

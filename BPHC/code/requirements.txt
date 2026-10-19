@@ -1,4 +1,4 @@
 # Everything: making the forecasts (bphc_export_to_city.py, live_forecast.py)
 # and the reporting step (make_bphc.py). Tested with Python 3.12.
 -r requirements-report.txt
-areafluforecast==1.1.0
+areafluforecast==1.2.0
