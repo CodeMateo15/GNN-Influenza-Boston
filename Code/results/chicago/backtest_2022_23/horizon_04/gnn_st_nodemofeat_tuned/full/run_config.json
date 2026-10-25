@@ -1,0 +1,327 @@
+{
+  "model": "gnn_st_nodemofeat_tuned",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-24T01:44:22",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 102,
+    "n_val": 18,
+    "n_test": 52,
+    "first_test_target": "2022-06-05",
+    "last_test_target": "2023-05-28"
+  },
+  "graph_counts": {
+    "geo_1hop": 115,
+    "anchor_edges": 2,
+    "geo_2hop": 198,
+    "geo_3hop": 236,
+    "corr": 61,
+    "demo": 1107
+  },
+  "n_nodes": 59,
+  "edge_weight_range": [
+    0.0,
+    2.8934475287836334
+  ],
+  "n_node_features": 38,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "temp_mean_c",
+    "temp_max_c",
+    "temp_min_c",
+    "relative_humidity_mean",
+    "precipitation_sum_mm",
+    "wind_speed_max_kmh"
+  ],
+  "global_names": [],
+  "n_params": 27814,
+  "best_epoch": 8,
+  "best_val_mse": 0.452063649892807,
+  "epochs_run": 80,
+  "checkpoint": "checkpoints/chicago/backtest_2022_23/gnn_st_nodemofeat_tuned_full.pt",
+  "experiment": {
+    "name": "gnn_st_nodemofeat_tuned",
+    "model": "stgnn",
+    "variant": "full",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": true,
+      "use_demographics": false,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": true,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.01,
+      "weight_decay": 0.003,
+      "epochs": 80,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.1,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 32,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        4
+      ],
+      "test_start": "2022-06-01",
+      "test_end": "2023-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Demographic node features removed, demographic edges KEPT. The half of gnn_st_nodemo that asks whether the 8 static columns carry signal as inputs."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "4": 1.207085336146132
+    },
+    "beta": {
+      "4": 1.9452419078488863
+    },
+    "kappa": {
+      "4": 1.0305008561575655
+    },
+    "n_validation": 1044,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "4": [
+        -1.0656606845272776,
+        -0.9710098387648424,
+        -0.8557068237699259,
+        -0.6800609569648174,
+        -0.5673743524267981,
+        -0.5172250599513692,
+        -0.48188311425580777,
+        -0.45945201872592173,
+        -0.4311101991225921,
+        -0.3620617061980207,
+        -0.2470231126432628,
+        -0.13230806019882183,
+        -0.05789800288105616,
+        0.02653724463811389,
+        0.0766446284514598,
+        0.2050988428047545,
+        0.4945633613906793,
+        0.8078761162408059,
+        1.1448018389737924,
+        1.5263520492856741,
+        2.0197445800380067,
+        2.7021892034888295,
+        3.7551145555550267
+      ]
+    },
+    "scale_floor": {
+      "4": 0.23788228321002058
+    }
+  },
+  "test_interval_coverage": 89.35676392572944,
+  "city": "chicago",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "n_seeds": 10,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.452063649892807,
+    "43": 0.5757034420967102,
+    "44": 0.46741417050361633,
+    "45": 0.48518654704093933,
+    "46": 0.49731966853141785,
+    "47": 0.5217185616493225,
+    "48": 0.5677908658981323,
+    "49": 0.5203590393066406,
+    "50": 0.5016137361526489,
+    "51": 0.5064781308174133
+  },
+  "per_seed_best_epoch": {
+    "42": 8,
+    "43": 1,
+    "44": 5,
+    "45": 3,
+    "46": 3,
+    "47": 1,
+    "48": 1,
+    "49": 1,
+    "50": 10,
+    "51": 2
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 6,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "4": 0.4162
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 0.4685,
+      "adaptive": 0.5315
+    },
+    {
+      "all": 0.5144,
+      "adaptive": 0.4856
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.4162
+    ],
+    "43": [
+      0.5013
+    ],
+    "44": [
+      0.4467
+    ],
+    "45": [
+      0.4775
+    ],
+    "46": [
+      0.4788
+    ],
+    "47": [
+      0.4962
+    ],
+    "48": [
+      0.4911
+    ],
+    "49": [
+      0.4995
+    ],
+    "50": [
+      0.3923
+    ],
+    "51": [
+      0.4924
+    ]
+  }
+}

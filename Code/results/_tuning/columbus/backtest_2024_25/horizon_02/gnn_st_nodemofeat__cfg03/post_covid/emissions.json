@@ -1,0 +1,37 @@
+{
+  "run_name": "gnn_st_nodemofeat__cfg03:post_covid:h2",
+  "city": "columbus",
+  "enabled": true,
+  "kg_co2": 0.00044919283066019433,
+  "kwh": 0.0012057325231555165,
+  "duration_s": 204.76320756226778,
+  "setup_s": 9.077466508373618,
+  "wall_s": 213.8406740706414,
+  "cpu_kwh": 0.00063792985466331,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 0.0005678026684922063,
+  "phases": {
+    "train": 167.515,
+    "eval": 31.051
+  },
+  "epochs": 200,
+  "seconds_per_epoch": 0.8375757480319589,
+  "region": "massachusetts",
+  "tracking_mode": "process",
+  "measured": "estimated (cpu load x TDP)",
+  "hardware": {
+    "cpu_model": "Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz",
+    "gpu_model": "",
+    "cpu_count": "1",
+    "os": "Linux-5.14.0-362.13.1.el9_3.x86_64-x86_64-with-glibc2.34",
+    "node_physical_cores": "20"
+  },
+  "emissions_file": "/scratch/biggs.m/gnn-flu/Code/results/_emissions/tasks/11339323_93.csv",
+  "slurm_job": "11339323_93",
+  "codecarbon_version": "3.2.5",
+  "cpu_share_correction": 0.05,
+  "raw_kwh": 0.013326399761758406,
+  "raw_kg_co2": 0.004964719053797558,
+  "git_sha": null,
+  "note": null
+}

@@ -57,6 +57,11 @@ _GNN_SPACE = {"--lr": [1e-3, 3e-3, 1e-2], "--weight-decay": [3e-4, 1e-3, 3e-3, 1
 SEARCH = {
     "gnn_st": ("run_gnn.py", [], _GNN_SPACE),
     "gnn_st_nograph": ("run_gnn.py", [], _GNN_SPACE),
+    # Component ablations for the paper's "what each part adds" section, tuned
+    # with the same budget as the map ablation above.
+    "gnn_st_noweather": ("run_gnn.py", [], _GNN_SPACE),
+    "gnn_st_nodemofeat": ("run_gnn.py", [], _GNN_SPACE),
+    "gnn_st_historyonly": ("run_gnn.py", [], _GNN_SPACE),
     "lstm": ("run_lstm.py", [],
              {"--lr": [3e-4, 1e-3, 3e-3], "--weight-decay": [1e-5, 1e-4, 1e-3],
               "--dropout": [0.0, 0.1, 0.25], "--hidden-size": [32, 64, 128],
@@ -222,7 +227,15 @@ def main() -> None:
               args.chunk)
     elif args.mode == "select":
         chosen = select(arms, cities)
-        SELECTION_FILE.write_text(json.dumps(chosen, indent=2))
+        # Merge into the existing file so selecting a subset of arms keeps the
+        # picks already made for the others.
+        merged = json.loads(SELECTION_FILE.read_text()) if SELECTION_FILE.exists() else {}
+        for city, seasons in chosen.items():
+            for season, horizons in seasons.items():
+                for horizon, picks in horizons.items():
+                    merged.setdefault(city, {}).setdefault(season, {}).setdefault(
+                        horizon, {}).update(picks)
+        SELECTION_FILE.write_text(json.dumps(merged, indent=2))
         n = sum(len(a) for s in chosen.values() for h in s.values() for a in h.values())
         print(f"{n} selections -> {paths.display(SELECTION_FILE)}")
         for city, seasons in chosen.items():
@@ -235,6 +248,10 @@ def main() -> None:
                               f"[{pick['n_configs_scored']}/{pick['n_configs']} scored]")
     else:
         chosen = json.loads(SELECTION_FILE.read_text())
+        chosen = {city: {season: {h: {a: p for a, p in picks.items() if a in arms}
+                                  for h, picks in horizons.items()}
+                         for season, horizons in seasons.items()}
+                  for city, seasons in chosen.items() if city in cities}
         write(final_tasks(chosen), args.out or Path("Code/sweep/tasks_tuned_final.jsonl"),
               args.chunk)
 
