@@ -1,0 +1,1464 @@
+% supplement.txt -- Appendix S1 for the AJE submission. Rename to
+% supplement.tex in Overleaf. Table bodies were generated from Code/results by
+% Paper/scripts/make_tables.py; regenerate rather than edit numbers by hand.
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage[super,sort&compress,comma]{natbib}
+\renewcommand{\bibnumfmt}[1]{#1.}
+\usepackage[hidelinks]{hyperref}
+\renewcommand{\thetable}{S\arabic{table}}
+\newcommand{\NOTE}[1]{\textcolor{red}{[#1]}}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries Appendix S1\par}
+\medskip
+Combining Temporal, Environmental, Demographic, and Geospatial Information
+to Forecast Influenza by Neighborhood: A Graph Neural Network in 3 US Cities
+\end{center}
+
+\noindent\textbf{Contents.} Appendix S1 (models, tuning, data notes, and
+design experience on the development season); Tables S1--S18; Figures S1--S6.
+
+%==========================================================================
+\section*{Models}
+
+Table~\ref{tab:models} lists every model in the evaluation. All learned models
+were tuned with the same budget in every test season and averaged over 10
+training runs, in all 3 cities; all models except the FluSight baseline received forecast intervals from the
+same shared procedure described in the main text. Table~\ref{tab:coverage}
+lists which analyses were run in each city and, where one was not, why.
+
+\begin{table}[h!]
+\centering
+\caption{Models Compared}
+\label{tab:models}
+\small
+\begin{tabular}{p{4.2cm}p{7.2cm}p{3.6cm}}
+\toprule
+Model & What it does & Inputs \\
+\midrule
+Graph neural network & Causal temporal convolutions over each neighborhood's recent weeks, graph convolution over the neighborhood map plus a learned set of extra links, and a learned correction to a blend of the current week and a seasonal curve & 16 weeks of rates, 6 weather, 8 demographic measures, map \\
+Same model, map removed & As above with no links between neighborhoods and no surrounding areas & Same, no map \\
+Same model, no environment & As the graph neural network without the 6 weather variables & Same, no weather \\
+Same model, no demographics & As the graph neural network without the 8 demographic measures as inputs (demographic links kept) & Same, no demographic inputs \\
+Same model, past rates only & No weather, demographic measures, suppression flag, or links; same baseline & 16 weeks of rates \\
+LSTM & Long short-term memory network reading all neighborhoods' series jointly & All series, no map \\
+Cola-GNN & Published influenza graph model that learns connections from the data;\cite{deng2020colagnn} reimplemented & All series \\
+Gradient-boosted trees & Regression trees pooled across neighborhoods & Same columns as graph model, no map \\
+Seasonal ARIMA & Per-neighborhood ARIMA with the annual cycle as harmonic regressors & Own history \\
+Seasonal blend, no learning & The graph model's baseline (current week blended with the seasonal curve) with the network switched off & Own history \\
+FluSight baseline & Latest value carried forward, ranges from past changes over the forecast horizon & Own history \\
+Persistence & Next week equals this week & Own history \\
+Climatology & Seasonal curve for the target week & Own history \\
+Same week last year & The value in the same week one year earlier & Own history \\
+Graph attention network$^{a}$ & Spatial graph attention over 52 weeks of history, no temporal layer\cite{velickovic2018gat,luo2025novel} & 52 weeks, map \\
+Dual-topology GCN$^{a}$ & Separate geographic and correlation graphs with temporal convolutions\cite{luo2025novel} & 52 weeks, 2 maps \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Abbreviations: ARIMA, autoregressive integrated moving average; GCN, graph
+convolutional network; LSTM, long short-term memory network.\\
+$^{a}$ The comparison and reference models of Luo et al.,\cite{luo2025novel}
+run at 1 week ahead only, as in that paper.
+\end{table}
+
+%==========================================================================
+\section*{Analyses performed in each city}
+
+\begin{table}[h!]
+\centering
+\caption{Analyses Performed in Each City}
+\label{tab:coverage}
+\footnotesize
+\begin{tabular}{p{4.2cm}p{3.4cm}p{3.4cm}p{3.4cm}}
+\toprule
+Analysis & Boston & Columbus & Chicago \\
+\midrule
+Training data used & December 2017 onward & July 2022 onward$^{a}$ & September 2019 onward \\
+Unseen test seasons & 3 (2022--2023 to 2024--2025) & 1 (2024--2025) & 4 (2022--2023 to 2025--2026) \\
+Development season (not evidence) & 2025--2026 & 2025--2026 & None$^{b}$ \\
+Models compared (Table~\ref{tab:models}) & All 16 & All 16 & All 16 \\
+Equal-budget tuning, 10 training runs & Yes & Yes & Yes \\
+Week-level tests (Tables~\ref{tab:sigboston}--\ref{tab:sigchi}) & Yes & Yes & Yes \\
+Cross-city transfer (main text, Table 5) & Target and source & Target and source & Target and source \\
+Training on several cities at once (Table~\ref{tab:pooled}) & Target and source & Target and source & Target and source \\
+Hand-drawn vs automatically built map (main text, Table 4) & Yes & Not applicable$^{c}$ & Not applicable$^{c}$ \\
+Severity alerts (Tables~\ref{tab:severity}, \ref{tab:lead}) & Yes & Yes & Not applicable$^{d}$ \\
+Component ablations (main text, Table 3, Figure 4; Tables~\ref{tab:components}, \ref{tab:historyonly}) & Yes & Yes & Yes \\
+Map effect by neighborhood; example forecasts and calibration (main text, Figures 5, 6) & Yes & Not shown$^{e}$ & Not shown$^{e}$ \\
+Design experiments on the development season (Table~\ref{tab:ablation}) & Yes & No$^{f}$ & No$^{f}$ \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+$^{a}$ Influenza nearly disappeared in the first pandemic year, and the
+Columbus series begins in January 2022, so models start after it; a 2023--2024
+test season would have had under 1 year of training data.\\
+$^{b}$ Chicago was added after the design was fixed; tuning used only the
+weeks before each test season.\\
+$^{c}$ Only Boston had a hand-drawn map. The Columbus and Chicago maps were
+built from boundary files from the start, by the rule tested in Table 4.\\
+$^{d}$ Chicago's measure is already the health department's graded 1--10
+activity level, so there is no rate on which to set intensity thresholds.\\
+$^{e}$ Illustrative figures for the primary city; the overall results for the
+other cities are in Tables~\ref{tab:colper}, \ref{tab:chiper},
+\ref{tab:sigcol}, and \ref{tab:sigchi}, and their component ablations in
+Table~\ref{tab:components}.\\
+$^{f}$ The model's structure was chosen on Boston's development season only.
+\end{table}
+
+%==========================================================================
+\section*{Comparison models: ARIMA and LSTM}
+
+\NOTE{Coauthor: describe the ARIMA comparison model here (about 120--170
+words).}
+
+\NOTE{Coauthor: describe the LSTM comparison model here (about 130--180
+words).}
+
+%==========================================================================
+\section*{Equal-budget tuning}
+
+For each learned model, test season, and horizon, 12 configurations were
+trained once: the model's default and 11 drawn at random from the space in
+Table~\ref{tab:space}. The configuration with the lowest mean absolute error
+on the validation weeks immediately before the test season was retrained with
+10 random seeds and scored on the test season. The chosen configurations are
+recorded in \texttt{Code/sweep/tuned\_configs.json}.
+
+\begin{table}[h!]
+\centering
+\caption{Tuning Search Spaces}
+\label{tab:space}
+\small
+\begin{tabular}{p{3.6cm}p{11.4cm}}
+\toprule
+Model & Values searched \\
+\midrule
+Graph neural network (with and without map) & learning rate \{0.001, 0.003, 0.01\}; weight decay \{0.0003, 0.001, 0.003, 0.01\}; dropout \{0.1, 0.25, 0.4\}; channels \{16, 24, 32\}; epochs \{80, 120, 200\} \\
+LSTM & learning rate \{0.0003, 0.001, 0.003\}; weight decay \{0.00001, 0.0001, 0.001\}; dropout \{0, 0.1, 0.25\}; hidden size \{32, 64, 128\}; lookback \{8, 16, 26\} weeks; epochs \{80, 120, 200\}; target \{level, blend\} \\
+Gradient-boosted trees & learning rate \{0.01, 0.03, 0.1\}; maximum depth \{2, 3, 4, 6\}; minimum child weight \{1, 4, 8\}; row subsample \{0.6, 0.8, 1.0\}; column subsample \{0.6, 0.8, 1.0\}; L2 penalty \{0.5, 2, 8\}; target \{climatology, level, blend\} \\
+Cola-GNN & learning rate \{0.0003, 0.001, 0.003\}; weight decay \{0, 0.0005, 0.005\}; dropout \{0.1, 0.2, 0.4\}; hidden size \{16, 32, 64\}; lookback \{12, 20, 26\} weeks; epochs \{100, 150, 200\} \\
+Graph attention network & learning rate \{0.001, 0.003, 0.01\}; weight decay \{0.00001, 0.0001, 0.001\}; dropout \{0.1, 0.2, 0.4\}; hidden size \{32, 64\}; heads \{4, 8\}; epochs \{100, 200\} \\
+Dual-topology GCN & learning rate \{0.001, 0.003, 0.01\}; weight decay \{0.00001, 0.0001, 0.001\}; epochs \{100, 200\}; fusion \{concatenate, mean, maximum\} \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Abbreviations: GCN, graph convolutional network; LSTM, long short-term memory
+network.
+\end{table}
+
+%==========================================================================
+\section*{The weighted interval score}
+
+The weighted interval score (WIS) asks how far off a forecast was, counting
+both its best guess and how honest its range was.\cite{bracher2021interval} A
+close forecast that claims too much certainty should score worse than an
+equally close one that admits its uncertainty, and a very wide range should
+not score well only because it happened to contain the observed value.
+
+The WIS is built from the interval score. For a central $(1-\alpha)\times100\%$ forecast interval
+from $l$ to $u$ and an observed value $y$, the interval score is
+\begin{equation*}
+\mathrm{IS}_\alpha(l, u; y) = (u - l)
++ \frac{2}{\alpha}\,(l - y)\,\mathbf{1}(y < l)
++ \frac{2}{\alpha}\,(y - u)\,\mathbf{1}(y > u),
+\end{equation*}
+where $\mathbf{1}(\cdot)$ is 1 when the condition holds and 0 otherwise. The
+first term is the width of the interval; the other 2 are penalties for missing,
+proportional to how far outside the interval the observation fell. For a 95\%
+interval ($\alpha = 0.05$), each unit of miss costs 40 times as much as each
+unit of width, so the score is lowest, on average, for an interval that
+really does contain the outcome 95\% of the time.\cite{gneiting2007proper}
+
+Every model in this study reports the 23
+quantiles used by FluSight: the median ($m$) and 11 central intervals with
+$\alpha_k = 0.02, 0.05, 0.10, 0.20, \ldots, 0.90$ (98\%, 95\%, 90\%, 80\%,
+\ldots, 10\% intervals). The WIS combines them:
+\begin{equation*}
+\mathrm{WIS}(y) = \frac{1}{K + \tfrac{1}{2}}
+\left( \tfrac{1}{2}\,\lvert y - m \rvert
++ \sum_{k=1}^{K} \frac{\alpha_k}{2}\,\mathrm{IS}_{\alpha_k}(l_k, u_k; y) \right),
+\qquad K = 11.
+\end{equation*}
+Each interval is weighted by $\alpha_k/2$, so narrow intervals near the median
+count with small weight and wide intervals with larger weight, and the median
+alone contributes half its absolute error. The WIS is in the units of the
+forecast (ED visits for ILI per 100,000, or Chicago's 1--10 levels), and lower
+is better. A forecast that puts all its quantiles on a single value has a WIS
+equal to its absolute error, so WIS can be read on the same scale as mean
+absolute error. The WIS approximates the continuous ranked probability score,
+a standard score for whole forecast distributions, and is algebraically equal
+to twice the mean quantile (pinball) loss over the 23 quantiles, which is how
+the code computes it. Each table reports the mean WIS over neighborhoods and
+target weeks; relative WIS divides a model's mean WIS by that of persistence.
+
+The WIS can be split exactly into a spread term (the weighted widths,
+$\sum_k \tfrac{\alpha_k}{2}(u_k - l_k)$, divided by $K + \tfrac{1}{2}$) and
+penalties for forecasting too high or too low (the weighted misses, including
+the median term). Most of a wide, cautious forecast's score comes from spread,
+and most of a narrow forecast's score comes from penalties when it misses.
+
+In Boston, the graph neural network's mean WIS 1 week ahead was 5.13 (Table 2
+of the main text): its forecasts were off by about 5 ED visits for ILI per
+100,000 residents per neighborhood-week, with credit given for honest ranges. For scale, observed rates in the 3 unseen
+seasons averaged 26.9 per 100,000 (median, 15.5; 90th percentile, 60.9). The
+WIS is lower than the same forecasts' mean absolute error (7.85; Table~\ref{tab:pointboston})
+because a forecast whose range covers the outcome is charged less than one
+that commits to a single value. Of the 5.13, about 1.9 came from the width of
+the ranges, 2.1 from forecasting too low, and 1.2 from forecasting too high.
+The mean is driven by high weeks. In the tenth of neighborhood-weeks with the
+highest rates, the average WIS was 16.2, against 3.9 in the rest, and those
+weeks supplied about a third of the total; a typical (median) week scored 2.8.
+WIS values cannot be compared across cities with different measures: Boston's
+(about 5 to 8) are in rates and Chicago's (about 1 to 1.5) in 1--10 levels.
+Within a city they also rise and fall with how high a season ran, so models
+are compared with each other on the same weeks. For this reason the main text
+leads with relative WIS. Persistence's mean WIS 1 week ahead was 6.24, so the
+graph neural network's relative WIS was 5.13/6.24 = 0.82, or 18\% less error
+than persistence.
+
+As an example, consider Dorchester. The graph neural network's forecast
+made on January 19, 2025, for the week of February 2 (2 weeks ahead) had a
+median of 226.7 per 100,000 and a 95\% interval of 175.6 to 292.6. The
+observed rate was 294.4, just above the 97.5th percentile. The WIS for this
+forecast was 43.5, of which 6.1 came from spread and 37.4 from
+underprediction. The model forecast a rise but too low a peak, and nearly all
+of the score reflects that shortfall. Persistence, which carried forward the
+292.5 observed on January 19, scored 9.0 that week. Forecasts that fall short
+of peaks, as described in the main text, are penalized most because errors
+are largest where rates are high.\cite{bosse2023transformed}
+
+%==========================================================================
+\section*{Data notes by city}
+
+\textbf{Inputs shared by all cities.} The 6 weekly weather variables are mean,
+maximum, and minimum temperature, relative humidity, precipitation, and maximum
+wind speed, from the Open-Meteo archive. The 8 demographic measures in all 3 cities
+are population density, poverty, share of children, share aged 65
+years or older, homeownership, transit commuting, households without a vehicle,
+and share of nonwhite residents, from city planning tables in Boston and from
+American Community Survey 5-year estimates in Columbus and Chicago. Each
+measure is scaled within its own city.
+
+\textbf{Boston.} Rates are published weekly by the Boston Public Health
+Commission for 14 neighborhoods (Back Bay, Beacon Hill, Downtown, North End, and
+West End form a single neighborhood). Suppressed weeks were treated as missing
+and excluded from training and scoring. Two data-loading errors found during the
+project (a count row averaged with the rate row, and suppressed weeks read as
+zero) were corrected before any result reported here was produced.
+
+\textbf{Columbus.} Visit-level ED records for influenza-like illness from
+Columbus Public Health were assigned to 17 planning areas through the
+department's ZIP code crosswalk. Population denominators come from the American
+Community Survey 5-year estimates summed over ZIP code tabulation areas. Areas
+with no visits in a week are recorded as observed zeros. The 5 surrounding
+areas in the map are fringe ZIP codes (43002, 43035, 43140, 43146, and 43240)
+that the crosswalk lists but leaves unassigned to any planning area; they carry
+0.2\% of visits.
+
+\textbf{Chicago.} The Chicago Department of Public Health publishes a weekly
+influenza-like illness activity level for each ZIP code on the City of Chicago
+Data Portal (dataset 8vvr-jv2g), compiled from Illinois emergency department
+syndromic surveillance. The level compares a ZIP code's share of emergency
+department visits for influenza-like illness with that ZIP code's own summer
+average: level 1 is at or below it, each level above is roughly 1 more
+standard deviation, and the scale stops at 10, which 13\% of ZIP-weeks reach.
+Because it is an index with no denominator, errors are in levels and cannot be
+compared in size with the other cities. The series begins in September 2019;
+the city is absent for May--September 2020, and those weeks are missing. Of 60
+ZIP codes, 1 (60106, mostly outside the city) has no boundary and is dropped,
+and 1 (60827) that joined the feed in September 2020 is in the map but not
+scored, leaving 58. O'Hare (60666) has no residents and takes the city median
+for its demographic measures. The map has 115 shared borders, derived from the
+city's ZIP code boundary file. Models were trained on all weeks from September
+2019, and every Chicago season from 2022--2023 to 2025--2026 is unseen. One ZIP
+code (60707) reported level 1 in every week before June 2022, so in the
+2022--2023 training data its series had no variation. Each series is scaled by
+its training-period standard deviation; a series with none is scaled by 1
+instead, which leaves every other series and city unchanged. An earlier run
+that divided by a near-zero value gave that ZIP code test inputs near 10$^{9}$,
+which graph models passed to its neighbors; all 2022--2023 Chicago results
+reported here are from the corrected runs.
+
+%==========================================================================
+\section*{Full results by season}
+
+\begin{table}[h!]
+\centering
+\caption{Mean Weighted Interval Score by Model, Season, and Horizon, 14
+Neighborhoods, Boston, Massachusetts, 2022--2025}
+\label{tab:bostonper}
+\small
+\begin{tabular}{lccccccccc}
+\toprule
+& \multicolumn{3}{c}{2022--2023} & \multicolumn{3}{c}{2023--2024} & \multicolumn{3}{c}{2024--2025} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+Model & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk \\
+\midrule
+Graph neural network & 5.56 & 7.70 & 10.95 & 4.70 & 5.07 & 5.53 & 5.14 & 6.64 & 8.18 \\
+Same model, map removed & 6.23 & 7.83 & 10.86 & 5.04 & 5.37 & 5.98 & 5.79 & 6.95 & 9.20 \\
+LSTM & 5.50 & 7.67 & 11.29 & 4.85 & 5.85 & 6.84 & 5.20 & 6.96 & 9.33 \\
+Cola$-$GNN & 6.01 & 10.37 & 10.97 & 4.79 & 5.29 & 6.43 & 5.24 & 7.17 & 8.92 \\
+Gradient$-$boosted trees & 6.29 & 8.09 & 11.31 & 5.28 & 5.61 & 6.34 & 6.68 & 8.27 & 9.49 \\
+Seasonal ARIMA & 6.29 & 8.02 & 10.94 & 5.43 & 5.75 & 5.91 & 7.84 & 9.22 & 10.60 \\
+Seasonal blend, no learning & 6.26 & 7.95 & 11.30 & 5.63 & 6.08 & 6.44 & 5.97 & 7.84 & 10.96 \\
+FluSight baseline & 6.65 & 8.55 & 12.50 & 5.83 & 6.52 & 7.68 & 6.69 & 9.41 & 14.17 \\
+Persistence & 6.51 & 8.30 & 12.38 & 5.86 & 6.57 & 7.87 & 6.36 & 8.95 & 14.07 \\
+Graph attention network$^{a}$ & 6.32 &  &  & 5.08 &  &  & 5.02 &  &  \\
+Dual$-$topology GCN$^{a}$ & 11.36 &  &  & 5.38 &  &  & 6.45 &  &  \\
+Climatology & 13.25 & 13.25 & 13.21 & 6.59 & 6.60 & 6.60 & 11.10 & 11.10 & 11.10 \\
+Same week last year & 12.19 & 12.19 & 12.19 & 13.71 & 13.79 & 13.79 & 10.61 & 10.61 & 10.61 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Values are emergency department visits for influenza-like illness per 100,000
+residents; lower is better. wk, weeks ahead.\\
+$^{a}$ Run at 1 week ahead only.
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Mean Weighted Interval Score by Model and Horizon, 17 Areas,
+Columbus, Ohio, June 2024--May 2025}
+\label{tab:colper}
+\small
+\begin{tabular}{lccc}
+\toprule
+Model & 1 wk & 2 wk & 4 wk \\
+\midrule
+Graph neural network & 4.06 & 5.03 & 6.31 \\
+Same model, map removed & 4.70 & 5.37 & 6.39 \\
+LSTM & 5.13 & 7.13 & 6.57 \\
+Cola$-$GNN & 6.03 & 6.75 & 7.12 \\
+Gradient$-$boosted trees & 6.96 & 5.47 & 6.59 \\
+Seasonal ARIMA & 5.55 & 5.84 & 6.50 \\
+Seasonal blend, no learning & 5.05 & 5.68 & 6.44 \\
+FluSight baseline & 4.84 & 6.10 & 8.20 \\
+Persistence & 4.67 & 5.89 & 8.45 \\
+Graph attention network$^{a}$ & 7.11 &  &  \\
+Dual$-$topology GCN$^{a}$ & 8.71 &  &  \\
+Climatology & 6.75 & 6.75 & 6.75 \\
+Same week last year & 5.75 & 5.75 & 5.75 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Values are emergency department visits for influenza-like illness per 100,000
+residents; lower is better. wk, weeks ahead.\\
+$^{a}$ Run at 1 week ahead only.
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Mean Weighted Interval Score by Model, Season, and Horizon, 58 ZIP Codes, Chicago, Illinois, 2022--2026}
+\label{tab:chiper}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lcccccccccccc}
+\toprule
+& \multicolumn{3}{c}{2022--2023} & \multicolumn{3}{c}{2023--2024} & \multicolumn{3}{c}{2024--2025} & \multicolumn{3}{c}{2025--2026} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(lr){11-13}
+Model & 1 & 2 & 4 & 1 & 2 & 4 & 1 & 2 & 4 & 1 & 2 & 4 \\
+\midrule
+Graph neural network & 1.16 & 1.31 & 1.48 & 1.08 & 1.14 & 1.23 & 1.09 & 1.13 & 1.26 & 1.00 & 1.07 & 1.17 \\
+Same model, map removed & 1.27 & 1.38 & 1.56 & 1.14 & 1.20 & 1.26 & 1.16 & 1.22 & 1.31 & 1.08 & 1.15 & 1.20 \\
+LSTM & 1.22 & 1.35 & 1.57 & 1.13 & 1.18 & 1.29 & 1.15 & 1.19 & 1.54 & 1.04 & 1.12 & 1.27 \\
+Cola-GNN & 1.33 & 1.41 & 1.55 & 1.10 & 1.16 & 1.38 & 1.12 & 1.16 & 1.39 & 1.02 & 1.09 & 1.19 \\
+Gradient$-$boosted trees & 1.29 & 1.41 & 1.51 & 1.14 & 1.20 & 1.27 & 1.21 & 1.27 & 1.37 & 1.11 & 1.15 & 1.20 \\
+Seasonal ARIMA & 1.31 & 1.37 & 1.52 & 1.17 & 1.19 & 1.21 & 1.25 & 1.27 & 1.35 & 1.10 & 1.15 & 1.20 \\
+Seasonal blend, no learning & 1.37 & 1.44 & 1.55 & 1.18 & 1.20 & 1.24 & 1.28 & 1.32 & 1.36 & 1.15 & 1.20 & 1.27 \\
+FluSight baseline & 1.40 & 1.48 & 1.69 & 1.35 & 1.42 & 1.53 & 1.33 & 1.39 & 1.51 & 1.24 & 1.32 & 1.49 \\
+Persistence & 1.44 & 1.52 & 1.68 & 1.33 & 1.39 & 1.48 & 1.35 & 1.42 & 1.52 & 1.25 & 1.32 & 1.50 \\
+Graph attention network$^{a}$ & 1.49 &  &  & 1.16 &  &  & 1.12 &  &  & 1.07 &  &  \\
+Dual-topology GCN$^{a}$ & 1.59 &  &  & 1.43 &  &  & 1.18 &  &  & 1.11 &  &  \\
+Climatology & 1.69 & 1.69 & 1.69 & 1.28 & 1.28 & 1.28 & 1.51 & 1.51 & 1.51 & 1.26 & 1.27 & 1.27 \\
+Same week last year & 1.76 & 1.76 & 1.76 & 1.63 & 1.63 & 1.63 & 1.57 & 1.57 & 1.57 & 1.47 & 1.47 & 1.47 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Values are in Chicago Department of Public Health influenza-like illness activity
+levels (1--10), not rates, so they are not comparable in size with Boston or
+Columbus; lower is better. Column numbers are weeks ahead. No Chicago season was
+used in design, so all 4 are unseen. Learned models were tuned with the same
+budget as in Boston and Columbus.\\
+$^{a}$ Run at 1 week ahead only.
+\end{table}
+
+%==========================================================================
+\clearpage
+
+%==========================================================================
+\section*{Week-level comparisons}
+
+Each row compares the graph neural network with one model on the weeks of one
+season. The difference is graph neural network minus the other model, so a
+negative value favors the graph neural network. Intervals are 95\% confidence
+intervals from a moving-block bootstrap over weeks (blocks of 4 weeks). \textit{P}
+values are from the 2-sided Diebold--Mariano test with the Harvey--Leybourne--Newbold
+correction, Holm-adjusted across every model compared in that season and
+horizon (including the 1-week-only models and an untuned 10-seed LSTM, which
+are not shown). The same models enter the adjustment in all 3 cities.
+
+{\small
+\begin{longtable}{llp{5.2cm}cc}
+\caption{Week-Level Differences in Weighted Interval Score, Boston,
+Massachusetts, 2022--2025}\label{tab:sigboston}\\
+\toprule
+Season & Weeks Ahead & Comparison Model & Difference (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endfirsthead
+\toprule
+Season & Weeks Ahead & Comparison Model & Difference (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endhead
+2022--2023 & 1 & Same model, map removed & $-$0.68 ($-$1.03, $-$0.36) & $<$.001 \\
+ &  & LSTM & 0.06 ($-$0.22, 0.34) & .62 \\
+ &  & Cola-GNN & $-$0.45 ($-$1.32, 0.09) & .30 \\
+ &  & Gradient-boosted trees & $-$0.73 ($-$1.15, $-$0.37) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.74 ($-$1.31, $-$0.37) & $<$.001 \\
+ &  & Seasonal blend, no learning & $-$0.70 ($-$1.11, $-$0.39) & $<$.001 \\
+ &  & FluSight baseline & $-$1.09 ($-$2.14, $-$0.47) & .001 \\
+ &  & Persistence & $-$0.95 ($-$1.94, $-$0.31) & .005 \\
+\midrule
+2022--2023 & 2 & Same model, map removed & $-$0.13 ($-$0.87, 0.60) & $>$.99 \\
+ &  & LSTM & 0.03 ($-$0.78, 0.63) & $>$.99 \\
+ &  & Cola-GNN & $-$2.67 ($-$7.23, 0.22) & .95 \\
+ &  & Gradient-boosted trees & $-$0.39 ($-$0.60, $-$0.20) & .001 \\
+ &  & Seasonal ARIMA & $-$0.32 ($-$1.24, 0.57) & $>$.99 \\
+ &  & Seasonal blend, no learning & $-$0.25 ($-$1.30, 0.71) & $>$.99 \\
+ &  & FluSight baseline & $-$0.85 ($-$3.37, 0.85) & $>$.99 \\
+ &  & Persistence & $-$0.60 ($-$3.12, 1.40) & $>$.99 \\
+\midrule
+2022--2023 & 4 & Same model, map removed & 0.09 ($-$0.18, 0.43) & $>$.99 \\
+ &  & LSTM & $-$0.34 ($-$3.55, 2.68) & $>$.99 \\
+ &  & Cola-GNN & $-$0.02 ($-$2.83, 2.77) & $>$.99 \\
+ &  & Gradient-boosted trees & $-$0.36 ($-$0.81, 0.00) & $>$.99 \\
+ &  & Seasonal ARIMA & 0.01 ($-$1.51, 1.81) & $>$.99 \\
+ &  & Seasonal blend, no learning & $-$0.35 ($-$2.16, 1.20) & $>$.99 \\
+ &  & FluSight baseline & $-$1.55 ($-$6.37, 1.79) & $>$.99 \\
+ &  & Persistence & $-$1.43 ($-$6.56, 2.72) & $>$.99 \\
+\midrule
+2023--2024 & 1 & Same model, map removed & $-$0.34 ($-$0.48, $-$0.17) & .009 \\
+ &  & LSTM & $-$0.14 ($-$0.42, 0.05) & .43 \\
+ &  & Cola-GNN & $-$0.09 ($-$0.26, 0.05) & .43 \\
+ &  & Gradient-boosted trees & $-$0.57 ($-$0.80, $-$0.37) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.73 ($-$0.95, $-$0.50) & $<$.001 \\
+ &  & Seasonal blend, no learning & $-$0.93 ($-$1.24, $-$0.66) & $<$.001 \\
+ &  & FluSight baseline & $-$1.13 ($-$1.48, $-$0.84) & $<$.001 \\
+ &  & Persistence & $-$1.15 ($-$1.46, $-$0.88) & $<$.001 \\
+\midrule
+2023--2024 & 2 & Same model, map removed & $-$0.30 ($-$0.50, $-$0.11) & .01 \\
+ &  & LSTM & $-$0.78 ($-$1.05, $-$0.51) & $<$.001 \\
+ &  & Cola-GNN & $-$0.22 ($-$0.71, 0.18) & .46 \\
+ &  & Gradient-boosted trees & $-$0.54 ($-$0.77, $-$0.34) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.68 ($-$0.98, $-$0.46) & $<$.001 \\
+ &  & Seasonal blend, no learning & $-$1.01 ($-$1.49, $-$0.68) & $<$.001 \\
+ &  & FluSight baseline & $-$1.45 ($-$2.07, $-$0.99) & $<$.001 \\
+ &  & Persistence & $-$1.50 ($-$2.03, $-$1.06) & $<$.001 \\
+\midrule
+2023--2024 & 4 & Same model, map removed & $-$0.45 ($-$0.75, $-$0.17) & .03 \\
+ &  & LSTM & $-$1.31 ($-$2.28, $-$0.53) & .03 \\
+ &  & Cola-GNN & $-$0.90 ($-$2.10, $-$0.02) & .10 \\
+ &  & Gradient-boosted trees & $-$0.81 ($-$1.09, $-$0.54) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.38 ($-$0.62, $-$0.10) & .04 \\
+ &  & Seasonal blend, no learning & $-$0.90 ($-$1.42, $-$0.49) & .004 \\
+ &  & FluSight baseline & $-$2.15 ($-$3.22, $-$1.35) & $<$.001 \\
+ &  & Persistence & $-$2.34 ($-$3.42, $-$1.47) & $<$.001 \\
+\midrule
+2024--2025 & 1 & Same model, map removed & $-$0.65 ($-$1.25, $-$0.18) & .009 \\
+ &  & LSTM & $-$0.06 ($-$0.41, 0.25) & $>$.99 \\
+ &  & Cola-GNN & $-$0.10 ($-$0.43, 0.24) & $>$.99 \\
+ &  & Gradient-boosted trees & $-$1.54 ($-$3.20, $-$0.51) & .01 \\
+ &  & Seasonal ARIMA & $-$2.70 ($-$5.17, $-$1.10) & $<$.001 \\
+ &  & Seasonal blend, no learning & $-$0.83 ($-$1.39, $-$0.41) & $<$.001 \\
+ &  & FluSight baseline & $-$1.55 ($-$2.83, $-$0.67) & .01 \\
+ &  & Persistence & $-$1.22 ($-$2.41, $-$0.35) & .04 \\
+\midrule
+2024--2025 & 2 & Same model, map removed & $-$0.31 ($-$0.57, $-$0.09) & .08 \\
+ &  & LSTM & $-$0.33 ($-$0.74, 0.07) & .25 \\
+ &  & Cola-GNN & $-$0.54 ($-$1.31, 0.06) & .25 \\
+ &  & Gradient-boosted trees & $-$1.63 ($-$3.53, $-$0.48) & .19 \\
+ &  & Seasonal ARIMA & $-$2.59 ($-$4.62, $-$1.19) & .009 \\
+ &  & Seasonal blend, no learning & $-$1.21 ($-$1.98, $-$0.60) & .002 \\
+ &  & FluSight baseline & $-$2.78 ($-$5.81, $-$0.86) & .17 \\
+ &  & Persistence & $-$2.31 ($-$5.12, $-$0.39) & .19 \\
+\midrule
+2024--2025 & 4 & Same model, map removed & $-$1.01 ($-$1.82, $-$0.40) & .06 \\
+ &  & LSTM & $-$1.15 ($-$2.13, $-$0.43) & .07 \\
+ &  & Cola-GNN & $-$0.74 ($-$1.70, $-$0.02) & .17 \\
+ &  & Gradient-boosted trees & $-$1.31 ($-$2.69, $-$0.35) & .17 \\
+ &  & Seasonal ARIMA & $-$2.41 ($-$3.89, $-$1.18) & .02 \\
+ &  & Seasonal blend, no learning & $-$2.78 ($-$4.71, $-$1.07) & .06 \\
+ &  & FluSight baseline & $-$5.98 ($-$12.10, $-$2.04) & .17 \\
+ &  & Persistence & $-$5.88 ($-$12.08, $-$1.81) & .17 \\
+\bottomrule
+\end{longtable}
+}
+
+{\small
+\begin{longtable}{llp{5.2cm}cc}
+\caption{Week-Level Differences in Weighted Interval Score, Columbus, Ohio,
+2024--2025}\label{tab:sigcol}\\
+\toprule
+Season & Weeks Ahead & Comparison Model & Difference (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endfirsthead
+2024--2025 & 1 & Same model, map removed & $-$0.64 ($-$1.58, $-$0.06) & .07 \\
+ &  & LSTM & $-$1.07 ($-$2.81, $-$0.08) & .07 \\
+ &  & Cola-GNN & $-$1.96 ($-$4.87, $-$0.23) & .05 \\
+ &  & Gradient-boosted trees & $-$2.90 ($-$7.04, $-$0.26) & .05 \\
+ &  & Seasonal ARIMA & $-$1.49 ($-$3.34, $-$0.30) & .02 \\
+ &  & Seasonal blend, no learning & $-$0.98 ($-$2.52, $-$0.04) & .07 \\
+ &  & FluSight baseline & $-$0.78 ($-$1.47, $-$0.07) & .05 \\
+ &  & Persistence & $-$0.60 ($-$1.13, 0.16) & .07 \\
+\midrule
+2024--2025 & 2 & Same model, map removed & $-$0.35 ($-$1.14, 0.22) & .63 \\
+ &  & LSTM & $-$2.10 ($-$4.72, $-$0.33) & .21 \\
+ &  & Cola-GNN & $-$1.73 ($-$3.91, $-$0.30) & .23 \\
+ &  & Gradient-boosted trees & $-$0.44 ($-$1.29, 0.12) & .63 \\
+ &  & Seasonal ARIMA & $-$0.81 ($-$2.10, 0.02) & .63 \\
+ &  & Seasonal blend, no learning & $-$0.66 ($-$1.93, 0.14) & .63 \\
+ &  & FluSight baseline & $-$1.07 ($-$2.64, 0.23) & .63 \\
+ &  & Persistence & $-$0.87 ($-$1.90, 0.27) & .63 \\
+\midrule
+2024--2025 & 4 & Same model, map removed & $-$0.08 ($-$0.39, 0.21) & .93 \\
+ &  & LSTM & $-$0.26 ($-$0.52, $-$0.10) & .25 \\
+ &  & Cola-GNN & $-$0.80 ($-$1.44, $-$0.35) & .10 \\
+ &  & Gradient-boosted trees & $-$0.28 ($-$0.72, 0.09) & .89 \\
+ &  & Seasonal ARIMA & $-$0.19 ($-$0.44, 0.07) & .88 \\
+ &  & Seasonal blend, no learning & $-$0.13 ($-$0.41, 0.13) & .93 \\
+ &  & FluSight baseline & $-$1.88 ($-$5.62, 1.05) & .93 \\
+ &  & Persistence & $-$2.14 ($-$4.48, $-$0.18) & .40 \\
+\bottomrule
+\end{longtable}
+}
+
+{\small
+\begin{longtable}{llp{5.2cm}cc}
+\caption{Week-Level Differences in Weighted Interval Score, Chicago, Illinois,
+2022--2026 (Activity Levels)}\label{tab:sigchi}\\
+\toprule
+Season & Weeks Ahead & Comparison Model & Difference (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endfirsthead
+\toprule
+Season & Weeks Ahead & Comparison Model & Difference (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endhead
+2022--2023 & 1 & Same model, map removed & $-$0.11 ($-$0.17, $-$0.05) & $<$.001 \\
+ &  & LSTM & $-$0.06 ($-$0.16, 0.00) & .02 \\
+ &  & Cola-GNN & $-$0.17 ($-$0.43, 0.01) & .02 \\
+ &  & Gradient-boosted trees & $-$0.13 ($-$0.24, $-$0.04) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.15 ($-$0.20, $-$0.11) & $<$.001 \\
+ &  & Seasonal blend, no learning & $-$0.21 ($-$0.39, $-$0.07) & $<$.001 \\
+ &  & FluSight baseline & $-$0.24 ($-$0.32, $-$0.15) & $<$.001 \\
+ &  & Persistence & $-$0.28 ($-$0.35, $-$0.20) & $<$.001 \\
+\midrule
+2022--2023 & 2 & Same model, map removed & $-$0.06 ($-$0.12, $-$0.03) & .06 \\
+ &  & LSTM & $-$0.03 ($-$0.18, 0.06) & $>$.99 \\
+ &  & Cola-GNN & $-$0.09 ($-$0.27, 0.03) & .63 \\
+ &  & Gradient-boosted trees & $-$0.10 ($-$0.22, $-$0.00) & .28 \\
+ &  & Seasonal ARIMA & $-$0.05 ($-$0.12, 0.05) & .63 \\
+ &  & Seasonal blend, no learning & $-$0.12 ($-$0.25, $-$0.03) & .09 \\
+ &  & FluSight baseline & $-$0.17 ($-$0.32, 0.02) & .09 \\
+ &  & Persistence & $-$0.20 ($-$0.35, $-$0.02) & .02 \\
+\midrule
+2022--2023 & 4 & Same model, map removed & $-$0.08 ($-$0.17, $-$0.00) & .81 \\
+ &  & LSTM & $-$0.08 ($-$0.30, 0.10) & $>$.99 \\
+ &  & Cola-GNN & $-$0.06 ($-$0.36, 0.14) & $>$.99 \\
+ &  & Gradient-boosted trees & $-$0.02 ($-$0.09, 0.05) & $>$.99 \\
+ &  & Seasonal ARIMA & $-$0.04 ($-$0.07, 0.01) & .80 \\
+ &  & Seasonal blend, no learning & $-$0.07 ($-$0.26, 0.10) & $>$.99 \\
+ &  & FluSight baseline & $-$0.20 ($-$0.44, 0.05) & .81 \\
+ &  & Persistence & $-$0.20 ($-$0.40, 0.05) & .81 \\
+\midrule
+2023--2024 & 1 & Same model, map removed & $-$0.06 ($-$0.10, $-$0.02) & .002 \\
+ &  & LSTM & $-$0.04 ($-$0.10, 0.00) & .19 \\
+ &  & Cola-GNN & $-$0.02 ($-$0.05, 0.01) & .22 \\
+ &  & Gradient-boosted trees & $-$0.06 ($-$0.09, $-$0.03) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.09 ($-$0.12, $-$0.06) & $<$.001 \\
+ &  & Seasonal blend, no learning & $-$0.10 ($-$0.15, $-$0.05) & $<$.001 \\
+ &  & FluSight baseline & $-$0.27 ($-$0.35, $-$0.18) & $<$.001 \\
+ &  & Persistence & $-$0.25 ($-$0.31, $-$0.18) & $<$.001 \\
+\midrule
+2023--2024 & 2 & Same model, map removed & $-$0.06 ($-$0.10, $-$0.02) & .02 \\
+ &  & LSTM & $-$0.04 ($-$0.11, 0.01) & .30 \\
+ &  & Cola-GNN & $-$0.02 ($-$0.07, 0.02) & .30 \\
+ &  & Gradient-boosted trees & $-$0.06 ($-$0.13, $-$0.01) & .09 \\
+ &  & Seasonal ARIMA & $-$0.05 ($-$0.09, $-$0.02) & .007 \\
+ &  & Seasonal blend, no learning & $-$0.06 ($-$0.11, $-$0.02) & .02 \\
+ &  & FluSight baseline & $-$0.28 ($-$0.38, $-$0.18) & $<$.001 \\
+ &  & Persistence & $-$0.25 ($-$0.32, $-$0.17) & $<$.001 \\
+\midrule
+2023--2024 & 4 & Same model, map removed & $-$0.03 ($-$0.06, $-$0.00) & .29 \\
+ &  & LSTM & $-$0.06 ($-$0.08, $-$0.04) & $<$.001 \\
+ &  & Cola-GNN & $-$0.15 ($-$0.30, $-$0.02) & .30 \\
+ &  & Gradient-boosted trees & $-$0.04 ($-$0.09, $-$0.00) & .30 \\
+ &  & Seasonal ARIMA & 0.02 ($-$0.02, 0.07) & .75 \\
+ &  & Seasonal blend, no learning & $-$0.01 ($-$0.04, 0.03) & .75 \\
+ &  & FluSight baseline & $-$0.30 ($-$0.48, $-$0.14) & .01 \\
+ &  & Persistence & $-$0.25 ($-$0.37, $-$0.14) & .001 \\
+\midrule
+2024--2025 & 1 & Same model, map removed & $-$0.08 ($-$0.12, $-$0.04) & $<$.001 \\
+ &  & LSTM & $-$0.06 ($-$0.12, $-$0.02) & .003 \\
+ &  & Cola-GNN & $-$0.03 ($-$0.05, $-$0.02) & $<$.001 \\
+ &  & Gradient-boosted trees & $-$0.13 ($-$0.22, $-$0.06) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.16 ($-$0.27, $-$0.08) & $<$.001 \\
+ &  & Seasonal blend, no learning & $-$0.20 ($-$0.31, $-$0.12) & $<$.001 \\
+ &  & FluSight baseline & $-$0.24 ($-$0.32, $-$0.16) & $<$.001 \\
+ &  & Persistence & $-$0.27 ($-$0.33, $-$0.21) & $<$.001 \\
+\midrule
+2024--2025 & 2 & Same model, map removed & $-$0.08 ($-$0.15, $-$0.03) & .01 \\
+ &  & LSTM & $-$0.06 ($-$0.13, $-$0.00) & .03 \\
+ &  & Cola-GNN & $-$0.03 ($-$0.05, $-$0.01) & .02 \\
+ &  & Gradient-boosted trees & $-$0.14 ($-$0.27, $-$0.05) & .02 \\
+ &  & Seasonal ARIMA & $-$0.13 ($-$0.27, $-$0.04) & .02 \\
+ &  & Seasonal blend, no learning & $-$0.19 ($-$0.31, $-$0.09) & $<$.001 \\
+ &  & FluSight baseline & $-$0.26 ($-$0.35, $-$0.17) & $<$.001 \\
+ &  & Persistence & $-$0.28 ($-$0.35, $-$0.21) & $<$.001 \\
+\midrule
+2024--2025 & 4 & Same model, map removed & $-$0.06 ($-$0.13, 0.01) & .29 \\
+ &  & LSTM & $-$0.28 ($-$0.56, $-$0.07) & .14 \\
+ &  & Cola-GNN & $-$0.14 ($-$0.18, $-$0.10) & $<$.001 \\
+ &  & Gradient-boosted trees & $-$0.11 ($-$0.19, $-$0.05) & .02 \\
+ &  & Seasonal ARIMA & $-$0.09 ($-$0.22, $-$0.00) & .29 \\
+ &  & Seasonal blend, no learning & $-$0.11 ($-$0.16, $-$0.06) & .002 \\
+ &  & FluSight baseline & $-$0.25 ($-$0.40, $-$0.11) & .01 \\
+ &  & Persistence & $-$0.26 ($-$0.37, $-$0.14) & $<$.001 \\
+\midrule
+2025--2026 & 1 & Same model, map removed & $-$0.08 ($-$0.15, $-$0.04) & .001 \\
+ &  & LSTM & $-$0.04 ($-$0.06, $-$0.02) & $<$.001 \\
+ &  & Cola-GNN & $-$0.02 ($-$0.03, $-$0.01) & .003 \\
+ &  & Gradient-boosted trees & $-$0.11 ($-$0.15, $-$0.06) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.10 ($-$0.13, $-$0.07) & $<$.001 \\
+ &  & Seasonal blend, no learning & $-$0.15 ($-$0.17, $-$0.13) & $<$.001 \\
+ &  & FluSight baseline & $-$0.24 ($-$0.30, $-$0.17) & $<$.001 \\
+ &  & Persistence & $-$0.25 ($-$0.30, $-$0.19) & $<$.001 \\
+\midrule
+2025--2026 & 2 & Same model, map removed & $-$0.07 ($-$0.15, $-$0.02) & .06 \\
+ &  & LSTM & $-$0.05 ($-$0.07, $-$0.03) & $<$.001 \\
+ &  & Cola-GNN & $-$0.02 ($-$0.04, 0.00) & .08 \\
+ &  & Gradient-boosted trees & $-$0.08 ($-$0.13, $-$0.03) & .02 \\
+ &  & Seasonal ARIMA & $-$0.07 ($-$0.12, $-$0.04) & .004 \\
+ &  & Seasonal blend, no learning & $-$0.12 ($-$0.16, $-$0.08) & $<$.001 \\
+ &  & FluSight baseline & $-$0.24 ($-$0.31, $-$0.17) & $<$.001 \\
+ &  & Persistence & $-$0.25 ($-$0.30, $-$0.19) & $<$.001 \\
+\midrule
+2025--2026 & 4 & Same model, map removed & $-$0.02 ($-$0.09, 0.04) & .90 \\
+ &  & LSTM & $-$0.09 ($-$0.13, $-$0.05) & $<$.001 \\
+ &  & Cola-GNN & $-$0.02 ($-$0.05, 0.01) & .79 \\
+ &  & Gradient-boosted trees & $-$0.03 ($-$0.08, 0.03) & .90 \\
+ &  & Seasonal ARIMA & $-$0.02 ($-$0.08, 0.03) & .90 \\
+ &  & Seasonal blend, no learning & $-$0.10 ($-$0.14, $-$0.05) & $<$.001 \\
+ &  & FluSight baseline & $-$0.31 ($-$0.44, $-$0.20) & $<$.001 \\
+ &  & Persistence & $-$0.32 ($-$0.42, $-$0.23) & $<$.001 \\
+\bottomrule
+\end{longtable}
+}
+
+\noindent CI, confidence interval.
+
+%==========================================================================
+\section*{Other accuracy measures}
+
+WIS is the primary measure because it scores the whole forecast, including its
+range. Tables S10--S12 give the point measures often reported in earlier work.
+In all 3 cities the graph neural network had the lowest mean absolute error
+and root mean squared error at every horizon among the models in Tables
+S10--S12. Correlation ranks the
+models differently at some horizons because it ignores whether forecasts are
+too high or too low overall.
+
+\begin{table}[h!]
+\centering
+\caption{Point Forecast Accuracy by Model and Horizon, 14 Neighborhoods, Boston, Massachusetts, 2022--2025}\label{tab:pointboston}
+\small
+\begin{tabular}{lccccccccc}
+\toprule
+& \multicolumn{3}{c}{Mean Absolute Error} & \multicolumn{3}{c}{Root Mean Squared Error} & \multicolumn{3}{c}{Correlation$^{a}$} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+Model & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk \\
+\midrule
+Graph neural network & 7.85 & 9.63 & 11.93 & 12.88 & 16.99 & 21.99 & 0.84 & 0.76 & 0.61 \\
+Same model, map removed & 8.76 & 10.10 & 12.57 & 14.44 & 17.56 & 23.13 & 0.80 & 0.73 & 0.57 \\
+LSTM & 7.96 & 10.19 & 13.02 & 13.18 & 18.01 & 24.09 & 0.87 & 0.76 & 0.54 \\
+Cola$-$GNN & 8.19 & 11.04 & 12.27 & 13.77 & 20.56 & 23.11 & 0.85 & 0.70 & 0.61 \\
+Gradient$-$boosted trees & 9.21 & 10.82 & 12.99 & 15.56 & 19.23 & 23.73 & 0.80 & 0.73 & 0.57 \\
+Seasonal ARIMA & 9.69 & 11.17 & 13.09 & 16.45 & 19.38 & 23.40 & 0.78 & 0.70 & 0.59 \\
+Seasonal blend, no learning & 9.06 & 10.88 & 13.69 & 15.07 & 19.03 & 25.33 & 0.79 & 0.69 & 0.49 \\
+FluSight baseline & 9.50 & 11.89 & 16.23 & 15.31 & 20.21 & 29.37 & 0.78 & 0.68 & 0.44 \\
+Persistence & 9.48 & 11.89 & 16.22 & 15.30 & 20.21 & 29.37 & 0.78 & 0.68 & 0.44 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Errors are ED visits for influenza-like illness per 100,000 residents; lower is better. wk, weeks ahead.\\
+$^{a}$ Pearson correlation between forecast and observed rates, computed for
+each area over the season and averaged across areas; higher is better.
+\end{table}
+\begin{table}[h!]
+\centering
+\caption{Point Forecast Accuracy by Model and Horizon, 17 Areas, Columbus, Ohio, June 2024--May 2025}
+\small
+\begin{tabular}{lccccccccc}
+\toprule
+& \multicolumn{3}{c}{Mean Absolute Error} & \multicolumn{3}{c}{Root Mean Squared Error} & \multicolumn{3}{c}{Correlation$^{a}$} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+Model & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk \\
+\midrule
+Graph neural network & 6.02 & 7.32 & 8.62 & 10.17 & 13.21 & 16.82 & 0.83 & 0.74 & 0.62 \\
+Same model, map removed & 7.04 & 7.65 & 8.71 & 12.41 & 14.41 & 17.23 & 0.81 & 0.75 & 0.64 \\
+LSTM & 6.94 & 8.60 & 8.78 & 12.63 & 16.36 & 16.85 & 0.81 & 0.71 & 0.57 \\
+Cola$-$GNN & 7.99 & 8.55 & 9.03 & 15.40 & 16.29 & 17.24 & 0.77 & 0.70 & 0.64 \\
+Gradient$-$boosted trees & 9.66 & 7.67 & 8.70 & 18.95 & 14.47 & 17.34 & 0.60 & 0.75 & 0.65 \\
+Seasonal ARIMA & 7.69 & 8.00 & 8.85 & 14.35 & 15.05 & 17.04 & 0.72 & 0.68 & 0.53 \\
+Seasonal blend, no learning & 7.66 & 8.37 & 9.10 & 13.73 & 15.77 & 17.62 & 0.80 & 0.74 & 0.64 \\
+FluSight baseline & 7.28 & 8.80 & 11.42 & 10.98 & 14.59 & 20.19 & 0.79 & 0.69 & 0.47 \\
+Persistence & 7.28 & 8.80 & 11.42 & 10.98 & 14.59 & 20.19 & 0.79 & 0.69 & 0.47 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Errors are ED visits for influenza-like illness per 100,000 residents; lower is better. wk, weeks ahead.\\
+$^{a}$ Pearson correlation between forecast and observed rates, computed for
+each area over the season and averaged across areas; higher is better.
+\end{table}
+\begin{table}[h!]
+\centering
+\caption{Point Forecast Accuracy by Model and Horizon, 58 ZIP Codes, Chicago, Illinois, 2022--2026}
+\small
+\begin{tabular}{lccccccccc}
+\toprule
+& \multicolumn{3}{c}{Mean Absolute Error} & \multicolumn{3}{c}{Root Mean Squared Error} & \multicolumn{3}{c}{Correlation$^{a}$} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+Model & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk \\
+\midrule
+Graph neural network & 1.62 & 1.75 & 1.96 & 2.31 & 2.47 & 2.67 & 0.60 & 0.54 & 0.45 \\
+Same model, map removed & 1.73 & 1.85 & 2.03 & 2.48 & 2.60 & 2.77 & 0.51 & 0.46 & 0.39 \\
+LSTM & 1.75 & 1.90 & 2.15 & 2.38 & 2.51 & 2.94 & 0.62 & 0.57 & 0.40 \\
+Cola-GNN & 1.77 & 1.90 & 2.19 & 2.38 & 2.51 & 2.86 & 0.58 & 0.53 & 0.33 \\
+Gradient$-$boosted trees & 1.81 & 1.93 & 2.04 & 2.48 & 2.60 & 2.74 & 0.51 & 0.47 & 0.42 \\
+Seasonal ARIMA & 1.83 & 1.90 & 2.03 & 2.53 & 2.60 & 2.72 & 0.52 & 0.50 & 0.44 \\
+Seasonal blend, no learning & 1.86 & 1.92 & 2.04 & 2.62 & 2.70 & 2.84 & 0.50 & 0.47 & 0.41 \\
+FluSight baseline & 1.87 & 1.99 & 2.24 & 2.98 & 3.13 & 3.39 & 0.47 & 0.42 & 0.33 \\
+Persistence & 1.87 & 1.99 & 2.24 & 2.98 & 3.13 & 3.39 & 0.47 & 0.42 & 0.33 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Errors are in influenza-like illness activity levels (1--10); lower is better. wk, weeks ahead.\\
+$^{a}$ Pearson correlation between forecast and observed rates, computed for
+each area over the season and averaged across areas; higher is better.
+\end{table}
+
+%==========================================================================
+\section*{Severity alerts}
+
+\textbf{Thresholds.} For each neighborhood (or Columbus area), intensity
+thresholds come from the Moving Epidemic Method,\cite{vega2013mem} reimplemented in
+Python following the defaults of the \texttt{mem} R package, at the 50th, 90th and 98th percentile levels CDC uses.
+Each test season uses only earlier, non-pandemic seasons, and data stop the day
+the test season starts: Boston 2022--2023 uses 2017--2018 and 2018--2019;
+2023--2024 adds 2022--2023; 2024--2025 adds 2023--2024. Columbus uses 2022--2023
+and 2023--2024. The 2019--2020 through 2021--2022 seasons are left out because
+COVID-19 truncated or suppressed them. Chicago is not included: its measure is
+already the health department's graded 1--10 activity level.
+
+\textbf{Scores.} A week is an event when the observed rate is at or above the
+threshold. The probability score uses each forecast's probability of being at
+or above the threshold, read from its calibrated 95\% interval as a normal
+distribution; the Brier skill score compares its mean squared error with
+always forecasting the pooled share of event weeks. The yes/no score alerts
+when the best-guess forecast is at or above the threshold; the Peirce skill
+score is the share of event weeks alerted minus the share of non-event weeks
+alerted. Both pool all neighborhood-weeks of a city's unseen seasons.
+Intervals for differences use the moving-block bootstrap of the main text.
+Code: \texttt{Code/compare\_severity.py} and \texttt{Paper/scripts/make\_severity.py}.
+
+\begin{table}[h!]
+\centering
+\caption{Skill at Warning of Moderate and High Influenza Weeks, by Model, City, and Horizon, Boston, Massachusetts, and Columbus, Ohio}\label{tab:severity}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lcccccccccccc}
+\toprule
+& \multicolumn{6}{c}{Brier Skill Score (probability)} & \multicolumn{6}{c}{Peirce Skill Score (yes/no)} \\
+\cmidrule(lr){2-7}\cmidrule(lr){8-13}
+& \multicolumn{3}{c}{Moderate+} & \multicolumn{3}{c}{High+} & \multicolumn{3}{c}{Moderate+} & \multicolumn{3}{c}{High+} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(lr){11-13}
+Model & 1 & 2 & 4 & 1 & 2 & 4 & 1 & 2 & 4 & 1 & 2 & 4 \\
+\midrule
+\multicolumn{13}{l}{\textit{Boston, Massachusetts, 2022--2025 (3 seasons): 232 moderate and 82 high neighborhood-weeks of 2,103}} \\
+Graph neural network & 0.61 & 0.41 & 0.11 & 0.40 & 0.12 & $-$0.07 & 0.63 & 0.48 & 0.07 & 0.40 & 0.09 & 0.00 \\
+Same model, map removed & 0.54 & 0.39 & 0.09 & 0.35 & 0.10 & $-$0.07 & 0.62 & 0.45 & 0.06 & 0.32 & 0.10 & 0.00 \\
+LSTM & 0.59 & 0.41 & 0.04 & 0.40 & 0.09 & $-$0.05 & 0.63 & 0.48 & 0.06 & 0.33 & 0.01 & 0.00 \\
+Cola-GNN & 0.57 & 0.23 & 0.11 & 0.39 & 0.03 & $-$0.03 & 0.60 & 0.21 & 0.07 & 0.26 & 0.00 & 0.00 \\
+FluSight baseline & 0.50 & 0.28 & $-$0.16 & 0.32 & $-$0.12 & $-$0.59 & 0.67 & 0.53 & 0.26 & 0.59 & 0.29 & 0.00 \\
+Persistence & 0.51 & 0.31 & $-$0.09 & 0.37 & $-$0.03 & $-$0.51 & 0.67 & 0.53 & 0.26 & 0.59 & 0.29 & 0.00 \\
+\midrule
+\multicolumn{13}{l}{\textit{Columbus, Ohio, 2024--2025: 248 moderate and 107 high neighborhood-weeks of 884}} \\
+Graph neural network & 0.55 & 0.51 & 0.33 & 0.52 & 0.30 & $-$0.04 & 0.68 & 0.65 & 0.35 & 0.51 & 0.36 & 0.02 \\
+Same model, map removed & 0.51 & 0.48 & 0.31 & 0.38 & 0.20 & $-$0.06 & 0.61 & 0.54 & 0.24 & 0.34 & 0.13 & 0.00 \\
+LSTM & 0.54 & 0.36 & 0.29 & 0.36 & $-$0.01 & $-$0.04 & 0.66 & 0.32 & 0.42 & 0.16 & 0.00 & 0.02 \\
+Cola-GNN & 0.46 & 0.37 & 0.30 & 0.02 & $-$0.01 & $-$0.08 & 0.49 & 0.34 & 0.13 & 0.00 & 0.00 & 0.00 \\
+FluSight baseline & 0.42 & 0.36 & 0.14 & 0.42 & 0.22 & $-$0.19 & 0.60 & 0.58 & 0.43 & 0.65 & 0.52 & 0.26 \\
+Persistence & 0.43 & 0.37 & 0.17 & 0.44 & 0.26 & $-$0.09 & 0.60 & 0.58 & 0.43 & 0.65 & 0.52 & 0.26 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Column numbers are weeks ahead. Moderate+, at or above the 50th-percentile
+intensity threshold; High+, at or above the 90th. Scores above 0 show skill;
+higher is better. LSTM, long short-term memory network.
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Weeks Late in First Crossing a Neighborhood's Moderate Threshold, Median Over Area-Seasons}\label{tab:lead}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+& \multicolumn{3}{c}{Boston} & \multicolumn{3}{c}{Columbus} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Model & 1 wk & 2 wk & 4 wk & 1 wk & 2 wk & 4 wk \\
+\midrule
+Graph neural network & 1 & 2 & 6 & 3 & 7 & 9 \\
+Same model, map removed & 1 & 2 & 7 & 7 & 10 & 11.5 \\
+LSTM & 1 & 3 & 4 & 8 & 15 & 5 \\
+Cola-GNN & 1 & 3 & 5 & 14 & 15 & 8 \\
+FluSight baseline & 1 & 2 & 4 & 1 & 2 & 4 \\
+Persistence & 1 & 2 & 4 & 1 & 2 & 4 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Positive values mean the forecast first crossed the threshold after the
+observed rate did; persistence is late by exactly the horizon by construction.
+Area-seasons in which the forecast never crossed are not included. wk, weeks
+ahead.
+\end{table}
+
+%==========================================================================
+\section*{What each component adds on the unseen seasons}
+
+Each version of the graph neural network with one component removed (main
+text, Methods) was tuned with the same budget as the full model and averaged
+over 10 training runs; the task lists and commands are in the released code
+(\texttt{Code/results/\_components/README.md}). Table~\ref{tab:components}
+compares each version with the full model on the weeks of one season. ``More
+error'' is the version's mean WIS minus the full model's, as a percentage of the
+full model's, so a positive value means the component lowered error; intervals
+are 95\% confidence intervals from a moving-block bootstrap over weeks (blocks
+of 4 weeks) on the same scale. \textit{P} values are from the 2-sided
+Diebold--Mariano test with the Harvey--Leybourne--Newbold correction,
+Holm-adjusted across the 4 versions within each season and horizon.
+
+Table~\ref{tab:historyonly} asks whether the version given only past rates
+forecasts like the comparison models that use only an area's own history.
+Here the reference is that version, and a positive value means the comparison
+model had more error. The 5 comparisons in each season and horizon form their
+own Holm family. Our criterion, set before the results were seen, was relative
+WIS within 5\% of the seasonal blend's and no clear difference from it in most
+comparisons. Neither part was met: relative WIS was 5.2\%, 7.1\%, and 9.0\%
+lower than the seasonal blend's at 1, 2, and 4 weeks in Boston, 6.1\%, 4.9\%,
+and 1.4\% lower in Columbus, and 5.7\%, 4.8\%, and 2.9\% lower in Chicago; the
+difference was clear in 12 of 24 season and horizon comparisons, each time
+favoring the version with past rates only.
+
+\textbf{Data version.} The Boston Public Health Commission later revised 5
+weekly neighborhood values before June 2025 (3 in the 2022--2023 test
+season). Every Boston model compared in the main text, including these
+versions, used the file as it stood before the revision, so that all were
+scored against the same observations. The multicity models in
+Table~\ref{tab:pooled} were trained after the revision; all 5 revised values
+fall in their training weeks, none in the 2024--2025 season on which they were
+scored. The released code documents both versions.
+
+{\small
+\begin{longtable}{llp{4.6cm}cc}
+\caption{Change in Weighted Interval Score When One Component Is Removed From the Graph Neural Network, by City, Season, and Horizon, Boston, Massachusetts (2022--2025); Columbus, Ohio (2024--2025); and Chicago, Illinois (2022--2026)}\label{tab:components}\\
+\toprule
+City and Season & Weeks Ahead & Version & More Error, \% (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endfirsthead
+\toprule
+City and Season & Weeks Ahead & Version & More Error, \% (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endhead
+Boston 2022--2023 & 1 & No environment & 0.8 ($-$2.2, 5.3) & .63 \\
+ &  & No demographics & 4.2 (0.8, 8.6) & .01 \\
+ &  & No map & 12.2 (6.5, 18.7) & $<$.001 \\
+ &  & None of the three & 9.4 (3.9, 15.2) & $<$.001 \\
+\midrule
+Boston 2022--2023 & 2 & No environment & $-$0.3 ($-$10.4, 8.9) & $>$.99 \\
+ &  & No demographics & 2.3 ($-$9.0, 13.2) & $>$.99 \\
+ &  & No map & 1.7 ($-$8.2, 10.6) & $>$.99 \\
+ &  & None of the three & 1.4 ($-$7.7, 9.6) & $>$.99 \\
+\midrule
+Boston 2022--2023 & 4 & No environment & $-$0.7 ($-$2.3, 0.8) & $>$.99 \\
+ &  & No demographics & $-$1.4 ($-$4.0, 0.5) & .98 \\
+ &  & No map & $-$0.8 ($-$3.9, 1.6) & $>$.99 \\
+ &  & None of the three & 0.7 ($-$3.0, 4.3) & $>$.99 \\
+\midrule
+Boston 2023--2024 & 1 & No environment & $-$0.7 ($-$3.3, 2.7) & $>$.99 \\
+ &  & No demographics & 0.2 ($-$0.6, 1.3) & $>$.99 \\
+ &  & No map & 7.2 (3.6, 10.3) & .006 \\
+ &  & None of the three & 8.9 (4.7, 12.2) & .002 \\
+\midrule
+Boston 2023--2024 & 2 & No environment & $-$1.5 ($-$6.5, 4.8) & .61 \\
+ &  & No demographics & $-$1.0 ($-$2.4, 0.1) & .27 \\
+ &  & No map & 6.0 (2.3, 9.8) & .02 \\
+ &  & None of the three & 7.4 (1.8, 12.8) & .03 \\
+\midrule
+Boston 2023--2024 & 4 & No environment & 1.2 ($-$2.1, 4.6) & .51 \\
+ &  & No demographics & 1.2 ($-$0.2, 2.6) & .23 \\
+ &  & No map & 8.1 (3.1, 13.6) & .02 \\
+ &  & None of the three & 8.6 (3.6, 14.2) & .02 \\
+\midrule
+Boston 2024--2025 & 1 & No environment & 0.0 ($-$0.8, 0.8) & .90 \\
+ &  & No demographics & 1.1 ($-$0.3, 2.7) & .17 \\
+ &  & No map & 12.6 (3.4, 24.1) & .005 \\
+ &  & None of the three & 11.4 (2.9, 21.8) & .005 \\
+\midrule
+Boston 2024--2025 & 2 & No environment & $-$1.1 ($-$6.1, 3.8) & .69 \\
+ &  & No demographics & $-$4.5 ($-$15.1, 1.4) & .48 \\
+ &  & No map & 4.7 (1.4, 8.5) & .04 \\
+ &  & None of the three & 6.6 (2.0, 12.0) & .04 \\
+\midrule
+Boston 2024--2025 & 4 & No environment & 6.5 (1.2, 13.8) & .12 \\
+ &  & No demographics & 1.9 ($-$0.4, 5.5) & .28 \\
+ &  & No map & 12.4 (4.9, 22.1) & .03 \\
+ &  & None of the three & 11.1 (3.1, 21.5) & .07 \\
+\midrule
+Columbus 2024--2025 & 1 & No environment & 0.9 ($-$2.1, 5.3) & .53 \\
+ &  & No demographics & $-$1.3 ($-$3.1, 0.0) & .35 \\
+ &  & No map & 15.8 (1.5, 40.1) & .09 \\
+ &  & None of the three & 16.6 ($-$0.2, 44.6) & .09 \\
+\midrule
+Columbus 2024--2025 & 2 & No environment & 3.7 (0.1, 9.1) & .22 \\
+ &  & No demographics & 2.1 ($-$1.3, 7.0) & .70 \\
+ &  & No map & 6.9 ($-$4.4, 22.6) & .70 \\
+ &  & None of the three & 7.5 ($-$4.5, 24.7) & .70 \\
+\midrule
+Columbus 2024--2025 & 4 & No environment & $-$0.3 ($-$2.2, 1.4) & $>$.99 \\
+ &  & No demographics & 0.9 ($-$1.8, 3.7) & $>$.99 \\
+ &  & No map & 1.2 ($-$3.3, 6.5) & $>$.99 \\
+ &  & None of the three & 0.7 ($-$3.4, 5.2) & $>$.99 \\
+\midrule
+Chicago 2022--2023 & 1 & No environment & $-$0.9 ($-$1.9, 0.4) & .13 \\
+ &  & No demographics & $-$0.1 ($-$0.4, 0.4) & .80 \\
+ &  & No map & 9.2 (4.6, 14.6) & $<$.001 \\
+ &  & None of the three & 11.3 (7.1, 16.0) & $<$.001 \\
+\midrule
+Chicago 2022--2023 & 2 & No environment & 1.0 ($-$0.1, 2.2) & .23 \\
+ &  & No demographics & $-$0.3 ($-$2.6, 1.4) & .70 \\
+ &  & No map & 4.9 (2.1, 9.0) & .03 \\
+ &  & None of the three & 5.0 (1.2, 8.6) & .03 \\
+\midrule
+Chicago 2022--2023 & 4 & No environment & 5.4 (1.7, 10.2) & .10 \\
+ &  & No demographics & 5.8 (0.9, 12.1) & .21 \\
+ &  & No map & 5.3 (0.2, 11.7) & .21 \\
+ &  & None of the three & 1.6 ($-$0.8, 3.6) & .21 \\
+\midrule
+Chicago 2023--2024 & 1 & No environment & 0.0 ($-$1.5, 1.2) & $>$.99 \\
+ &  & No demographics & 0.4 ($-$0.7, 1.4) & $>$.99 \\
+ &  & No map & 5.2 (2.3, 9.3) & $<$.001 \\
+ &  & None of the three & 5.6 (3.1, 9.0) & $<$.001 \\
+\midrule
+Chicago 2023--2024 & 2 & No environment & 0.2 ($-$0.4, 1.0) & .71 \\
+ &  & No demographics & $-$0.3 ($-$0.8, 0.2) & .71 \\
+ &  & No map & 5.0 (1.8, 9.2) & .01 \\
+ &  & None of the three & 3.5 (1.4, 6.1) & .01 \\
+\midrule
+Chicago 2023--2024 & 4 & No environment & 2.7 (0.9, 4.2) & .02 \\
+ &  & No demographics & 0.3 ($-$1.0, 1.7) & .67 \\
+ &  & No map & 2.3 (0.2, 4.6) & .15 \\
+ &  & None of the three & 1.5 ($-$0.6, 3.0) & .27 \\
+\midrule
+Chicago 2024--2025 & 1 & No environment & $-$0.6 ($-$1.2, $-$0.1) & .03 \\
+ &  & No demographics & 0.3 ($-$0.1, 0.8) & .19 \\
+ &  & No map & 6.9 (3.9, 11.5) & $<$.001 \\
+ &  & None of the three & 8.1 (5.4, 11.9) & $<$.001 \\
+\midrule
+Chicago 2024--2025 & 2 & No environment & $-$1.8 ($-$2.9, $-$0.9) & .002 \\
+ &  & No demographics & 1.5 ($-$0.8, 4.0) & .16 \\
+ &  & No map & 7.5 (2.9, 13.3) & .005 \\
+ &  & None of the three & 6.8 (2.9, 11.8) & .005 \\
+\midrule
+Chicago 2024--2025 & 4 & No environment & $-$2.7 ($-$5.3, $-$0.9) & .08 \\
+ &  & No demographics & 2.2 (0.4, 4.4) & .10 \\
+ &  & No map & 4.5 ($-$0.6, 10.2) & .14 \\
+ &  & None of the three & 4.8 (2.3, 8.2) & .02 \\
+\midrule
+Chicago 2025--2026 & 1 & No environment & $-$0.7 ($-$1.4, $-$0.1) & .02 \\
+ &  & No demographics & $-$0.2 ($-$0.9, 0.5) & .55 \\
+ &  & No map & 8.1 (3.8, 15.2) & .002 \\
+ &  & None of the three & 8.0 (5.0, 12.4) & $<$.001 \\
+\midrule
+Chicago 2025--2026 & 2 & No environment & $-$0.2 ($-$1.4, 1.3) & $>$.99 \\
+ &  & No demographics & $-$0.6 ($-$2.7, 1.2) & $>$.99 \\
+ &  & No map & 6.9 (2.1, 13.9) & .09 \\
+ &  & None of the three & 6.6 (3.4, 10.4) & .02 \\
+\midrule
+Chicago 2025--2026 & 4 & No environment & 0.7 ($-$0.9, 2.8) & $>$.99 \\
+ &  & No demographics & 0.2 ($-$0.7, 1.1) & $>$.99 \\
+ &  & No map & 1.9 ($-$3.0, 7.3) & $>$.99 \\
+ &  & None of the three & 2.2 ($-$1.1, 5.0) & .75 \\
+\bottomrule
+\end{longtable}
+}
+
+{\small
+\begin{longtable}{llp{4.6cm}cc}
+\caption{Forecast Error of History-Only Models and the LSTM Compared With the Graph Neural Network Given Only Past Rates, by City, Season, and Horizon, Boston, Massachusetts (2022--2025); Columbus, Ohio (2024--2025); and Chicago, Illinois (2022--2026)}\label{tab:historyonly}\\
+\toprule
+City and Season & Weeks Ahead & Comparison Model & More Error, \% (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endfirsthead
+\toprule
+City and Season & Weeks Ahead & Comparison Model & More Error, \% (95\% CI) & Adjusted \textit{P} \\
+\midrule
+\endhead
+Boston 2022--2023 & 1 & Seasonal blend & 3.0 (0.5, 5.2) & .01 \\
+ &  & Seasonal ARIMA & 3.6 ($-$1.0, 8.4) & .09 \\
+ &  & Persistence & 7.1 ($-$2.7, 17.9) & .09 \\
+ &  & FluSight baseline & 9.4 (2.2, 21.0) & .02 \\
+ &  & LSTM & $-$9.5 ($-$15.8, $-$3.6) & .01 \\
+\midrule
+Boston 2022--2023 & 2 & Seasonal blend & 1.8 ($-$2.3, 7.0) & $>$.99 \\
+ &  & Seasonal ARIMA & 2.7 ($-$1.7, 7.1) & .90 \\
+ &  & Persistence & 6.3 ($-$12.8, 28.6) & $>$.99 \\
+ &  & FluSight baseline & 9.5 ($-$4.8, 31.8) & .95 \\
+ &  & LSTM & $-$1.8 ($-$8.8, 9.1) & $>$.99 \\
+\midrule
+Boston 2022--2023 & 4 & Seasonal blend & 2.5 ($-$8.9, 16.3) & $>$.99 \\
+ &  & Seasonal ARIMA & $-$0.7 ($-$14.0, 10.1) & $>$.99 \\
+ &  & Persistence & 12.3 ($-$24.2, 56.2) & $>$.99 \\
+ &  & FluSight baseline & 13.4 ($-$16.2, 53.4) & $>$.99 \\
+ &  & LSTM & 2.5 ($-$26.2, 34.6) & $>$.99 \\
+\midrule
+Boston 2023--2024 & 1 & Seasonal blend & 9.9 (6.6, 13.9) & $<$.001 \\
+ &  & Seasonal ARIMA & 6.0 (2.7, 9.5) & .003 \\
+ &  & Persistence & 14.4 (10.5, 19.1) & $<$.001 \\
+ &  & FluSight baseline & 13.9 (9.4, 19.6) & $<$.001 \\
+ &  & LSTM & $-$5.4 ($-$9.9, 0.8) & .05 \\
+\midrule
+Boston 2023--2024 & 2 & Seasonal blend & 11.7 (4.8, 19.3) & .004 \\
+ &  & Seasonal ARIMA & 5.7 (0.0, 11.4) & .04 \\
+ &  & Persistence & 20.7 (11.7, 31.1) & $<$.001 \\
+ &  & FluSight baseline & 19.8 (10.6, 30.5) & $<$.001 \\
+ &  & LSTM & 7.5 (3.2, 11.6) & .01 \\
+\midrule
+Boston 2023--2024 & 4 & Seasonal blend & 7.1 ($-$3.8, 18.3) & .53 \\
+ &  & Seasonal ARIMA & $-$1.6 ($-$10.5, 5.8) & .68 \\
+ &  & Persistence & 31.0 (13.0, 52.2) & .03 \\
+ &  & FluSight baseline & 27.9 (10.4, 47.8) & .04 \\
+ &  & LSTM & 13.9 (3.7, 26.9) & .10 \\
+\midrule
+Boston 2024--2025 & 1 & Seasonal blend & 4.2 (0.6, 7.2) & .005 \\
+ &  & Seasonal ARIMA & 36.8 (12.8, 74.2) & .002 \\
+ &  & Persistence & 11.0 ($-$7.3, 29.6) & .18 \\
+ &  & FluSight baseline & 16.8 (1.5, 37.0) & .09 \\
+ &  & LSTM & $-$9.2 ($-$19.9, $-$2.3) & .09 \\
+\midrule
+Boston 2024--2025 & 2 & Seasonal blend & 10.9 (4.6, 18.2) & .002 \\
+ &  & Seasonal ARIMA & 30.4 (9.3, 61.2) & .04 \\
+ &  & Persistence & 26.5 ($-$0.9, 66.1) & .22 \\
+ &  & FluSight baseline & 33.1 (7.6, 75.4) & .17 \\
+ &  & LSTM & $-$1.6 ($-$7.3, 4.1) & .73 \\
+\midrule
+Boston 2024--2025 & 4 & Seasonal blend & 20.5 (7.0, 36.6) & .09 \\
+ &  & Seasonal ARIMA & 16.5 ($-$0.1, 34.1) & .29 \\
+ &  & Persistence & 54.6 (11.7, 118.2) & .29 \\
+ &  & FluSight baseline & 55.8 (14.5, 118.8) & .29 \\
+ &  & LSTM & 2.6 ($-$0.6, 5.4) & .29 \\
+\midrule
+Columbus 2024--2025 & 1 & Seasonal blend & 6.5 (0.2, 16.4) & .05 \\
+ &  & Seasonal ARIMA & 17.1 (5.3, 35.8) & .002 \\
+ &  & Persistence & $-$1.5 ($-$40.0, 20.1) & $>$.99 \\
+ &  & FluSight baseline & 2.2 ($-$33.1, 23.6) & $>$.99 \\
+ &  & LSTM & 8.3 (0.3, 22.4) & .19 \\
+\midrule
+Columbus 2024--2025 & 2 & Seasonal blend & 5.2 ($-$0.3, 14.3) & .32 \\
+ &  & Seasonal ARIMA & 8.1 ($-$0.3, 19.9) & .30 \\
+ &  & Persistence & 9.1 ($-$26.9, 35.3) & .89 \\
+ &  & FluSight baseline & 12.8 ($-$24.6, 46.0) & .89 \\
+ &  & LSTM & 31.9 (8.3, 65.5) & .05 \\
+\midrule
+Columbus 2024--2025 & 4 & Seasonal blend & 1.4 (0.4, 2.7) & .13 \\
+ &  & Seasonal ARIMA & 2.3 ($-$3.0, 7.9) & .93 \\
+ &  & Persistence & 33.0 ($-$0.5, 72.3) & .38 \\
+ &  & FluSight baseline & 28.9 ($-$20.7, 92.9) & .93 \\
+ &  & LSTM & 3.4 ($-$2.4, 9.9) & .93 \\
+\midrule
+Chicago 2022--2023 & 1 & Seasonal blend & 5.7 ($-$3.6, 18.2) & .15 \\
+ &  & Seasonal ARIMA & 1.2 ($-$1.9, 3.9) & .36 \\
+ &  & Persistence & 11.4 (4.4, 16.3) & $<$.001 \\
+ &  & FluSight baseline & 8.2 (0.4, 13.8) & $<$.001 \\
+ &  & LSTM & $-$5.4 ($-$9.6, 0.3) & .04 \\
+\midrule
+Chicago 2022--2023 & 2 & Seasonal blend & 4.2 ($-$5.1, 15.3) & .92 \\
+ &  & Seasonal ARIMA & $-$1.0 ($-$5.5, 2.0) & $>$.99 \\
+ &  & Persistence & 10.0 ($-$0.2, 18.1) & .04 \\
+ &  & FluSight baseline & 7.6 ($-$2.8, 15.7) & .19 \\
+ &  & LSTM & $-$2.5 ($-$9.6, 8.2) & $>$.99 \\
+\midrule
+Chicago 2022--2023 & 4 & Seasonal blend & 3.0 ($-$6.1, 13.8) & $>$.99 \\
+ &  & Seasonal ARIMA & 1.0 ($-$2.3, 3.3) & $>$.99 \\
+ &  & Persistence & 11.4 ($-$6.6, 27.6) & $>$.99 \\
+ &  & FluSight baseline & 11.9 ($-$6.5, 30.1) & $>$.99 \\
+ &  & LSTM & 3.9 ($-$10.2, 20.6) & $>$.99 \\
+\midrule
+Chicago 2023--2024 & 1 & Seasonal blend & 3.0 (0.0, 5.9) & .02 \\
+ &  & Seasonal ARIMA & 2.2 ($-$0.3, 4.1) & .08 \\
+ &  & Persistence & 16.3 (10.9, 21.1) & $<$.001 \\
+ &  & FluSight baseline & 18.0 (10.9, 24.8) & $<$.001 \\
+ &  & LSTM & $-$1.6 ($-$5.6, 3.0) & .40 \\
+\midrule
+Chicago 2023--2024 & 2 & Seasonal blend & 2.0 ($-$0.3, 4.2) & .19 \\
+ &  & Seasonal ARIMA & 1.2 ($-$1.0, 3.1) & .43 \\
+ &  & Persistence & 17.5 (11.0, 23.5) & $<$.001 \\
+ &  & FluSight baseline & 20.2 (11.5, 28.5) & $<$.001 \\
+ &  & LSTM & 0.2 ($-$3.9, 5.2) & .93 \\
+\midrule
+Chicago 2023--2024 & 4 & Seasonal blend & $-$0.8 ($-$3.1, 1.1) & .50 \\
+ &  & Seasonal ARIMA & $-$3.2 ($-$6.6, $-$0.6) & .10 \\
+ &  & Persistence & 18.3 (9.7, 27.5) & .002 \\
+ &  & FluSight baseline & 22.4 (10.2, 36.1) & .009 \\
+ &  & LSTM & 3.2 (2.1, 4.4) & $<$.001 \\
+\midrule
+Chicago 2024--2025 & 1 & Seasonal blend & 9.2 (4.3, 15.9) & $<$.001 \\
+ &  & Seasonal ARIMA & 5.9 (1.1, 12.2) & .004 \\
+ &  & Persistence & 15.2 (10.4, 20.3) & $<$.001 \\
+ &  & FluSight baseline & 12.8 (5.7, 20.3) & $<$.001 \\
+ &  & LSTM & $-$2.2 ($-$5.0, 0.5) & .09 \\
+\midrule
+Chicago 2024--2025 & 2 & Seasonal blend & 9.1 (3.7, 16.9) & .004 \\
+ &  & Seasonal ARIMA & 4.8 ($-$0.5, 12.8) & .18 \\
+ &  & Persistence & 17.0 (10.2, 23.6) & $<$.001 \\
+ &  & FluSight baseline & 14.9 (5.7, 23.6) & $<$.001 \\
+ &  & LSTM & $-$1.4 ($-$5.2, 2.9) & .44 \\
+\midrule
+Chicago 2024--2025 & 4 & Seasonal blend & 3.5 (1.4, 5.6) & .02 \\
+ &  & Seasonal ARIMA & 2.2 ($-$3.6, 10.3) & .55 \\
+ &  & Persistence & 15.2 (4.7, 24.2) & .02 \\
+ &  & FluSight baseline & 14.5 (1.6, 25.9) & .09 \\
+ &  & LSTM & 17.0 (2.3, 35.3) & .13 \\
+\midrule
+Chicago 2025--2026 & 1 & Seasonal blend & 6.3 (2.2, 9.0) & $<$.001 \\
+ &  & Seasonal ARIMA & 1.6 ($-$0.7, 4.0) & .08 \\
+ &  & Persistence & 15.7 (9.1, 21.0) & $<$.001 \\
+ &  & FluSight baseline & 14.6 (7.4, 20.8) & $<$.001 \\
+ &  & LSTM & $-$3.8 ($-$9.1, $-$0.2) & .07 \\
+\midrule
+Chicago 2025--2026 & 2 & Seasonal blend & 4.5 (0.6, 7.1) & .01 \\
+ &  & Seasonal ARIMA & 0.2 ($-$3.1, 3.4) & .88 \\
+ &  & Persistence & 15.7 (10.3, 20.9) & $<$.001 \\
+ &  & FluSight baseline & 15.1 (8.7, 21.4) & $<$.001 \\
+ &  & LSTM & $-$1.8 ($-$5.6, 0.8) & .69 \\
+\midrule
+Chicago 2025--2026 & 4 & Seasonal blend & 6.2 (3.5, 8.0) & $<$.001 \\
+ &  & Seasonal ARIMA & $-$0.1 ($-$3.4, 3.1) & .93 \\
+ &  & Persistence & 25.0 (15.9, 34.6) & $<$.001 \\
+ &  & FluSight baseline & 24.1 (13.6, 35.9) & $<$.001 \\
+ &  & LSTM & 5.8 (3.1, 7.8) & $<$.001 \\
+\bottomrule
+\end{longtable}
+}
+
+%==========================================================================
+\section*{Design experience on the development season}
+
+Before the test seasons were scored, we chose the model's structure on the
+development season (2025--2026 in Boston; models trained on weeks from July
+2022). To decide what to keep, we changed one part of the model at a time,
+retrained it from scratch with 10 training runs, and asked whether the change
+made its forecasts rise and fall more closely with what happened in each
+neighborhood. The measure is the correlation between forecast and observed
+rates, averaged over the 14 neighborhoods; Table~\ref{tab:ablation} gives each
+change minus the default, so a positive value means the changed model tracked
+the observed curve better. To judge how large a difference has to be before it
+means anything, we trained the default 3 times on different random starting
+points. Those 3 results differed by up to 0.003, 0.006, and 0.031 at 1, 2, and 4
+weeks, so smaller differences are within run-to-run noise. The table also
+counts the neighborhoods in which the change raised the correlation. These
+results were used only to make design choices. They come from the season used
+to design the model and are not evidence of performance, which comes from the
+unseen seasons in the main text, where removing the map, weather, the
+demographic measures, or all 3 is tested week by week (Figure 4;
+Table~\ref{tab:components}). There, the map's effect was confirmed, the
+demographic measures again added nothing, and the small gain from weather seen
+here was not.
+
+Removing all links between neighborhoods lowered the correlation by 0.075 at 1
+week and 0.093 at 2 weeks, in every neighborhood, but made no difference beyond
+noise at 4 weeks. Which links were used mattered much less. Keeping borders only,
+or removing the correlation or demographic links, changed the correlation by
+0.006 or less at 1 and 2 weeks, and so did keeping only the links the model
+learns for itself. Removing weather lowered the correlation at every horizon
+and in every neighborhood.
+The 8 demographic measures did not help as inputs: removing them changed the
+correlation by 0.003 or less at 1 and 2 weeks and raised it by 0.027 at 4 weeks,
+in all 14 neighborhoods. They remained in the evaluated model. The blended baseline mattered most at 4 weeks, where
+replacing it with the current week alone lowered the correlation by 0.096.
+
+Of the inputs we tried adding, Boston's influenza wastewater series raised the
+correlation by 0.089 at 4 weeks, in all 14 neighborhoods, but lowered it by
+0.017 at 1 week. The series begins in July 2024 and covers under half of the
+training period, so the 4-week gain is uncertain, and wastewater was not part of
+the evaluated model. Statewide vaccination uptake also helped at 4 weeks
+(0.041). Neighborhood COVID-19 and RSV rates with COVID-19 wastewater made
+forecasts worse at every horizon. Links weighted by public transit ridership,
+measured in a separate study, changed the correlation by $-0.001$, $-0.007$, and
+$+0.015$; nearly every transit link duplicated an existing link. Finally,
+in an earlier, untuned run of our reimplementation of the dual-topology model of
+Luo et al.,\cite{luo2025novel} adding a node for the surrounding area raised the
+correlation from 0.412 to 0.417, compared with the 0.135 gain reported in the
+original study.
+
+\begin{table}[h!]
+\centering
+\caption{Change in Forecast Correlation When One Part of the Graph Neural
+Network Is Removed, Changed, or Added, Development Season, Boston,
+Massachusetts, June 2025--May 2026}
+\label{tab:ablation}
+\footnotesize
+\begin{tabular}{lccc}
+\toprule
+& \multicolumn{3}{c}{Change in Correlation (Neighborhoods Improved)$^{a}$} \\
+\cmidrule(lr){2-4}
+Part of the Model & 1 Week Ahead & 2 Weeks Ahead & 4 Weeks Ahead \\
+\midrule
+\multicolumn{4}{l}{\textit{Removed}} \\
+\quad All links between neighborhoods (map and learned) & $-$0.075 (0) & $-$0.093 (0) & $-$0.009 (6) \\
+\quad Hand-built links, keeping learned links & $+$0.006 (11) & $-$0.006 (3) & $+$0.006 (9) \\
+\quad Learned links, keeping hand-built links & $-$0.011 (0) & $-$0.007 (4) & $+$0.016 (14) \\
+\quad Correlation and demographic links (borders only) & $+$0.001 (9) & $-$0.004 (2) & $-$0.009 (0) \\
+\quad Correlation links & 0.000 (9) & $-$0.003 (3) & $+$0.028 (13) \\
+\quad Demographic links & $+$0.003 (13) & $+$0.002 (9) & $-$0.001 (4) \\
+\quad Demographic measures as inputs & 0.000 (6) & $-$0.003 (4) & $+$0.027 (14) \\
+\quad Demographic measures and links & $+$0.001 (9) & $-$0.002 (5) & $+$0.008 (13) \\
+\quad Weather & $-$0.012 (0) & $-$0.031 (0) & $-$0.025 (0) \\
+\quad Flag for suppressed weeks & $-$0.002 (5) & $+$0.006 (12) & $+$0.002 (8) \\
+\quad All inputs except past rates & $-$0.012 (0) & $-$0.008 (2) & $-$0.023 (1) \\
+\quad Correlation term in the training loss & $-$0.001 (3) & $-$0.006 (1) & $+$0.007 (11) \\
+\multicolumn{4}{l}{\textit{Changed}} \\
+\quad Baseline: current week only & $-$0.010 (0) & $-$0.019 (1) & $-$0.096 (0) \\
+\quad No baseline & 0.000 (7) & $-$0.059 (2) & $-$0.029 (3) \\
+\quad Link types kept separate & 0.000 (9) & $-$0.011 (0) & $-$0.004 (5) \\
+\quad Smaller model & $-$0.005 (3) & $-$0.007 (2) & $-$0.003 (6) \\
+\multicolumn{4}{l}{\textit{Added}} \\
+\quad Influenza wastewater & $-$0.017 (3) & $+$0.013 (11) & $+$0.089 (14) \\
+\quad Statewide vaccination uptake & 0.000 (7) & $+$0.008 (13) & $+$0.041 (14) \\
+\quad Citywide ILI share & $-$0.004 (4) & $-$0.006 (2) & $+$0.021 (14) \\
+\quad Calendar terms & $-$0.001 (6) & $-$0.001 (8) & $+$0.025 (13) \\
+\quad COVID-19 and RSV rates, COVID-19 wastewater & $-$0.031 (0) & $-$0.155 (0) & $-$0.159 (0) \\
+\quad Transit ridership links$^{b}$ & $-$0.001 & $-$0.007 & $+$0.015 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Abbreviations: ILI, influenza-like illness; RSV, respiratory syncytial virus.\\
+The default model's mean correlation was 0.893, 0.802, and 0.582 at 1, 2, and
+4 weeks. Not evidence of performance: this season was used to design the model.\\
+$^{a}$ Mean per-neighborhood correlation between forecast and observed rates
+for the changed model minus the default, each averaged over 10 training runs;
+positive values favor the change. In parentheses, the number of the 14
+neighborhoods in which the change raised the correlation. Differences within
+0.003, 0.006, and 0.031 at 1, 2, and 4 weeks are within run-to-run noise.\\
+$^{b}$ Separate study with the same default; per-neighborhood counts are not
+available.
+\end{table}
+
+%==========================================================================
+\section*{Training on several cities at once}
+
+Because Columbus is forecast about as well by a Boston-trained model as by its
+own, we asked whether training on more than 1 city helps further. We used the
+same model and settings as in Table 5 of the main text (no
+neighborhood-specific learned links, settings fixed in advance, 10 training
+runs of 120 passes) and trained it on several cities together, using only weeks
+before the 2024--2025 test season in each. Each city kept its own map, its own
+scaling (each area's series standardized by its own training-period mean and
+standard deviation), and its own validation weeks. Every training batch came
+from 1 city, each city supplied the same number of batches per pass so that
+Chicago's 58 areas did not outweigh Boston's 14 or Columbus's 17, and the stopping
+point was chosen on the average of the 3 cities' validation errors. We trained
+2 versions: one on all 3 cities, which includes the target city's own earlier
+weeks, and one on the other 2 cities only, which, like the transferred models
+of Table 5, has seen no data from the target. Each was applied to each city's
+2024--2025 season as is and after fine-tuning on local data, and compared week
+by week with the model trained on the target city alone (Holm adjustment over
+the 4 multicity versions at each horizon).
+
+No multicity model was clearly more accurate than the locally trained one
+(Table~\ref{tab:pooled}). In Columbus, every multicity version had lower mean
+WIS than the local model at every horizon, by 3\% to 8\%, but none of these
+differences was clear (adjusted \textit{P} values .06 to .40). The model
+trained on Boston and Chicago, with no Columbus data, beat the Boston-only model of Table 5 at 1, 2, and 4
+weeks (3.85 vs 3.90, 4.80 vs 5.08, and 5.97 vs 6.45), clearly at 2 weeks
+(\textit{P} = .006) and nearly so at 4 weeks (\textit{P} = .06). In Boston and
+Chicago, which have long histories, their own data were best. Without further
+training, the multicity models were worse than the local ones at every
+horizon in both cities, clearly in 3 of the 4 Chicago comparisons at 1 and 2
+weeks; after fine-tuning they tied the local models in all 12 comparisons.
+Training on 2 cities instead of 1 did not help Boston (adjusted \textit{P} >
+.99 against each single-city source) and helped Chicago only slightly, clearly
+at 1 week (1.14 vs 1.16, \textit{P} = .04) but not at 2 or 4 weeks.
+
+\begin{table}[h!]
+\centering
+\caption{Forecast Error When the Model Is Trained on Several Cities at Once,
+Boston, Massachusetts; Columbus, Ohio; and Chicago, Illinois, Unseen Season
+June 2024--May 2025}
+\label{tab:pooled}
+\footnotesize
+\begin{tabular}{lccccccc}
+\toprule
+& & & \multicolumn{2}{c}{Trained on All 3 Cities$^{b}$} & \multicolumn{2}{c}{Trained on the Other 2 Cities$^{c}$} & \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Target City & Weeks Ahead & Trained Locally & As Is & Fine-Tuned & As Is & Fine-Tuned & Persistence \\
+\midrule
+Boston & 1 & 4.88 & 5.13 & 4.85 & 5.33 & 4.80 & 6.36 \\
+ & 2 & 6.15 & 6.63 & 6.07 & 6.96 & 6.34 & 8.95 \\
+ & 4 & 8.25 & 9.16 & 8.39 & 10.11 & 8.12 & 14.07 \\
+Columbus & 1 & 4.11 & 3.87 & 4.00 & 3.85 & 3.95 & 4.67 \\
+ & 2 & 5.18 & 4.81 & 4.99 & 4.80 & 4.96 & 5.89 \\
+ & 4 & 6.49 & 6.02 & 5.95 & 5.97 & 6.07 & 8.45 \\
+Chicago$^{d}$ & 1 & 1.09 & 1.10 & 1.08 & 1.14$^{a}$ & 1.08 & 1.35 \\
+ & 2 & 1.12 & 1.15$^{a}$ & 1.13 & 1.23$^{a}$ & 1.12 & 1.42 \\
+ & 4 & 1.25 & 1.28 & 1.24 & 1.30 & 1.24 & 1.52 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Abbreviations: WIS, weighted interval score.\\
+Values are mean WIS in the target city's units: ED visits for influenza-like
+illness per 100,000 residents in Boston and Columbus, and the health
+department's 1--10 activity level in Chicago. Compare columns within a row,
+not values across cities. ``Trained locally'' and ``Persistence'' are the
+same as in Table 5 of the main text.\\
+$^{a}$ Clearly different from the locally trained model (Holm-adjusted
+Diebold--Mariano \textit{P} < .05); all 3 marked values are worse.\\
+$^{b}$ Includes the target city's own weeks before the test season.\\
+$^{c}$ No data from the target city; comparable to the transferred models of
+Table 5.\\
+$^{d}$ Each area's series is scaled by its own training-period mean and
+standard deviation, so models trained elsewhere forecast in standardized units
+that are converted back to levels.
+\end{table}
+
+%==========================================================================
+\clearpage
+
+%==========================================================================
+\section*{Supplementary figures}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.55\textwidth]{figures/figureS1_blend_weight.pdf}
+\caption*{\textbf{Figure S1.} What the graph neural network leans on, by
+horizon, city, and unseen season. The model's baseline blends the current
+week's rate with the usual rate for that time of year; the y-axis is the
+learned weight on the current week (the rest goes to the seasonal curve).
+At 0.8 to 0.9 at 1 week in most seasons, the model mostly carries the latest value forward; by 4
+weeks, it leans at least as much on the seasonal pattern. Boston,
+Massachusetts, 2022--2025; Columbus, Ohio, 2024--2025; Chicago, Illinois,
+2022--2026.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{figures/figureS2_tuning_gains.pdf}
+\caption*{\textbf{Figure S2.} How much equal-budget tuning improved each model,
+by city: A) Boston, Massachusetts; B) Columbus, Ohio; C) Chicago, Illinois. Each dot is 1 test season and horizon; the percentage is the
+reduction in mean absolute error on validation weeks for the chosen settings
+compared with the model's default settings. Black bars are means. LSTM, long
+short-term memory network.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{figures/figureS3_pit.pdf}
+\caption*{\textbf{Figure S3.} Calibration of the graph neural network's forecast
+distributions, 14 neighborhoods, Boston, Massachusetts, June 2022--May 2025: A)
+1 week, B) 2 weeks, and C) 4 weeks ahead. Each histogram shows where observed
+values fell within the forecast distribution (the probability integral
+transform). A flat histogram at the dotted line means well-calibrated
+forecasts; a U shape would mean ranges that are too narrow, and a hump ranges
+that are too wide.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{figures/figureS4_all_neighborhoods.pdf}
+\caption*{\textbf{Figure S4.} Forecasts made 2 weeks ahead for all 14
+neighborhoods, Boston, Massachusetts, June 2024--May 2025. Lines show the graph
+neural network's median forecast, shading its 50\% and 95\% forecast intervals,
+and dots the observed emergency department visit rates for influenza-like
+illness (ILI) per 100,000 residents. Vertical scales differ by neighborhood.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{figures/figureS5_severity_skill.pdf}
+\caption*{\textbf{Figure S5.} Skill at warning of moderate and high influenza
+weeks, 14 neighborhoods, Boston, Massachusetts, June 2022--May 2025. A, B)
+Brier skill score of the forecast's probability of being at or above the
+moderate (A) or high (B) threshold. C, D) Peirce skill score of a yes/no alert
+issued when the best-guess forecast is at or above the threshold. Values above
+the dotted line at 0 show skill. LSTM, long short-term memory network.}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\textwidth]{figures/figureS6_severity_confusion.pdf}
+\caption*{\textbf{Figure S6.} Severity band of each neighborhood-week, observed
+and forecast 2 weeks ahead, 14 neighborhoods, Boston, Massachusetts, June
+2022--May 2025 (3 unseen seasons; 2,103 neighborhood-weeks). A) Graph neural
+network. B) Persistence (next week equals this week). Each forecast is placed
+in a band by its best guess (the median). Bands use each neighborhood's
+Moving Epidemic Method intensity thresholds, fitted only on seasons before
+each test season: low is below the 50th-percentile threshold, moderate from
+the 50th to below the 90th, high from the 90th to below the 98th, and very
+high at or above the 98th. Each cell gives the number of neighborhood-weeks
+with that observed band (row) and forecast band (column); shading shows the
+share of each observed band's weeks, so the diagonal shows how often the band
+was forecast correctly.}
+\end{figure}
+
+\clearpage
+\bibliographystyle{vancouver-aje}
+\bibliography{references}
+
+\end{document}

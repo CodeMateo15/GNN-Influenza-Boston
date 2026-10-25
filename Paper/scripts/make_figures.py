@@ -6,7 +6,8 @@ Run from anywhere:
 
     /opt/anaconda3/bin/python Paper/scripts/make_figures.py
 
-Writes PDF and PNG copies of each figure to Paper/overleaf/figures/.
+Writes PDF and PNG copies of each figure to Paper/overleaf_v2/figures/, or to
+the folder given with `--out DIR`.
 Only the unseen seasons are plotted as evidence; the development season
 appears only in the Figure 1 timeline, labeled as such.
 """
@@ -31,7 +32,7 @@ from matplotlib.patches import Patch  # noqa: E402
 ROOT = Path(__file__).resolve().parents[2]
 RESULTS = ROOT / "Code" / "results"
 NEIGH_DIR = ROOT / "Data" / "Neighborhood Data"
-OUT = ROOT / "Paper" / "overleaf" / "figures"
+OUT = ROOT / "Paper" / "overleaf_v2" / "figures"
 sys.path.insert(0, str(ROOT / "Code"))
 
 from influenza.cities.boston import (ANCHOR_SHORT, GEO_EDGES_ANCHOR,  # noqa: E402
@@ -51,7 +52,7 @@ C = {"graph": "#0072B2", "nograph": "#56B4E9", "lstm": "#E69F00", "cola": "#009E
      "flusight": "#999999", "blend": "#CC79A7", "persist": "#000000", "red": "#D55E00"}
 MODELS = [  # arm, label, color, marker
     ("gnn_st_tuned", "Graph neural network", C["graph"], "o"),
-    ("gnn_st_nograph_tuned", "Same model, no map", C["nograph"], "s"),
+    ("gnn_st_nograph_tuned", "Same model, map removed", C["nograph"], "s"),
     ("lstm_tuned", "LSTM", C["lstm"], "^"),
     ("colagnn_tuned", "Cola-GNN", C["cola"], "D"),
     ("blend_baseline", "Seasonal blend (no learning)", C["blend"], "v"),
@@ -134,9 +135,10 @@ def boston_mean_rates() -> pd.Series:
 
 
 def figure1() -> None:
-    fig = plt.figure(figsize=(7.0, 3.5))
-    ax_map = fig.add_axes([0.0, 0.0, 0.45, 0.95])
-    ax_t = fig.add_axes([0.56, 0.12, 0.43, 0.78])
+    fig = plt.figure(figsize=(7.0, 5.6))
+    ax_map = fig.add_axes([0.0, 0.38, 0.45, 0.60])
+    ax_t = fig.add_axes([0.56, 0.52, 0.43, 0.44])
+    ax_s = fig.add_axes([0.0, 0.0, 1.0, 0.30])
 
     geo = json.loads((NEIGH_DIR / "boston_polygons_tract_neighborhoods.geojson").read_text())
     rates = boston_mean_rates()
@@ -188,7 +190,7 @@ def figure1() -> None:
     locant(ax_map, "A", x=0.0, y=0.98)
     sm = plt.cm.ScalarMappable(cmap=matplotlib.colors.LinearSegmentedColormap.from_list(
         "b", [cmap(0.15), cmap(0.95)]), norm=plt.Normalize(vmin, vmax))
-    cax = fig.add_axes([0.03, 0.10, 0.16, 0.025])
+    cax = fig.add_axes([0.26, 0.43, 0.16, 0.016])
     cb = fig.colorbar(sm, cax=cax, orientation="horizontal")
     cb.set_label("Mean weekly rate per 100,000", fontsize=7)
     cb.ax.tick_params(labelsize=6.5)
@@ -222,7 +224,71 @@ def figure1() -> None:
                          Patch(color="#BBBBBB", label="Development season (not evidence)")],
                 loc="upper center", bbox_to_anchor=(0.45, -0.2), ncol=1, frameon=False)
     locant(ax_t, "B", x=-0.02, y=1.02)
+    model_schematic(ax_s)
+    locant(ax_s, "C", x=0.0, y=1.06)
     save(fig, "figure1_study_design")
+
+
+def model_schematic(ax) -> None:
+    """Panel C: the 4 kinds of information, where each enters, and the blended head.
+
+    Each input box names the component ablation that removes it (Figure 4), so
+    the schematic doubles as the key to the "what each component adds" section.
+    """
+    from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 41)
+    ax.axis("off")
+
+    def box(x, y, w, h, text, face, edge="#333333", size=6.8, weight="normal"):
+        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.4,rounding_size=1.2",
+                                    facecolor=face, edgecolor=edge, lw=0.7))
+        ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", fontsize=size,
+                fontweight=weight, linespacing=1.15)
+
+    def arrow(x0, y0, x1, y1):
+        ax.add_patch(FancyArrowPatch((x0, y0), (x1, y1), arrowstyle="-|>", mutation_scale=7,
+                                     color="#333333", lw=0.8, shrinkA=0, shrinkB=0))
+
+    light = {"t": "#E8F1F8", "e": "#E6F4EE", "d": "#FBEFE0", "g": "#F3E6F0"}
+    inputs = [
+        ("Temporal: past 16 weeks of\nthe area's rate", light["t"], "always kept"),
+        ("Environmental: 6 weekly\nweather variables", light["e"], "removed in\n\"no environment\""),
+        ("Demographic: 8 fixed\nmeasures", light["d"], "removed in\n\"no demographics\""),
+        ("Geospatial: neighborhood map\nplus learned links", light["g"], "removed in\n\"no map\""),
+    ]
+    ys = [31, 22, 13, 4]
+    for (text, face, note), y in zip(inputs, ys):
+        box(1, y, 21, 6.5, text, face)
+        ax.text(23.0, y + 3.25, note, fontsize=5.6, va="center", ha="left", color="#555555",
+                style="italic", linespacing=1.1)
+    ax.text(11.5, 38.6, "Inputs for each area and week", ha="center", fontsize=7, weight="bold")
+    # Temporal, environmental and demographic inputs are node features: they enter
+    # the temporal encoder. The map enters only at the graph step.
+    box(44, 19, 13, 12, "Temporal\nconvolution\n(each area,\npast weeks only)", "white")
+    box(62, 19, 13, 12, "Graph\nconvolution\n(mix with\nneighbors)", "white")
+    # Only the rates (and suppression flag) run through the temporal convolution;
+    # the current week's weather and the fixed demographic measures are joined
+    # to its summary (static_fuse in models.py) before the graph step.
+    arrow(36.5, ys[0] + 3.25, 44, 25)
+    # Weather and demographics run below the temporal box and join after it.
+    for y in ys[1:3]:
+        ax.plot([36.5, 40.5, 59.5], [y + 3.25, 15.5, 15.5], color="#333333", lw=0.8)
+    arrow(59.5, 15.5, 59.5, 24.3)
+    ax.plot([59.5], [25], marker="o", ms=3.5, color="#333333", zorder=5)
+    ax.text(59.5, 27.0, "join", ha="center", fontsize=5.6, color="#555555")
+    arrow(57, 25, 62, 25)
+    arrow(36.5, ys[3] + 3.25, 68.5, 19)
+    box(62, 3, 13, 9, "Baseline: blend of\ncurrent week and\nseasonal curve", "#F2F2F2")
+    box(80, 19, 7, 12, "+", "white", size=11, weight="bold")
+    ax.text(83.5, 32.0, "learned correction", ha="center", va="bottom", fontsize=5.6,
+            color="#555555")
+    arrow(75, 25, 80, 25)
+    arrow(75, 7.5, 83.5, 19)
+    box(91.5, 19, 7.5, 12, "23\nquantiles\n1, 2, 4\nweeks\nahead", "white", size=6.2)
+    arrow(87, 25, 91.5, 25)
+    ax.text(68.5, 0.2, "no-learning version = baseline alone (seasonal blend)", ha="center",
+            fontsize=5.8, color="#555555", style="italic")
 
 
 # --------------------------------------------------------------------------- #
@@ -287,7 +353,8 @@ def significance_rows() -> pd.DataFrame:
 def figure3() -> pd.DataFrame:
     sig = significance_rows()
     # Panel titles are in the legend (AJE: no text on figures beyond locants and axes).
-    comps = [("gnn_st_nograph_tuned", "A"), ("lstm_tuned", "B"), ("colagnn_tuned", "C")]
+    # The map comparison moved to Figure 4 with the other components.
+    comps = [("persistence", "A"), ("lstm_tuned", "B"), ("colagnn_tuned", "C")]
     order = [(c, s) for c, ss in UNSEEN.items() for s in ss]
     hcol = {1: "#0072B2", 2: "#E69F00", 4: "#009E73"}
     fig, axes = plt.subplots(1, 3, figsize=(7.0, 3.9), sharey=True)
@@ -326,7 +393,72 @@ def figure3() -> pd.DataFrame:
 
 
 # --------------------------------------------------------------------------- #
-# Figure 4: example forecast and interval coverage                             #
+# Figure 4: what each component adds                                           #
+# --------------------------------------------------------------------------- #
+COMPONENTS = [("gnn_st_noweather_tuned", "Environment", "A"),
+              ("gnn_st_nodemofeat_tuned", "Demographics", "B"),
+              ("gnn_st_nograph_tuned", "Neighborhood map", "C"),
+              ("gnn_st_historyonly_tuned", "All three", "D")]
+
+
+def component_rows() -> pd.DataFrame:
+    rows = []
+    for city, seasons in UNSEEN.items():
+        base = RESULTS if city == "boston" else RESULTS / city
+        for s in seasons:
+            for h in HORIZONS:
+                d = pd.read_csv(base / f"backtest_{s}" / f"horizon_{h:02d}" / "_comparison"
+                                / "significance_components.csv")
+                d["city"], d["season"] = city, s
+                rows.append(d)
+    d = pd.concat(rows, ignore_index=True)
+    # dWIS is full model minus the version without the component, so the cost of
+    # removing it is -dWIS, here as a percentage of the full model's WIS.
+    pct = 100.0 / d.WIS_ref
+    d["cost"], d["cost_lo"], d["cost_hi"] = -d.dWIS * pct, -d.dWIS_hi * pct, -d.dWIS_lo * pct
+    d["clear"] = d.DM_WIS_p_holm < 0.05
+    return d
+
+
+def figure_components() -> pd.DataFrame:
+    comp = component_rows()
+    order = [(c, s) for c, ss in UNSEEN.items() for s in ss]
+    hcol = {1: "#0072B2", 2: "#E69F00", 4: "#009E73"}
+    fig, axes = plt.subplots(1, 4, figsize=(7.0, 3.9), sharey=True, sharex=True)
+    for ax, (arm, label, letter) in zip(axes, COMPONENTS):
+        ax.axvline(0, color="black", lw=0.7)
+        for i, (city, s) in enumerate(order):
+            for j, h in enumerate(HORIZONS):
+                r = comp[(comp.city == city) & (comp.season == s) & (comp.horizon == h)
+                         & (comp.model == arm)]
+                if r.empty:
+                    continue
+                r = r.iloc[0]
+                y = len(order) - 1 - i + (0.22 - 0.22 * j)
+                ax.errorbar(r.cost, y, xerr=[[r.cost - r.cost_lo], [r.cost_hi - r.cost]],
+                            fmt="o", ms=3.6, color=hcol[h], mfc=hcol[h] if r.clear else "white",
+                            elinewidth=0.9, capsize=0)
+        ax.set_xlabel("Change in WIS when\nremoved, %")
+        locant(ax, letter, x=-0.02 if letter != "A" else -0.62, y=1.02)
+    axes[0].set_yticks(range(len(order)),
+                       [f"{CITY_LABEL[c]} {season_text(c, s)}" for c, s in reversed(order)])
+    hz = [Line2D([], [], marker="o", ls="none", color=hcol[h],
+                 label=f"{h} week{'s' if h > 1 else ''} ahead") for h in HORIZONS]
+    fill = [Line2D([], [], marker="o", ls="none", color="grey", mfc="grey",
+                   label="Filled: clear after correction for multiple comparisons"),
+            Line2D([], [], marker="o", ls="none", color="grey", mfc="white", label="Open: not clear")]
+    fig.legend(handles=hz, loc="lower center", ncol=3, frameon=False, bbox_to_anchor=(0.55, -0.02))
+    fig.legend(handles=fill, loc="lower center", ncol=2, frameon=False, bbox_to_anchor=(0.55, -0.075))
+    fig.subplots_adjust(bottom=0.25, wspace=0.1)
+    save(fig, "figure4_components")
+    summary = comp.pivot_table(index=["model", "city"], columns="horizon", values="cost").round(1)
+    summary["clear"] = comp.groupby(["model", "city"]).clear.sum()
+    summary["cells"] = comp.groupby(["model", "city"]).clear.size()
+    return summary
+
+
+# --------------------------------------------------------------------------- #
+# Figure 6: example forecast and interval coverage                             #
 # --------------------------------------------------------------------------- #
 def coverage(city: str, arm: str, h: int) -> tuple[float, float]:
     d = pd.concat([predictions(city, s, h, arm) for s in UNSEEN[city]])
@@ -397,7 +529,7 @@ def figure4() -> pd.DataFrame:
     ax_b.legend(loc="center right", frameon=False, fontsize=6.5, bbox_to_anchor=(1.0, 0.72))
     # The legend says the dotted lines mark the stated coverage, so no labels on them.
     locant(ax_b, "A", x=-0.3, y=1.01)
-    save(fig, "figure5_example_and_coverage")
+    save(fig, "figure6_example_and_coverage")
     return pd.DataFrame(rows)
 
 
@@ -454,7 +586,7 @@ def figure5() -> pd.DataFrame:
     cb.set_label("Less forecast error (WIS) with the map than without, %", fontsize=7)
     cb.ax.tick_params(labelsize=6.5)
     fig.subplots_adjust(bottom=0.2, wspace=0.02)
-    save(fig, "figure4_map_benefit_by_neighborhood")
+    save(fig, "figure5_map_benefit_by_neighborhood")
     return pd.DataFrame(ben).round(1)
 
 
@@ -605,12 +737,18 @@ def figure6() -> dict[str, np.ndarray]:
         ax.tick_params(length=0)
         locant(ax, letter, x=-0.32 if letter == "A" else -0.05)
     fig.tight_layout(w_pad=1.5)
-    save(fig, "figure6_severity_confusion")
+    save(fig, "figureS6_severity_confusion")
     return mats
 
 
 def main() -> None:
-    only = set(sys.argv[1:])  # e.g. `make_figures.py figure1 figure5` regenerates just those
+    global OUT
+    args = sys.argv[1:]
+    if "--out" in args:
+        i = args.index("--out")
+        OUT = Path(args[i + 1]).resolve()
+        args = args[:i] + args[i + 2:]
+    only = set(args)  # e.g. `make_figures.py figure1 figure5` regenerates just those
     if only:
         for name in sorted(only):
             globals()[name]()
@@ -618,6 +756,7 @@ def main() -> None:
     figure1()
     rel = figure2()
     figure3()
+    comp = figure_components()
     cov = figure4()
     ben = figure5()
     blend = figure_s1_blend()
@@ -628,6 +767,8 @@ def main() -> None:
     # Numbers the text quotes, printed so the data check can compare against them.
     print("\nRelative WIS (unseen seasons):")
     print(rel.pivot_table(index=["city", "arm"], columns="horizon", values="rel").round(3).to_string())
+    print("\nPercent change in WIS when a component is removed (Figure 4):")
+    print(comp.to_string())
     print("\nInterval coverage, Boston unseen seasons:")
     print(cov.pivot_table(index="arm", columns="horizon", values=["cov50", "cov95"]).round(3).to_string())
     print("\nPercent less WIS with the map, by neighborhood (Boston unseen seasons):")
