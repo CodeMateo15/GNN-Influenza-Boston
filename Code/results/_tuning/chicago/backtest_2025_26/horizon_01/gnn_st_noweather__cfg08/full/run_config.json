@@ -1,0 +1,275 @@
+{
+  "model": "gnn_st_noweather__cfg08",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-24T00:18:42",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 238,
+    "n_val": 41,
+    "n_test": 53,
+    "first_test_target": "2025-06-01",
+    "last_test_target": "2026-05-31"
+  },
+  "graph_counts": {
+    "geo_1hop": 115,
+    "anchor_edges": 2,
+    "geo_2hop": 198,
+    "geo_3hop": 236,
+    "corr": 0,
+    "demo": 1107
+  },
+  "n_nodes": 59,
+  "edge_weight_range": [
+    0.0,
+    1.9917329968169226
+  ],
+  "n_node_features": 40,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "pop_density",
+    "poverty_rate",
+    "transit_share",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate",
+    "no_vehicle_rate",
+    "nonwhite_share"
+  ],
+  "global_names": [],
+  "n_params": 8742,
+  "best_epoch": 20,
+  "best_val_mse": 0.7267277836799622,
+  "epochs_run": 80,
+  "checkpoint": "checkpoints/_tuning/chicago/backtest_2025_26/horizon_01/gnn_st_noweather__cfg08_full.pt",
+  "experiment": {
+    "name": "gnn_st_noweather__cfg08",
+    "model": "stgnn",
+    "variant": "full",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": false,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": true,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.01,
+      "weight_decay": 0.01,
+      "epochs": 80,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.4,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 16,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 1,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        1
+      ],
+      "test_start": "2025-06-01",
+      "test_end": "2026-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Weather removed (6 of 30 feature columns). Expected to cost little: temp_mean_c correlates with week-of-year at R^2=0.93, so weather was an implicit seasonal clock the climatology baseline now supplies directly."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 6.906708346099545
+    },
+    "beta": {
+      "1": 0.0
+    },
+    "kappa": {
+      "1": 1.0861831299960998
+    },
+    "n_validation": 2378,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -2.1188006232474317,
+        -1.6658951036068808,
+        -1.3537460811941582,
+        -0.9909298856207139,
+        -0.696775117543736,
+        -0.519088359323353,
+        -0.39879399059610116,
+        -0.30920864752596827,
+        -0.20874018468872826,
+        -0.13152776334945826,
+        -0.0582417794938272,
+        0.004936673363462965,
+        0.11477342632511164,
+        0.21867808655324517,
+        0.31430644108864253,
+        0.43362229880983866,
+        0.5686949010102584,
+        0.7470616641862081,
+        1.0009669267426775,
+        1.376230516992923,
+        1.904199165960444,
+        2.388361057117125,
+        2.862844527414823
+      ]
+    },
+    "scale_floor": {
+      "1": 0.2571081554150719
+    }
+  },
+  "test_interval_coverage": 97.29993493819129,
+  "city": "chicago",
+  "seeds": [
+    42
+  ],
+  "n_seeds": 1,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.7267277836799622
+  },
+  "per_seed_best_epoch": {
+    "42": 20
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 8,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "1": 0.574
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 0.3175,
+      "adaptive": 0.6825
+    },
+    {
+      "all": 0.3141,
+      "adaptive": 0.6859
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.574
+    ]
+  }
+}

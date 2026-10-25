@@ -1,0 +1,242 @@
+{
+  "model": "gnn_st_historyonly__cfg07",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-24T00:22:25",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 147,
+    "n_val": 25,
+    "n_test": 52,
+    "first_test_target": "2023-06-04",
+    "last_test_target": "2024-05-26"
+  },
+  "graph_counts": {},
+  "n_nodes": 58,
+  "edge_weight_range": [
+    0.0,
+    0.0
+  ],
+  "n_node_features": 16,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_lag1",
+    "flu_lag2",
+    "flu_lag3",
+    "flu_lag4",
+    "flu_lag5",
+    "flu_lag6",
+    "flu_lag7",
+    "flu_lag8",
+    "flu_lag9",
+    "flu_lag10",
+    "flu_lag11",
+    "flu_lag12",
+    "flu_lag13",
+    "flu_lag14",
+    "flu_lag15"
+  ],
+  "global_names": [],
+  "n_params": 13372,
+  "best_epoch": 1,
+  "best_val_mse": 0.9317753314971924,
+  "epochs_run": 120,
+  "checkpoint": "checkpoints/_tuning/chicago/backtest_2023_24/horizon_04/gnn_st_historyonly__cfg07_full.pt",
+  "experiment": {
+    "name": "gnn_st_historyonly__cfg07",
+    "model": "stgnn",
+    "variant": "full",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": false,
+      "use_demographics": false,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": false,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "none",
+      "geo": false,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": false,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.01,
+      "weight_decay": 0.003,
+      "epochs": 120,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.25,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": false,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 1,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        4
+      ],
+      "test_start": "2023-06-01",
+      "test_end": "2024-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Own past rates only: lagsonly features with the nograph graph (no hand-built edges, no adaptive adjacency, no anchors)."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "4": 4.277424137028507
+    },
+    "beta": {
+      "4": 1.3583325231525853
+    },
+    "kappa": {
+      "4": 1.0034616977382071
+    },
+    "n_validation": 1450,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "4": [
+        -1.6203283322309627,
+        -1.5676806156512135,
+        -1.4594000008461439,
+        -1.2156333499928382,
+        -0.9628273693043504,
+        -0.7742963624487372,
+        -0.6013097597915336,
+        -0.44683557269853774,
+        -0.35555616796048123,
+        -0.26936605313555745,
+        -0.21048431095192827,
+        -0.13930737104180269,
+        -0.05698133259086994,
+        0.009274746707821342,
+        0.09421662589103098,
+        0.3320102970140086,
+        0.5397364060846745,
+        0.6815722983640369,
+        0.8755897326136233,
+        1.2383768574289296,
+        1.9667488029457674,
+        2.6599795725461766,
+        3.1889864454384296
+      ]
+    },
+    "scale_floor": {
+      "4": 0.30240845117511883
+    }
+  },
+  "test_interval_coverage": 95.026525198939,
+  "city": "chicago",
+  "seeds": [
+    42
+  ],
+  "n_seeds": 1,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.9317753314971924
+  },
+  "per_seed_best_epoch": {
+    "42": 1
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 1,
+  "n_static_features": 0,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "4": 0.4939
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 1.0
+    },
+    {
+      "all": 1.0
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.4939
+    ]
+  }
+}

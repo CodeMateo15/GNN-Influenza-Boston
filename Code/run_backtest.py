@@ -107,6 +107,8 @@ FROZEN_ARMS = (
 # validation-only search, K configurations each, then ten seeds); the others
 # are ordinary sweep arms.
 ADDED_ARMS = ("lstm_s10", "flusight_baseline", "gnn_st_tuned", "gnn_st_nograph_tuned",
+              # Component ablations (tune.py), unseen seasons in all 3 cities.
+              "gnn_st_noweather_tuned", "gnn_st_nodemofeat_tuned", "gnn_st_historyonly_tuned",
               "lstm_tuned", "xgboost_tuned", "colagnn_tuned", "gat_tuned", "dualtopo_tuned",
               # The portability tests: borders-only graph, and cross-city transfer.
               "gnn_st_geofixed", "gnn_st_noadapt",

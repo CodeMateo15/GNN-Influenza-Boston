@@ -16,12 +16,15 @@ neighborhoods of the week-to-week correlation (higher is better).
 | gnn_st_noadapt                       |   nan     |   nan     |     1.622 |     1.55  |           1.586 |
 | transfer_finetune_from_boston        |   nan     |   nan     |     1.627 |     1.558 |           1.592 |
 | transfer_finetune_from_pooled_all3   |   nan     |   nan     |     1.613 |   nan     |           1.613 |
+| gnn_st_noweather_tuned               |     1.73  |     1.612 |     1.614 |     1.495 |           1.613 |
+| gnn_st_nodemofeat_tuned              |     1.722 |     1.62  |     1.608 |     1.508 |           1.614 |
 | gnn_st                               |     1.729 |     1.624 |     1.614 |     1.522 |           1.622 |
 | gnn_st_tuned                         |     1.729 |     1.626 |     1.614 |     1.522 |           1.623 |
 | transfer_finetune_from_pooled_others |   nan     |   nan     |     1.623 |   nan     |           1.623 |
 | transfer_zeroshot_from_pooled_all3   |   nan     |   nan     |     1.656 |   nan     |           1.656 |
 | transfer_zeroshot_from_boston        |   nan     |   nan     |     1.737 |     1.625 |           1.681 |
 | gnn_st_nograph_tuned                 |     1.814 |     1.706 |     1.741 |     1.645 |           1.727 |
+| gnn_st_historyonly_tuned             |     1.839 |     1.703 |     1.783 |     1.641 |           1.741 |
 | gnn_st_nograph                       |     1.84  |     1.714 |     1.766 |     1.658 |           1.744 |
 | lstm_tuned                           |     1.879 |     1.723 |     1.778 |     1.605 |           1.746 |
 | transfer_zeroshot_from_pooled_others |   nan     |   nan     |     1.756 |   nan     |           1.756 |
@@ -35,8 +38,8 @@ neighborhoods of the week-to-week correlation (higher is better).
 | gat_parity                           |     2.257 |     1.806 |     1.746 |     1.626 |           1.859 |
 | gat_tuned                            |     2.301 |     1.806 |     1.721 |     1.622 |           1.862 |
 | xgboost                              |     2.076 |     1.778 |     1.877 |     1.743 |           1.868 |
-| flusight_baseline                    |     1.929 |     1.922 |     1.864 |     1.782 |           1.874 |
 | persistence                          |     1.929 |     1.922 |     1.864 |     1.782 |           1.874 |
+| flusight_baseline                    |     1.929 |     1.922 |     1.864 |     1.782 |           1.874 |
 | arima                                |     1.961 |     1.873 |     1.939 |     1.769 |           1.886 |
 | lstm_parity                          |     2     |     1.918 |     2.017 |     1.792 |           1.932 |
 | dualtopo_tuned                       |     2.434 |     2.16  |     1.842 |     1.673 |           2.027 |
@@ -49,8 +52,10 @@ neighborhoods of the week-to-week correlation (higher is better).
 |:-------------------------------------|----------:|----------:|----------:|----------:|----------------:|
 | transfer_finetune_from_boston        |   nan     |   nan     |     1.084 |     1.006 |           1.045 |
 | gnn_st_noadapt                       |   nan     |   nan     |     1.086 |     1.005 |           1.046 |
+| gnn_st_noweather_tuned               |     1.15  |     1.085 |     1.081 |     0.993 |           1.077 |
 | gnn_st_tuned                         |     1.161 |     1.085 |     1.087 |     1.001 |           1.083 |
 | transfer_finetune_from_pooled_all3   |   nan     |   nan     |     1.085 |   nan     |           1.085 |
+| gnn_st_nodemofeat_tuned              |     1.16  |     1.089 |     1.091 |     0.999 |           1.085 |
 | gnn_st                               |     1.161 |     1.09  |     1.087 |     1.001 |           1.085 |
 | transfer_finetune_from_pooled_others |   nan     |   nan     |     1.085 |   nan     |           1.085 |
 | transfer_zeroshot_from_pooled_all3   |   nan     |   nan     |     1.097 |   nan     |           1.097 |
@@ -62,6 +67,7 @@ neighborhoods of the week-to-week correlation (higher is better).
 | colagnn_tuned                        |     1.331 |     1.104 |     1.12  |     1.017 |           1.143 |
 | gnn_st_nograph                       |     1.258 |     1.144 |     1.171 |     1.079 |           1.163 |
 | gnn_st_nograph_tuned                 |     1.267 |     1.142 |     1.163 |     1.082 |           1.163 |
+| gnn_st_historyonly_tuned             |     1.292 |     1.146 |     1.176 |     1.081 |           1.174 |
 | xgboost_parity                       |     1.283 |     1.139 |     1.206 |     1.108 |           1.184 |
 | xgboost_tuned                        |     1.291 |     1.143 |     1.214 |     1.107 |           1.189 |
 | gat_parity                           |     1.457 |     1.164 |     1.128 |     1.073 |           1.205 |
@@ -83,8 +89,10 @@ neighborhoods of the week-to-week correlation (higher is better).
 |:-------------------------------------|----------:|----------:|----------:|----------:|----------------:|
 | transfer_finetune_from_boston        |   nan     |   nan     |     2.312 |     2.126 |           2.219 |
 | gnn_st_noadapt                       |   nan     |   nan     |     2.325 |     2.127 |           2.226 |
+| gnn_st_noweather_tuned               |     2.411 |     2.32  |     2.308 |     2.122 |           2.29  |
 | gnn_st_tuned                         |     2.442 |     2.322 |     2.331 |     2.13  |           2.306 |
 | gnn_st                               |     2.442 |     2.331 |     2.331 |     2.13  |           2.308 |
+| gnn_st_nodemofeat_tuned              |     2.449 |     2.332 |     2.343 |     2.125 |           2.312 |
 | transfer_finetune_from_pooled_others |   nan     |   nan     |     2.313 |   nan     |           2.313 |
 | transfer_finetune_from_pooled_all3   |   nan     |   nan     |     2.317 |   nan     |           2.317 |
 | transfer_zeroshot_from_pooled_all3   |   nan     |   nan     |     2.319 |   nan     |           2.319 |
@@ -98,6 +106,7 @@ neighborhoods of the week-to-week correlation (higher is better).
 | xgboost_parity                       |     2.661 |     2.407 |     2.529 |     2.284 |           2.47  |
 | xgboost_tuned                        |     2.685 |     2.41  |     2.536 |     2.283 |           2.478 |
 | gnn_st_nograph_tuned                 |     2.702 |     2.426 |     2.507 |     2.299 |           2.484 |
+| gnn_st_historyonly_tuned             |     2.744 |     2.453 |     2.516 |     2.258 |           2.493 |
 | gat_parity                           |     2.97  |     2.45  |     2.354 |     2.243 |           2.504 |
 | gat_tuned                            |     3.041 |     2.45  |     2.343 |     2.255 |           2.522 |
 | sarima                               |     2.738 |     2.504 |     2.595 |     2.266 |           2.526 |
@@ -124,13 +133,16 @@ neighborhoods of the week-to-week correlation (higher is better).
 | lstm_tuned                           |     0.608 |     0.564 |     0.683 |     0.635 |           0.622 |
 | lstm_s10                             |     0.599 |     0.577 |     0.683 |     0.627 |           0.621 |
 | lstm                                 |     0.586 |     0.568 |     0.677 |     0.619 |           0.612 |
+| gnn_st_noweather_tuned               |     0.584 |     0.556 |     0.671 |     0.616 |           0.607 |
 | transfer_zeroshot_from_boston        |   nan     |   nan     |     0.632 |     0.58  |           0.606 |
+| gnn_st_nodemofeat_tuned              |     0.573 |     0.554 |     0.665 |     0.613 |           0.601 |
 | gnn_st_tuned                         |     0.573 |     0.555 |     0.664 |     0.61  |           0.601 |
 | gnn_st                               |     0.573 |     0.552 |     0.664 |     0.61  |           0.6   |
 | colagnn_tuned                        |     0.472 |     0.561 |     0.677 |     0.62  |           0.582 |
 | gat_parity                           |     0.428 |     0.531 |     0.683 |     0.594 |           0.559 |
 | gat_tuned                            |     0.37  |     0.531 |     0.684 |     0.599 |           0.546 |
 | sarima                               |     0.483 |     0.485 |     0.581 |     0.54  |           0.522 |
+| gnn_st_historyonly_tuned             |     0.472 |     0.481 |     0.601 |     0.521 |           0.519 |
 | xgboost_parity                       |     0.474 |     0.502 |     0.581 |     0.512 |           0.517 |
 | gnn_st_nograph                       |     0.47  |     0.482 |     0.594 |     0.519 |           0.516 |
 | xgboost_tuned                        |     0.47  |     0.495 |     0.577 |     0.515 |           0.514 |
@@ -157,9 +169,12 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | flusight_baseline | 4 of 4 |
 | gat_parity | 4 of 4 |
 | gat_tuned | 4 of 4 |
+| gnn_st_historyonly_tuned | 4 of 4 |
 | gnn_st_noadapt | 2 of 2 |
+| gnn_st_nodemofeat_tuned | 0 of 4 |
 | gnn_st_nograph | 4 of 4 |
 | gnn_st_nograph_tuned | 4 of 4 |
+| gnn_st_noweather_tuned | 1 of 4 |
 | gnn_st_tuned | 1 of 4 |
 | lstm | 4 of 4 |
 | lstm_parity | 4 of 4 |
@@ -188,10 +203,13 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | gnn_st_noadapt                       |   nan     |   nan     |     1.719 |     1.654 |           1.686 |
 | transfer_finetune_from_pooled_others |   nan     |   nan     |     1.718 |   nan     |           1.718 |
 | transfer_finetune_from_pooled_all3   |   nan     |   nan     |     1.729 |   nan     |           1.729 |
+| gnn_st_noweather_tuned               |     1.953 |     1.69  |     1.687 |     1.61  |           1.735 |
+| gnn_st_nodemofeat_tuned              |     1.948 |     1.684 |     1.746 |     1.605 |           1.746 |
 | gnn_st_tuned                         |     1.953 |     1.685 |     1.734 |     1.64  |           1.753 |
 | gnn_st                               |     1.985 |     1.695 |     1.741 |     1.64  |           1.765 |
 | transfer_zeroshot_from_boston        |   nan     |   nan     |     1.886 |     1.691 |           1.788 |
 | transfer_zeroshot_from_pooled_all3   |   nan     |   nan     |     1.791 |   nan     |           1.791 |
+| gnn_st_historyonly_tuned             |     1.99  |     1.759 |     1.868 |     1.727 |           1.836 |
 | gnn_st_nograph_tuned                 |     2.004 |     1.801 |     1.883 |     1.721 |           1.852 |
 | gnn_st_nograph                       |     2.045 |     1.811 |     1.908 |     1.755 |           1.88  |
 | sarima                               |     2.036 |     1.798 |     1.98  |     1.771 |           1.896 |
@@ -204,8 +222,8 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | xgboost                              |     2.228 |     1.838 |     1.966 |     1.827 |           1.965 |
 | lstm_s10                             |     2.124 |     1.866 |     2.105 |     1.78  |           1.969 |
 | lstm                                 |     2.064 |     1.883 |     2.189 |     1.798 |           1.983 |
-| persistence                          |     2.062 |     2.026 |     1.972 |     1.901 |           1.99  |
 | flusight_baseline                    |     2.062 |     2.026 |     1.972 |     1.901 |           1.99  |
+| persistence                          |     2.062 |     2.026 |     1.972 |     1.901 |           1.99  |
 | lstm_parity                          |     2.101 |     1.925 |     2.24  |     1.822 |           2.022 |
 | arima                                |     2.107 |     1.979 |     2.141 |     1.875 |           2.025 |
 | climatology                          |     2.358 |     1.968 |     2.412 |     1.877 |           2.154 |
@@ -221,10 +239,13 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | transfer_finetune_from_pooled_all3   |   nan     |   nan     |     1.127 |   nan     |           1.127 |
 | transfer_zeroshot_from_pooled_all3   |   nan     |   nan     |     1.152 |   nan     |           1.152 |
 | gnn_st                               |     1.311 |     1.133 |     1.136 |     1.072 |           1.163 |
+| gnn_st_noweather_tuned               |     1.328 |     1.143 |     1.114 |     1.071 |           1.164 |
 | gnn_st_tuned                         |     1.315 |     1.14  |     1.134 |     1.072 |           1.165 |
+| gnn_st_nodemofeat_tuned              |     1.311 |     1.137 |     1.151 |     1.065 |           1.166 |
 | transfer_zeroshot_from_boston        |   nan     |   nan     |     1.235 |     1.129 |           1.182 |
 | colagnn_tuned                        |     1.405 |     1.165 |     1.163 |     1.09  |           1.206 |
 | lstm_tuned                           |     1.346 |     1.182 |     1.195 |     1.123 |           1.211 |
+| gnn_st_historyonly_tuned             |     1.38  |     1.18  |     1.211 |     1.143 |           1.229 |
 | transfer_zeroshot_from_pooled_others |   nan     |   nan     |     1.23  |   nan     |           1.23  |
 | gnn_st_nograph_tuned                 |     1.379 |     1.196 |     1.219 |     1.146 |           1.235 |
 | gnn_st_nograph                       |     1.38  |     1.196 |     1.238 |     1.147 |           1.24  |
@@ -253,10 +274,13 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | transfer_zeroshot_from_pooled_all3   |   nan     |   nan     |     2.432 |   nan     |           2.432 |
 | transfer_zeroshot_from_boston        |   nan     |   nan     |     2.6   |     2.289 |           2.444 |
 | gnn_st                               |     2.728 |     2.429 |     2.409 |     2.264 |           2.458 |
+| gnn_st_noweather_tuned               |     2.766 |     2.447 |     2.375 |     2.265 |           2.463 |
 | gnn_st_tuned                         |     2.758 |     2.445 |     2.407 |     2.264 |           2.469 |
+| gnn_st_nodemofeat_tuned              |     2.739 |     2.435 |     2.461 |     2.247 |           2.47  |
 | colagnn_tuned                        |     2.903 |     2.461 |     2.387 |     2.27  |           2.505 |
 | lstm_tuned                           |     2.717 |     2.518 |     2.5   |     2.304 |           2.51  |
 | transfer_zeroshot_from_pooled_others |   nan     |   nan     |     2.573 |   nan     |           2.573 |
+| gnn_st_historyonly_tuned             |     2.879 |     2.531 |     2.571 |     2.369 |           2.588 |
 | lstm_s10                             |     2.71  |     2.511 |     2.81  |     2.35  |           2.595 |
 | sarima                               |     2.86  |     2.538 |     2.639 |     2.359 |           2.599 |
 | gnn_st_nograph_tuned                 |     2.872 |     2.539 |     2.582 |     2.423 |           2.604 |
@@ -269,8 +293,8 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | arima                                |     2.9   |     2.683 |     2.952 |     2.479 |           2.754 |
 | lstm_parity                          |     3.013 |     2.84  |     3.119 |     2.69  |           2.916 |
 | climatology                          |     3.311 |     2.865 |     3.458 |     2.683 |           3.079 |
-| flusight_baseline                    |     3.273 |     3.097 |     3.17  |     2.965 |           3.126 |
 | persistence                          |     3.273 |     3.097 |     3.17  |     2.965 |           3.126 |
+| flusight_baseline                    |     3.273 |     3.097 |     3.17  |     2.965 |           3.126 |
 | seasonal_naive                       |     3.703 |     3.415 |     3.463 |     3.094 |           3.419 |
 
 ### Corr
@@ -287,10 +311,13 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | lstm_tuned                           |     0.526 |     0.529 |     0.66  |     0.57  |           0.572 |
 | lstm_s10                             |     0.511 |     0.533 |     0.629 |     0.549 |           0.555 |
 | lstm                                 |     0.537 |     0.527 |     0.591 |     0.541 |           0.549 |
+| gnn_st_noweather_tuned               |     0.457 |     0.516 |     0.655 |     0.564 |           0.548 |
+| gnn_st_nodemofeat_tuned              |     0.464 |     0.516 |     0.638 |     0.571 |           0.547 |
 | gnn_st                               |     0.463 |     0.514 |     0.642 |     0.558 |           0.544 |
 | gnn_st_tuned                         |     0.46  |     0.515 |     0.641 |     0.558 |           0.544 |
 | colagnn_tuned                        |     0.388 |     0.491 |     0.664 |     0.565 |           0.527 |
 | sarima                               |     0.439 |     0.478 |     0.567 |     0.497 |           0.496 |
+| gnn_st_historyonly_tuned             |     0.406 |     0.453 |     0.579 |     0.474 |           0.478 |
 | xgboost_tuned                        |     0.361 |     0.477 |     0.549 |     0.479 |           0.467 |
 | blend_baseline                       |     0.402 |     0.449 |     0.55  |     0.461 |           0.466 |
 | gnn_st_nograph_tuned                 |     0.39  |     0.434 |     0.57  |     0.445 |           0.46  |
@@ -313,9 +340,12 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | climatology | 4 of 4 |
 | colagnn_tuned | 4 of 4 |
 | flusight_baseline | 4 of 4 |
+| gnn_st_historyonly_tuned | 4 of 4 |
 | gnn_st_noadapt | 1 of 2 |
+| gnn_st_nodemofeat_tuned | 1 of 4 |
 | gnn_st_nograph | 4 of 4 |
 | gnn_st_nograph_tuned | 4 of 4 |
+| gnn_st_noweather_tuned | 0 of 4 |
 | gnn_st_tuned | 0 of 4 |
 | lstm | 4 of 4 |
 | lstm_parity | 4 of 4 |
@@ -345,7 +375,10 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | gnn_st_noadapt                       |   nan     |   nan     |     1.986 |     1.849 |           1.918 |
 | transfer_finetune_from_pooled_others |   nan     |   nan     |     1.963 |   nan     |           1.963 |
 | gnn_st_tuned                         |     2.215 |     1.86  |     1.995 |     1.789 |           1.965 |
+| gnn_st_noweather_tuned               |     2.32  |     1.872 |     1.925 |     1.79  |           1.977 |
 | transfer_finetune_from_pooled_all3   |   nan     |   nan     |     1.977 |   nan     |           1.977 |
+| gnn_st_historyonly_tuned             |     2.227 |     1.856 |     2.083 |     1.794 |           1.99  |
+| gnn_st_nodemofeat_tuned              |     2.327 |     1.821 |     2.033 |     1.797 |           1.994 |
 | gnn_st                               |     2.305 |     1.858 |     2.035 |     1.85  |           2.012 |
 | sarima                               |     2.332 |     1.803 |     2.116 |     1.865 |           2.029 |
 | gnn_st_nograph_tuned                 |     2.314 |     1.876 |     2.079 |     1.865 |           2.033 |
@@ -379,7 +412,10 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | transfer_zeroshot_from_pooled_all3   |   nan     |   nan     |     1.278 |   nan     |           1.278 |
 | gnn_st_tuned                         |     1.483 |     1.232 |     1.258 |     1.173 |           1.287 |
 | transfer_zeroshot_from_pooled_others |   nan     |   nan     |     1.305 |   nan     |           1.305 |
+| gnn_st_noweather_tuned               |     1.563 |     1.265 |     1.224 |     1.181 |           1.308 |
 | gnn_st                               |     1.551 |     1.255 |     1.273 |     1.18  |           1.315 |
+| gnn_st_nodemofeat_tuned              |     1.569 |     1.236 |     1.286 |     1.175 |           1.316 |
+| gnn_st_historyonly_tuned             |     1.507 |     1.25  |     1.318 |     1.199 |           1.319 |
 | sarima                               |     1.523 |     1.211 |     1.347 |     1.197 |           1.319 |
 | gnn_st_nograph_tuned                 |     1.561 |     1.261 |     1.314 |     1.196 |           1.333 |
 | xgboost_tuned                        |     1.505 |     1.272 |     1.37  |     1.204 |           1.338 |
@@ -411,8 +447,11 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | transfer_zeroshot_from_pooled_all3   |   nan     |   nan     |     2.704 |   nan     |           2.704 |
 | transfer_zeroshot_from_pooled_others |   nan     |   nan     |     2.714 |   nan     |           2.714 |
 | sarima                               |     3.164 |     2.489 |     2.79  |     2.448 |           2.723 |
+| gnn_st_noweather_tuned               |     3.243 |     2.635 |     2.567 |     2.45  |           2.724 |
 | gnn_st                               |     3.239 |     2.61  |     2.642 |     2.445 |           2.734 |
+| gnn_st_nodemofeat_tuned              |     3.271 |     2.544 |     2.696 |     2.442 |           2.739 |
 | xgboost_tuned                        |     3.071 |     2.603 |     2.831 |     2.462 |           2.742 |
+| gnn_st_historyonly_tuned             |     3.116 |     2.624 |     2.822 |     2.493 |           2.764 |
 | xgboost_parity                       |     3.073 |     2.616 |     2.859 |     2.527 |           2.769 |
 | gnn_st_nograph_tuned                 |     3.255 |     2.635 |     2.726 |     2.483 |           2.775 |
 | gnn_st_nograph                       |     3.15  |     2.691 |     2.816 |     2.535 |           2.798 |
@@ -442,7 +481,10 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | gnn_st_noadapt                       |   nan     |   nan     |     0.591 |     0.468 |           0.529 |
 | gnn_st_tuned                         |     0.29  |     0.454 |     0.597 |     0.475 |           0.454 |
 | sarima                               |     0.294 |     0.486 |     0.535 |     0.461 |           0.444 |
+| gnn_st_nodemofeat_tuned              |     0.231 |     0.46  |     0.574 |     0.472 |           0.434 |
+| gnn_st_noweather_tuned               |     0.235 |     0.415 |     0.607 |     0.466 |           0.431 |
 | gnn_st                               |     0.24  |     0.42  |     0.585 |     0.462 |           0.427 |
+| gnn_st_historyonly_tuned             |     0.291 |     0.424 |     0.543 |     0.431 |           0.422 |
 | xgboost_tuned                        |     0.296 |     0.471 |     0.485 |     0.429 |           0.42  |
 | blend_baseline                       |     0.294 |     0.431 |     0.528 |     0.372 |           0.406 |
 | lstm_tuned                           |     0.304 |     0.392 |     0.513 |     0.377 |           0.396 |
@@ -469,9 +511,12 @@ Evidence seasons in which `gnn_st` has the lower MAE:
 | climatology | 4 of 4 |
 | colagnn_tuned | 4 of 4 |
 | flusight_baseline | 4 of 4 |
+| gnn_st_historyonly_tuned | 1 of 4 |
 | gnn_st_noadapt | 0 of 2 |
+| gnn_st_nodemofeat_tuned | 1 of 4 |
 | gnn_st_nograph | 3 of 4 |
 | gnn_st_nograph_tuned | 4 of 4 |
+| gnn_st_noweather_tuned | 2 of 4 |
 | gnn_st_tuned | 1 of 4 |
 | lstm | 4 of 4 |
 | lstm_parity | 3 of 4 |

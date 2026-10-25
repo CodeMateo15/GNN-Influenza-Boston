@@ -1,0 +1,329 @@
+{
+  "model": "gnn_st_noweather_tuned",
+  "variant": "post_covid",
+  "git_sha": null,
+  "created": "2026-10-24T01:44:38",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 71,
+    "n_val": 12,
+    "n_test": 52,
+    "first_test_target": "2024-06-02",
+    "last_test_target": "2025-05-25"
+  },
+  "graph_counts": {
+    "geo_1hop": 48,
+    "anchor_edges": 9,
+    "geo_2hop": 58,
+    "geo_3hop": 35,
+    "corr": 7,
+    "demo": 85
+  },
+  "n_nodes": 22,
+  "edge_weight_range": [
+    0.0,
+    2.693608880433143
+  ],
+  "n_node_features": 40,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_imputed_lag0",
+    "flu_lag1",
+    "flu_imputed_lag1",
+    "flu_lag2",
+    "flu_imputed_lag2",
+    "flu_lag3",
+    "flu_imputed_lag3",
+    "flu_lag4",
+    "flu_imputed_lag4",
+    "flu_lag5",
+    "flu_imputed_lag5",
+    "flu_lag6",
+    "flu_imputed_lag6",
+    "flu_lag7",
+    "flu_imputed_lag7",
+    "flu_lag8",
+    "flu_imputed_lag8",
+    "flu_lag9",
+    "flu_imputed_lag9",
+    "flu_lag10",
+    "flu_imputed_lag10",
+    "flu_lag11",
+    "flu_imputed_lag11",
+    "flu_lag12",
+    "flu_imputed_lag12",
+    "flu_lag13",
+    "flu_imputed_lag13",
+    "flu_lag14",
+    "flu_imputed_lag14",
+    "flu_lag15",
+    "flu_imputed_lag15",
+    "pop_density",
+    "poverty_rate",
+    "transit_share",
+    "pct_children",
+    "pct_elderly",
+    "owner_rate",
+    "no_vehicle_rate",
+    "nonwhite_share"
+  ],
+  "global_names": [],
+  "n_params": 7558,
+  "best_epoch": 65,
+  "best_val_mse": 0.37577641010284424,
+  "epochs_run": 200,
+  "checkpoint": "checkpoints/columbus/backtest_2024_25/gnn_st_noweather_tuned_post_covid.pt",
+  "experiment": {
+    "name": "gnn_st_noweather_tuned",
+    "model": "stgnn",
+    "variant": "post_covid",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": false,
+      "use_demographics": true,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": true,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": true,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.001,
+      "weight_decay": 0.0003,
+      "epochs": 200,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.1,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 16,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        1
+      ],
+      "test_start": "2024-06-01",
+      "test_end": "2025-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Weather removed (6 of 30 feature columns). Expected to cost little: temp_mean_c correlates with week-of-year at R^2=0.93, so weather was an implicit seasonal clock the climatology baseline now supplies directly."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.3719808227503315
+    },
+    "beta": {
+      "1": 1.8637038382205207
+    },
+    "kappa": {
+      "1": 0.9498596419791283
+    },
+    "n_validation": 204,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.7828436204437006,
+        -1.5799513495308384,
+        -1.3447965344240052,
+        -1.1212784554176205,
+        -0.963875867169253,
+        -0.8102730827292565,
+        -0.7000412994813118,
+        -0.5889177441772276,
+        -0.49972916827527747,
+        -0.3498346380502754,
+        -0.17514744659787235,
+        -0.08540317271723911,
+        0.025296349419065285,
+        0.16167044719293674,
+        0.28213753954019355,
+        0.4623487516938148,
+        0.6216757099405883,
+        0.787210738028441,
+        1.034564823758076,
+        1.2822879000759257,
+        1.6795773773542024,
+        1.9183648119180132,
+        2.2819804594400352
+      ]
+    },
+    "scale_floor": {
+      "1": 0.5190526346519578
+    }
+  },
+  "test_interval_coverage": 91.17647058823529,
+  "city": "columbus",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "n_seeds": 10,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.4092956483364105,
+    "43": 0.3871441185474396,
+    "44": 0.39558467268943787,
+    "45": 0.3867810070514679,
+    "46": 0.3920610845088959,
+    "47": 0.39833196997642517,
+    "48": 0.39997026324272156,
+    "49": 0.37577641010284424,
+    "50": 0.37986141443252563,
+    "51": 0.40138155221939087
+  },
+  "per_seed_best_epoch": {
+    "42": 54,
+    "43": 51,
+    "44": 73,
+    "45": 58,
+    "46": 68,
+    "47": 96,
+    "48": 97,
+    "49": 65,
+    "50": 56,
+    "51": 53
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 2,
+  "n_static_features": 8,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "1": 0.9099
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 0.5164,
+      "adaptive": 0.4836
+    },
+    {
+      "all": 0.5218,
+      "adaptive": 0.4782
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.9099
+    ],
+    "43": [
+      0.9106
+    ],
+    "44": [
+      0.9056
+    ],
+    "45": [
+      0.9085
+    ],
+    "46": [
+      0.9071
+    ],
+    "47": [
+      0.9024
+    ],
+    "48": [
+      0.9019
+    ],
+    "49": [
+      0.9083
+    ],
+    "50": [
+      0.9096
+    ],
+    "51": [
+      0.9096
+    ]
+  }
+}

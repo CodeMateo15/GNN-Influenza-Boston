@@ -1,0 +1,37 @@
+{
+  "run_name": "gnn_st_noweather__cfg03:post_covid:h4",
+  "city": "columbus",
+  "enabled": true,
+  "kg_co2": 0.00023930603885191233,
+  "kwh": 0.0006423501319181616,
+  "duration_s": 147.19153103791177,
+  "setup_s": 4.1333598252385855,
+  "wall_s": 151.32489086315036,
+  "cpu_kwh": 0.0002350551357215505,
+  "gpu_kwh": 0.0,
+  "ram_kwh": 0.0004072949961966111,
+  "phases": {
+    "train": 119.965,
+    "eval": 24.285
+  },
+  "epochs": 200,
+  "seconds_per_epoch": 0.5998242341261357,
+  "region": "massachusetts",
+  "tracking_mode": "process",
+  "measured": "estimated (cpu load x TDP)",
+  "hardware": {
+    "cpu_model": "Intel(R) Xeon(R) Platinum 8276 CPU @ 2.20GHz",
+    "gpu_model": "",
+    "cpu_count": "1",
+    "os": "Linux-5.14.0-611.30.1.el9_7.x86_64-x86_64-with-glibc2.34",
+    "node_physical_cores": "56"
+  },
+  "emissions_file": "/scratch/biggs.m/gnn-flu/Code/results/_emissions/tasks/11339323_87.csv",
+  "slurm_job": "11339323_87",
+  "codecarbon_version": "3.2.5",
+  "cpu_share_correction": 0.017857142857142856,
+  "raw_kwh": 0.013570382596603441,
+  "raw_kg_co2": 0.005055614288115132,
+  "git_sha": null,
+  "note": null
+}

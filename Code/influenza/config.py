@@ -669,6 +669,16 @@ def _experiments() -> dict[str, Experiment]:
              "help at all', and the number that decides whether this is a graph "
              "problem. Removing the hand-built edges alone does not get here -- "
              "the adaptive adjacency would still be a learned graph.")
+    # The component floor for the unseen-season ablations: no map and no
+    # covariates, so the network sees only each neighborhood's own past rates on
+    # top of the same blended baseline. Should land near the history-only
+    # baselines (seasonal blend, SARIMA); if it does, the gap to gnn_st is what
+    # the integration buys.
+    registry["gnn_st_historyonly"] = replace(
+        registry["gnn_st_nograph"], name="gnn_st_historyonly",
+        features=registry["gnn_st_lagsonly"].features,
+        note=st.note + " Own past rates only: lagsonly features with the nograph "
+             "graph (no hand-built edges, no adaptive adjacency, no anchors).")
 
     # --- timing interventions, October 2026 ---------------------------------
     # The lag fingerprint sits at about -0.8 for every arm above (METHODS.md,

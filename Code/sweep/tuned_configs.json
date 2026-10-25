@@ -144,6 +144,63 @@
           "default_val_mae": 11.74011928048627,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 7.54477213319659,
+          "default_val_mae": 8.22745740386007,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 7.406427266979438,
+          "default_val_mae": 7.85675269268505,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 8.62927716403439,
+          "default_val_mae": 8.873469442889752,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "2": {
@@ -251,6 +308,52 @@
           "default_val_mae": 13.437433124178707,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 10.782393971793086,
+          "default_val_mae": 10.782393971793086,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 10.917009987133584,
+          "default_val_mae": 10.946384259265104,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 10.800731837892418,
+          "default_val_mae": 10.832932548843127,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "4": {
@@ -356,6 +459,63 @@
           ],
           "val_mae": 11.474683400900059,
           "default_val_mae": 14.161535440813196,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 10,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 14.205216681071036,
+          "default_val_mae": 14.440851872487606,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 14.463551058186043,
+          "default_val_mae": 14.788376843043082,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 14.379352181935483,
+          "default_val_mae": 14.556441518614331,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -505,6 +665,63 @@
           "default_val_mae": 19.047707331861048,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.995093643114439,
+          "default_val_mae": 9.493959315823538,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 9.083459702525253,
+          "default_val_mae": 9.409100327165643,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 10.080259075446843,
+          "default_val_mae": 10.210873576497415,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "2": {
@@ -612,6 +829,63 @@
           "default_val_mae": 12.843621661767106,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 10.958185994470847,
+          "default_val_mae": 12.182905103274502,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 12.0860625309336,
+          "default_val_mae": 12.187788759273875,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 12.340040628879215,
+          "default_val_mae": 12.77536051198427,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "4": {
@@ -706,6 +980,52 @@
           ],
           "val_mae": 15.394073192975673,
           "default_val_mae": 16.222106727057263,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 15.097010526992037,
+          "default_val_mae": 15.097010526992037,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 8,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 15.531233702040865,
+          "default_val_mae": 16.804250303786695,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 15.507713592867754,
+          "default_val_mae": 16.994939078244617,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -855,6 +1175,63 @@
           "default_val_mae": 9.215671639780101,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 7.658914300553721,
+          "default_val_mae": 7.738871753123092,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 7.5840274553462095,
+          "default_val_mae": 7.809665602065541,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 7.955461474265874,
+          "default_val_mae": 8.055460319548706,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "2": {
@@ -962,6 +1339,63 @@
           "default_val_mae": 8.977980227690242,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 7.974603753067657,
+          "default_val_mae": 8.344938358659878,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 4,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.076933574157406,
+          "default_val_mae": 8.45436509437917,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 8.418238096622805,
+          "default_val_mae": 8.539975469627796,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "4": {
@@ -1067,6 +1501,63 @@
           ],
           "val_mae": 9.074148520556363,
           "default_val_mae": 9.323829495442379,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 8.330817961210782,
+          "default_val_mae": 8.564996609606231,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 8.18434107359238,
+          "default_val_mae": 8.700615961481216,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 8.814021228446189,
+          "default_val_mae": 8.937405545455672,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -1209,6 +1700,52 @@
           "default_val_mae": 3.2253564475965097,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 3.9309565033398424,
+          "default_val_mae": 4.02879674820339,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 3.8454060548660802,
+          "default_val_mae": 3.8454060548660802,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 4.0044394792879325,
+          "default_val_mae": 4.339907966992435,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "2": {
@@ -1316,6 +1853,63 @@
           "default_val_mae": 3.635715573507273,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 3.8573049572752973,
+          "default_val_mae": 4.043857335167773,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 3.8507778080655077,
+          "default_val_mae": 4.2013643258342555,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 3.976650426200792,
+          "default_val_mae": 4.208511842232125,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "4": {
@@ -1421,6 +2015,63 @@
           ],
           "val_mae": 3.2357919538474187,
           "default_val_mae": 3.2428277342469727,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 3.9626971050804736,
+          "default_val_mae": 4.397266442869224,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 4.011611052587921,
+          "default_val_mae": 4.670181473242302,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 3.9793924362051722,
+          "default_val_mae": 4.267384484118106,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -1924,6 +2575,52 @@
           "default_val_mae": 1.7777854369394974,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 1.3146759163145818,
+          "default_val_mae": 1.3465072560584408,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.3254835192842045,
+          "default_val_mae": 1.3254835192842045,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.3874054211994697,
+          "default_val_mae": 1.4233757728475265,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "2": {
@@ -2031,6 +2728,63 @@
           "default_val_mae": 1.6353078452420646,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.4102985070468823,
+          "default_val_mae": 1.4434088909306289,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.4105774714001293,
+          "default_val_mae": 1.434760714741959,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.4869575880724808,
+          "default_val_mae": 1.5132010651616759,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "4": {
@@ -2136,6 +2890,63 @@
           ],
           "val_mae": 1.5453525861917898,
           "default_val_mae": 1.8822093369631931,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 4,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.6978423498085633,
+          "default_val_mae": 1.808612093957448,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 1.6088425898460592,
+          "default_val_mae": 1.7205359320302576,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 9,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.7021110682423544,
+          "default_val_mae": 1.7936284057367806,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -2272,6 +3083,52 @@
           "default_val_mae": 1.9411077963380978,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.8437070599522452,
+          "default_val_mae": 1.8832950820499137,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 0,
+          "flags": [],
+          "val_mae": 1.8432777561939047,
+          "default_val_mae": 1.8432777561939047,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.9200305864412526,
+          "default_val_mae": 1.9449735338396987,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "2": {
@@ -2364,6 +3221,63 @@
           "flags": [],
           "val_mae": 1.9056400456733402,
           "default_val_mae": 1.9056400456733402,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.9099985847659706,
+          "default_val_mae": 1.9817930031913662,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.9298930478428025,
+          "default_val_mae": 1.943205200451913,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 2.0266384719537487,
+          "default_val_mae": 2.057386272900617,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -2471,6 +3385,63 @@
           ],
           "val_mae": 1.9887112711781059,
           "default_val_mae": 2.0993951890060956,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 8,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.01",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 2.1446376775050986,
+          "default_val_mae": 2.368507818394694,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 2.2093306282470966,
+          "default_val_mae": 2.2396465515679327,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.1965148480596213,
+          "default_val_mae": 2.269001253802201,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -2594,6 +3565,63 @@
           "default_val_mae": 1.9862283493938118,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 1.819954232681112,
+          "default_val_mae": 1.855627631379431,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.8360304956080706,
+          "default_val_mae": 1.8627808657729843,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.9465370961062565,
+          "default_val_mae": 1.9662254571642643,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "2": {
@@ -2688,6 +3716,63 @@
           ],
           "val_mae": 1.9107356304302812,
           "default_val_mae": 1.9747730963060568,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.8900027096333798,
+          "default_val_mae": 1.925011973255854,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 11,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.9069119923540792,
+          "default_val_mae": 1.9273838821249696,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 2.0143440339009713,
+          "default_val_mae": 2.0231375106636635,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -2795,6 +3880,63 @@
           ],
           "val_mae": 2.039047520575595,
           "default_val_mae": 2.1751151832848272,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.0368691529288436,
+          "default_val_mae": 2.0398247991858853,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.053123158985669,
+          "default_val_mae": 2.086428244690661,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 3,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "24",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.0863616647142353,
+          "default_val_mae": 2.102629000864059,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -2920,6 +4062,63 @@
           "default_val_mae": 2.2414181271846267,
           "n_configs_scored": 12,
           "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.8257566543062562,
+          "default_val_mae": 1.8572291780961874,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.8294642421630773,
+          "default_val_mae": 1.8567372560250448,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 2,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.001",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.9566012448979788,
+          "default_val_mae": 1.9986522858938918,
+          "n_configs_scored": 12,
+          "n_configs": 12
         }
       },
       "2": {
@@ -3001,6 +4200,63 @@
           "flags": [],
           "val_mae": 2.0018900134697044,
           "default_val_mae": 2.0018900134697044,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 4,
+          "flags": [
+            "--lr",
+            "0.003",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.4",
+            "--channels",
+            "32",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 1.928171306948786,
+          "default_val_mae": 1.9371720995343564,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 7,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "24",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 1.926347063457996,
+          "default_val_mae": 1.9275954484789184,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 2.0667022369156576,
+          "default_val_mae": 2.108003543694547,
           "n_configs_scored": 12,
           "n_configs": 12
         }
@@ -3095,6 +4351,63 @@
           "flags": [],
           "val_mae": 2.183054729149892,
           "default_val_mae": 2.183054729149892,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_noweather": {
+          "config": 5,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.25",
+            "--channels",
+            "32",
+            "--epochs",
+            "120"
+          ],
+          "val_mae": 2.097093198533014,
+          "default_val_mae": 2.1294952780133642,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_nodemofeat": {
+          "config": 6,
+          "flags": [
+            "--lr",
+            "0.01",
+            "--weight-decay",
+            "0.003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "32",
+            "--epochs",
+            "80"
+          ],
+          "val_mae": 2.103967113816708,
+          "default_val_mae": 2.154682580817137,
+          "n_configs_scored": 12,
+          "n_configs": 12
+        },
+        "gnn_st_historyonly": {
+          "config": 1,
+          "flags": [
+            "--lr",
+            "0.001",
+            "--weight-decay",
+            "0.0003",
+            "--dropout",
+            "0.1",
+            "--channels",
+            "16",
+            "--epochs",
+            "200"
+          ],
+          "val_mae": 2.3348589065798797,
+          "default_val_mae": 2.341443744875785,
           "n_configs_scored": 12,
           "n_configs": 12
         }
