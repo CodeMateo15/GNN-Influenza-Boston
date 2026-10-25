@@ -37,6 +37,9 @@ def load(city: str) -> pd.DataFrame:
 LABEL = {
     "gnn_st_tuned": "Graph neural network",
     "gnn_st_nograph_tuned": "Same model, map removed",
+    "gnn_st_noweather_tuned": "No environment",
+    "gnn_st_nodemofeat_tuned": "No demographics",
+    "gnn_st_historyonly_tuned": "None of the three (past rates only)",
     "lstm_tuned": "LSTM",
     "colagnn_tuned": "Cola-GNN",
     "xgboost_tuned": "Gradient-boosted trees",
@@ -122,6 +125,85 @@ def point_metrics(city: str) -> None:
         cells = [fmt(t[m].loc[a, h], 2) for m in ("MAE", "RMSE") for h in (1, 2, 4)]
         cells += [fmt(t["Corr"].loc[a, h], 2) for h in (1, 2, 4)]
         print(f"{LABEL[a]} & " + " & ".join(cells) + r" \\")
+    print()
+
+
+# Table 3. What each component adds: relative WIS by city and horizon for the
+# full model, each version with one component removed, the version with none,
+# and the 2 history-only models it should resemble.
+COMPONENTS = ["gnn_st_tuned", "gnn_st_noweather_tuned", "gnn_st_nodemofeat_tuned",
+              "gnn_st_nograph_tuned", "gnn_st_historyonly_tuned", "blend_baseline", "sarima"]
+COMPONENT_LABEL = {"gnn_st_tuned": "Full model", "gnn_st_noweather_tuned": "No environment",
+                   "gnn_st_nodemofeat_tuned": "No demographics",
+                   "gnn_st_nograph_tuned": "No map",
+                   "gnn_st_historyonly_tuned": "None of the three",
+                   "blend_baseline": "Seasonal blend", "sarima": "Seasonal ARIMA"}
+
+
+def _clear_counts(city: str, tag: str, arm: str, h: int) -> tuple[int, int]:
+    """Seasons in which the comparison is clear: (arm worse than gnn_st_tuned, arm better)."""
+    base = RESULTS if city == "boston" else RESULTS / city
+    worse = better = 0
+    for s in UNSEEN[city]:
+        t = pd.read_csv(base / f"backtest_{s}" / f"horizon_{h:02d}" / "_comparison"
+                        / f"significance_{tag}.csv").set_index("model")
+        if arm in t.index and t.loc[arm, "DM_WIS_p_holm"] < 0.05:
+            worse += t.loc[arm, "dWIS"] < 0
+            better += t.loc[arm, "dWIS"] > 0
+    return worse, better
+
+
+def component_table() -> None:
+    """Table 3: % more mean WIS than the full model, and seasons with a clear difference.
+
+    Mean WIS is the mean of season means, as in Table 2. The component rows use
+    the components family (significance_components.csv); the 2 history-only
+    rows use the comparison-model family (significance_tuned.csv).
+    """
+    print("% Table 3: % change in mean WIS vs full model (seasons clearly worse; ^b if any clearly better),"
+          " Boston h1 h2 h4 & Columbus h1 h2 h4 & Chicago h1 h2 h4")
+    wis = {c: load(c).groupby(["arm", "horizon"]).WIS.mean().unstack() for c in UNSEEN}
+    for a in COMPONENTS[1:]:
+        tag = "tuned" if a in ("blend_baseline", "sarima") else "components"
+        cells = []
+        for c in UNSEEN:
+            for h in (1, 2, 4):
+                pct = 100 * (wis[c].loc[a, h] - wis[c].loc["gnn_st_tuned", h]) / wis[c].loc["gnn_st_tuned", h]
+                worse, better = _clear_counts(c, tag, a, h)
+                mark = "$^{b}$" if better else ""
+                cells.append(f"{pct:.1f} ({worse}){mark}".replace("-", "$-$", 1))
+        print(f"{COMPONENT_LABEL[a]} & " + " & ".join(cells) + r" \\")
+    print("% relative WIS of the full model, for the footnote:")
+    print(" & ".join(f"{wis[c].loc['gnn_st_tuned', h] / wis[c].loc['persistence', h]:.2f}"
+                     for c in UNSEEN for h in (1, 2, 4)))
+    print()
+
+
+def _signed(x: float) -> str:
+    return f"$-${abs(x):.1f}" if round(x, 1) < 0 else f"{abs(x) if round(x, 1) == 0 else x:.1f}"
+
+
+def component_significance(tag: str, models) -> None:
+    """Supplement: one row per city, season, horizon and model, from significance_<tag>.csv."""
+    print(f"% significance_{tag}: % more mean WIS than the reference (95% CI), Holm p")
+    for c in UNSEEN:
+        base = RESULTS if c == "boston" else RESULTS / c
+        for s in UNSEEN[c]:
+            for h in (1, 2, 4):
+                t = pd.read_csv(base / f"backtest_{s}" / f"horizon_{h:02d}" / "_comparison"
+                                / f"significance_{tag}.csv").set_index("model")
+                for a in models:
+                    if a not in t.index:
+                        continue
+                    r = t.loc[a]
+                    label = f"{c.capitalize()} {s[:4]}--20{s[5:]}"
+                    # % more WIS than the reference (positive: the other model is worse),
+                    # with the block-bootstrap interval carried over to the same scale.
+                    pct = 100 / r.WIS_ref
+                    est, lo, hi = -r.dWIS * pct, -r.dWIS_hi * pct, -r.dWIS_lo * pct
+                    print(f"{label} & {h} & {COMPONENT_LABEL.get(a, LABEL.get(a, a))} & "
+                          f"{_signed(est)} ({_signed(lo)}, {_signed(hi)}) & "
+                          f"{ama_p(r.DM_WIS_p_holm)} \\\\")
     print()
 
 
@@ -267,3 +349,7 @@ if __name__ == "__main__":
     transfer_table()
     pooled_table()
     ablation_table()
+    component_table()
+    component_significance("components", COMPONENTS[1:5])
+    component_significance("historyonly", ["blend_baseline", "sarima", "persistence",
+                                           "flusight_baseline", "lstm_tuned"])

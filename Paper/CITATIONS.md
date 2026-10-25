@@ -2,7 +2,7 @@
 
 Compiled for the framing in `PAPER_PLAN.md`; PDFs re-checked against
 `Citation Papers/`. Every entry was checked against PubMed or
-Crossref/DataCite: the DOI resolves and the title/authors match. BibTeX keys are in `references.bib` (89 entries). The draft's own cleaned bibliography,
+Crossref/DataCite: the DOI resolves and the title/authors match. BibTeX keys are in `references.bib` (100 entries). The draft's own cleaned bibliography,
 with the AJE fixes, is `overleaf/references.bib`.
 
 **Columns and marks**
@@ -117,6 +117,42 @@ rook contiguity.
 |---|---|---|---|
 | `panagopoulos2021transfer` ✓ | Panagopoulos et al. 2021, AAAI 35:4838 | Graph model transferred between countries (COVID-19). | `Discussion/Transfer Graph Neural Networks for Pandemic Forecasting.pdf` |
 | `shea2020multiple` | Shea et al. 2020 | Multiple models for outbreak management. Not cited. | `2nd Closest/Harnessing multiple models for outbreak management.pdf` |
+
+## Added for the second draft (2026-10-23)
+
+Found for sentences in the new Introduction (`newIntro.txt`) that the bib did
+not cover. Each DOI was resolved on Crossref and title, authors, journal, year,
+volume and pages matched; each abstract was read on PubMed (EpiGNN via
+Consensus). Cited in `overleaf_v2/`. **No PDFs yet** for any of them.
+
+| Key | Citation | Use it for | PDF file |
+|---|---|---|---|
+| `chandrasekhar2017social` | Chandrasekhar et al. 2017, *Influenza Other Respir Viruses* 11:479 | FluSurv-NET, 33,515 hospitalizations: tracts with ≥5% crowded housing (aOR 1.17) and ≥20% poverty (aOR 1.31) had higher odds. The housing source. | missing |
+| `tam2014newhaven` | Tam, Yousey-Hindes & Hadler 2014, *Influenza Other Respir Viruses* 8:274 | Within one county, hospitalization rose with lower tract SES on every measure (crowding, poverty, income). | missing |
+| `chang2021mobility` | Chang et al. 2021, *Nature* 589:82 | Hourly movement of 98 million people from neighborhoods to restaurants, shops and other places in 10 US metro areas. Backs "commute, work, and shop across neighborhoods". | missing |
+| `shabbat2024detailing` | Shabbat et al. 2024, *J Public Health Manag Pract* 30:168 | NYC health department clinician outreach "across targeted neighborhoods". The clinician-messaging source. | missing |
+| `benjaminchung2020sliv` | Benjamin-Chung et al. 2020, *PLoS Med* 17:e1003238 | City-wide school-located influenza vaccination in Oakland with the county health department. The school-outreach source. | missing |
+| `lambooij2024mobile` | Lambooij et al. 2024, *Euro Surveill* 29:2300503 | Municipal health services sent mobile vaccination units to neighborhoods with low uptake. Dutch, not US. | missing |
+| `clayton1987empirical` | Clayton & Kaldor 1987, *Biometrics* 43:671 | Small-area rates are unreliable because counts are small. | missing |
+| `white2023california` | White et al. 2023, *BMC Public Health* 23:782 | County forecasts were worse in less populous counties (partly because fewer models covered them). | missing |
+| `zhu2024gast` | Zhu et al. 2024, *PLoS One* 19:e0307159 | Graph attention spatiotemporal model reported gains for influenza and COVID-19. | missing |
+| `xie2023epignn` | Xie et al., EpiGNN, ECML PKDD 2022 (LNCS, 2023), pp 469-485 | Regional epidemic GNN, including influenza data; reported 9.48% lower RMSE than baselines. LNCS volume not confirmed, so left out of the entry. | missing |
+| `chretien2014scoping` | Chretien et al. 2014, *PLoS One* 9:e94130 | Of 35 validated influenza forecasting studies, inputs were virological (14), syndromic (13), meteorological (6), search queries (4); none listed demographic or spatial inputs. Do **not** cite it for "most use one or two kinds". | missing |
+
+Searched for and **not found**: a peer-reviewed Boston Public Health
+Commission report on neighborhood-targeted outreach (Leibowitz et al. 2021,
+*Prev Med Rep* 24:101551, covers community health centers' mobile clinics in
+Mattapan and Codman Square, not the commission); a peer-reviewed source on
+health-alert messaging to clinicians.
+
+Also newly cited in `overleaf_v2/` from the existing bib: `worby2015age`,
+`shaman2012forecasting`, `fritz2022combining`.
+
+No longer cited in `overleaf_v2/` (the coauthor's Introduction replaced the
+burden and nowcasting sentences): `yamauchi2025book`, `putri2018burden`,
+`ginsberg2009detecting`, `yang2015argo`, `lu2019statelevel`,
+`lazer2014parable`. They stay in `references.bib` and in `overleaf/`. The ✓
+marks above still describe the first draft in `overleaf/`.
 
 ## Buenos Aires (removed from the paper 2026-10-07)
 

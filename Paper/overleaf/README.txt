@@ -1,6 +1,11 @@
 Overleaf package for the AJE submission (Practice of Epidemiology)
 ==================================================================
 
+SUPERSEDED (2026-10-23): this is the first draft, kept as a record. The second
+draft, with the new Introduction and the component ablations, is in
+Paper/overleaf_v2/. Paper/scripts now build the second draft's figures; the
+figures here came from the scripts as of commit 2d1e3b3a.
+
 Files
   main.txt         Anonymized manuscript: abstract, text, references, tables,
                    figure legends with alt text, figures.
