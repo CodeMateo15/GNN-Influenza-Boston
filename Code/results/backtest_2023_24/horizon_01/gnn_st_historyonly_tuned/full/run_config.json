@@ -1,0 +1,296 @@
+{
+  "model": "gnn_st_historyonly_tuned",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-10-25T02:23:44",
+  "target_kind": "blend",
+  "normalize": "train",
+  "split": {
+    "n_train": 227,
+    "n_val": 39,
+    "n_test": 52,
+    "first_test_target": "2023-06-04",
+    "last_test_target": "2024-05-26"
+  },
+  "graph_counts": {},
+  "n_nodes": 14,
+  "edge_weight_range": [
+    0.0,
+    0.0
+  ],
+  "n_node_features": 16,
+  "n_global": 0,
+  "feature_names": [
+    "flu_lag0",
+    "flu_lag1",
+    "flu_lag2",
+    "flu_lag3",
+    "flu_lag4",
+    "flu_lag5",
+    "flu_lag6",
+    "flu_lag7",
+    "flu_lag8",
+    "flu_lag9",
+    "flu_lag10",
+    "flu_lag11",
+    "flu_lag12",
+    "flu_lag13",
+    "flu_lag14",
+    "flu_lag15"
+  ],
+  "global_names": [],
+  "n_params": 23460,
+  "best_epoch": 67,
+  "best_val_mse": 0.5117385983467102,
+  "epochs_run": 120,
+  "checkpoint": "checkpoints/backtest_2023_24/gnn_st_historyonly_tuned_full.pt",
+  "experiment": {
+    "name": "gnn_st_historyonly_tuned",
+    "model": "stgnn",
+    "variant": "full",
+    "target": "blend",
+    "normalize": "train",
+    "features": {
+      "use_weather": false,
+      "use_demographics": false,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": false,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "none",
+      "geo": false,
+      "geo_max_hop": 3,
+      "geo_decay": 0.5,
+      "corr": false,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": false
+    },
+    "train": {
+      "lr": 0.001,
+      "weight_decay": 0.0003,
+      "epochs": 120,
+      "batch_size": 16,
+      "plateau_factor": 0.5,
+      "plateau_patience": 10,
+      "early_stop_patience": 10000,
+      "grad_clip": 1.0,
+      "dropout": 0.25,
+      "hidden": [
+        64,
+        32,
+        32
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adamw",
+      "schedule": "cosine",
+      "channels": 32,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": false,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 1.0,
+      "pearson_weight": 0.3,
+      "slope_weight": 0.0,
+      "n_seeds": 10,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 16,
+      "horizons": [
+        1
+      ],
+      "test_start": "2023-06-01",
+      "test_end": "2024-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Multi-relational spatio-temporal GNN: dilated causal temporal convolutions per node, graph mixing with a learned adaptive adjacency, and a residual measured from a learned blend of the origin level and a train-only harmonic climatology. Own past rates only: lagsonly features with the nograph graph (no hand-built edges, no adaptive adjacency, no anchors)."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 15.634399456069527
+    },
+    "kappa": {
+      "1": 0.6612083085610011
+    },
+    "n_validation": 541,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.0230871372823318,
+        -0.9165401333840153,
+        -0.7316969981701964,
+        -0.5511674836275711,
+        -0.47642339843595083,
+        -0.389698076357665,
+        -0.30263288795276233,
+        -0.23622360189354039,
+        -0.15878922124988187,
+        -0.10531244194714745,
+        -0.0637648543559204,
+        0.025949173750236258,
+        0.08126649188838578,
+        0.12381115699229248,
+        0.2031858803502473,
+        0.26207582843088767,
+        0.40413688109197926,
+        0.5376465719111229,
+        0.7498933770615193,
+        0.9623183718662507,
+        1.2510281786547632,
+        1.5849326517423123,
+        2.257516347884798
+      ]
+    },
+    "scale_floor": {
+      "1": 1.7487022241828125
+    }
+  },
+  "test_interval_coverage": 97.60563380281691,
+  "city": "boston",
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "n_seeds": 10,
+  "ensemble_reduction": "mean of pooled MC draws in normalized space",
+  "per_seed_best_val_mse": {
+    "42": 0.5190605521202087,
+    "43": 0.5251438617706299,
+    "44": 0.5278340578079224,
+    "45": 0.5117385983467102,
+    "46": 0.5284919738769531,
+    "47": 0.5260433554649353,
+    "48": 0.5264018774032593,
+    "49": 0.5255169868469238,
+    "50": 0.5267107486724854,
+    "51": 0.5323023200035095
+  },
+  "per_seed_best_epoch": {
+    "42": 50,
+    "43": 72,
+    "44": 86,
+    "45": 67,
+    "46": 86,
+    "47": 60,
+    "48": 46,
+    "49": 1,
+    "50": 62,
+    "51": 65
+  },
+  "carry_forward_limits": {},
+  "globals_coverage": {},
+  "lookback": 16,
+  "temporal_channels": 1,
+  "n_static_features": 0,
+  "relations_used": [
+    "all"
+  ],
+  "blend_origin_share_per_horizon": {
+    "1": 0.8898
+  },
+  "relation_gate_per_block": [
+    {
+      "all": 1.0
+    },
+    {
+      "all": 1.0
+    }
+  ],
+  "per_seed_blend_origin_share": {
+    "42": [
+      0.8898
+    ],
+    "43": [
+      0.8825
+    ],
+    "44": [
+      0.8779
+    ],
+    "45": [
+      0.8845
+    ],
+    "46": [
+      0.8845
+    ],
+    "47": [
+      0.8878
+    ],
+    "48": [
+      0.8925
+    ],
+    "49": [
+      0.9234
+    ],
+    "50": [
+      0.8853
+    ],
+    "51": [
+      0.884
+    ]
+  }
+}

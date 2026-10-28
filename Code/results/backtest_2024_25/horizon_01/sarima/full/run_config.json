@@ -1,0 +1,122 @@
+{
+  "model": "sarima",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-09-25T14:01:42",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1
+    ],
+    "test_start": "2024-06-01",
+    "test_end": "2025-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 278,
+    "n_val": 48,
+    "n_test": 52,
+    "first_test_target": "2024-06-02",
+    "last_test_target": "2025-05-25"
+  },
+  "order_grid": {
+    "p": 3,
+    "d": 1,
+    "q": 3
+  },
+  "seasonal_harmonics": 3,
+  "selected_orders": {
+    "Allston/Brighton": "(0, 0, 2)",
+    "Back Bay/Beacon Hill/Downtown/North End/West End": "(1, 0, 1)",
+    "Charlestown": "(2, 0, 2)",
+    "Dorchester": "(1, 0, 0)",
+    "East Boston": "(0, 0, 1)",
+    "Fenway": "(0, 0, 2)",
+    "Hyde Park": "(0, 0, 1)",
+    "Jamaica Plain": "(0, 0, 0)",
+    "Mattapan": "(1, 0, 1)",
+    "Roslindale": "(0, 0, 0)",
+    "Roxbury": "(0, 0, 0)",
+    "South Boston": "(0, 0, 0)",
+    "South End": "(1, 0, 2)",
+    "West Roxbury": "(1, 0, 3)"
+  },
+  "fallback_forecasts": 0,
+  "fallback_share": 0.0,
+  "selection_horizon": 1,
+  "missing_target_cells": 51,
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 5.0356272006695155
+    },
+    "kappa": {
+      "1": 0.9540316083190169
+    },
+    "n_validation": 656,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -1.5488320940995053,
+        -1.3762901115345256,
+        -1.1024343094492635,
+        -0.79970843349254,
+        -0.6378537392947032,
+        -0.49953154047502657,
+        -0.4038254819881434,
+        -0.3047034518770506,
+        -0.21858799101296505,
+        -0.13568004816093698,
+        -0.04026115424717947,
+        0.042899456302515265,
+        0.16489259773787637,
+        0.28302980647652004,
+        0.4545586268216276,
+        0.5897180095482656,
+        0.6984901263725845,
+        0.8503204846139767,
+        1.0301993275658872,
+        1.3096308507594565,
+        1.813653186569765,
+        2.1106256663244385,
+        2.687635942471711
+      ]
+    },
+    "scale_floor": {
+      "1": 1.1103492220920692
+    }
+  },
+  "test_interval_coverage": 89.6602658788774
+}

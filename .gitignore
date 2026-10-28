@@ -20,10 +20,39 @@ Code/checkpoints/horizon_*/
 
 # Backtest and sweep output. A rolling backtest is 4 seasons x 3 horizons x
 # every arm; at ~300 KB of predictions/metrics per run that is gigabytes, and
-# any run reproduces it from the recorded seed and config. The aggregated
-# _backtest/ tables are committed; the per-run trees are not.
-Code/results/backtest_*/
-Code/results/_backtest/*.csv
+# any run reproduces it from the recorded seed and config. The per-run trees
+# are ignored, except what the paper reads (below). The aggregated
+# _backtest/ tables are committed.
+Code/results/backtest_*/**
+!Code/results/backtest_*/**/
+
+# Exception: the paper's inputs (see Paper/scripts/README.md). Boston's 3
+# unseen seasons: the week-level tests and the run files (predictions, metrics,
+# settings) of every model the paper reports, plus the compute table. ~60 MB.
+# Columbus and Chicago results live under Code/results/<city>/ and are tracked.
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/_comparison/*.csv
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/gnn_st_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/gnn_st_nograph_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/gnn_st_noweather_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/gnn_st_nodemofeat_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/gnn_st_historyonly_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/gnn_st/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/gnn_st_geofixed/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/lstm_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/colagnn_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/xgboost_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/sarima/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/blend_baseline/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/flusight_baseline/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/persistence/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/climatology/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/seasonal_naive/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/gat_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/dualtopo_tuned/*/*
+!Code/results/backtest_202[2-4]_2[3-5]/horizon_*/transfer_*/*/*
+Code/results/backtest_*/horizon_*/*/*/predictions_val.csv
+Code/results/backtest_*/horizon_*/*/*/*.png
+!Code/results/backtest_2024_25/_compute/*
 Code/checkpoints/backtest*/
 Code/sweep/tasks.jsonl
 

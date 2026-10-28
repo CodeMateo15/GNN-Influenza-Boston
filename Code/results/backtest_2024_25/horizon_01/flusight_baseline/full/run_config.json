@@ -1,0 +1,30 @@
+{
+  "model": "flusight_baseline",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-09-25T16:27:04",
+  "target_kind": "level",
+  "normalize": "none",
+  "window": {
+    "lookback": 8,
+    "horizons": [
+      1
+    ],
+    "test_start": "2024-06-01",
+    "test_end": "2025-05-31",
+    "val_fraction": 0.15,
+    "val_mode": "pre_test"
+  },
+  "split": {
+    "n_train": 278,
+    "n_val": 48,
+    "n_test": 52,
+    "first_test_target": "2024-06-02",
+    "last_test_target": "2025-05-25"
+  },
+  "method": "median = latest observation; quantiles = latest + symmetrised empirical h-week changes up to the origin",
+  "min_changes_per_node": 20,
+  "pooled_fallbacks": 0,
+  "n_params": 0,
+  "test_interval_coverage": 92.31905465288035
+}

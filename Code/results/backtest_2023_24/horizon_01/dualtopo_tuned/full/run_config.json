@@ -1,0 +1,246 @@
+{
+  "model": "dualtopo_tuned",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-09-25T17:06:49",
+  "target_kind": "level",
+  "normalize": "train",
+  "split": {
+    "n_train": 196,
+    "n_val": 34,
+    "n_test": 52,
+    "first_test_target": "2023-06-04",
+    "last_test_target": "2024-05-26"
+  },
+  "graph_counts": {
+    "geo_1hop": 44,
+    "anchor_edges": 21,
+    "corr": 27
+  },
+  "corr_topology_edges": 48,
+  "n_nodes": 21,
+  "fusion": "mean",
+  "time_axis_before_readout": 42,
+  "n_params": 443041,
+  "best_epoch": 27,
+  "best_val_mse": 1.1569437980651855,
+  "epochs_run": 47,
+  "n_seeds": 10,
+  "per_seed": [
+    {
+      "seed": 42,
+      "best_epoch": 34,
+      "best_val_mse": 1.6358908414840698
+    },
+    {
+      "seed": 43,
+      "best_epoch": 20,
+      "best_val_mse": 1.0095099210739136
+    },
+    {
+      "seed": 44,
+      "best_epoch": 23,
+      "best_val_mse": 0.9016494750976562
+    },
+    {
+      "seed": 45,
+      "best_epoch": 2,
+      "best_val_mse": 1.883963704109192
+    },
+    {
+      "seed": 46,
+      "best_epoch": 64,
+      "best_val_mse": 0.94203120470047
+    },
+    {
+      "seed": 47,
+      "best_epoch": 16,
+      "best_val_mse": 0.7816177606582642
+    },
+    {
+      "seed": 48,
+      "best_epoch": 8,
+      "best_val_mse": 1.6271787881851196
+    },
+    {
+      "seed": 49,
+      "best_epoch": 2,
+      "best_val_mse": 1.9866786003112793
+    },
+    {
+      "seed": 50,
+      "best_epoch": 22,
+      "best_val_mse": 1.0105186700820923
+    },
+    {
+      "seed": 51,
+      "best_epoch": 27,
+      "best_val_mse": 1.1569437980651855
+    }
+  ],
+  "paper": "Luo et al. 2025, BMC Public Health 25:408",
+  "paper_gaps_filled": {
+    "fusion_operator": "mean",
+    "corr_threshold": 0.85,
+    "optimizer": "Adam"
+  },
+  "checkpoint": "checkpoints/backtest_2023_24/dualtopo_tuned_full.pt",
+  "experiment": {
+    "name": "dualtopo_tuned",
+    "model": "dualtopo",
+    "variant": "full",
+    "target": "level",
+    "normalize": "train",
+    "features": {
+      "use_weather": false,
+      "use_demographics": false,
+      "use_wastewater": false,
+      "use_covid_cases": false,
+      "use_covid_testing": false,
+      "use_covid_wastewater": false,
+      "use_rsv_cases": false,
+      "use_rsv_wastewater": false,
+      "use_rt": false,
+      "use_seasonality": false,
+      "use_imputed_flag": false,
+      "globals_": []
+    },
+    "graph": {
+      "anchors": "seven",
+      "geo": true,
+      "geo_max_hop": 1,
+      "geo_decay": 0.5,
+      "corr": true,
+      "corr_threshold": 0.85,
+      "corr_binary": false,
+      "corr_coef": 1.0,
+      "demo": false,
+      "demo_threshold": 0.5,
+      "demo_coef": 1.0,
+      "uniform_complete": false,
+      "dual": true
+    },
+    "train": {
+      "lr": 0.003,
+      "weight_decay": 1e-05,
+      "epochs": 200,
+      "batch_size": 26,
+      "plateau_factor": 0.2,
+      "plateau_patience": 5,
+      "early_stop_patience": 20,
+      "grad_clip": 1.0,
+      "dropout": 0.2,
+      "hidden": [
+        16,
+        64
+      ],
+      "seed": 42,
+      "mc_samples": 100,
+      "mc_seed": 123,
+      "optimizer": "adam",
+      "schedule": "plateau",
+      "channels": 24,
+      "dilations": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "adaptive_dim": 8,
+      "adaptive": true,
+      "drop_edge": 0.0,
+      "n_blocks": 2,
+      "huber_delta": 0.0,
+      "pearson_weight": 0.0,
+      "slope_weight": 0.0,
+      "n_seeds": 1,
+      "relations": [
+        "all"
+      ],
+      "conv": "gcn",
+      "heads": 4
+    },
+    "window": {
+      "lookback": 52,
+      "horizons": [
+        1
+      ],
+      "test_start": "2023-06-01",
+      "test_end": "2024-05-31",
+      "val_fraction": 0.15,
+      "val_mode": "pre_test"
+    },
+    "note": "Paper-faithful Dual-Topo-STGCN (Luo et al. 2025, BMC Public Health 25:408). ILI rates only, two separate topologies, 52-week input."
+  },
+  "intervals": {
+    "method": "affine-in-level residual variance, kappa-calibrated to 95% on validation",
+    "alpha": {
+      "1": 0.0
+    },
+    "beta": {
+      "1": 54.78433543617478
+    },
+    "kappa": {
+      "1": 0.6483064048368661
+    },
+    "n_validation": 473,
+    "fitted": true,
+    "note": "",
+    "quantile_levels": [
+      0.01,
+      0.025,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.975,
+      0.99
+    ],
+    "z_quantiles": {
+      "1": [
+        -0.6012877968578763,
+        -0.49803770075749476,
+        -0.37768650384191077,
+        -0.27708222945452293,
+        -0.23240502624292508,
+        -0.18948045695753468,
+        -0.1417322164659796,
+        -0.11024360663975996,
+        -0.07519834538340903,
+        -0.017100696470651447,
+        0.03233588217073113,
+        0.08776802429629632,
+        0.12621282650344873,
+        0.16791300385872737,
+        0.22887950923376027,
+        0.27846281858099503,
+        0.34621292179930213,
+        0.42368777772066246,
+        0.5119369278626471,
+        0.7292616405267,
+        1.2706572144496835,
+        1.5763538848122225,
+        2.2228511948145475
+      ]
+    },
+    "scale_floor": {
+      "1": 2.8265343040662323
+    }
+  },
+  "test_interval_coverage": 100.0
+}
