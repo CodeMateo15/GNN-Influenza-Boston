@@ -2,7 +2,7 @@
 
 Status as of 2026-09-27; cities updated 2026-10-09 (Chicago replaced Buenos Aires
 as the third city, and Buenos Aires is out of the paper). Target: a complete draft
-by **2026-10-14**. Open city items live in `Paper/chicagoAndNextSteps.md`.
+by **2026-10-14**. Open city items live in `Paper/notes/chicagoAndNextSteps.md`.
 
 The evidence is ready to write from. It supports a narrower paper than the one
 first planned: the GNN does **not** beat strong baselines by a wide margin. What

@@ -1,6 +1,6 @@
 % supplement.txt -- Appendix S1 for the AJE submission. Rename to
-% supplement.tex in Overleaf. Table bodies were generated from Code/results by
-% Paper/scripts/make_tables.py; regenerate rather than edit numbers by hand.
+% supplement.tex in Overleaf. Table bodies were generated from the results by
+% the table script (see README.txt); regenerate rather than edit numbers by hand.
 
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
@@ -10,7 +10,7 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{longtable}
-\usepackage{amsmath}
+\usepackage{amsmath,amssymb}
 \usepackage{caption}
 \usepackage{xcolor}
 \usepackage[super,sort&compress,comma]{natbib}
@@ -26,10 +26,18 @@
 \medskip
 Combining Temporal, Environmental, Demographic, and Geospatial Information
 to Forecast Influenza by Neighborhood: A Graph Neural Network in 3 US Cities
+
+\smallskip
+\NOTE{Byline blinded for review}
 \end{center}
 
-\noindent\textbf{Contents.} Appendix S1 (models, tuning, data notes, and
-design experience on the development season); Tables S1--S18; Figures S1--S6.
+\noindent\textbf{Contents.} Appendix S1: models compared; how the map is
+built; analyses performed in each city; the ARIMA and LSTM comparison models;
+equal-budget tuning; the weighted interval score; data notes by city; full
+results by season; week-level comparisons; other accuracy measures; severity
+alerts; what each component adds on the unseen seasons; design experience on
+the development season; training on several cities at once; computing time
+and energy; Tables S1--S19; Figures S1--S6.
 
 %==========================================================================
 \section*{Models}
@@ -49,7 +57,7 @@ lists which analyses were run in each city and, where one was not, why.
 \toprule
 Model & What it does & Inputs \\
 \midrule
-Graph neural network & Causal temporal convolutions over each neighborhood's recent weeks, graph convolution over the neighborhood map plus a learned set of extra links, and a learned correction to a blend of the current week and a seasonal curve & 16 weeks of rates, 6 weather, 8 demographic measures, map \\
+Graph neural network & Causal temporal convolutions over each neighborhood's recent weeks, graph convolution over the neighborhood map plus a learned set of extra links, and a learned correction to a blend of the current week and a seasonal curve & 16 weeks of rates and suppression flags, 6 weather, 8 demographic measures, map \\
 Same model, map removed & As above with no links between neighborhoods and no surrounding areas & Same, no map \\
 Same model, no environment & As the graph neural network without the 6 weather variables & Same, no weather \\
 Same model, no demographics & As the graph neural network without the 8 demographic measures as inputs (demographic links kept) & Same, no demographic inputs \\
@@ -77,6 +85,58 @@ run at 1 week ahead only, as in that paper.
 \end{table}
 
 %==========================================================================
+\section*{How the map is built}
+
+The map is a table of link weights $A_{ij}$ between areas $i$ and $j$. It is
+the sum of 4 parts, and a pair linked in more than one way gets the weights
+added:
+\begin{equation*}
+A_{ij} = \mathbb{1}[\text{$i$ and $j$ share a border}]
+ + 0.5^{\,d_{ij}}\,\mathbb{1}[2 \le d_{ij} \le 3]
+ + r_{ij}\,\mathbb{1}[r_{ij} > 0.85]
+ + s_{ij}\,\mathbb{1}[s_{ij} > 0.5].
+\end{equation*}
+\begin{itemize}
+\item \textbf{Shared borders} have weight 1. Boston has 23 borders between
+its 14 neighborhoods and 21 more to its 7 surrounding areas:
+Cambridge/Somerville, the Charles River, Chelsea/Revere/Winthrop, Boston
+Harbor, the southern suburbs (Milton and Quincy), the western suburbs (Newton
+and Dedham), and Brookline. Columbus has 39 borders between its 17 planning
+areas and 9 to its 5 surrounding fringe ZIP codes (see Data notes by city).
+Chicago has 113 borders between its 58 scored ZIP codes and 2 to ZIP code
+60827, which is in the map but not scored. Surrounding areas have no
+influenza series and are never forecast or scored.
+\item \textbf{Areas 2 or 3 borders apart}, where $d_{ij}$ counts borders
+between scored areas only, have weight 0.25 and 0.125: 29 and 22 pairs in
+Boston, 58 and 35 in Columbus, and 198 and 236 in Chicago.
+\item \textbf{Correlated curves.} $r_{ij}$ is the Pearson correlation of the
+2 areas' weekly rates over the training weeks before each test season, so it
+uses no test data. Pairs above 0.85 are linked with weight $r_{ij}$: 30, 27,
+and 20 of 91 pairs in Boston for the 2022--2023, 2023--2024, and 2024--2025
+seasons; 7 in Columbus; and 61, 2, 0, and 0 in Chicago for 2022--2023 to
+2025--2026. Chicago's capped activity levels correlate less closely as more
+seasons enter the training weeks.
+\item \textbf{Similar demographic measures.} Each of the 8 measures is
+rescaled to run from 0 to 1 across a city's areas, and
+$s_{ij} = \exp\bigl(-\lVert z_i - z_j \rVert^2 / 2\sigma^2\bigr)$, where
+$z_i$ holds area $i$'s 8 rescaled measures and $\sigma$ is the median
+distance between pairs of areas. Pairs above 0.5 are linked with weight
+$s_{ij}$: 60 of 91 pairs in Boston, 85 of 136 in Columbus, and 1,107 of 1,653
+in Chicago.
+\end{itemize}
+Every area is also linked to itself with weight 1, and the table is
+normalized as is usual for a graph convolution,\cite{kipf2017gcn}
+$\tilde{\mathbf{A}} = \mathbf{D}^{-1/2}(\mathbf{A} + \mathbf{I})\mathbf{D}^{-1/2}$,
+where $\mathbf{D}$ holds the row sums of $\mathbf{A} + \mathbf{I}$. The
+learned links $\mathbf{B}$ in the main-text equation are
+$\mathrm{softmax}\bigl(\mathrm{ReLU}(\mathbf{E}_1\mathbf{E}_2^{\top})\bigr)$,
+taken row by row, where $\mathbf{E}_1$ and $\mathbf{E}_2$ give each area 2
+learned vectors of length 8. The version with the map removed drops
+$\tilde{\mathbf{A}}$, $\mathbf{B}$, and the surrounding areas. On the
+development season, removing the correlation or demographic links changed
+accuracy far less than removing all links (Table~\ref{tab:ablation}).
+
+%==========================================================================
 \section*{Analyses performed in each city}
 
 \begin{table}[h!]
@@ -98,8 +158,8 @@ Cross-city transfer (main text, Table 5) & Target and source & Target and source
 Training on several cities at once (Table~\ref{tab:pooled}) & Target and source & Target and source & Target and source \\
 Hand-drawn vs automatically built map (main text, Table 4) & Yes & Not applicable$^{c}$ & Not applicable$^{c}$ \\
 Severity alerts (Tables~\ref{tab:severity}, \ref{tab:lead}) & Yes & Yes & Not applicable$^{d}$ \\
-Component ablations (main text, Table 3, Figure 4; Tables~\ref{tab:components}, \ref{tab:historyonly}) & Yes & Yes & Yes \\
-Map effect by neighborhood; example forecasts and calibration (main text, Figures 5, 6) & Yes & Not shown$^{e}$ & Not shown$^{e}$ \\
+Component ablations (main text, Table 3, Figure 5; Tables~\ref{tab:components}, \ref{tab:historyonly}) & Yes & Yes & Yes \\
+Map effect by neighborhood; example forecasts and calibration (main text, Figures 6, 6) & Yes & Not shown$^{e}$ & Not shown$^{e}$ \\
 Design experiments on the development season (Table~\ref{tab:ablation}) & Yes & No$^{f}$ & No$^{f}$ \\
 \bottomrule
 \end{tabular}
@@ -125,11 +185,34 @@ $^{f}$ The model's structure was chosen on Boston's development season only.
 %==========================================================================
 \section*{Comparison models: ARIMA and LSTM}
 
-\NOTE{Coauthor: describe the ARIMA comparison model here (about 120--170
-words).}
+\textbf{Seasonal ARIMA.} Each area has its own model, fitted to its weekly
+rates with statsmodels. The annual cycle enters as 3 pairs of sine and cosine
+terms of the day of the year, used as regressors (dynamic harmonic
+regression), because a lag-52 seasonal term needs more full seasons than the
+data hold. The regressors depend on the calendar only, so their future values
+are known when the forecast is made. For each area, the order $(p, d, q)$,
+with $p$ and $q$ from 0 to 3 and $d$ 0 or 1, was chosen by root mean squared
+error of 1-week forecasts on the validation weeks before each test season.
+The model was then fitted once on the training weeks and updated with each
+new observed week without refitting. A forecast more than 10 times an area's
+highest past rate, or a failed fit, was replaced by the last observed value;
+this happened in at most 0.4\% of forecasts in any city, season, and horizon. Suppressed weeks are left
+missing, which the state-space fit handles directly.
 
-\NOTE{Coauthor: describe the LSTM comparison model here (about 130--180
-words).}
+\textbf{LSTM.} One network reads all of a city's areas together: each week
+is a vector of every area's rate, so the network can use other areas' series
+but has no map. A single LSTM layer\cite{hochreiter1997lstm} reads the past weeks
+(by default 8 weeks and 64 hidden units), and a linear layer gives every area's
+forecast for one horizon. Rates are scaled per area by the mean and standard
+deviation of the training weeks. Suppressed weeks are filled from earlier
+weeks in the inputs and skipped in the loss, a mean squared error. Training
+uses Adam and stops when validation error has not improved for 25 epochs. As
+an option in tuning, the network can predict a correction to the same
+seasonal blend the graph neural network uses instead of the rate itself.
+Hidden size, window, target, learning rate, weight decay, dropout, and epochs
+were tuned as in Table~\ref{tab:space}, and forecasts are the mean of 10
+training runs. Both models received forecast intervals from the same procedure
+as the other models.
 
 %==========================================================================
 \section*{Equal-budget tuning}
@@ -139,7 +222,7 @@ trained once: the model's default and 11 drawn at random from the space in
 Table~\ref{tab:space}. The configuration with the lowest mean absolute error
 on the validation weeks immediately before the test season was retrained with
 10 random seeds and scored on the test season. The chosen configurations are
-recorded in \texttt{Code/sweep/tuned\_configs.json}.
+recorded in the released code (repository blinded for review).
 
 \begin{table}[h!]
 \centering
@@ -528,11 +611,11 @@ Season & Weeks Ahead & Comparison Model & Difference (95\% CI) & Adjusted \texti
 \endfirsthead
 2024--2025 & 1 & Same model, map removed & $-$0.64 ($-$1.58, $-$0.06) & .07 \\
  &  & LSTM & $-$1.07 ($-$2.81, $-$0.08) & .07 \\
- &  & Cola-GNN & $-$1.96 ($-$4.87, $-$0.23) & .05 \\
- &  & Gradient-boosted trees & $-$2.90 ($-$7.04, $-$0.26) & .05 \\
+ &  & Cola-GNN & $-$1.96 ($-$4.87, $-$0.23) & .053 \\
+ &  & Gradient-boosted trees & $-$2.90 ($-$7.04, $-$0.26) & .052 \\
  &  & Seasonal ARIMA & $-$1.49 ($-$3.34, $-$0.30) & .02 \\
  &  & Seasonal blend, no learning & $-$0.98 ($-$2.52, $-$0.04) & .07 \\
- &  & FluSight baseline & $-$0.78 ($-$1.47, $-$0.07) & .05 \\
+ &  & FluSight baseline & $-$0.78 ($-$1.47, $-$0.07) & .053 \\
  &  & Persistence & $-$0.60 ($-$1.13, 0.16) & .07 \\
 \midrule
 2024--2025 & 2 & Same model, map removed & $-$0.35 ($-$1.14, 0.22) & .63 \\
@@ -799,7 +882,7 @@ when the best-guess forecast is at or above the threshold; the Peirce skill
 score is the share of event weeks alerted minus the share of non-event weeks
 alerted. Both pool all neighborhood-weeks of a city's unseen seasons.
 Intervals for differences use the moving-block bootstrap of the main text.
-Code: \texttt{Code/compare\_severity.py} and \texttt{Paper/scripts/make\_severity.py}.
+The code is in the released repository (blinded for review).
 
 \begin{table}[h!]
 \centering
@@ -872,7 +955,7 @@ ahead.
 Each version of the graph neural network with one component removed (main
 text, Methods) was tuned with the same budget as the full model and averaged
 over 10 training runs; the task lists and commands are in the released code
-(\texttt{Code/results/\_components/README.md}). Table~\ref{tab:components}
+(repository blinded for review). Table~\ref{tab:components}
 compares each version with the full model on the weeks of one season. ``More
 error'' is the version's mean WIS minus the full model's, as a percentage of the
 full model's, so a positive value means the component lowered error; intervals
@@ -1069,7 +1152,7 @@ Boston 2023--2024 & 1 & Seasonal blend & 9.9 (6.6, 13.9) & $<$.001 \\
  &  & Seasonal ARIMA & 6.0 (2.7, 9.5) & .003 \\
  &  & Persistence & 14.4 (10.5, 19.1) & $<$.001 \\
  &  & FluSight baseline & 13.9 (9.4, 19.6) & $<$.001 \\
- &  & LSTM & $-$5.4 ($-$9.9, 0.8) & .05 \\
+ &  & LSTM & $-$5.4 ($-$9.9, 0.8) & .048 \\
 \midrule
 Boston 2023--2024 & 2 & Seasonal blend & 11.7 (4.8, 19.3) & .004 \\
  &  & Seasonal ARIMA & 5.7 (0.0, 11.4) & .04 \\
@@ -1101,7 +1184,7 @@ Boston 2024--2025 & 4 & Seasonal blend & 20.5 (7.0, 36.6) & .09 \\
  &  & FluSight baseline & 55.8 (14.5, 118.8) & .29 \\
  &  & LSTM & 2.6 ($-$0.6, 5.4) & .29 \\
 \midrule
-Columbus 2024--2025 & 1 & Seasonal blend & 6.5 (0.2, 16.4) & .05 \\
+Columbus 2024--2025 & 1 & Seasonal blend & 6.5 (0.2, 16.4) & .053 \\
  &  & Seasonal ARIMA & 17.1 (5.3, 35.8) & .002 \\
  &  & Persistence & $-$1.5 ($-$40.0, 20.1) & $>$.99 \\
  &  & FluSight baseline & 2.2 ($-$33.1, 23.6) & $>$.99 \\
@@ -1111,7 +1194,7 @@ Columbus 2024--2025 & 2 & Seasonal blend & 5.2 ($-$0.3, 14.3) & .32 \\
  &  & Seasonal ARIMA & 8.1 ($-$0.3, 19.9) & .30 \\
  &  & Persistence & 9.1 ($-$26.9, 35.3) & .89 \\
  &  & FluSight baseline & 12.8 ($-$24.6, 46.0) & .89 \\
- &  & LSTM & 31.9 (8.3, 65.5) & .05 \\
+ &  & LSTM & 31.9 (8.3, 65.5) & .045 \\
 \midrule
 Columbus 2024--2025 & 4 & Seasonal blend & 1.4 (0.4, 2.7) & .13 \\
  &  & Seasonal ARIMA & 2.3 ($-$3.0, 7.9) & .93 \\
@@ -1213,7 +1296,7 @@ counts the neighborhoods in which the change raised the correlation. These
 results were used only to make design choices. They come from the season used
 to design the model and are not evidence of performance, which comes from the
 unseen seasons in the main text, where removing the map, weather, the
-demographic measures, or all 3 is tested week by week (Figure 4;
+demographic measures, or all 3 is tested week by week (Figure 5;
 Table~\ref{tab:components}). There, the map's effect was confirmed, the
 demographic measures again added nothing, and the small gain from weather seen
 here was not.
@@ -1376,6 +1459,61 @@ Table 5.\\
 $^{d}$ Each area's series is scaled by its own training-period mean and
 standard deviation, so models trained elsewhere forecast in standardized units
 that are converted back to levels.
+\end{table}
+
+%==========================================================================
+\section*{Computing time and energy}
+
+Table~\ref{tab:compute} gives the time and electricity for one evaluation run
+of each model: the final settings trained and used to forecast the 52 target
+weeks of Boston's 2024--2025 season, at each horizon. For learned models this
+covers all 10 training runs; tuning (12 single training runs of different
+settings) is not included. Every run used 1 processor core of Northeastern
+University's Explorer cluster (Intel Xeon E5-2680 v4) and no graphics card.
+Energy was estimated with CodeCarbon 3.2.5 from processor load and rated power,
+not read from a power meter, with processor energy scaled to the single core
+allocated; it is suited to ranking models on the same hardware, not to exact
+totals. At the Massachusetts grid's carbon intensity (about 372 g of carbon
+dioxide per kWh), the graph neural network's 17 to 24 Wh per run is 6 to 9 g
+of carbon dioxide, and the tuned LSTM's under 0.1 Wh is under 0.04 g.
+
+The graph neural network took about 1 hour per run, 100 to 280 times as long
+as the tuned LSTM and 30 to 45 times as long as Cola-GNN. Almost all of that time is
+training. In weekly use, a model trained once at the start of the season and
+loaded each week, as in this evaluation, forecasts all 4 horizons for Boston in
+about 80 seconds on a laptop (Apple M5).
+
+\begin{table}[h!]
+\centering
+\caption{Time and Energy for One Evaluation Run of Each Model, Boston,
+Massachusetts, 2024--2025 Season}
+\label{tab:compute}
+\small
+\begin{tabular}{lrrrrrr}
+\toprule
+ & \multicolumn{2}{c}{1 Week Ahead} & \multicolumn{2}{c}{2 Weeks Ahead} & \multicolumn{2}{c}{4 Weeks Ahead} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+Model & Time & Wh & Time & Wh & Time & Wh \\
+\midrule
+Graph neural network & 1 h 10 min & 22 & 1 h 16 min & 24 & 1 h 3 min & 17 \\
+Same model, map removed & 1 h 13 min & 23 & 55 min & 17 & 54 min & 17 \\
+LSTM & 38 s & 0.08 & 17 s & 0.06 & 26 s & 0.08 \\
+Cola-GNN & 2.6 min & 0.67 & 1.7 min & 0.46 & 2.1 min & 0.62 \\
+Gradient-boosted trees & 5 s & 0.01 & 6 s & 0.01 & 9 s & 0.02 \\
+Seasonal ARIMA & 20 min & 6.2 & 21 min & 6.6 & 20 min & 6.1 \\
+Graph attention network$^{a}$ & 6.8 min & 2.1 & & & & \\
+Dual-topology GCN$^{a}$ & 31 min & 9.7 & & & & \\
+Seasonal blend, no learning & 2 s & $<$0.01 & 3 s & $<$0.01 & 2 s & $<$0.01 \\
+FluSight baseline & 2 s & $<$0.01 & 2 s & $<$0.01 & 2 s & $<$0.01 \\
+Persistence & 2 s & $<$0.01 & 2 s & $<$0.01 & 2 s & $<$0.01 \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+\raggedright\footnotesize
+Abbreviations: ARIMA, autoregressive integrated moving average; GCN, graph
+convolutional network; LSTM, long short-term memory network; Wh, watt-hours.\\
+$^{a}$ Evaluated at 1 week ahead only.
 \end{table}
 
 %==========================================================================

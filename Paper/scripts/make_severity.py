@@ -39,7 +39,7 @@ import pandas as pd  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SEV = ROOT / "Code" / "results" / "_severity_backtest"
-FIG = ROOT / "Paper" / "overleaf" / "figures"
+FIG = ROOT / "Paper" / "overleaf_v2" / "figures"
 B, BLOCK, SEED = 2000, 4, 0
 LEVELS = {"IT50": (1, "p_exceed_50", "Moderate or higher"), "IT90": (2, "p_exceed_90", "High or higher")}
 MODELS = [("gnn_st_tuned", "Graph neural network", "#0072B2", "o"),
@@ -157,7 +157,7 @@ def figure_s5(lv: pd.DataFrame) -> None:
 
 def latex(lv: pd.DataFrame, df: pd.DataFrame, onset: pd.DataFrame) -> None:
     f = lambda v: "" if pd.isna(v) else f"{v:.2f}".replace("-", "$-$")
-    print("\n% Table S12 rows (Boston): model & BSS mod h1 h2 h4 & BSS high & PSS mod & PSS high")
+    print("\n% Table S13 rows: model & BSS mod h1 h2 h4 & BSS high & PSS mod & PSS high")
     for city in CITIES:
         print(f"% --- {city}")
         for m, name, *_ in MODELS:
@@ -173,7 +173,7 @@ def latex(lv: pd.DataFrame, df: pd.DataFrame, onset: pd.DataFrame) -> None:
     for _, r in df.iterrows():
         print(f"% {r.city} h{r.horizon} {r.level} vs {r.other}: dBSS {r.dBSS:.3f} [{r.dBSS_lo:.3f}, {r.dBSS_hi:.3f}]  "
               f"dPSS {r.dPSS:.3f} [{r.dPSS_lo:.3f}, {r.dPSS_hi:.3f}]")
-    print("\n% Onset error (weeks late, median) for moderate threshold")
+    print("\n% Table S14: onset error (weeks late, median) for moderate threshold")
     print(onset.pivot_table(index=["city", "model"], columns="horizon", values="median").to_string())
 
 
