@@ -1,0 +1,68 @@
+{
+  "model": "xgboost_tuned",
+  "variant": "full",
+  "git_sha": null,
+  "created": "2026-09-25T16:42:03",
+  "model_class": "xgboost.XGBRegressor",
+  "target_kind": "blend",
+  "features_from": "gnn_st",
+  "n_node_features": 46,
+  "pooled_rows": 4410,
+  "params": {
+    "n_estimators": 600,
+    "learning_rate": 0.03,
+    "max_depth": 2,
+    "subsample": 0.8,
+    "colsample_bytree": 0.6,
+    "min_child_weight": 1.0,
+    "reg_lambda": 8.0,
+    "objective": "reg:squarederror",
+    "random_state": 42
+  },
+  "n_seeds": 10,
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+  ],
+  "best_iterations": {
+    "4": [
+      271,
+      354,
+      277,
+      309,
+      191,
+      329,
+      262,
+      243,
+      269,
+      243
+    ]
+  },
+  "blend_share": {
+    "4": 0.4981166842016937
+  },
+  "split": {
+    "n_train": 224,
+    "n_val": 39,
+    "n_test": 52,
+    "first_test_target": "2023-06-04",
+    "last_test_target": "2024-05-26"
+  },
+  "climatology": {
+    "n_harmonics": 3,
+    "n_train_rows": 244,
+    "n_terms": 7,
+    "fallback_nodes": []
+  },
+  "test_interval_coverage": 99.29577464788733,
+  "city": "boston",
+  "note": "One pooled model over all nodes with the node index as a feature. No edges reach the model; it reads the same per-node columns the graph model does."
+}

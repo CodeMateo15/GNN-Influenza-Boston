@@ -163,6 +163,8 @@ def figure1() -> None:
         w = np.array([n for _, n in parts], float)
         pts = np.array([p for p, _ in parts])
         center[SHORT_NAMES[idx]] = (pts * w[:, None]).sum(0) / w.sum()
+    # Fenway's vertex mean sits off to the west; put its dot at Fenway Park.
+    center["Fenway"] = np.array([-71.0972, 42.3467])
 
     # Polygon-derived borders between neighborhoods.
     with open(NEIGH_DIR / "boston_edges_land.csv") as fh:
@@ -232,7 +234,7 @@ def figure1() -> None:
 def model_schematic(ax) -> None:
     """Panel C: the 4 kinds of information, where each enters, and the blended head.
 
-    Each input box names the component ablation that removes it (Figure 4), so
+    Each input box names the component ablation that removes it (Figure 5), so
     the schematic doubles as the key to the "what each component adds" section.
     """
     from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
@@ -353,7 +355,7 @@ def significance_rows() -> pd.DataFrame:
 def figure3() -> pd.DataFrame:
     sig = significance_rows()
     # Panel titles are in the legend (AJE: no text on figures beyond locants and axes).
-    # The map comparison moved to Figure 4 with the other components.
+    # The map comparison moved to Figure 5 with the other components.
     comps = [("persistence", "A"), ("lstm_tuned", "B"), ("colagnn_tuned", "C")]
     order = [(c, s) for c, ss in UNSEEN.items() for s in ss]
     hcol = {1: "#0072B2", 2: "#E69F00", 4: "#009E73"}
@@ -393,7 +395,7 @@ def figure3() -> pd.DataFrame:
 
 
 # --------------------------------------------------------------------------- #
-# Figure 4: what each component adds                                           #
+# Figure 5: what each component adds                                           #
 # --------------------------------------------------------------------------- #
 COMPONENTS = [("gnn_st_noweather_tuned", "Environment", "A"),
               ("gnn_st_nodemofeat_tuned", "Demographics", "B"),
@@ -420,7 +422,7 @@ def component_rows() -> pd.DataFrame:
     return d
 
 
-def figure_components() -> pd.DataFrame:
+def figure5() -> pd.DataFrame:
     comp = component_rows()
     order = [(c, s) for c, ss in UNSEEN.items() for s in ss]
     hcol = {1: "#0072B2", 2: "#E69F00", 4: "#009E73"}
@@ -450,7 +452,7 @@ def figure_components() -> pd.DataFrame:
     fig.legend(handles=hz, loc="lower center", ncol=3, frameon=False, bbox_to_anchor=(0.55, -0.02))
     fig.legend(handles=fill, loc="lower center", ncol=2, frameon=False, bbox_to_anchor=(0.55, -0.075))
     fig.subplots_adjust(bottom=0.25, wspace=0.1)
-    save(fig, "figure4_components")
+    save(fig, "figure5_components")
     summary = comp.pivot_table(index=["model", "city"], columns="horizon", values="cost").round(1)
     summary["clear"] = comp.groupby(["model", "city"]).clear.sum()
     summary["cells"] = comp.groupby(["model", "city"]).clear.size()
@@ -458,7 +460,7 @@ def figure_components() -> pd.DataFrame:
 
 
 # --------------------------------------------------------------------------- #
-# Figure 6: example forecast and interval coverage                             #
+# Figure 4: example forecast and interval coverage                             #
 # --------------------------------------------------------------------------- #
 def coverage(city: str, arm: str, h: int) -> tuple[float, float]:
     d = pd.concat([predictions(city, s, h, arm) for s in UNSEEN[city]])
@@ -469,7 +471,7 @@ def coverage(city: str, arm: str, h: int) -> tuple[float, float]:
 
 
 def figure4() -> pd.DataFrame:
-    # Paper Figure 5. A: calibration by horizon. B-D: one neighborhood-season
+    # Paper Figure 4. A: calibration by horizon. B-D: one neighborhood-season
     # (Dorchester, the highest-rate neighborhood, 2024-25) at 1, 2 and 4 weeks,
     # so the reader sees persistence fall further behind as the lead grows.
     import matplotlib.dates as mdates
@@ -506,7 +508,7 @@ def figure4() -> pd.DataFrame:
     axes[-1].set_xlabel("Target week")
     fig.text(0.405, 0.10 + 0.29 + 0.115, "ED visits for ILI per 100,000", rotation=90,
              va="center", ha="center")
-    print("  Figure 5 Dorchester 2024-25 relative WIS:",
+    print("  Figure 4 Dorchester 2024-25 relative WIS:",
           ", ".join(f"h{h} {v:.2f}" for h, v in rel.items()))
 
     rows = []
@@ -529,12 +531,12 @@ def figure4() -> pd.DataFrame:
     ax_b.legend(loc="center right", frameon=False, fontsize=6.5, bbox_to_anchor=(1.0, 0.72))
     # The legend says the dotted lines mark the stated coverage, so no labels on them.
     locant(ax_b, "A", x=-0.3, y=1.01)
-    save(fig, "figure6_example_and_coverage")
+    save(fig, "figure4_example_and_coverage")
     return pd.DataFrame(rows)
 
 
 # --------------------------------------------------------------------------- #
-# Figure 5: where the map helps, neighborhood by neighborhood                  #
+# Figure 6: where the map helps, neighborhood by neighborhood                  #
 # --------------------------------------------------------------------------- #
 from influenza.scoring import FLUSIGHT_QUANTILES, pit_values, wis_from_quantiles  # noqa: E402
 from influenza.intervals import QUANTILE_COLUMNS  # noqa: E402
@@ -555,7 +557,7 @@ def map_benefit(h: int) -> pd.Series:
     return 100 * (by.WIS_n - by.WIS_g) / by.WIS_n  # % less error with the map
 
 
-def figure5() -> pd.DataFrame:
+def figure6() -> pd.DataFrame:
     geo = json.loads((NEIGH_DIR / "boston_polygons_tract_neighborhoods.geojson").read_text())
     ben = {h: map_benefit(h) for h in HORIZONS}
     lim = float(np.ceil(max(b.abs().max() for b in ben.values()) / 5) * 5)
@@ -586,7 +588,7 @@ def figure5() -> pd.DataFrame:
     cb.set_label("Less forecast error (WIS) with the map than without, %", fontsize=7)
     cb.ax.tick_params(labelsize=6.5)
     fig.subplots_adjust(bottom=0.2, wspace=0.02)
-    save(fig, "figure5_map_benefit_by_neighborhood")
+    save(fig, "figure6_map_benefit_by_neighborhood")
     return pd.DataFrame(ben).round(1)
 
 
@@ -713,7 +715,7 @@ def severity_confusion(arm: str, h: int = 2) -> np.ndarray:
     return m
 
 
-def figure6() -> dict[str, np.ndarray]:
+def figure_s6_severity_confusion() -> dict[str, np.ndarray]:
     """Severity band of each neighborhood-week: observed vs best-guess forecast, 2 weeks ahead."""
     arms = [("gnn_st_tuned", "A"), ("persistence", "B")]
     mats = {a: severity_confusion(a) for a, _ in arms}
@@ -748,7 +750,7 @@ def main() -> None:
         i = args.index("--out")
         OUT = Path(args[i + 1]).resolve()
         args = args[:i] + args[i + 2:]
-    only = set(args)  # e.g. `make_figures.py figure1 figure5` regenerates just those
+    only = set(args)  # e.g. `make_figures.py figure1 figure5` regenerates just those (names match the paper's figure numbers)
     if only:
         for name in sorted(only):
             globals()[name]()
@@ -756,18 +758,18 @@ def main() -> None:
     figure1()
     rel = figure2()
     figure3()
-    comp = figure_components()
+    comp = figure5()
     cov = figure4()
-    ben = figure5()
+    ben = figure6()
     blend = figure_s1_blend()
     tune = figure_s2_tuning()
     figure_s3_pit()
     figure_s4_all_neighborhoods()
-    sev = figure6()
+    sev = figure_s6_severity_confusion()
     # Numbers the text quotes, printed so the data check can compare against them.
     print("\nRelative WIS (unseen seasons):")
     print(rel.pivot_table(index=["city", "arm"], columns="horizon", values="rel").round(3).to_string())
-    print("\nPercent change in WIS when a component is removed (Figure 4):")
+    print("\nPercent change in WIS when a component is removed (Figure 5):")
     print(comp.to_string())
     print("\nInterval coverage, Boston unseen seasons:")
     print(cov.pivot_table(index="arm", columns="horizon", values=["cov50", "cov95"]).round(3).to_string())

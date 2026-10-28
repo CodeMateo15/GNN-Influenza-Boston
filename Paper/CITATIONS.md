@@ -3,14 +3,14 @@
 Compiled for the framing in `PAPER_PLAN.md`; PDFs re-checked against
 `Citation Papers/`. Every entry was checked against PubMed or
 Crossref/DataCite: the DOI resolves and the title/authors match. BibTeX keys are in `references.bib` (100 entries). The draft's own cleaned bibliography,
-with the AJE fixes, is `overleaf/references.bib`.
+with the AJE fixes, is `overleaf_v2/references.bib`.
 
 **Columns and marks**
 - **PDF file**: the file's path under `Citation Papers/`. **missing** means no
   PDF yet.
 - Chapters of *Influenza Virus: Methods and Protocols* (2nd ed., Methods Mol
   Biol 2890, 2025) point to the whole book's PDF, with the chapter number.
-- **✓**: cited in the current draft (`overleaf/main.txt` or `supplement.txt`).
+- **✓**: cited in the current draft, `overleaf_v2/` (`main.txt` or `supplement.txt`). No mark means not cited there.
 
 ---
 
@@ -18,9 +18,9 @@ with the AJE fixes, is `overleaf/references.bib`.
 
 | Key | Citation | Use it for | PDF file |
 |---|---|---|---|
-| `yamauchi2025book` ✓ | Yamauchi & Amorim (eds) 2025, *Influenza Virus: Methods and Protocols*, 2nd ed. doi:10.1007/978-1-0716-4326-6 | "Up to one billion individuals annually" is in the book's **Preface**. The draft cites the whole volume for it. | `2nd Closest/Influenza Virus Methods and Protocols.pdf` |
+| `yamauchi2025book` | Yamauchi & Amorim (eds) 2025, *Influenza Virus: Methods and Protocols*, 2nd ed. doi:10.1007/978-1-0716-4326-6 | "Up to one billion individuals annually" is in the book's **Preface**. The draft cites the whole volume for it. | `2nd Closest/Influenza Virus Methods and Protocols.pdf` |
 | `hutchinson2025understanding` | Hutchinson, Amorim & Yamauchi 2025, "Understanding Influenza", pp 1-26. doi:10.1007/978-1-0716-4326-6_1 | Winter epidemics in temperate regions; GISRS surveillance. It does **not** contain the 1-billion figure, so it was dropped from the draft. | `2nd Closest/Influenza Virus Methods and Protocols.pdf` (ch. 1) |
-| `putri2018burden` ✓ | Putri et al. 2018, *Vaccine* 36:3960 | US economic burden, $11.2 billion. | `2nd Closest/Economic burden of seasonal influenza in the United State.pdf` |
+| `putri2018burden` | Putri et al. 2018, *Vaccine* 36:3960 | US economic burden, $11.2 billion. | `2nd Closest/Economic burden of seasonal influenza in the United State.pdf` |
 | `lipsitch2011evidence` ✓ | Lipsitch et al. 2011, *Biosecur Bioterror* 9:89. doi:10.1089/bsp.2011.0007 | Decisions made on thin evidence during 2009 H1N1: the case for forecasting. | `Need for Forecasting/2011 Biosec Bioterr Lipsitch 2009pdm.pdf` |
 | `frontiers2024surveillance` | "Infectious disease surveillance needs for the United States: lessons from Covid-19", *Front Public Health* 2024. doi:10.3389/fpubh.2024.1408193 | The need for local surveillance. Not cited in the draft. | `Need for Forecasting/2024 Frontiers PH Grad Surveillance.pdf` |
 | `lutz2019applying` ✓ | Lutz et al. 2019, *BMC Public Health* 19:1659. doi:10.1186/s12889-019-7966-8 | The documented uses are CDC's: risk-communication talking points and planning. The draft wording was adjusted to match. | `Nearest Neighbors/Applying infectious disease forecasting to public health.pdf` |
@@ -30,14 +30,14 @@ with the AJE fixes, is `overleaf/references.bib`.
 | Key | Citation | Use it for | PDF file |
 |---|---|---|---|
 | `yang2016nyc` ✓ | Yang, Olson & Shaman 2016, *PLoS Comput Biol* 12:e1005201 | **The closest prior work.** Linking areas helped at the borough scale but degraded neighborhood forecasts. | `Nearest Neighbors/Forecasting Influenza Outbreaks in Boroughs and Neighborhoods of New York City.pdf` |
-| `shaman2012forecasting` | Shaman & Karspeck 2012, *PNAS* 109:20425 | The founding real-time influenza forecast. Not cited in the draft; a good fit for the first Introduction paragraph on forecasting. | `2nd Closest/Forecasting seasonal outbreaks of inﬂuenza.pdf` |
+| `shaman2012forecasting` ✓ | Shaman & Karspeck 2012, *PNAS* 109:20425 | The founding real-time influenza forecast. Cited in the Introduction (forecasting epidemic timing). | `2nd Closest/Forecasting seasonal outbreaks of inﬂuenza.pdf` |
 | `reich2019collaborative` ✓ | Reich et al. 2019, *PNAS* 116:3146 | FluSight multiyear assessment. **Caution:** it found that over half the models beat the *historical* baseline. Do not cite it for "few models beat the baseline". The draft now cites it only for FluSight's history. | `2nd Closest/A collaborative multiyear, multimodel assessment ofseasonal inﬂuenza forecasting in the United States.pdf` |
 | `mcgowan2019collaborative` ✓ | McGowan et al. 2019, *Sci Rep* 9:683 | The CDC challenge: short-term forecasts had the most skill. | `2nd Closest/Collaborative efforts to forecast seasonal influenza in the United States, 2015–2016.pdf` |
 | `mathis2024flusight` ✓ | Mathis et al. 2024, *Nat Commun* 15:6289 | WIS, relative WIS, 23 quantiles. Also the FluSight baseline method, and "6 of 23 models outperform the baseline in 2021–22". | `3rd Closest/Evaluation of FluSight influenza.pdf` |
 | `cramer2022covid` ✓ | Cramer et al. 2022, *PNAS* 119:e2113561119 | COVID Forecast Hub. Two-thirds of models beat the naive baseline; gains grow at longer horizons. | `3rd Closest/Evaluation of individual and ensemble probabilisticforecasts of COVID-19 mortality in the United States.pdf` |
 | `brooks2018nonmechanistic` ✓ | Brooks et al. 2018, *PLoS Comput Biol* 14:e1006134 | Delphi. Models backfill and uses the data available at the time (Limitations). | `2nd Closest/Nonmechanistic forecasts of seasonal influenza with iterative one-week-ahead distributions.pdf` |
-| `yang2015argo` ✓ / `lu2019statelevel` ✓ | Yang et al. 2015, *PNAS* 112:14473; Lu et al. 2019, *Nat Commun* 10:147 | Nowcasting versus forecasting. | `yang2015argo`: `3rd Closest/Accurate estimation of influenza epidemics using Google search data via ARGO.pdf`<br>`lu2019statelevel`: `3rd Closest/Improved state-level influenza nowcasting in the United States leveraging Internet-based data and network approaches.pdf` |
-| `ginsberg2009detecting` ✓, `lazer2014parable` ✓ | Ginsberg et al. 2009; Lazer et al. 2014 | Google Flu Trends and why it failed. The folder has the working-paper version of Lazer; the published Science version is doi:10.1126/science.1248506. | `ginsberg2009detecting`: `2nd Closest/Detecting influenza epidemics using search engine query data.pdf`<br>`lazer2014parable`: `3rd Closest/The Parable of Google Flu (WP-Final).pdf` |
+| `yang2015argo` / `lu2019statelevel` | Yang et al. 2015, *PNAS* 112:14473; Lu et al. 2019, *Nat Commun* 10:147 | Nowcasting versus forecasting. | `yang2015argo`: `3rd Closest/Accurate estimation of influenza epidemics using Google search data via ARGO.pdf`<br>`lu2019statelevel`: `3rd Closest/Improved state-level influenza nowcasting in the United States leveraging Internet-based data and network approaches.pdf` |
+| `ginsberg2009detecting`, `lazer2014parable` | Ginsberg et al. 2009; Lazer et al. 2014 | Google Flu Trends and why it failed. The folder has the working-paper version of Lazer; the published Science version is doi:10.1126/science.1248506. | `ginsberg2009detecting`: `2nd Closest/Detecting influenza epidemics using search engine query data.pdf`<br>`lazer2014parable`: `3rd Closest/The Parable of Google Flu (WP-Final).pdf` |
 | `rodriguez2022datacentric` | Rodríguez et al. 2022 | Survey of epidemic forecasting. Not cited in the draft. | `3rd Closest/Data-Centric Epidemic Forecasting.pdf` |
 | `kraemer2025ai` ✓ | Kraemer et al. 2025, *Nature* 638:623 | The main review of AI for epidemics. Cite it for "the added value is hard to evaluate", not for "backtests overstate". | `Nearest Neighbors/Artificial Intelligence for Modelling Infectious Disease Epidemics - PMC.pdf` |
 | `kamyshnyi2026review` ✓ | Kamyshnyi et al. 2026, *Rev Med Virol* 36:e70107 ("Forecasting Influenza Epidemics and Pandemics in the Age of AI…") | Backtests "may overestimate actual performance in real-world settings". | `2nd Closest/Forecasting Influenza Epidemics and Pandemics in the Age of AI and Machine Learning.pdf` |
@@ -59,7 +59,7 @@ with the AJE fixes, is `overleaf/references.bib`.
 | `pei2018spatial` ✓ | Pei et al. 2018, *PNAS* 115:2752 | Network model forecasting spread between areas. | `Related Work/Forecasting the spatial transmission of influenza in the United States.pdf` |
 | `venkatramanan2021mobility` | Venkatramanan et al. 2021, *Nat Commun* 12:726 | A learned mobility map improves flu forecasts; contrast with the null transit result. Not cited; candidate for the Discussion's transit sentence. | `Related Work/Forecasting influenza activity using machine-learned mobility map.pdf` |
 | `colizza2006airline`, `salathe2010contact`, `malik2022transit`, `guo2023transit` | Colizza et al. 2006; Salathé et al. 2010; Malik et al. 2022; Guo et al. 2023 | Mobility and contact networks, from the old transit framing. Not cited. | `colizza2006airline`: `3rd Closest/The role of the airline transportation network in the prediction and predictability of global epidemics.pdf`<br>`salathe2010contact`: `2nd Closest/A high-resolution human contact network forinfectious disease transmission.pdf`<br>`malik2022transit`: `2nd Closest/Modelling epidemic spread in cities using public transportation as a proxy for generalized mobility trends.pdf`<br>`guo2023transit`: `2nd Closest/Dynamic model of infectious public transportation systems.pdf` |
-| `fritz2022combining` | Fritz, Dorigatti & Rügamer 2022, "Combining graph neural networks and spatio-temporal disease models to improve the prediction of weekly COVID-19 cases in Germany", *Sci Rep* 12:3930, doi:10.1038/s41598-022-07757-5 | A graph neural network combined with a statistical disease model for German districts. A close methodological neighbor; worth one sentence in the Introduction. | `Related Work/Combining graph neural networks and spatio‑temporal disease models to improve the prediction of weekly COVID‑19 cases in Germany.pdf` |
+| `fritz2022combining` ✓ | Fritz, Dorigatti & Rügamer 2022, "Combining graph neural networks and spatio-temporal disease models to improve the prediction of weekly COVID-19 cases in Germany", *Sci Rep* 12:3930, doi:10.1038/s41598-022-07757-5 | A graph neural network combined with a statistical disease model for German districts. A close methodological neighbor; worth one sentence in the Introduction. | `Related Work/Combining graph neural networks and spatio‑temporal disease models to improve the prediction of weekly COVID‑19 cases in Germany.pdf` |
 
 ## Methods: features and data
 
@@ -120,24 +120,24 @@ rook contiguity.
 
 ## Added for the second draft (2026-10-23)
 
-Found for sentences in the new Introduction (`newIntro.txt`) that the bib did
+Found for sentences in the new Introduction (`notes/newIntro.txt`) that the bib did
 not cover. Each DOI was resolved on Crossref and title, authors, journal, year,
 volume and pages matched; each abstract was read on PubMed (EpiGNN via
 Consensus). Cited in `overleaf_v2/`. **No PDFs yet** for any of them.
 
 | Key | Citation | Use it for | PDF file |
 |---|---|---|---|
-| `chandrasekhar2017social` | Chandrasekhar et al. 2017, *Influenza Other Respir Viruses* 11:479 | FluSurv-NET, 33,515 hospitalizations: tracts with ≥5% crowded housing (aOR 1.17) and ≥20% poverty (aOR 1.31) had higher odds. The housing source. | missing |
-| `tam2014newhaven` | Tam, Yousey-Hindes & Hadler 2014, *Influenza Other Respir Viruses* 8:274 | Within one county, hospitalization rose with lower tract SES on every measure (crowding, poverty, income). | missing |
-| `chang2021mobility` | Chang et al. 2021, *Nature* 589:82 | Hourly movement of 98 million people from neighborhoods to restaurants, shops and other places in 10 US metro areas. Backs "commute, work, and shop across neighborhoods". | missing |
-| `shabbat2024detailing` | Shabbat et al. 2024, *J Public Health Manag Pract* 30:168 | NYC health department clinician outreach "across targeted neighborhoods". The clinician-messaging source. | missing |
-| `benjaminchung2020sliv` | Benjamin-Chung et al. 2020, *PLoS Med* 17:e1003238 | City-wide school-located influenza vaccination in Oakland with the county health department. The school-outreach source. | missing |
-| `lambooij2024mobile` | Lambooij et al. 2024, *Euro Surveill* 29:2300503 | Municipal health services sent mobile vaccination units to neighborhoods with low uptake. Dutch, not US. | missing |
-| `clayton1987empirical` | Clayton & Kaldor 1987, *Biometrics* 43:671 | Small-area rates are unreliable because counts are small. | missing |
-| `white2023california` | White et al. 2023, *BMC Public Health* 23:782 | County forecasts were worse in less populous counties (partly because fewer models covered them). | missing |
-| `zhu2024gast` | Zhu et al. 2024, *PLoS One* 19:e0307159 | Graph attention spatiotemporal model reported gains for influenza and COVID-19. | missing |
-| `xie2023epignn` | Xie et al., EpiGNN, ECML PKDD 2022 (LNCS, 2023), pp 469-485 | Regional epidemic GNN, including influenza data; reported 9.48% lower RMSE than baselines. LNCS volume not confirmed, so left out of the entry. | missing |
-| `chretien2014scoping` | Chretien et al. 2014, *PLoS One* 9:e94130 | Of 35 validated influenza forecasting studies, inputs were virological (14), syndromic (13), meteorological (6), search queries (4); none listed demographic or spatial inputs. Do **not** cite it for "most use one or two kinds". | missing |
+| `chandrasekhar2017social` ✓ | Chandrasekhar et al. 2017, *Influenza Other Respir Viruses* 11:479 | FluSurv-NET, 33,515 hospitalizations: tracts with ≥5% crowded housing (aOR 1.17) and ≥20% poverty (aOR 1.31) had higher odds. The housing source. | `New Introduction/Social determinants of influenza hospitalization in the United States.pdf` |
+| `tam2014newhaven` ✓ | Tam, Yousey-Hindes & Hadler 2014, *Influenza Other Respir Viruses* 8:274 | Within one county, hospitalization rose with lower tract SES on every measure (crowding, poverty, income). | `New Introduction/Influenza-related hospitalization of adults associated with low census tract socioeconomic status.pdf` |
+| `chang2021mobility` ✓ | Chang et al. 2021, *Nature* 589:82 | Hourly movement of 98 million people from neighborhoods to restaurants, shops and other places in 10 US metro areas. Backs "commute, work, and shop across neighborhoods". | `New Introduction/Mobility network models of COVID-19 explain inequities and inform reopening.pdf` |
+| `shabbat2024detailing` ✓ | Shabbat et al. 2024, *J Public Health Manag Pract* 30:168 | NYC health department clinician outreach "across targeted neighborhoods". The clinician-messaging source. | `New Introduction/Using Public Health Detailing to Increase Access and Confidence in COVID-19 Vaccines and Reinvest in Disproportionately Impacted NYC Communities.pdf` |
+| `benjaminchung2020sliv` ✓ | Benjamin-Chung et al. 2020, *PLoS Med* 17:e1003238 | City-wide school-located influenza vaccination in Oakland with the county health department. The school-outreach source. | `New Introduction/Evaluation of a city-wide school-located influenza vaccination program in Oakland, California, with respect to vaccination coverage, school absences, and laboratory confirmed influenza.pdf` |
+| `lambooij2024mobile` ✓ | Lambooij et al. 2024, *Euro Surveill* 29:2300503 | Municipal health services sent mobile vaccination units to neighborhoods with low uptake. Dutch, not US. | `New Introduction/Mobile vaccination units to increase COVID-19 vaccination uptake in areas with lower coverage.pdf` |
+| `clayton1987empirical` ✓ | Clayton & Kaldor 1987, *Biometrics* 43:671 | Small-area rates are unreliable because counts are small. | `New Introduction/Empirical Bayes Estimates of Age-standardized Relative Risksfor Use in Disease Mapping.pdf` |
+| `white2023california` ✓ | White et al. 2023, *BMC Public Health* 23:782 | County forecasts were worse in less populous counties (partly because fewer models covered them). | `New Introduction/Assessing the accuracy of California county level COVID-19 hospitalization forecasts to inform public policy decision making.pdf` |
+| `zhu2024gast` ✓ | Zhu et al. 2024, *PLoS One* 19:e0307159 | Graph attention spatiotemporal model reported gains for influenza and COVID-19. | `New Introduction/Modeling epidemic dynamics using Graph Attention based Spatial Temporal networks.pdf` |
+| `xie2023epignn` ✓ | Xie et al., EpiGNN, ECML PKDD 2022 (LNCS, 2023), pp 469-485 | Regional epidemic GNN, including influenza data; reported 9.48% lower RMSE than baselines. LNCS volume not confirmed, so left out of the entry. | `New Introduction/EpiGNN, Exploring Spatial Transmission with Graph Neural Network for Regional Epidemic Forecasting.pdf` |
+| `chretien2014scoping` ✓ | Chretien et al. 2014, *PLoS One* 9:e94130 | Of 35 validated influenza forecasting studies, inputs were virological (14), syndromic (13), meteorological (6), search queries (4); none listed demographic or spatial inputs. Do **not** cite it for "most use one or two kinds". | `New Introduction/Influenza Forecasting in Human Populations, A Scoping Review.pdf` |
 
 Searched for and **not found**: a peer-reviewed Boston Public Health
 Commission report on neighborhood-targeted outreach (Leibowitz et al. 2021,
@@ -148,11 +148,27 @@ health-alert messaging to clinicians.
 Also newly cited in `overleaf_v2/` from the existing bib: `worby2015age`,
 `shaman2012forecasting`, `fritz2022combining`.
 
-No longer cited in `overleaf_v2/` (the coauthor's Introduction replaced the
-burden and nowcasting sentences): `yamauchi2025book`, `putri2018burden`,
+No longer cited in `overleaf_v2/` (replaced the burden and nowcasting sentences): `yamauchi2025book`, `putri2018burden`,
 `ginsberg2009detecting`, `yang2015argo`, `lu2019statelevel`,
-`lazer2014parable`. They stay in `references.bib` and in `overleaf/`. The ✓
-marks above still describe the first draft in `overleaf/`.
+`lazer2014parable`. They stay in `references.bib` and in the archived first
+draft (`archive/overleaf_v1/`).
+
+## Data, software and code sources
+
+Cited in `overleaf_v2/` for where the data and code come from. Web sources need
+an access date before submission (red notes in the bib).
+
+| Key | Citation | Use it for | PDF file |
+|---|---|---|---|
+| `bphc2026dashboard` ✓ | Boston Public Health Commission, influenza surveillance dashboard (ED visits for ILI by neighborhood) | Boston rates | web |
+| `cdph2026influenza` ✓ | Chicago Department of Public Health, influenza risk level by ZIP code (City of Chicago Data Portal, 8vvr-jv2g) | Chicago activity levels | web |
+| `census2023acs` ✓ | US Census Bureau, American Community Survey 2019-2023 5-year estimates | Population denominators and demographic measures | web |
+| `boston2026boundaries` ✓ | City of Boston, neighborhood boundaries approximated by 2020 census tracts (Analyze Boston) | Automatically built Boston map | web |
+| `census2023tigerweb` ✓ | US Census Bureau, TIGERweb boundary services, ACS 2023 vintage | Automatically built maps | web |
+| `chicago2026zipboundaries` ✓ | City of Chicago, ZIP code boundaries (unjd-c2ca) | Chicago map | web |
+| `openmeteo2023` ✓ | Zippenfenig 2023, Open-Meteo.com weather API, Zenodo doi:10.5281/zenodo.7970649 | Weather inputs | web |
+| `areaflu2026package` ✓ | areaFluForecast 1.2.0 (blinded for review), Zenodo doi:10.5281/zenodo.23449348 | The released Python package | software |
+| `code2026release` ✓ | Code and frozen configurations for this paper (blinded for review) | The research code release | software |
 
 ## Buenos Aires (removed from the paper 2026-10-07)
 
@@ -165,8 +181,6 @@ Kept in `references.bib` in case the city comes back.
 | `caini2016temporal` | Caini et al. 2016, *PLoS One* 11:e0152310 | Longer, less defined seasons in the **tropics**. Temperate Southern Hemisphere sites (including Argentina) are as concentrated as northern ones, so don't use it for "outside the temperate north". | `Discussion/Temporal Patterns of Influenza A and B in Tropical and Temperate Countries.pdf` |
 | `dave2019global` | Dave & Lee 2019, *Epidemiol Rev* 41:51 | Onset, duration and peaks differ between climate zones. | `Discussion/Global Geographical and Temporal Patterns of Seasonal Influenza and Associated Climatic Factors.pdf` |
 | `kramer2019countries` | Kramer & Shaman 2019, *PLoS Comput Biol* 15:e1006742 | Forecasts are less accurate in tropical and subtropical countries. | `2nd Closest/Development and validation of influenza forecasting for 64 temperate and tropical countries.pdf` |
-| `tamerius2013environmental` ✓ | Tamerius et al. 2013, *PLoS Pathog* 9:e1003194 | Climate rule for flu timing (cited for the weather features). | `2nd Closest/Environmental Predictors of Seasonal Influenza Epidemics across Temperate and Tropical Climates.pdf` |
-| `olsen2020decreased` ✓ | (above) | Why the Columbus series starts after 2020–2021. | `Discussion/Decreased Influenza Activity During the COVID-19 Pandemic.pdf` |
 
 ## Limitations
 
@@ -197,7 +211,7 @@ folder.
 | `gog2014pandemic` ✓ | Introduction | `2nd Closest/Spatial Transmission of 2009 Pandemic Influenza in the US.pdf` | Short-distance spread dominated in 2009. |
 | `baker2020npi` | Discussion / Limitations | `2nd Closest/The impact of COVID-19 nonpharmaceuticalinterventions on the future dynamics of endemic infections.pdf` | Post-COVID seasons behave oddly. Not cited; could go next to olsen. |
 | `kissler2020nyc` | Discussion: transit | `3rd Closest/Reductions in commuting mobility correlate with geographic differences in SARS-CoV-2 prevalence in New York City.pdf` | Within-city mobility mattered for COVID in NYC. Not cited; contrast with the null transit result. |
-| `worby2015age` | Methods: demographics | `3rd Closest/On the relative role of different age groups in influenza epidemics.pdf` | Ages 5-17 drive the largest epidemics. Not cited. (Its PDF title "On the relative role of different age groups…" is this paper, not Lemaitre.) |
+| `worby2015age` ✓ | Methods: demographics | `3rd Closest/On the relative role of different age groups in influenza epidemics.pdf` | Ages 5-17 drive the largest epidemics. Cited for age structure. (Its PDF title "On the relative role of different age groups…" is this paper, not Lemaitre.) |
 | `morris2019bym` ✓ | Methods: graph | `Methods/Bayesian Hierarchical Spatial Models, Implementing the Besag York Mollié Model in Stan.pdf` | See above. |
 
 ## Optional or weak

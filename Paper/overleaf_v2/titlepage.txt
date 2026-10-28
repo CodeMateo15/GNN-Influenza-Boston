@@ -19,16 +19,14 @@
 {\Large\bfseries Combining Temporal, Environmental, Demographic, and Geospatial Information to Forecast Influenza by Neighborhood: A Graph Neural Network in 3 US Cities\par}
 
 \bigskip
-Mateo Biggs$^{1,*}$, D. Yu$^{1}$ \NOTE{full first name}, A. Nilapwar$^{1}$
-\NOTE{full first name}, and R. Venkatesaramani$^{1}$ \NOTE{full first name}
+Mateo Biggs$^{1,*}$ and Deahan Yu$^{1}$
 \end{center}
 
-\noindent$^{1}$ \NOTE{Department}, Northeastern University, Boston,
-Massachusetts, United States \NOTE{confirm each author's department and
-institution; add further affiliation numbers if they differ}
+\noindent$^{1}$ Khoury College of Computer Sciences, Northeastern University, Boston,
+Massachusetts, United States 
 
 \medskip
-\noindent$^{*}$ Corresponding author: Mateo Biggs, \NOTE{department},
+\noindent$^{*}$ Corresponding author: Mateo Biggs, Khoury College of Computer Sciences,
 Northeastern University, 360 Huntington Avenue, Boston, MA 02115
 \NOTE{confirm mailing address}. Email: biggs.m@northeastern.edu
 
@@ -41,7 +39,7 @@ to Population Inference'' (guest editors Li Shen and Haochang Shou).
 \noindent\textbf{Running head:} Neighborhood influenza forecasting with graphs
 
 \medskip
-\noindent\textbf{Word count:} abstract, 200; text, 3,996 (texcount, 2026-10-25) \NOTE{recount with texcount
+\noindent\textbf{Word count:} abstract, 200; text, 3,998 (texcount, 2026-10-28) \NOTE{recount with texcount
 once the ethics statement and software versions are final; limit 4,000}
 
 \section*{Acknowledgments}
@@ -49,8 +47,15 @@ once the ethics statement and software versions are final; limit 4,000}
 We thank the Boston Public Health Commission and Columbus Public Health for
 providing and explaining their surveillance data, and Professor Ariel Hamlin
 (Khoury College of Computer Sciences, Northeastern University) for guidance
-throughout the project. Computation was performed on the Explorer cluster of
+throughout the project. Atharva Nilapwar and Rajagopal Venkatesaramani
+(Northeastern University) built the LSTM and seasonal ARIMA comparison
+models. Computation was performed on the Explorer cluster of
 Northeastern University's research computing service.
+
+We used Claude Opus 4.5, 4.6, 4.7, 4.8, 5, and 5.5 (Anthropic), through Claude
+Code, to help write and debug code, run analyses, find and check references,
+edit text, and cross-check reported numbers (see Methods). The authors
+reviewed all output and take full responsibility for the content.
 
 \section*{Funding}
 
@@ -60,8 +65,7 @@ with grant numbers}.
 
 \section*{Conflict of Interest}
 
-The authors declare no conflicts of interest. \NOTE{confirm for every
-author}
+The authors declare no conflicts of interest.
 
 \section*{Disclaimer}
 
@@ -78,19 +82,16 @@ Chicago Data Portal (dataset 8vvr-jv2g; ZIP code boundaries, dataset
 unjd-c2ca). Columbus data
 were provided by Columbus Public Health as de-identified visit-level extracts;
 with their agreement, the weekly area-level counts used in every analysis are
-publicly available with the code \NOTE{confirm Columbus Public Health's terms
-permit releasing the weekly counts}, and the visit-level extracts are available
+publicly available with the code, and the visit-level extracts are available
 from Columbus Public Health on request. Weather data come from the Open-Meteo
 archive (CC BY 4.0), and boundary files from the City of Boston, the City of
 Chicago, and the US Census Bureau. All code, frozen model
-configurations, and the scripts that produce every table and figure are
-available at \url{https://github.com/CodeMateo15/GNN-Influenza-Boston}
-\NOTE{tag the release used for this paper, e.g., paper-v1, and cite it or a
-Zenodo DOI here}.
+configurations, and the scripts that produce every table and figure
+(Paper/scripts, with a README listing each one's inputs) are available at \url{https://github.com/CodeMateo15/GNN-Influenza-Boston}.
 
 The forecasting models are also released as an open-source Python package for
-health departments, areaFluForecast, version 1.1.0 (MIT license; archived at
-Zenodo, \url{https://doi.org/10.5281/zenodo.23350130}; all versions,
+health departments, areaFluForecast, version 1.2.0 (MIT license; archived at
+Zenodo, \url{https://doi.org/10.5281/zenodo.23449348}; all versions,
 \url{https://doi.org/10.5281/zenodo.23327108}). It installs with
 \texttt{pip install areaFluForecast} (\url{https://pypi.org/project/areaFluForecast/}),
 runs on a laptop CPU, and is documented at
@@ -107,8 +108,7 @@ model, season, and horizon results were numerically identical, and the other
 
 Real-time forecasts for the 2026--2027 season, made each week with the same
 models, are posted on the Boston Flu Outlook dashboard
-(\NOTE{Posit Connect Cloud URL}; data and source,
-\url{https://github.com/CodeMateo15/boston-flu-outlook}), which also shows
+(\url{https://codemateo15-boston-flu-outlook.share.connect.posit.cloud/}; data and source, \url{https://github.com/CodeMateo15/boston-flu-outlook}), which also shows
 Chicago. These are experimental research forecasts, not an official Boston
 Public Health Commission product, and are not part of the evaluation reported
 in this paper: unlike the evaluated models, they are trained on every

@@ -62,12 +62,14 @@ def fmt(x, nd=2):
 
 
 def ama_p(v: float) -> str:
-    """AMA style: 2 digits, 3 below .01, bounded at <.001 and >.99."""
+    """AMA style: 2 digits, 3 below .01 and where 2 would round to .05 (so the
+    side of the cutoff shows), bounded at <.001 and >.99."""
     if v < 0.001:
         return "$<$.001"
     if v > 0.99:
         return "$>$.99"
-    return (f"{v:.3f}" if v < 0.01 else f"{v:.2f}").lstrip("0")
+    three = v < 0.01 or round(v, 2) == 0.05
+    return (f"{v:.3f}" if three else f"{v:.2f}").lstrip("0")
 
 
 def main_table(city: str, arms) -> None:
@@ -218,8 +220,35 @@ TRANSFER_PAIRS = [("columbus", "boston"), ("chicago", "boston"),
                   ("boston", "columbus"), ("boston", "chicago")]
 
 
+MAP_ROOTS = {"Hand drawn": RESULTS, "Land boundaries": RESULTS / "boston_geo_land",
+             "Census tracts": RESULTS / "boston_geo_tract"}
+
+
+def maps_table() -> None:
+    """Table 4: mean WIS over Boston's unseen seasons, by map, from each run's predictions."""
+    import sys
+    sys.path.insert(0, str(ROOT / "Code"))
+    from influenza import scoring
+    q = list(scoring.QUANTILE_COLUMNS)
+
+    def mean_wis(root: Path, arm: str, h: int) -> float:
+        per_season = []
+        for s in UNSEEN["boston"]:
+            f = pd.read_csv(root / f"backtest_{s}" / f"horizon_{h:02d}" / arm / "full" / "predictions.csv")
+            wis = scoring.wis_from_quantiles(f["actual"].to_numpy(), f[q].to_numpy())
+            per_season.append(wis[f["actual"].notna().to_numpy()].mean())
+        return sum(per_season) / len(per_season)
+
+    print("% Table 4: model & h & " + " & ".join(MAP_ROOTS))
+    for arm, label in (("gnn_st", "Graph neural network"), ("gnn_st_geofixed", "Borders only$^{d}$")):
+        for i, h in enumerate((1, 2, 4)):
+            cells = [fmt(mean_wis(root, arm, h)) for root in MAP_ROOTS.values()]
+            print(f"{label if i == 0 else ''} & {h} & " + " & ".join(cells) + r" \\")
+    print()
+
+
 def transfer_table() -> None:
-    print(f"% Table 4: target (source) & h & local & zero-shot & fine-tuned & persistence, "
+    print(f"% Table 5: target (source) & h & local & zero-shot & fine-tuned & persistence, "
           f"{TRANSFER_SEASON}")
     for target, source in TRANSFER_PAIRS:
         d = pd.read_csv(CSV[target])
@@ -243,7 +272,7 @@ SIG_ROOT = {"boston": RESULTS, "columbus": RESULTS / "columbus",
 
 
 def pooled_table() -> None:
-    print(f"% Table S15: target & h & local & all3 & all3 fine-tuned & other2 & "
+    print(f"% Table S18: target & h & local & all3 & all3 fine-tuned & other2 & "
           f"other2 fine-tuned & persistence, {TRANSFER_SEASON}; ^{{a}} = clear vs local")
     for target in ("boston", "columbus", "chicago"):
         d = pd.read_csv(CSV[target])
@@ -311,7 +340,7 @@ def ablation_table() -> None:
     main = pd.read_csv(ABLATION / "ablation_main_s10.csv").set_index(["arm", "horizon"]).Corr_macro
     transit = pd.read_csv(ABLATION / "transit_retirement" / "transit_retirement_s10.csv")
     transit = transit.set_index(["arm", "horizon"]).Corr_macro
-    print("% Table S16: change & delta corr (nbhds improved/14) at h1 h2 h4; "
+    print("% Table S17: change & delta corr (nbhds improved/14) at h1 h2 h4; "
           "development season 2025-26, 10 seeds")
     floor = []
     for h in (1, 2, 4):
@@ -346,6 +375,7 @@ if __name__ == "__main__":
         significance(c)
     for c in UNSEEN:
         point_metrics(c)
+    maps_table()
     transfer_table()
     pooled_table()
     ablation_table()
