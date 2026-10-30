@@ -1,0 +1,21 @@
+Dear Editors,
+
+ 
+
+We would like our manuscript, “Integrating Time, Weather, Demographics, and Geography: Graph Neural Networks for Neighborhood-Level Influenza Forecasting in Three US Cities,” to be considered as an Original Contribution for AJE’s special collection on Artificial Intelligence in Health.
+
+ 
+
+Health departments act on influenza neighborhood by neighborhood; however, most forecasts cover states or regions. We forecast emergency department visits for influenza-like illness 1, 2, and 4 weeks ahead in Boston’s 14 neighborhoods and repeated the analysis in Columbus and Chicago. Our graph neural network integrates temporal, environmental, demographic, and geospatial information.
+
+ 
+
+We believe our work will interest AJE’s readers because it offers a rigorous test of whether neighborhood-level influenza forecasts are accurate enough to guide local public health action.
+
+ 
+
+This manuscript is not under consideration elsewhere, all authors have approved it, and none of the authors has a conflict of interest to declare. If the manuscript is accepted, we intend to publish open access, with article processing charges covered through Northeastern University Library’s agreement with Oxford University Press.
+
+ 
+
+Thank you for your consideration

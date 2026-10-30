@@ -9,6 +9,7 @@
 \usepackage{lmodern}
 \usepackage{setspace}
 \usepackage{xcolor}
+\usepackage{xurl}  % lets long URLs break at any character
 \usepackage[hidelinks]{hyperref}
 \newcommand{\NOTE}[1]{\textcolor{red}{[#1]}}
 \doublespacing
@@ -16,7 +17,9 @@
 \begin{document}
 
 \begin{center}
-{\Large\bfseries Combining Temporal, Environmental, Demographic, and Geospatial Information to Forecast Influenza by Neighborhood: A Graph Neural Network in 3 US Cities\par}
+{\Large\bfseries Forecasting Emergency Department Visits for Influenza-Like Illness by
+Neighborhood With a Graph Neural Network: Contributions of Spatial,
+Environmental, and Demographic Information\par}
 
 \bigskip
 Mateo Biggs$^{1,*}$ and Deahan Yu$^{1}$
@@ -27,8 +30,7 @@ Massachusetts, United States
 
 \medskip
 \noindent$^{*}$ Corresponding author: Mateo Biggs, Khoury College of Computer Sciences,
-Northeastern University, 360 Huntington Avenue, Boston, MA 02115
-\NOTE{confirm mailing address}. Email: biggs.m@northeastern.edu
+Northeastern University, 360 Huntington Avenue, Boston, MA 02115. Email: biggs.m@northeastern.edu
 
 \bigskip
 \noindent\textbf{Manuscript type:} Practice of Epidemiology. Submitted to the
@@ -39,8 +41,7 @@ to Population Inference'' (guest editors Li Shen and Haochang Shou).
 \noindent\textbf{Running head:} Neighborhood influenza forecasting with graphs
 
 \medskip
-\noindent\textbf{Word count:} abstract, 200; text, 3,998 (texcount, 2026-10-28) \NOTE{recount with texcount
-once the ethics statement and software versions are final; limit 4,000}
+\noindent\textbf{Word count:} abstract, 187; text, 3,995 (texcount, 2026-10-30)
 
 \section*{Acknowledgments}
 
@@ -48,7 +49,7 @@ We thank the Boston Public Health Commission and Columbus Public Health for
 providing and explaining their surveillance data, and Professor Ariel Hamlin
 (Khoury College of Computer Sciences, Northeastern University) for guidance
 throughout the project. Atharva Nilapwar and Rajagopal Venkatesaramani
-(Northeastern University) built the LSTM and seasonal ARIMA comparison
+(Khoury College of Computer Sciences, Northeastern University) built the LSTM and seasonal ARIMA comparison
 models. Computation was performed on the Explorer cluster of
 Northeastern University's research computing service.
 
@@ -60,8 +61,7 @@ reviewed all output and take full responsibility for the content.
 \section*{Funding}
 
 This work was supported in part by a PEAK Trailblazer fellowship from
-Northeastern University \NOTE{award number; list any other funding sources
-with grant numbers}.
+Northeastern University.
 
 \section*{Conflict of Interest}
 

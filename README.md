@@ -76,7 +76,6 @@ Weather comes from [Open-Meteo](https://open-meteo.com/) (CC BY 4.0).
   - [Boston](Code/docs/DATA_NOTES.md)
   - [Chicago](Code/docs/CHICAGO_DATA_NOTES.md)
   - [Columbus](Code/docs/COLUMBUS_DATA_NOTES.md)
-  - [Buenos Aires](Code/docs/AMBA_DATA_NOTES.md)
 
 ---
 
