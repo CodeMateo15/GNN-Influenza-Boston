@@ -24,8 +24,9 @@
 \begin{center}
 {\Large\bfseries Appendix S1\par}
 \medskip
-Combining Temporal, Environmental, Demographic, and Geospatial Information
-to Forecast Influenza by Neighborhood: A Graph Neural Network in 3 US Cities
+Forecasting Emergency Department Visits for Influenza-Like Illness by
+Neighborhood With a Graph Neural Network: Contributions of Spatial,
+Environmental, and Demographic Information
 
 \smallskip
 \NOTE{Byline blinded for review}
@@ -1317,7 +1318,8 @@ Of the inputs we tried adding, Boston's influenza wastewater series raised the
 correlation by 0.089 at 4 weeks, in all 14 neighborhoods, but lowered it by
 0.017 at 1 week. The series begins in July 2024 and covers under half of the
 training period, so the 4-week gain is uncertain, and wastewater was not part of
-the evaluated model. Statewide vaccination uptake also helped at 4 weeks
+the evaluated model. It also begins after the training period of every unseen
+Boston season (the latest ends in May 2024), so it could not be tested there. Statewide vaccination uptake also helped at 4 weeks
 (0.041). Neighborhood COVID-19 and RSV rates with COVID-19 wastewater made
 forecasts worse at every horizon. Links weighted by public transit ridership,
 measured in a separate study, changed the correlation by $-0.001$, $-0.007$, and

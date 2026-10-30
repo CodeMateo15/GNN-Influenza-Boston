@@ -34,18 +34,18 @@
 \begin{document}
 
 \begin{center}
-{\Large\bfseries Combining Temporal, Environmental, Demographic, and Geospatial
-Information to Forecast Influenza by Neighborhood: A Graph Neural Network in 3
-US Cities\par}
+{\Large\bfseries Forecasting Emergency Department Visits for Influenza-Like Illness by
+Neighborhood With a Graph Neural Network: Contributions of Spatial,
+Environmental, and Demographic Information\par}
 \end{center}
 
 \section*{Abstract}
 
 Health departments act by neighborhood, but most influenza forecasts cover
-states or regions. We asked whether a graph neural network
-combining each neighborhood's recent trajectory, weather, demographic
-measures, and a map of neighboring areas improves neighborhood forecasts, and
-which part accounts for any gain. We forecast emergency department visits for
+states or regions. We tested which information improves
+neighborhood forecasts from a graph neural network given each neighborhood's
+recent trajectory, weather, demographic measures, and a map of neighboring
+areas. We forecast emergency department visits for
 influenza-like illness 1, 2, and 4 weeks ahead in Boston, Massachusetts (14
 neighborhoods, 2022--2025); Columbus, Ohio (17 areas, 2024--2025); and Chicago,
 Illinois (58 ZIP codes, 2022--2026), on seasons not used in design, with equal tuning,
@@ -55,8 +55,7 @@ tuned recurrent neural network matched it 1 week ahead. Removing the map raised
 error by 4\% to 11\% in Boston and 4\% to 7\% in Chicago, clearly at 1 week in
 every season; removing weather or demographics changed error by under 4\%. Maps
 from public boundary files matched a hand-drawn one, and a Boston-trained model
-forecast Columbus as well as a local model. Of the 3 components, only the map
-clearly lowered error.
+forecast Columbus as well as a local model. Among the inputs to the integrated model, the map of neighboring areas contributed most to neighborhood forecasts.
 
 \bigskip
 \noindent\textbf{Keywords:} forecasting; graph neural networks; influenza, human;
@@ -111,7 +110,7 @@ forecasting studies, models drew mainly on surveillance series, 6 used
 weather, and none reported demographic or neighboring-area
 inputs.\cite{chretien2014scoping} Graph neural networks, which pass
 information along a map of connections, offer a way to combine all of them in
-a single model.\cite{kipf2017gcn,jin2023stgnn} Graph models have reported gains
+a single model.\cite{kipf2017gcn,jin2023stgnn,aje2025primer} Graph models have reported gains
 for influenza across regions\cite{deng2020colagnn,xie2023epignn,zhu2024gast,luo2025novel}
 and for COVID-19 across German districts,\cite{fritz2022combining} but the
 evidence is mixed. In forecasting hubs, many models failed to beat simple
@@ -124,14 +123,13 @@ artificial intelligence for epidemics is hard to judge\cite{kraemer2025ai} and
 that retrospective tests can overstate real-world
 accuracy.\cite{kamyshnyi2026review}
 
-It is therefore unclear whether combining temporal, environmental,
-demographic, and geospatial information in a graph neural network improves
-neighborhood-level forecasts in a city like Boston, and where any gain comes
-from. We addressed this question by forecasting
+It is therefore unclear which of these kinds of information improve
+neighborhood-level forecasts from a graph neural network in a city like
+Boston. We addressed this question by forecasting
 neighborhood ED visit rates for ILI 1, 2, and 4 weeks ahead in Boston's 14
-neighborhoods. We asked 1) whether the combined model outperforms simple and
-machine learning comparison models; 2) how much each component (environmental,
-demographic, and geospatial) adds to its forecasts; and 3) whether the map can
+neighborhoods. We asked 1) whether a graph neural network given all 4 outperforms simple
+and machine learning comparison models; 2) which components (environmental,
+demographic, and geospatial) lower its error; and 3) whether the map can
 be built from public boundary files and whether a model trained in one city
 can forecast another. To limit the usual ways a new model can look better than
 it is, we tested on seasons never used in design,\cite{tashman2000outofsample}
@@ -157,11 +155,10 @@ data.\cite{areaflu2026package}
 
 \subsection*{Setting and data}
 
-Table~\ref{tab:data} summarizes the 3 cities. The Boston Public Health
+Table~\ref{tab:data} summarizes the 3 cities: Boston, Columbus, and Chicago. The Boston Public Health
 Commission publishes the weekly rate of ED visits for ILI per 100,000
 residents for 14 neighborhoods;\cite{bphc2026dashboard} ED visits track
-laboratory-confirmed influenza closely, including by age
-group.\cite{olson2007ed} Suppressed weeks with small counts were treated as
+laboratory-confirmed influenza closely.\cite{olson2007ed} Suppressed weeks with small counts were treated as
 missing, not zero. Columbus Public Health provided visit-level ED records,
 which we aggregated to 17 planning areas and divided by American Community
 Survey population.\cite{census2023acs} The Chicago Department of Public Health
@@ -207,7 +204,7 @@ $^{c}$ Used to design the model and not reported as evidence.
 Boston and Chicago data are public weekly aggregates; Columbus records were
 deidentified and aggregated to weekly area counts before analysis.
 
-\subsection*{Four kinds of information}
+\subsection*{Model inputs}
 
 The model received 4 kinds of information for each area and week (Figure 1C).
 \textit{Temporal}: the area's rate over the past 16 weeks, a flag for
@@ -264,21 +261,19 @@ sign, which points to an output box of 23 quantiles 1, 2, and 4 weeks ahead.
 
 \medskip
 
-\subsection*{The neighborhood map}
+\subsection*{Neighborhood map}
 
 Each city is a map in which every area is a point and 2 areas are linked when
-they share a border (Figure 1A). So that areas at the edge of a city do not
-look as if they had no neighbors on one side, the map also includes
-surrounding areas that are never forecast or scored (7 in Boston, 5 in
+they share a border (Figure 1A). The map also includes surrounding areas, never
+forecast or scored, so that edge areas have neighbors on every side (7 in Boston, 5 in
 Columbus, and 1 in Chicago; Appendix S1).
 
 Boston's map was first drawn by hand. To test whether a new city could skip
 that step, we also built it from public boundary
 files,\cite{boston2026boundaries,census2023tigerweb,chicago2026zipboundaries}
 treating 2 areas as neighbors when their boundaries share an edge rather than
-only a corner. Building neighbor lists from census boundary files is standard
-in spatial disease mapping, as is adding links across water by
-hand,\cite{morris2019bym} as we did for the Charles River and Boston Harbor.
+only a corner. Adding links across water by hand is standard in disease
+mapping;\cite{morris2019bym} we did so for the Charles River and Boston Harbor.
 Besides shared borders, which also reach 2 and 3 borders away at decreasing
 weight, the default map links neighborhoods whose past influenza curves were
 highly correlated (before the test season only) and neighborhoods with
@@ -366,7 +361,7 @@ The 2025--2026 season in Boston and Columbus was used to design the model
 (the development season; Appendix S1) and is not reported as evidence. The
 other seasons were never used in design: 2022--2023, 2023--2024, and 2024--2025 in Boston and
 2024--2025 in Columbus. Chicago was added after the design was fixed, so all 4
-of its seasons, 2022--2023 through 2025--2026, are unseen (Figure 1B).
+of its seasons are unseen (Figure 1B).
 Influenza nearly disappeared during the first year of the COVID-19
 pandemic,\cite{olsen2020decreased} so Columbus models used weeks from July
 2022 onward, leaving 1 unseen season; Boston and Chicago models used their
@@ -380,10 +375,7 @@ S1).
 
 \subsection*{Scoring}
 
-Our main measure answers the question: How far off was the forecast, counting
-both its best guess and how honest its range was? This is the weighted
-interval score (WIS), the scoring rule used by FluSight and the COVID-19
-Forecast Hubs.\cite{bracher2021interval,mathis2024flusight} Each forecast gives
+We used the weighted interval score (WIS) to measure forecast accuracy, accounting for both the point forecast and the width and accuracy of its prediction interval. WIS is the scoring rule used by FluSight and the COVID-19 Forecast Hubs.\cite{bracher2021interval,mathis2024flusight} Each forecast gives
 a median $m$ and $K = 11$ central intervals $[l_k, u_k]$ (98\% to 10\%); for
 observed value $y$,
 \begin{equation*}
@@ -405,7 +397,7 @@ correlation between forecast and observed rates score only the best guess, so
 they are secondary. We checked calibration by asking how often the observed
 value fell inside the 50\% and 95\% forecast intervals.\cite{gneiting2007proper}
 
-To compare 2 models within a season, we asked whether the gap between them
+To compare any pair of models within a season, we asked whether the gap between them
 could be explained by which weeks the season happened to contain. We averaged
 WIS over areas for each week, resampled blocks of 4 consecutive weeks for a
 95\% confidence interval (2,000 resamples),\cite{kunsch1989bootstrap} and used
@@ -452,7 +444,7 @@ outputs, and text; and take full responsibility for the content.
 %==========================================================================
 \section*{Results}
 
-\subsection*{How well the combined model forecasts}
+\subsection*{How well the full model forecasts}
 
 In Boston, the graph neural network had the lowest mean WIS of the comparison
 models at every horizon (Table~\ref{tab:boston}): 5.13 per 100,000 at 1 week, 6.47 at 2
@@ -620,8 +612,7 @@ fallen.
 
 \subsection*{What each component adds}
 
-Which kinds of information account for the graph neural network's lead?
-Removing the map raised error the most (Table~\ref{tab:components}; Figure
+To identify which kinds of information account for the graph neural network’s lead, we removed each in turn. Removing the map raised error the most (Table~\ref{tab:components}; Figure
 5C; Appendix S1, Table S15). In Boston, error rose by 10.8\% at 1
 week, 3.8\% at 2 weeks, and 5.6\% at 4 weeks, and the increase was clear in all
 3 seasons at 1 week and in 2 of 3 at 2 and 4 weeks. Averaged over the 3
@@ -734,8 +725,7 @@ the map reduced error everywhere.
 
 \medskip
 
-Removing weather or the demographic measures changed little (Figure 5A and B).
-In Boston, error changed by $-$0.9\% to $+$2.1\%, and 1 of 18 week-level
+Removing the environmental features or the demographic features did not consistently change forecast error (Figure 5A and B). In Boston, error changed by $-$0.9\% to $+$2.1\%, and 1 of 18 week-level
 comparisons was clear (demographics, 2022--2023, 1 week). In Chicago, the
 version without demographics never differed clearly from the full model, and
 the version without weather was clearly better in 3 of 12 comparisons and
@@ -745,14 +735,13 @@ Removing all 3 at once, so that the model saw only each area's own past
 rates, cost about as much as removing the map alone; relative WIS was within
 0.01 of the no-map version's in every city and horizon (Figure 5D).
 
-Did this version forecast like the comparison models that use only an
-area's own history? Not by the criterion we set in
-advance: its relative WIS was 1\% to 9\% below the seasonal blend's (within 5\%
+The past-rates-only version forecast better than the comparison models that
+use only an area's own history, failing the criterion we set in advance:
+its relative WIS was 1\% to 9\% below the seasonal blend's (within 5\%
 in 4 of 9 city and horizon pairs), and it was clearly better than the seasonal
 blend in 12 of 24 season and horizon comparisons, never clearly worse
 (Appendix S1, Table S16). It also had less error than seasonal ARIMA in Boston
-and Columbus and was within 3\% of it in Chicago, while the tuned LSTM, which
-reads all areas' series together, had less error than it at 1 week in Boston
+and Columbus and was within 3\% of it in Chicago, while the tuned LSTM had less error than it at 1 week in Boston
 and Chicago. Learning from past rates adds a little; the map adds most of
 the rest. On the
 development season, weather had appeared to help slightly, which the unseen
@@ -760,7 +749,7 @@ seasons did not confirm (Appendix S1, Table S17).
 
 \subsection*{Transferability}
 
-Can a new city skip drawing the map by hand? The hand-drawn Boston map had 18
+Automatically built maps performed as well as the hand-drawn Boston map. It had 18
 or 19 of its 23 borders right compared with the 2 automatically built maps, and
 replacing it made no clear difference in any of 36 week-level comparisons,
 including for a model whose only spatial information is the map
@@ -800,7 +789,7 @@ $^{d}$ Uses shared borders only and learns no additional links, so the map is
 its only spatial information.
 \end{table}
 
-Can a model trained in one city forecast another? A Boston-trained model
+Transfer between cities worked in Columbus but not consistently elsewhere. A Boston-trained model
 applied to Columbus with no local training had a mean WIS of 3.90, 5.08, and
 6.45 at 1, 2, and 4 weeks, against 4.11, 5.18, and 6.49 for the same model
 trained in Columbus, with no clear difference (Table~\ref{tab:transfer}). In
@@ -860,23 +849,20 @@ levels.
 %==========================================================================
 \section*{Discussion}
 
-On seasons never used to design it, a graph neural network combining each
+On seasons never used to design it, a graph neural network given each
 neighborhood's recent trajectory, weather, demographic measures, and a map of
 neighboring areas forecast ED visits for ILI with 18\% to 28\% less error than
-persistence in Boston and 17\% to 19\% less in Chicago. Nearly all of the
-combination's value over a model given only past rates came from the map;
-removing weather or demographic measures changed error by a few percent at
-most. The margin over strong alternatives was modest: a tuned LSTM that sees
-every neighborhood's series but no map matched the graph neural network 1 week
+persistence in Boston and 17\% to 19\% less in Chicago.
+Its gain over a model given only past rates was attributable to the map; removing the environmental or demographic features changed error by $-$0.9\% to $+$2.1\% in Boston, so in these data they added no consistent benefit. The margin over strong alternatives was modest: a tuned LSTM with no map
+matched the graph neural network 1 week
 ahead in Boston, and in Columbus, with 1 unseen season, no gain was clear.
 
-Why would the map matter when weather and demographics do not? Each area's
+One explanation for why the map mattered when the environmental and demographic features did not is how the inputs were prepared. Each area's
 series was scaled by its own mean, so fixed differences between neighborhoods,
 the kind the demographic measures describe, were absorbed before the model saw
 them. Neighborhoods in one city share nearly the same weather, and its seasonal
 part is already carried by the baseline; humidity and temperature shape when
-seasons occur,\cite{shaman2009humidity,lowen2014humidity} but given recent
-rates and the time of year, little was left for them to explain. The map, by
+seasons occur,\cite{shaman2009humidity,lowen2014humidity} but given recent rates and the time of year, they may have had little additional information to offer. The map, by
 contrast, tells the model what is happening now in nearby areas, from which
 influenza tends to arrive.\cite{gog2014pandemic,pei2018spatial} That the
 LSTM also beat the version with past rates only suggests the gain comes from
@@ -885,8 +871,7 @@ other areas' series more than from the particular map.
 Linking areas gave little for New York City neighborhoods and for dengue in
 Sri Lankan districts,\cite{yang2016nyc,gogovi2026spatial} whereas here the map's gain was
 clear at the neighborhood scale in 2 of 3 cities, including Chicago, which had
-4 times as many areas and a different measure and played no part in the
-design. As in forecasting hubs, where gains over simple baselines have varied
+4 times as many areas and played no part in the design. As in forecasting hubs, where gains over simple baselines have varied
 over time,\cite{mathis2024flusight,cramer2022covid} the advantage over the
 tuned LSTM varied, small in Boston but clear at 1 week in 3 of 4 Chicago
 seasons.
@@ -900,14 +885,13 @@ with their own. For alerts, a forecast's probability of crossing a threshold
 is more useful than its best guess, which falls short of peaks. An
 open-source Python package runs the forecasts and a check against persistence
 on a department's own data; once trained, its weekly forecasts take about a
-minute on a laptop (Appendix S1, Table S19). With this study's model, it reproduced the
-Boston evaluation within 0.4\% mean WIS in all 27 model, season, and horizon
-comparisons;\cite{areaflu2026package} by default it leaves out the
-demographic measures and links, which changed error little here.
+minute on a laptop (Appendix S1, Table S19). With this study's model it reproduced the
+Boston evaluation within 0.4\% mean WIS;\cite{areaflu2026package} by default
+it leaves out the demographic measures and links.
 
 This study has limitations. Components were removed one at a time, so weather
-and demographic measures might matter together, in cities with more varied
-climate, or as measures that change over time, such as vaccination coverage.
+and demographic measures might matter together or in cities with more varied
+climate.
 Every model, like persistence, ran about \textit{h} weeks behind the observed
 curve at \textit{h} weeks ahead, so the gains come from forecasting the size of
 the epidemic, not its turns; earlier warning likely needs leading signals such
@@ -921,16 +905,20 @@ WIS is on the scale of the rates, high-rate neighborhoods and weeks weigh
 most,\cite{bosse2023transformed} and ED visits for ILI capture people who seek
 emergency care, not all infections.
 
-Next steps are a real-time test in the 2026--2027 season, now under way with
-weekly forecasts posted publicly (see Data Availability), ensembles of
-models,\cite{reich2019ensemble,sherratt2023european} and wastewater as an
-input.
+Next steps are the real-time test under way in 2026--2027 (see Data
+Availability), ensembles of
+models,\cite{reich2019ensemble,sherratt2023european} and new inputs and
+places. Boston's influenza wastewater series began in July 2024, too late to
+train any unseen season's model (Appendix S1). Neighborhood vaccination
+coverage, held by health departments but not public, may help where fixed
+demographics did not. Cities abroad, such as Buenos Aires, Argentina, would
+test how far the map's gain generalizes.
 
 Neighborhood-level influenza forecasts 1 to 4 weeks ahead are feasible from
-routine ED surveillance. Of the components we combined with each area's own
-history, only the map linking neighboring areas clearly lowered error; it can
-be built from public boundary files, and weather and demographic measures
-added little.
+routine ED surveillance. Of the components added to each area's own history,
+only the map linking neighboring areas clearly lowered error. It can be built
+from public boundary files, while weather and demographic measures added
+little.
 
 %==========================================================================
 \clearpage

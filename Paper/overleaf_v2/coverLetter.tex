@@ -1,0 +1,60 @@
+% coverLetter.tex -- cover letter for the AJE submission. Not seen by reviewers.
+% Keep the title below identical to the one in main.txt and titlepage.txt.
+
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8\baselineskip}
+\pagestyle{empty}
+
+\newcommand{\papertitle}{Forecasting Emergency Department Visits for Influenza-Like Illness by
+Neighborhood With a Graph Neural Network: Contributions of Spatial,
+Environmental, and Demographic Information}
+
+\begin{document}
+
+October 30, 2026
+
+Dear Editors,
+
+We submit our manuscript, ``\papertitle,'' for consideration as a Practice of
+Epidemiology article in the \textit{American Journal of Epidemiology}'s special
+collection ``Artificial Intelligence in Health: From Pattern Discovery to
+Population Inference.''
+
+Health departments act on influenza neighborhood by neighborhood, but most
+forecasts cover states or regions. We forecast emergency department visits for
+influenza-like illness 1, 2, and 4 weeks ahead in Boston's 14 neighborhoods and
+repeated the analysis in Columbus and Chicago. Our graph neural network uses
+each neighborhood's recent trajectory, weather, demographic measures, and a map
+of neighboring areas. On seasons not used in design, it had 18\% to 28\% less
+error than persistence in Boston. Removing one input at a time showed that the
+map accounted for this gain; weather and demographics did not.
+
+We think the work will interest the journal's readers because it tests, on
+held-out seasons and against equally tuned comparison models, whether
+neighborhood forecasts are accurate enough to guide local public health action,
+and which information makes them so. The models are released as an open-source
+package that a health department can run on a laptop.
+
+This manuscript has not been published and is not under consideration
+elsewhere. All authors have approved it, and none has a conflict of interest to
+declare. If the manuscript is accepted, we intend to publish open access, with
+article processing charges covered through Northeastern University Library's
+agreement with Oxford University Press.
+
+Thank you for your consideration.
+
+Sincerely,
+
+Mateo Biggs, on behalf of both authors\\
+Khoury College of Computer Sciences, Northeastern University\\
+360 Huntington Avenue, Boston, MA 02115\\
+\href{mailto:biggs.m@northeastern.edu}{biggs.m@northeastern.edu}
+
+\end{document}

@@ -41,7 +41,7 @@ with the AJE fixes, is `overleaf_v2/references.bib`.
 | `rodriguez2022datacentric` | Rodríguez et al. 2022 | Survey of epidemic forecasting. Not cited in the draft. | `3rd Closest/Data-Centric Epidemic Forecasting.pdf` |
 | `kraemer2025ai` ✓ | Kraemer et al. 2025, *Nature* 638:623 | The main review of AI for epidemics. Cite it for "the added value is hard to evaluate", not for "backtests overstate". | `Nearest Neighbors/Artificial Intelligence for Modelling Infectious Disease Epidemics - PMC.pdf` |
 | `kamyshnyi2026review` ✓ | Kamyshnyi et al. 2026, *Rev Med Virol* 36:e70107 ("Forecasting Influenza Epidemics and Pandemics in the Age of AI…") | Backtests "may overestimate actual performance in real-world settings". | `2nd Closest/Forecasting Influenza Epidemics and Pandemics in the Age of AI and Machine Learning.pdf` |
-| `aje2022dengue`, `aje2024rt`, `aje2025primer` | *AJE* 2022, 2024, 2025 | Style models for AJE. Not cited. `aje2025primer` could back the one-line explanation of neural networks. | `aje2022dengue`: `AJE Papers/Machine-Learning–Based Forecasting of Dengue Fever.pdf`<br>`aje2024rt`: `AJE Papers/Using the near real-time effective reproduction number.pdf`<br>`aje2025primer`: `AJE Papers/A primer on neural networks.pdf` |
+| `aje2022dengue`, `aje2024rt`, `aje2025primer` | *AJE* 2022, 2024, 2025 | Style models for AJE. `aje2022dengue`, `aje2024rt` not cited. `aje2025primer` is cited. | `aje2022dengue`: `AJE Papers/Machine-Learning–Based Forecasting of Dengue Fever.pdf`<br>`aje2024rt`: `AJE Papers/Using the near real-time effective reproduction number.pdf`<br>`aje2025primer`: `AJE Papers/A primer on neural networks.pdf` |
 
 ## Related work: graph models and spatial spread
 
@@ -111,19 +111,17 @@ rook contiguity.
 | `morris2019bym` ✓ | Morris et al. 2019, *Spat Spatiotemporal Epidemiol* 31:100301 | Neighbor lists from census boundary files, plus a hand-added link across Jamaica Bay. **Note:** `poly2nb` defaults to queen contiguity (corners count), so do not claim that Morris used "the same rule". | `Methods/Bayesian Hierarchical Spatial Models, Implementing the Besag York Mollié Model in Stan.pdf` |
 | `besag1991bayesian` | Besag, York & Mollié 1991, "Bayesian image restoration, with two applications in spatial statistics", *Ann Inst Stat Math* 43(1):1-20, doi:10.1007/BF00116466 (the PDF runs to p. 59 with the published discussion) | The original neighborhood-adjacency disease-mapping model that Morris implements. Optional, as a second citation for adjacency-based spatial models. | `3rd Closest/Bayesian Image Restoration, With Two Applications in Spatial Statistics.pdf` |
 
-## Discussion: portability and transfer
+## Discussion:
 
 | Key | Citation | Use it for | PDF file |
 |---|---|---|---|
 | `panagopoulos2021transfer` ✓ | Panagopoulos et al. 2021, AAAI 35:4838 | Graph model transferred between countries (COVID-19). | `Discussion/Transfer Graph Neural Networks for Pandemic Forecasting.pdf` |
 | `shea2020multiple` | Shea et al. 2020 | Multiple models for outbreak management. Not cited. | `2nd Closest/Harnessing multiple models for outbreak management.pdf` |
+| `sill2009` | Sill et al. 2009 | Blending the predictions of multiple machine learning models. Not cited | `Discussion/Feature-Weighted Linear Stacking.pdf` |
 
 ## Added for the second draft (2026-10-23)
 
-Found for sentences in the new Introduction (`notes/newIntro.txt`) that the bib did
-not cover. Each DOI was resolved on Crossref and title, authors, journal, year,
-volume and pages matched; each abstract was read on PubMed (EpiGNN via
-Consensus). Cited in `overleaf_v2/`. **No PDFs yet** for any of them.
+Cited in `overleaf_v2/`.
 
 | Key | Citation | Use it for | PDF file |
 |---|---|---|---|
@@ -217,6 +215,7 @@ folder.
 ## Optional or weak
 
 - `anter2025ai` (the book's ch. 15): generic AI background. Not cited. PDF: `2nd Closest/Influenza Virus Methods and Protocols.pdf` (ch. 15)
+- `medlock2009`: optimizing flu vaccination based on age groups. Not cited. PDF: `Discussion/Optimizing Influenza Vaccine Distribution.pdf`
 - `huddleston2020h3n2`: forecasts viral evolution. Not cited. PDF: `3rd Closest/Integrating genotypes and phenotypes improves long-term forecasts of seasonal influenza A/H3N2 evolution.pdf`
 - `kermack1927contribution`: SIR, from the old draft. Not cited. PDF: `3rd Closest/A contribution to the mathematical theory of epidemics.pdf`
 - **Probably drop** (not cited):
