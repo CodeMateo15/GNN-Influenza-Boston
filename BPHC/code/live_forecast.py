@@ -21,7 +21,8 @@
     python live_forecast.py score --city boston     # light: once new weeks arrive
 
 A copy of areaFluForecast's scripts/live_forecast.py (v1.2.0), standalone:
-it needs only the installed package.
+it needs only the installed package. One change from the package's copy: a plain
+message, instead of a traceback, when the city folder from step 1 is missing.
 
 Layout under --root (default live/):
     <city>/                         the data, as export_sample.py --out writes it
@@ -81,8 +82,22 @@ SEASON_GLOB = "[0-9][0-9][0-9][0-9]_[0-9][0-9]"
 
 # --- helpers -------------------------------------------------------------------
 
+def city_folder(args) -> Path:
+    """The city folder step 1 writes (--data, else <root>/<city>), checked to exist."""
+    folder = Path(args.data or Path(args.root) / args.city)
+    if not (folder / "city.json").is_file():
+        # Added in the BPHC copy: the package would stop with a bare FileNotFoundError.
+        raise SystemExit(
+            f"No city data in {folder}/ (no city.json). Run step 1 first, from this same folder:\n"
+            f'    python bphc_export_to_city.py --export "BPHC Dashboard Influenza Neighborhood.csv"'
+            f" --out {folder}\n"
+            "It writes the folder this command reads. If you already ran it somewhere else, run "
+            "this from that folder, or pass the folder it wrote with --data.")
+    return folder
+
+
 def load(args) -> af.City:
-    city = af.load_city(args.data or Path(args.root) / args.city, name=args.city)
+    city = af.load_city(city_folder(args), name=args.city)
     if getattr(args, "as_of", None):
         as_of = pd.Timestamp(args.as_of)
         weather = {k: v.loc[:as_of] for k, v in city.weather.items()} if city.weather else None
@@ -367,7 +382,7 @@ def assemble(args) -> None:
 
 def score(args) -> None:
     root = Path(args.root)
-    truth = af.load_city(args.data or root / args.city, name=args.city, weather=False).rates
+    truth = af.load_city(city_folder(args), name=args.city, weather=False).rates
     actual = truth.stack().rename("actual").rename_axis(["target_date", "area"]).reset_index()
     frames = []
     for path in sorted(root.glob(f"{SEASON_GLOB}/{args.city}/*/forecast.csv")):

@@ -360,21 +360,24 @@ Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-06-07,2026-06-13,23,85,count,
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-06-14,2026-06-20,24,72,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-06-21,2026-06-27,25,54,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-06-28,2026-07-04,26,60,count,NA
-Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-07-05,2026-07-11,27,48,count,NA
+Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-07-05,2026-07-11,27,49,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-07-12,2026-07-18,28,47,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-07-19,2026-07-25,29,62,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-07-26,2026-08-01,30,67,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-08-09,2026-08-15,32,56,count,NA
-Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-08-16,2026-08-22,33,48,count,NA
+Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-08-16,2026-08-22,33,49,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-08-23,2026-08-29,34,66,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-08-30,2026-09-05,35,62,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-09-06,2026-09-12,36,90,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-09-13,2026-09-19,37,115,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-09-20,2026-09-26,38,135,count,NA
-Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-09-27,2026-10-03,39,119,count,NA
+Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-09-27,2026-10-03,39,120,count,NA
 Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-10-04,2026-10-10,40,161,count,NA
-Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-10-11,2026-10-17,41,163,count,NA
-Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-10-18,2026-10-24,42,161,count,NA
+Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-10-11,2026-10-17,41,164,count,NA
+Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-10-18,2026-10-24,42,193,count,NA
+Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-10-25,2026-10-31,43,257,count,NA
+Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-11-01,2026-11-07,44,465,count,NA
+Influenza,Flu ILI ED Visit,ILI Count, ,Weekly,2026-11-08,2026-11-14,45,357,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2017-12-31,2018-01-06,1,10468,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2018-01-07,2018-01-13,2,13601,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2018-01-14,2018-01-20,3,13576,count,NA
@@ -586,7 +589,7 @@ Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-07-09,2023-07-15,28,14464,coun
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-07-16,2023-07-22,29,14103,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-07-23,2023-07-29,30,14141,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-07-30,2023-08-05,31,13958,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-08-06,2023-08-12,32,14510,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-08-06,2023-08-12,32,14511,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-08-13,2023-08-19,33,13932,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-08-20,2023-08-26,34,13997,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2023-08-27,2023-09-02,35,13958,count,NA
@@ -642,7 +645,7 @@ Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-08-04,2024-08-10,32,13586,coun
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-08-18,2024-08-24,34,13058,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-08-25,2024-08-31,35,13387,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-09-01,2024-09-07,36,13264,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-09-08,2024-09-14,37,13673,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-09-08,2024-09-14,37,13674,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-09-15,2024-09-21,38,14096,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-09-22,2024-09-28,39,13834,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2024-09-29,2024-10-05,40,13853,count,NA
@@ -701,7 +704,7 @@ Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-10-05,2025-10-11,41,13580,coun
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-10-12,2025-10-18,42,12891,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-10-19,2025-10-25,43,13669,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-10-26,2025-11-01,44,12942,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-11-02,2025-11-08,45,12900,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-11-02,2025-11-08,45,12901,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-11-09,2025-11-15,46,12770,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-11-16,2025-11-22,47,13005,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2025-11-23,2025-11-29,48,11643,count,NA
@@ -714,43 +717,46 @@ Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-01-04,2026-01-10,1,13617,count
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-01-11,2026-01-17,2,13445,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-01-18,2026-01-24,3,12490,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-01-25,2026-01-31,4,10891,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-02-01,2026-02-07,5,12381,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-02-01,2026-02-07,5,12382,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-02-08,2026-02-14,6,12760,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-02-15,2026-02-21,7,12803,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-02-22,2026-02-28,8,11664,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-03-01,2026-03-07,9,12597,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-03-08,2026-03-14,10,13247,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-03-15,2026-03-21,11,13285,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-03-22,2026-03-28,12,13461,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-03-29,2026-04-04,13,13161,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-04-05,2026-04-11,14,13446,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-04-12,2026-04-18,15,13858,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-03-22,2026-03-28,12,13462,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-03-29,2026-04-04,13,13162,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-04-05,2026-04-11,14,13447,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-04-12,2026-04-18,15,13859,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-04-19,2026-04-25,16,12936,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-04-26,2026-05-02,17,13380,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-05-03,2026-05-09,18,13417,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-05-03,2026-05-09,18,13420,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-05-10,2026-05-16,19,13514,count,NA
 Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-05-17,2026-05-23,20,13751,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-05-24,2026-05-30,21,12504,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-05-31,2026-06-06,22,11909,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-06-07,2026-06-13,23,12226,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-06-14,2026-06-20,24,12166,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-06-21,2026-06-27,25,11673,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-06-28,2026-07-04,26,11346,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-07-05,2026-07-11,27,12287,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-07-12,2026-07-18,28,12327,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-07-19,2026-07-25,29,11899,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-07-26,2026-08-01,30,11863,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-08-09,2026-08-15,32,12125,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-08-16,2026-08-22,33,12017,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-08-23,2026-08-29,34,11899,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-08-30,2026-09-05,35,12088,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-09-06,2026-09-12,36,12354,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-09-13,2026-09-19,37,12649,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-09-20,2026-09-26,38,12111,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-09-27,2026-10-03,39,12530,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-10-04,2026-10-10,40,12983,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-10-11,2026-10-17,41,12568,count,NA
-Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-10-18,2026-10-24,42,10614,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-05-24,2026-05-30,21,12506,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-05-31,2026-06-06,22,11910,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-06-07,2026-06-13,23,12231,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-06-14,2026-06-20,24,12168,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-06-21,2026-06-27,25,11676,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-06-28,2026-07-04,26,11351,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-07-05,2026-07-11,27,12289,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-07-12,2026-07-18,28,12328,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-07-19,2026-07-25,29,11900,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-07-26,2026-08-01,30,11864,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-08-09,2026-08-15,32,12127,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-08-16,2026-08-22,33,12018,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-08-23,2026-08-29,34,11903,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-08-30,2026-09-05,35,12091,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-09-06,2026-09-12,36,12355,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-09-13,2026-09-19,37,12656,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-09-20,2026-09-26,38,12115,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-09-27,2026-10-03,39,12534,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-10-04,2026-10-10,40,12995,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-10-11,2026-10-17,41,12578,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-10-18,2026-10-24,42,12680,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-10-25,2026-10-31,43,12525,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-11-01,2026-11-07,44,13327,count,NA
+Influenza,Flu ILI ED Visit,ED Count, ,Weekly,2026-11-08,2026-11-14,45,11357,count,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2017-12-31,2018-01-06,1,3.99,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2018-01-07,2018-01-13,2,4.15,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2018-01-14,2018-01-20,3,5.16,percentage,NA
@@ -1108,25 +1114,28 @@ Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-05-10,2026-05-16,19,1.09,pe
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-05-17,2026-05-23,20,1,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-05-24,2026-05-30,21,0.79,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-05-31,2026-06-06,22,0.56,percentage,NA
-Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-06-07,2026-06-13,23,0.7,percentage,NA
+Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-06-07,2026-06-13,23,0.69,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-06-14,2026-06-20,24,0.59,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-06-21,2026-06-27,25,0.46,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-06-28,2026-07-04,26,0.53,percentage,NA
-Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-07-05,2026-07-11,27,0.39,percentage,NA
+Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-07-05,2026-07-11,27,0.4,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-07-12,2026-07-18,28,0.38,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-07-19,2026-07-25,29,0.52,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-07-26,2026-08-01,30,0.56,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-08-09,2026-08-15,32,0.46,percentage,NA
-Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-08-16,2026-08-22,33,0.4,percentage,NA
+Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-08-16,2026-08-22,33,0.41,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-08-23,2026-08-29,34,0.55,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-08-30,2026-09-05,35,0.51,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-09-06,2026-09-12,36,0.73,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-09-13,2026-09-19,37,0.91,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-09-20,2026-09-26,38,1.11,percentage,NA
-Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-09-27,2026-10-03,39,0.95,percentage,NA
+Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-09-27,2026-10-03,39,0.96,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-10-04,2026-10-10,40,1.24,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-10-11,2026-10-17,41,1.3,percentage,NA
 Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-10-18,2026-10-24,42,1.52,percentage,NA
+Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-10-25,2026-10-31,43,2.05,percentage,NA
+Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-11-01,2026-11-07,44,3.49,percentage,NA
+Influenza,Flu ILI ED Visit,ili ed perc, ,Weekly,2026-11-08,2026-11-14,45,3.14,percentage,NA
 Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2017-12-31,2018-01-06,1,54,count,2017 - 2018
 Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2018-01-07,2018-01-13,2,75,count,2017 - 2018
 Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2018-01-14,2018-01-20,3,97,count,2017 - 2018
@@ -1502,4 +1511,7 @@ Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-09-20,2026-09-26,38,19,count,
 Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-09-27,2026-10-03,39,30,count,2025 - 2026
 Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-10-04,2026-10-10,40,29,count,2026 - 2027
 Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-10-11,2026-10-17,41,49,count,2026 - 2027
-Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-10-18,2026-10-24,42,61,count,2026 - 2027
+Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-10-18,2026-10-24,42,69,count,2026 - 2027
+Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-10-25,2026-10-31,43,146,count,2026 - 2027
+Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-11-01,2026-11-07,44,254,count,2026 - 2027
+Influenza,Flu ILI ED Visit,flu cases, ,Weekly,2026-11-08,2026-11-14,45,190,count,2026 - 2027

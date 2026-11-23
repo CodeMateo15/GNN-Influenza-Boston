@@ -104,6 +104,7 @@ Influenza,Characteristics of Flu,Gender,Female,Monthly,2026-06-01,2026-06-30,0,4
 Influenza,Characteristics of Flu,Gender,Female,Monthly,2026-07-01,2026-07-31,0,4,count,NA
 Influenza,Characteristics of Flu,Gender,Female,Monthly,2026-08-01,2026-08-31,0,16,count,NA
 Influenza,Characteristics of Flu,Gender,Female,Monthly,2026-09-01,2026-09-30,0,39,count,NA
+Influenza,Characteristics of Flu,Gender,Female,Monthly,2026-10-01,2026-10-31,0,180,count,NA
 Influenza,Characteristics of Flu,Gender,Male,Monthly,2018-01-01,2018-01-31,0,228,count,NA
 Influenza,Characteristics of Flu,Gender,Male,Monthly,2018-02-01,2018-02-28,0,276,count,NA
 Influenza,Characteristics of Flu,Gender,Male,Monthly,2018-03-01,2018-03-31,0,105,count,NA
@@ -209,6 +210,7 @@ Influenza,Characteristics of Flu,Gender,Male,Monthly,2026-06-01,2026-06-30,0,8,c
 Influenza,Characteristics of Flu,Gender,Male,Monthly,2026-07-01,2026-07-31,0,2,count,NA
 Influenza,Characteristics of Flu,Gender,Male,Monthly,2026-08-01,2026-08-31,0,8,count,NA
 Influenza,Characteristics of Flu,Gender,Male,Monthly,2026-09-01,2026-09-30,0,34,count,NA
+Influenza,Characteristics of Flu,Gender,Male,Monthly,2026-10-01,2026-10-31,0,121,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Asian,Monthly,2018-01-01,2018-01-31,0,16,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Asian,Monthly,2018-02-01,2018-02-28,0,34,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Asian,Monthly,2018-03-01,2018-03-31,0,12,count,NA
@@ -314,6 +316,7 @@ Influenza,Characteristics of Flu,Race/Ethnicity,Asian,Monthly,2026-06-01,2026-06
 Influenza,Characteristics of Flu,Race/Ethnicity,Asian,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Asian,Monthly,2026-08-01,2026-08-31,0,1,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Asian,Monthly,2026-09-01,2026-09-30,0,11,count,NA
+Influenza,Characteristics of Flu,Race/Ethnicity,Asian,Monthly,2026-10-01,2026-10-31,0,20,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Black,Monthly,2018-01-01,2018-01-31,0,184,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Black,Monthly,2018-02-01,2018-02-28,0,324,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Black,Monthly,2018-03-01,2018-03-31,0,79,count,NA
@@ -419,6 +422,7 @@ Influenza,Characteristics of Flu,Race/Ethnicity,Black,Monthly,2026-06-01,2026-06
 Influenza,Characteristics of Flu,Race/Ethnicity,Black,Monthly,2026-07-01,2026-07-31,0,2,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Black,Monthly,2026-08-01,2026-08-31,0,8,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Black,Monthly,2026-09-01,2026-09-30,0,20,count,NA
+Influenza,Characteristics of Flu,Race/Ethnicity,Black,Monthly,2026-10-01,2026-10-31,0,79,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Latinx,Monthly,2018-01-01,2018-01-31,0,57,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Latinx,Monthly,2018-02-01,2018-02-28,0,63,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Latinx,Monthly,2018-03-01,2018-03-31,0,15,count,NA
@@ -524,6 +528,7 @@ Influenza,Characteristics of Flu,Race/Ethnicity,Latinx,Monthly,2026-06-01,2026-0
 Influenza,Characteristics of Flu,Race/Ethnicity,Latinx,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Latinx,Monthly,2026-08-01,2026-08-31,0,4,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Latinx,Monthly,2026-09-01,2026-09-30,0,10,count,NA
+Influenza,Characteristics of Flu,Race/Ethnicity,Latinx,Monthly,2026-10-01,2026-10-31,0,69,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Multirace,Monthly,2018-01-01,2018-01-31,0,2,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Multirace,Monthly,2018-02-01,2018-02-28,0,16,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Multirace,Monthly,2018-03-01,2018-03-31,0,4,count,NA
@@ -629,6 +634,7 @@ Influenza,Characteristics of Flu,Race/Ethnicity,Multirace,Monthly,2026-06-01,202
 Influenza,Characteristics of Flu,Race/Ethnicity,Multirace,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Multirace,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Multirace,Monthly,2026-09-01,2026-09-30,0,0,count,NA
+Influenza,Characteristics of Flu,Race/Ethnicity,Multirace,Monthly,2026-10-01,2026-10-31,0,0,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Other,Monthly,2018-01-01,2018-01-31,0,68,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Other,Monthly,2018-02-01,2018-02-28,0,100,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Other,Monthly,2018-03-01,2018-03-31,0,22,count,NA
@@ -734,6 +740,7 @@ Influenza,Characteristics of Flu,Race/Ethnicity,Other,Monthly,2026-06-01,2026-06
 Influenza,Characteristics of Flu,Race/Ethnicity,Other,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Other,Monthly,2026-08-01,2026-08-31,0,9,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Other,Monthly,2026-09-01,2026-09-30,0,6,count,NA
+Influenza,Characteristics of Flu,Race/Ethnicity,Other,Monthly,2026-10-01,2026-10-31,0,27,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Unknown,Monthly,2018-01-01,2018-01-31,0,15,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Unknown,Monthly,2018-02-01,2018-02-28,0,19,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Unknown,Monthly,2018-03-01,2018-03-31,0,4,count,NA
@@ -839,6 +846,7 @@ Influenza,Characteristics of Flu,Race/Ethnicity,Unknown,Monthly,2026-06-01,2026-
 Influenza,Characteristics of Flu,Race/Ethnicity,Unknown,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Unknown,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,Unknown,Monthly,2026-09-01,2026-09-30,0,5,count,NA
+Influenza,Characteristics of Flu,Race/Ethnicity,Unknown,Monthly,2026-10-01,2026-10-31,0,13,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,White,Monthly,2018-01-01,2018-01-31,0,149,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,White,Monthly,2018-02-01,2018-02-28,0,145,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,White,Monthly,2018-03-01,2018-03-31,0,69,count,NA
@@ -944,6 +952,7 @@ Influenza,Characteristics of Flu,Race/Ethnicity,White,Monthly,2026-06-01,2026-06
 Influenza,Characteristics of Flu,Race/Ethnicity,White,Monthly,2026-07-01,2026-07-31,0,3,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,White,Monthly,2026-08-01,2026-08-31,0,2,count,NA
 Influenza,Characteristics of Flu,Race/Ethnicity,White,Monthly,2026-09-01,2026-09-30,0,21,count,NA
+Influenza,Characteristics of Flu,Race/Ethnicity,White,Monthly,2026-10-01,2026-10-31,0,93,count,NA
 Influenza,Characteristics of Flu,Age Group,<5,Monthly,2018-01-01,2018-01-31,0,25,count,NA
 Influenza,Characteristics of Flu,Age Group,<5,Monthly,2018-02-01,2018-02-28,0,71,count,NA
 Influenza,Characteristics of Flu,Age Group,<5,Monthly,2018-03-01,2018-03-31,0,11,count,NA
@@ -1049,6 +1058,7 @@ Influenza,Characteristics of Flu,Age Group,<5,Monthly,2026-06-01,2026-06-30,0,2,
 Influenza,Characteristics of Flu,Age Group,<5,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Age Group,<5,Monthly,2026-08-01,2026-08-31,0,3,count,NA
 Influenza,Characteristics of Flu,Age Group,<5,Monthly,2026-09-01,2026-09-30,0,8,count,NA
+Influenza,Characteristics of Flu,Age Group,<5,Monthly,2026-10-01,2026-10-31,0,53,count,NA
 Influenza,Characteristics of Flu,Age Group,18-44,Monthly,2018-01-01,2018-01-31,0,175,count,NA
 Influenza,Characteristics of Flu,Age Group,18-44,Monthly,2018-02-01,2018-02-28,0,221,count,NA
 Influenza,Characteristics of Flu,Age Group,18-44,Monthly,2018-03-01,2018-03-31,0,54,count,NA
@@ -1154,6 +1164,7 @@ Influenza,Characteristics of Flu,Age Group,18-44,Monthly,2026-06-01,2026-06-30,0
 Influenza,Characteristics of Flu,Age Group,18-44,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Age Group,18-44,Monthly,2026-08-01,2026-08-31,0,13,count,NA
 Influenza,Characteristics of Flu,Age Group,18-44,Monthly,2026-09-01,2026-09-30,0,26,count,NA
+Influenza,Characteristics of Flu,Age Group,18-44,Monthly,2026-10-01,2026-10-31,0,66,count,NA
 Influenza,Characteristics of Flu,Age Group,45-64,Monthly,2018-01-01,2018-01-31,0,148,count,NA
 Influenza,Characteristics of Flu,Age Group,45-64,Monthly,2018-02-01,2018-02-28,0,175,count,NA
 Influenza,Characteristics of Flu,Age Group,45-64,Monthly,2018-03-01,2018-03-31,0,67,count,NA
@@ -1259,6 +1270,7 @@ Influenza,Characteristics of Flu,Age Group,45-64,Monthly,2026-06-01,2026-06-30,0
 Influenza,Characteristics of Flu,Age Group,45-64,Monthly,2026-07-01,2026-07-31,0,2,count,NA
 Influenza,Characteristics of Flu,Age Group,45-64,Monthly,2026-08-01,2026-08-31,0,4,count,NA
 Influenza,Characteristics of Flu,Age Group,45-64,Monthly,2026-09-01,2026-09-30,0,15,count,NA
+Influenza,Characteristics of Flu,Age Group,45-64,Monthly,2026-10-01,2026-10-31,0,57,count,NA
 Influenza,Characteristics of Flu,Age Group,5-17,Monthly,2018-01-01,2018-01-31,0,33,count,NA
 Influenza,Characteristics of Flu,Age Group,5-17,Monthly,2018-02-01,2018-02-28,0,85,count,NA
 Influenza,Characteristics of Flu,Age Group,5-17,Monthly,2018-03-01,2018-03-31,0,16,count,NA
@@ -1364,6 +1376,7 @@ Influenza,Characteristics of Flu,Age Group,5-17,Monthly,2026-06-01,2026-06-30,0,
 Influenza,Characteristics of Flu,Age Group,5-17,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Age Group,5-17,Monthly,2026-08-01,2026-08-31,0,2,count,NA
 Influenza,Characteristics of Flu,Age Group,5-17,Monthly,2026-09-01,2026-09-30,0,6,count,NA
+Influenza,Characteristics of Flu,Age Group,5-17,Monthly,2026-10-01,2026-10-31,0,68,count,NA
 Influenza,Characteristics of Flu,Age Group,65+,Monthly,2018-01-01,2018-01-31,0,110,count,NA
 Influenza,Characteristics of Flu,Age Group,65+,Monthly,2018-02-01,2018-02-28,0,149,count,NA
 Influenza,Characteristics of Flu,Age Group,65+,Monthly,2018-03-01,2018-03-31,0,57,count,NA
@@ -1469,6 +1482,7 @@ Influenza,Characteristics of Flu,Age Group,65+,Monthly,2026-06-01,2026-06-30,0,0
 Influenza,Characteristics of Flu,Age Group,65+,Monthly,2026-07-01,2026-07-31,0,2,count,NA
 Influenza,Characteristics of Flu,Age Group,65+,Monthly,2026-08-01,2026-08-31,0,2,count,NA
 Influenza,Characteristics of Flu,Age Group,65+,Monthly,2026-09-01,2026-09-30,0,18,count,NA
+Influenza,Characteristics of Flu,Age Group,65+,Monthly,2026-10-01,2026-10-31,0,57,count,NA
 Influenza,Characteristics of Flu,Neighborhood,Allston/Brighton,Monthly,2018-01-01,2018-01-31,0,16,count,Allston/Brighton
 Influenza,Characteristics of Flu,Neighborhood,Allston/Brighton,Monthly,2018-02-01,2018-02-28,0,31,count,Allston/Brighton
 Influenza,Characteristics of Flu,Neighborhood,Allston/Brighton,Monthly,2018-03-01,2018-03-31,0,8,count,Allston/Brighton
@@ -1574,6 +1588,7 @@ Influenza,Characteristics of Flu,Neighborhood,Allston/Brighton,Monthly,2026-06-0
 Influenza,Characteristics of Flu,Neighborhood,Allston/Brighton,Monthly,2026-07-01,2026-07-31,0,1,count,Allston/Brighton
 Influenza,Characteristics of Flu,Neighborhood,Allston/Brighton,Monthly,2026-08-01,2026-08-31,0,3,count,Allston/Brighton
 Influenza,Characteristics of Flu,Neighborhood,Allston/Brighton,Monthly,2026-09-01,2026-09-30,0,4,count,Allston/Brighton
+Influenza,Characteristics of Flu,Neighborhood,Allston/Brighton,Monthly,2026-10-01,2026-10-31,0,12,count,Allston/Brighton
 Influenza,Characteristics of Flu,Neighborhood,BB/BH/DT/NE/WE,Monthly,2018-01-01,2018-01-31,0,36,count,"Back Bay, Beacon Hill, Downtown, North End, West End"
 Influenza,Characteristics of Flu,Neighborhood,BB/BH/DT/NE/WE,Monthly,2018-02-01,2018-02-28,0,24,count,"Back Bay, Beacon Hill, Downtown, North End, West End"
 Influenza,Characteristics of Flu,Neighborhood,BB/BH/DT/NE/WE,Monthly,2018-03-01,2018-03-31,0,14,count,"Back Bay, Beacon Hill, Downtown, North End, West End"
@@ -1679,6 +1694,7 @@ Influenza,Characteristics of Flu,Neighborhood,BB/BH/DT/NE/WE,Monthly,2026-06-01,
 Influenza,Characteristics of Flu,Neighborhood,BB/BH/DT/NE/WE,Monthly,2026-07-01,2026-07-31,0,1,count,"Back Bay, Beacon Hill, Downtown, North End, West End"
 Influenza,Characteristics of Flu,Neighborhood,BB/BH/DT/NE/WE,Monthly,2026-08-01,2026-08-31,0,1,count,"Back Bay, Beacon Hill, Downtown, North End, West End"
 Influenza,Characteristics of Flu,Neighborhood,BB/BH/DT/NE/WE,Monthly,2026-09-01,2026-09-30,0,3,count,"Back Bay, Beacon Hill, Downtown, North End, West End"
+Influenza,Characteristics of Flu,Neighborhood,BB/BH/DT/NE/WE,Monthly,2026-10-01,2026-10-31,0,12,count,"Back Bay, Beacon Hill, Downtown, North End, West End"
 Influenza,Characteristics of Flu,Neighborhood,Charlestown,Monthly,2018-01-01,2018-01-31,0,13,count,Charlestown
 Influenza,Characteristics of Flu,Neighborhood,Charlestown,Monthly,2018-02-01,2018-02-28,0,24,count,Charlestown
 Influenza,Characteristics of Flu,Neighborhood,Charlestown,Monthly,2018-03-01,2018-03-31,0,3,count,Charlestown
@@ -1784,6 +1800,7 @@ Influenza,Characteristics of Flu,Neighborhood,Charlestown,Monthly,2026-06-01,202
 Influenza,Characteristics of Flu,Neighborhood,Charlestown,Monthly,2026-07-01,2026-07-31,0,0,count,Charlestown
 Influenza,Characteristics of Flu,Neighborhood,Charlestown,Monthly,2026-08-01,2026-08-31,0,0,count,Charlestown
 Influenza,Characteristics of Flu,Neighborhood,Charlestown,Monthly,2026-09-01,2026-09-30,0,4,count,Charlestown
+Influenza,Characteristics of Flu,Neighborhood,Charlestown,Monthly,2026-10-01,2026-10-31,0,15,count,Charlestown
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02121, 02125)",Monthly,2018-01-01,2018-01-31,0,82,count,"Dorchester (02121, 02125)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02121, 02125)",Monthly,2018-02-01,2018-02-28,0,126,count,"Dorchester (02121, 02125)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02121, 02125)",Monthly,2018-03-01,2018-03-31,0,29,count,"Dorchester (02121, 02125)"
@@ -1889,6 +1906,7 @@ Influenza,Characteristics of Flu,Neighborhood,"Dor (02121, 02125)",Monthly,2026-
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02121, 02125)",Monthly,2026-07-01,2026-07-31,0,0,count,"Dorchester (02121, 02125)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02121, 02125)",Monthly,2026-08-01,2026-08-31,0,3,count,"Dorchester (02121, 02125)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02121, 02125)",Monthly,2026-09-01,2026-09-30,0,15,count,"Dorchester (02121, 02125)"
+Influenza,Characteristics of Flu,Neighborhood,"Dor (02121, 02125)",Monthly,2026-10-01,2026-10-31,0,32,count,"Dorchester (02121, 02125)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02122, 02124)",Monthly,2018-01-01,2018-01-31,0,56,count,"Dorchester (02122, 02124)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02122, 02124)",Monthly,2018-02-01,2018-02-28,0,88,count,"Dorchester (02122, 02124)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02122, 02124)",Monthly,2018-03-01,2018-03-31,0,27,count,"Dorchester (02122, 02124)"
@@ -1994,6 +2012,7 @@ Influenza,Characteristics of Flu,Neighborhood,"Dor (02122, 02124)",Monthly,2026-
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02122, 02124)",Monthly,2026-07-01,2026-07-31,0,1,count,"Dorchester (02122, 02124)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02122, 02124)",Monthly,2026-08-01,2026-08-31,0,5,count,"Dorchester (02122, 02124)"
 Influenza,Characteristics of Flu,Neighborhood,"Dor (02122, 02124)",Monthly,2026-09-01,2026-09-30,0,10,count,"Dorchester (02122, 02124)"
+Influenza,Characteristics of Flu,Neighborhood,"Dor (02122, 02124)",Monthly,2026-10-01,2026-10-31,0,30,count,"Dorchester (02122, 02124)"
 Influenza,Characteristics of Flu,Neighborhood,East Boston,Monthly,2018-01-01,2018-01-31,0,16,count,East Boston
 Influenza,Characteristics of Flu,Neighborhood,East Boston,Monthly,2018-02-01,2018-02-28,0,26,count,East Boston
 Influenza,Characteristics of Flu,Neighborhood,East Boston,Monthly,2018-03-01,2018-03-31,0,3,count,East Boston
@@ -2099,6 +2118,7 @@ Influenza,Characteristics of Flu,Neighborhood,East Boston,Monthly,2026-06-01,202
 Influenza,Characteristics of Flu,Neighborhood,East Boston,Monthly,2026-07-01,2026-07-31,0,1,count,East Boston
 Influenza,Characteristics of Flu,Neighborhood,East Boston,Monthly,2026-08-01,2026-08-31,0,1,count,East Boston
 Influenza,Characteristics of Flu,Neighborhood,East Boston,Monthly,2026-09-01,2026-09-30,0,3,count,East Boston
+Influenza,Characteristics of Flu,Neighborhood,East Boston,Monthly,2026-10-01,2026-10-31,0,14,count,East Boston
 Influenza,Characteristics of Flu,Neighborhood,Fenway,Monthly,2018-01-01,2018-01-31,0,18,count,Fenway
 Influenza,Characteristics of Flu,Neighborhood,Fenway,Monthly,2018-02-01,2018-02-28,0,23,count,Fenway
 Influenza,Characteristics of Flu,Neighborhood,Fenway,Monthly,2018-03-01,2018-03-31,0,10,count,Fenway
@@ -2204,6 +2224,7 @@ Influenza,Characteristics of Flu,Neighborhood,Fenway,Monthly,2026-06-01,2026-06-
 Influenza,Characteristics of Flu,Neighborhood,Fenway,Monthly,2026-07-01,2026-07-31,0,1,count,Fenway
 Influenza,Characteristics of Flu,Neighborhood,Fenway,Monthly,2026-08-01,2026-08-31,0,3,count,Fenway
 Influenza,Characteristics of Flu,Neighborhood,Fenway,Monthly,2026-09-01,2026-09-30,0,4,count,Fenway
+Influenza,Characteristics of Flu,Neighborhood,Fenway,Monthly,2026-10-01,2026-10-31,0,11,count,Fenway
 Influenza,Characteristics of Flu,Neighborhood,Hyde Park,Monthly,2018-01-01,2018-01-31,0,37,count,Hyde Park
 Influenza,Characteristics of Flu,Neighborhood,Hyde Park,Monthly,2018-02-01,2018-02-28,0,39,count,Hyde Park
 Influenza,Characteristics of Flu,Neighborhood,Hyde Park,Monthly,2018-03-01,2018-03-31,0,16,count,Hyde Park
@@ -2309,6 +2330,7 @@ Influenza,Characteristics of Flu,Neighborhood,Hyde Park,Monthly,2026-06-01,2026-
 Influenza,Characteristics of Flu,Neighborhood,Hyde Park,Monthly,2026-07-01,2026-07-31,0,0,count,Hyde Park
 Influenza,Characteristics of Flu,Neighborhood,Hyde Park,Monthly,2026-08-01,2026-08-31,0,2,count,Hyde Park
 Influenza,Characteristics of Flu,Neighborhood,Hyde Park,Monthly,2026-09-01,2026-09-30,0,4,count,Hyde Park
+Influenza,Characteristics of Flu,Neighborhood,Hyde Park,Monthly,2026-10-01,2026-10-31,0,19,count,Hyde Park
 Influenza,Characteristics of Flu,Neighborhood,Jamaica Plain,Monthly,2018-01-01,2018-01-31,0,26,count,Jamaica Plain
 Influenza,Characteristics of Flu,Neighborhood,Jamaica Plain,Monthly,2018-02-01,2018-02-28,0,40,count,Jamaica Plain
 Influenza,Characteristics of Flu,Neighborhood,Jamaica Plain,Monthly,2018-03-01,2018-03-31,0,15,count,Jamaica Plain
@@ -2414,6 +2436,7 @@ Influenza,Characteristics of Flu,Neighborhood,Jamaica Plain,Monthly,2026-06-01,2
 Influenza,Characteristics of Flu,Neighborhood,Jamaica Plain,Monthly,2026-07-01,2026-07-31,0,0,count,Jamaica Plain
 Influenza,Characteristics of Flu,Neighborhood,Jamaica Plain,Monthly,2026-08-01,2026-08-31,0,0,count,Jamaica Plain
 Influenza,Characteristics of Flu,Neighborhood,Jamaica Plain,Monthly,2026-09-01,2026-09-30,0,6,count,Jamaica Plain
+Influenza,Characteristics of Flu,Neighborhood,Jamaica Plain,Monthly,2026-10-01,2026-10-31,0,21,count,Jamaica Plain
 Influenza,Characteristics of Flu,Neighborhood,Mattapan,Monthly,2018-01-01,2018-01-31,0,17,count,Mattapan
 Influenza,Characteristics of Flu,Neighborhood,Mattapan,Monthly,2018-02-01,2018-02-28,0,42,count,Mattapan
 Influenza,Characteristics of Flu,Neighborhood,Mattapan,Monthly,2018-03-01,2018-03-31,0,6,count,Mattapan
@@ -2519,6 +2542,7 @@ Influenza,Characteristics of Flu,Neighborhood,Mattapan,Monthly,2026-06-01,2026-0
 Influenza,Characteristics of Flu,Neighborhood,Mattapan,Monthly,2026-07-01,2026-07-31,0,0,count,Mattapan
 Influenza,Characteristics of Flu,Neighborhood,Mattapan,Monthly,2026-08-01,2026-08-31,0,3,count,Mattapan
 Influenza,Characteristics of Flu,Neighborhood,Mattapan,Monthly,2026-09-01,2026-09-30,0,3,count,Mattapan
+Influenza,Characteristics of Flu,Neighborhood,Mattapan,Monthly,2026-10-01,2026-10-31,0,19,count,Mattapan
 Influenza,Characteristics of Flu,Neighborhood,Roslindale,Monthly,2018-01-01,2018-01-31,0,26,count,Roslindale
 Influenza,Characteristics of Flu,Neighborhood,Roslindale,Monthly,2018-02-01,2018-02-28,0,26,count,Roslindale
 Influenza,Characteristics of Flu,Neighborhood,Roslindale,Monthly,2018-03-01,2018-03-31,0,8,count,Roslindale
@@ -2624,6 +2648,7 @@ Influenza,Characteristics of Flu,Neighborhood,Roslindale,Monthly,2026-06-01,2026
 Influenza,Characteristics of Flu,Neighborhood,Roslindale,Monthly,2026-07-01,2026-07-31,0,0,count,Roslindale
 Influenza,Characteristics of Flu,Neighborhood,Roslindale,Monthly,2026-08-01,2026-08-31,0,0,count,Roslindale
 Influenza,Characteristics of Flu,Neighborhood,Roslindale,Monthly,2026-09-01,2026-09-30,0,2,count,Roslindale
+Influenza,Characteristics of Flu,Neighborhood,Roslindale,Monthly,2026-10-01,2026-10-31,0,28,count,Roslindale
 Influenza,Characteristics of Flu,Neighborhood,Roxbury,Monthly,2018-01-01,2018-01-31,0,54,count,Roxbury
 Influenza,Characteristics of Flu,Neighborhood,Roxbury,Monthly,2018-02-01,2018-02-28,0,93,count,Roxbury
 Influenza,Characteristics of Flu,Neighborhood,Roxbury,Monthly,2018-03-01,2018-03-31,0,24,count,Roxbury
@@ -2729,6 +2754,7 @@ Influenza,Characteristics of Flu,Neighborhood,Roxbury,Monthly,2026-06-01,2026-06
 Influenza,Characteristics of Flu,Neighborhood,Roxbury,Monthly,2026-07-01,2026-07-31,0,1,count,Roxbury
 Influenza,Characteristics of Flu,Neighborhood,Roxbury,Monthly,2026-08-01,2026-08-31,0,0,count,Roxbury
 Influenza,Characteristics of Flu,Neighborhood,Roxbury,Monthly,2026-09-01,2026-09-30,0,5,count,Roxbury
+Influenza,Characteristics of Flu,Neighborhood,Roxbury,Monthly,2026-10-01,2026-10-31,0,27,count,Roxbury
 Influenza,Characteristics of Flu,Neighborhood,South Boston,Monthly,2018-01-01,2018-01-31,0,26,count,South Boston
 Influenza,Characteristics of Flu,Neighborhood,South Boston,Monthly,2018-02-01,2018-02-28,0,30,count,South Boston
 Influenza,Characteristics of Flu,Neighborhood,South Boston,Monthly,2018-03-01,2018-03-31,0,14,count,South Boston
@@ -2834,6 +2860,7 @@ Influenza,Characteristics of Flu,Neighborhood,South Boston,Monthly,2026-06-01,20
 Influenza,Characteristics of Flu,Neighborhood,South Boston,Monthly,2026-07-01,2026-07-31,0,0,count,South Boston
 Influenza,Characteristics of Flu,Neighborhood,South Boston,Monthly,2026-08-01,2026-08-31,0,1,count,South Boston
 Influenza,Characteristics of Flu,Neighborhood,South Boston,Monthly,2026-09-01,2026-09-30,0,2,count,South Boston
+Influenza,Characteristics of Flu,Neighborhood,South Boston,Monthly,2026-10-01,2026-10-31,0,9,count,South Boston
 Influenza,Characteristics of Flu,Neighborhood,South End,Monthly,2018-01-01,2018-01-31,0,56,count,South End
 Influenza,Characteristics of Flu,Neighborhood,South End,Monthly,2018-02-01,2018-02-28,0,63,count,South End
 Influenza,Characteristics of Flu,Neighborhood,South End,Monthly,2018-03-01,2018-03-31,0,22,count,South End
@@ -2939,6 +2966,7 @@ Influenza,Characteristics of Flu,Neighborhood,South End,Monthly,2026-06-01,2026-
 Influenza,Characteristics of Flu,Neighborhood,South End,Monthly,2026-07-01,2026-07-31,0,0,count,South End
 Influenza,Characteristics of Flu,Neighborhood,South End,Monthly,2026-08-01,2026-08-31,0,1,count,South End
 Influenza,Characteristics of Flu,Neighborhood,South End,Monthly,2026-09-01,2026-09-30,0,4,count,South End
+Influenza,Characteristics of Flu,Neighborhood,South End,Monthly,2026-10-01,2026-10-31,0,25,count,South End
 Influenza,Characteristics of Flu,Neighborhood,West Roxbury,Monthly,2018-01-01,2018-01-31,0,12,count,West Roxbury
 Influenza,Characteristics of Flu,Neighborhood,West Roxbury,Monthly,2018-02-01,2018-02-28,0,26,count,West Roxbury
 Influenza,Characteristics of Flu,Neighborhood,West Roxbury,Monthly,2018-03-01,2018-03-31,0,6,count,West Roxbury
@@ -3044,6 +3072,7 @@ Influenza,Characteristics of Flu,Neighborhood,West Roxbury,Monthly,2026-06-01,20
 Influenza,Characteristics of Flu,Neighborhood,West Roxbury,Monthly,2026-07-01,2026-07-31,0,0,count,West Roxbury
 Influenza,Characteristics of Flu,Neighborhood,West Roxbury,Monthly,2026-08-01,2026-08-31,0,1,count,West Roxbury
 Influenza,Characteristics of Flu,Neighborhood,West Roxbury,Monthly,2026-09-01,2026-09-30,0,4,count,West Roxbury
+Influenza,Characteristics of Flu,Neighborhood,West Roxbury,Monthly,2026-10-01,2026-10-31,0,27,count,West Roxbury
 Influenza,Characteristics of Flu,Zip,02108,Monthly,2018-01-01,2018-01-31,0,4,count,NA
 Influenza,Characteristics of Flu,Zip,02108,Monthly,2018-02-01,2018-02-28,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02108,Monthly,2018-03-01,2018-03-31,0,0,count,NA
@@ -3149,6 +3178,7 @@ Influenza,Characteristics of Flu,Zip,02108,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02108,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02108,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02108,Monthly,2026-09-01,2026-09-30,0,0,count,NA
+Influenza,Characteristics of Flu,Zip,02108,Monthly,2026-10-01,2026-10-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02109,Monthly,2018-01-01,2018-01-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02109,Monthly,2018-02-01,2018-02-28,0,3,count,NA
 Influenza,Characteristics of Flu,Zip,02109,Monthly,2018-03-01,2018-03-31,0,2,count,NA
@@ -3254,6 +3284,7 @@ Influenza,Characteristics of Flu,Zip,02109,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02109,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02109,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02109,Monthly,2026-09-01,2026-09-30,0,0,count,NA
+Influenza,Characteristics of Flu,Zip,02109,Monthly,2026-10-01,2026-10-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02110,Monthly,2018-01-01,2018-01-31,0,5,count,NA
 Influenza,Characteristics of Flu,Zip,02110,Monthly,2018-02-01,2018-02-28,0,2,count,NA
 Influenza,Characteristics of Flu,Zip,02110,Monthly,2018-03-01,2018-03-31,0,1,count,NA
@@ -3359,6 +3390,7 @@ Influenza,Characteristics of Flu,Zip,02110,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02110,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02110,Monthly,2026-08-01,2026-08-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02110,Monthly,2026-09-01,2026-09-30,0,1,count,NA
+Influenza,Characteristics of Flu,Zip,02110,Monthly,2026-10-01,2026-10-31,0,2,count,NA
 Influenza,Characteristics of Flu,Zip,02111,Monthly,2018-01-01,2018-01-31,0,6,count,NA
 Influenza,Characteristics of Flu,Zip,02111,Monthly,2018-02-01,2018-02-28,0,9,count,NA
 Influenza,Characteristics of Flu,Zip,02111,Monthly,2018-03-01,2018-03-31,0,3,count,NA
@@ -3464,6 +3496,7 @@ Influenza,Characteristics of Flu,Zip,02111,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02111,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02111,Monthly,2026-08-01,2026-08-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02111,Monthly,2026-09-01,2026-09-30,0,0,count,NA
+Influenza,Characteristics of Flu,Zip,02111,Monthly,2026-10-01,2026-10-31,0,6,count,NA
 Influenza,Characteristics of Flu,Zip,02113,Monthly,2018-01-01,2018-01-31,0,5,count,NA
 Influenza,Characteristics of Flu,Zip,02113,Monthly,2018-02-01,2018-02-28,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02113,Monthly,2018-03-01,2018-03-31,0,3,count,NA
@@ -3569,6 +3602,7 @@ Influenza,Characteristics of Flu,Zip,02113,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02113,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02113,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02113,Monthly,2026-09-01,2026-09-30,0,0,count,NA
+Influenza,Characteristics of Flu,Zip,02113,Monthly,2026-10-01,2026-10-31,0,2,count,NA
 Influenza,Characteristics of Flu,Zip,02114,Monthly,2018-01-01,2018-01-31,0,8,count,NA
 Influenza,Characteristics of Flu,Zip,02114,Monthly,2018-02-01,2018-02-28,0,10,count,NA
 Influenza,Characteristics of Flu,Zip,02114,Monthly,2018-03-01,2018-03-31,0,3,count,NA
@@ -3674,6 +3708,7 @@ Influenza,Characteristics of Flu,Zip,02114,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02114,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02114,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02114,Monthly,2026-09-01,2026-09-30,0,1,count,NA
+Influenza,Characteristics of Flu,Zip,02114,Monthly,2026-10-01,2026-10-31,0,5,count,NA
 Influenza,Characteristics of Flu,Zip,02115,Monthly,2018-01-01,2018-01-31,0,15,count,NA
 Influenza,Characteristics of Flu,Zip,02115,Monthly,2018-02-01,2018-02-28,0,14,count,NA
 Influenza,Characteristics of Flu,Zip,02115,Monthly,2018-03-01,2018-03-31,0,7,count,NA
@@ -3779,6 +3814,7 @@ Influenza,Characteristics of Flu,Zip,02115,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02115,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02115,Monthly,2026-08-01,2026-08-31,0,3,count,NA
 Influenza,Characteristics of Flu,Zip,02115,Monthly,2026-09-01,2026-09-30,0,3,count,NA
+Influenza,Characteristics of Flu,Zip,02115,Monthly,2026-10-01,2026-10-31,0,7,count,NA
 Influenza,Characteristics of Flu,Zip,02116,Monthly,2018-01-01,2018-01-31,0,13,count,NA
 Influenza,Characteristics of Flu,Zip,02116,Monthly,2018-02-01,2018-02-28,0,9,count,NA
 Influenza,Characteristics of Flu,Zip,02116,Monthly,2018-03-01,2018-03-31,0,5,count,NA
@@ -3884,6 +3920,7 @@ Influenza,Characteristics of Flu,Zip,02116,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02116,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02116,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02116,Monthly,2026-09-01,2026-09-30,0,1,count,NA
+Influenza,Characteristics of Flu,Zip,02116,Monthly,2026-10-01,2026-10-31,0,3,count,NA
 Influenza,Characteristics of Flu,Zip,02118,Monthly,2018-01-01,2018-01-31,0,50,count,NA
 Influenza,Characteristics of Flu,Zip,02118,Monthly,2018-02-01,2018-02-28,0,54,count,NA
 Influenza,Characteristics of Flu,Zip,02118,Monthly,2018-03-01,2018-03-31,0,19,count,NA
@@ -3989,6 +4026,7 @@ Influenza,Characteristics of Flu,Zip,02118,Monthly,2026-06-01,2026-06-30,0,1,cou
 Influenza,Characteristics of Flu,Zip,02118,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02118,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02118,Monthly,2026-09-01,2026-09-30,0,4,count,NA
+Influenza,Characteristics of Flu,Zip,02118,Monthly,2026-10-01,2026-10-31,0,19,count,NA
 Influenza,Characteristics of Flu,Zip,02119,Monthly,2018-01-01,2018-01-31,0,41,count,NA
 Influenza,Characteristics of Flu,Zip,02119,Monthly,2018-02-01,2018-02-28,0,77,count,NA
 Influenza,Characteristics of Flu,Zip,02119,Monthly,2018-03-01,2018-03-31,0,18,count,NA
@@ -4094,6 +4132,7 @@ Influenza,Characteristics of Flu,Zip,02119,Monthly,2026-06-01,2026-06-30,0,3,cou
 Influenza,Characteristics of Flu,Zip,02119,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02119,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02119,Monthly,2026-09-01,2026-09-30,0,2,count,NA
+Influenza,Characteristics of Flu,Zip,02119,Monthly,2026-10-01,2026-10-31,0,21,count,NA
 Influenza,Characteristics of Flu,Zip,02120,Monthly,2018-01-01,2018-01-31,0,13,count,NA
 Influenza,Characteristics of Flu,Zip,02120,Monthly,2018-02-01,2018-02-28,0,16,count,NA
 Influenza,Characteristics of Flu,Zip,02120,Monthly,2018-03-01,2018-03-31,0,6,count,NA
@@ -4199,6 +4238,7 @@ Influenza,Characteristics of Flu,Zip,02120,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02120,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02120,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02120,Monthly,2026-09-01,2026-09-30,0,3,count,NA
+Influenza,Characteristics of Flu,Zip,02120,Monthly,2026-10-01,2026-10-31,0,6,count,NA
 Influenza,Characteristics of Flu,Zip,02121,Monthly,2018-01-01,2018-01-31,0,36,count,NA
 Influenza,Characteristics of Flu,Zip,02121,Monthly,2018-02-01,2018-02-28,0,74,count,NA
 Influenza,Characteristics of Flu,Zip,02121,Monthly,2018-03-01,2018-03-31,0,17,count,NA
@@ -4304,6 +4344,7 @@ Influenza,Characteristics of Flu,Zip,02121,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02121,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02121,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02121,Monthly,2026-09-01,2026-09-30,0,12,count,NA
+Influenza,Characteristics of Flu,Zip,02121,Monthly,2026-10-01,2026-10-31,0,17,count,NA
 Influenza,Characteristics of Flu,Zip,02122,Monthly,2018-01-01,2018-01-31,0,19,count,NA
 Influenza,Characteristics of Flu,Zip,02122,Monthly,2018-02-01,2018-02-28,0,23,count,NA
 Influenza,Characteristics of Flu,Zip,02122,Monthly,2018-03-01,2018-03-31,0,7,count,NA
@@ -4409,6 +4450,7 @@ Influenza,Characteristics of Flu,Zip,02122,Monthly,2026-06-01,2026-06-30,0,1,cou
 Influenza,Characteristics of Flu,Zip,02122,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02122,Monthly,2026-08-01,2026-08-31,0,2,count,NA
 Influenza,Characteristics of Flu,Zip,02122,Monthly,2026-09-01,2026-09-30,0,4,count,NA
+Influenza,Characteristics of Flu,Zip,02122,Monthly,2026-10-01,2026-10-31,0,8,count,NA
 Influenza,Characteristics of Flu,Zip,02124,Monthly,2018-01-01,2018-01-31,0,37,count,NA
 Influenza,Characteristics of Flu,Zip,02124,Monthly,2018-02-01,2018-02-28,0,65,count,NA
 Influenza,Characteristics of Flu,Zip,02124,Monthly,2018-03-01,2018-03-31,0,20,count,NA
@@ -4514,6 +4556,7 @@ Influenza,Characteristics of Flu,Zip,02124,Monthly,2026-06-01,2026-06-30,0,2,cou
 Influenza,Characteristics of Flu,Zip,02124,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02124,Monthly,2026-08-01,2026-08-31,0,3,count,NA
 Influenza,Characteristics of Flu,Zip,02124,Monthly,2026-09-01,2026-09-30,0,6,count,NA
+Influenza,Characteristics of Flu,Zip,02124,Monthly,2026-10-01,2026-10-31,0,22,count,NA
 Influenza,Characteristics of Flu,Zip,02125,Monthly,2018-01-01,2018-01-31,0,46,count,NA
 Influenza,Characteristics of Flu,Zip,02125,Monthly,2018-02-01,2018-02-28,0,52,count,NA
 Influenza,Characteristics of Flu,Zip,02125,Monthly,2018-03-01,2018-03-31,0,12,count,NA
@@ -4619,6 +4662,7 @@ Influenza,Characteristics of Flu,Zip,02125,Monthly,2026-06-01,2026-06-30,0,1,cou
 Influenza,Characteristics of Flu,Zip,02125,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02125,Monthly,2026-08-01,2026-08-31,0,3,count,NA
 Influenza,Characteristics of Flu,Zip,02125,Monthly,2026-09-01,2026-09-30,0,3,count,NA
+Influenza,Characteristics of Flu,Zip,02125,Monthly,2026-10-01,2026-10-31,0,15,count,NA
 Influenza,Characteristics of Flu,Zip,02126,Monthly,2018-01-01,2018-01-31,0,17,count,NA
 Influenza,Characteristics of Flu,Zip,02126,Monthly,2018-02-01,2018-02-28,0,42,count,NA
 Influenza,Characteristics of Flu,Zip,02126,Monthly,2018-03-01,2018-03-31,0,6,count,NA
@@ -4724,6 +4768,7 @@ Influenza,Characteristics of Flu,Zip,02126,Monthly,2026-06-01,2026-06-30,0,1,cou
 Influenza,Characteristics of Flu,Zip,02126,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02126,Monthly,2026-08-01,2026-08-31,0,3,count,NA
 Influenza,Characteristics of Flu,Zip,02126,Monthly,2026-09-01,2026-09-30,0,3,count,NA
+Influenza,Characteristics of Flu,Zip,02126,Monthly,2026-10-01,2026-10-31,0,19,count,NA
 Influenza,Characteristics of Flu,Zip,02127,Monthly,2018-01-01,2018-01-31,0,25,count,NA
 Influenza,Characteristics of Flu,Zip,02127,Monthly,2018-02-01,2018-02-28,0,29,count,NA
 Influenza,Characteristics of Flu,Zip,02127,Monthly,2018-03-01,2018-03-31,0,14,count,NA
@@ -4829,6 +4874,7 @@ Influenza,Characteristics of Flu,Zip,02127,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02127,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02127,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02127,Monthly,2026-09-01,2026-09-30,0,2,count,NA
+Influenza,Characteristics of Flu,Zip,02127,Monthly,2026-10-01,2026-10-31,0,7,count,NA
 Influenza,Characteristics of Flu,Zip,02128,Monthly,2018-01-01,2018-01-31,0,16,count,NA
 Influenza,Characteristics of Flu,Zip,02128,Monthly,2018-02-01,2018-02-28,0,26,count,NA
 Influenza,Characteristics of Flu,Zip,02128,Monthly,2018-03-01,2018-03-31,0,3,count,NA
@@ -4934,6 +4980,7 @@ Influenza,Characteristics of Flu,Zip,02128,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02128,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02128,Monthly,2026-08-01,2026-08-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02128,Monthly,2026-09-01,2026-09-30,0,3,count,NA
+Influenza,Characteristics of Flu,Zip,02128,Monthly,2026-10-01,2026-10-31,0,14,count,NA
 Influenza,Characteristics of Flu,Zip,02129,Monthly,2018-01-01,2018-01-31,0,13,count,NA
 Influenza,Characteristics of Flu,Zip,02129,Monthly,2018-02-01,2018-02-28,0,24,count,NA
 Influenza,Characteristics of Flu,Zip,02129,Monthly,2018-03-01,2018-03-31,0,3,count,NA
@@ -5039,6 +5086,7 @@ Influenza,Characteristics of Flu,Zip,02129,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02129,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02129,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02129,Monthly,2026-09-01,2026-09-30,0,4,count,NA
+Influenza,Characteristics of Flu,Zip,02129,Monthly,2026-10-01,2026-10-31,0,15,count,NA
 Influenza,Characteristics of Flu,Zip,02130,Monthly,2018-01-01,2018-01-31,0,26,count,NA
 Influenza,Characteristics of Flu,Zip,02130,Monthly,2018-02-01,2018-02-28,0,40,count,NA
 Influenza,Characteristics of Flu,Zip,02130,Monthly,2018-03-01,2018-03-31,0,15,count,NA
@@ -5144,6 +5192,7 @@ Influenza,Characteristics of Flu,Zip,02130,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02130,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02130,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02130,Monthly,2026-09-01,2026-09-30,0,6,count,NA
+Influenza,Characteristics of Flu,Zip,02130,Monthly,2026-10-01,2026-10-31,0,21,count,NA
 Influenza,Characteristics of Flu,Zip,02131,Monthly,2018-01-01,2018-01-31,0,26,count,NA
 Influenza,Characteristics of Flu,Zip,02131,Monthly,2018-02-01,2018-02-28,0,26,count,NA
 Influenza,Characteristics of Flu,Zip,02131,Monthly,2018-03-01,2018-03-31,0,8,count,NA
@@ -5249,6 +5298,7 @@ Influenza,Characteristics of Flu,Zip,02131,Monthly,2026-06-01,2026-06-30,0,1,cou
 Influenza,Characteristics of Flu,Zip,02131,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02131,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02131,Monthly,2026-09-01,2026-09-30,0,2,count,NA
+Influenza,Characteristics of Flu,Zip,02131,Monthly,2026-10-01,2026-10-31,0,28,count,NA
 Influenza,Characteristics of Flu,Zip,02132,Monthly,2018-01-01,2018-01-31,0,12,count,NA
 Influenza,Characteristics of Flu,Zip,02132,Monthly,2018-02-01,2018-02-28,0,26,count,NA
 Influenza,Characteristics of Flu,Zip,02132,Monthly,2018-03-01,2018-03-31,0,6,count,NA
@@ -5354,6 +5404,7 @@ Influenza,Characteristics of Flu,Zip,02132,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02132,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02132,Monthly,2026-08-01,2026-08-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02132,Monthly,2026-09-01,2026-09-30,0,4,count,NA
+Influenza,Characteristics of Flu,Zip,02132,Monthly,2026-10-01,2026-10-31,0,27,count,NA
 Influenza,Characteristics of Flu,Zip,02134,Monthly,2018-01-01,2018-01-31,0,4,count,NA
 Influenza,Characteristics of Flu,Zip,02134,Monthly,2018-02-01,2018-02-28,0,8,count,NA
 Influenza,Characteristics of Flu,Zip,02134,Monthly,2018-03-01,2018-03-31,0,4,count,NA
@@ -5459,6 +5510,7 @@ Influenza,Characteristics of Flu,Zip,02134,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02134,Monthly,2026-07-01,2026-07-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02134,Monthly,2026-08-01,2026-08-31,0,2,count,NA
 Influenza,Characteristics of Flu,Zip,02134,Monthly,2026-09-01,2026-09-30,0,1,count,NA
+Influenza,Characteristics of Flu,Zip,02134,Monthly,2026-10-01,2026-10-31,0,3,count,NA
 Influenza,Characteristics of Flu,Zip,02135,Monthly,2018-01-01,2018-01-31,0,12,count,NA
 Influenza,Characteristics of Flu,Zip,02135,Monthly,2018-02-01,2018-02-28,0,23,count,NA
 Influenza,Characteristics of Flu,Zip,02135,Monthly,2018-03-01,2018-03-31,0,4,count,NA
@@ -5564,6 +5616,7 @@ Influenza,Characteristics of Flu,Zip,02135,Monthly,2026-06-01,2026-06-30,0,1,cou
 Influenza,Characteristics of Flu,Zip,02135,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02135,Monthly,2026-08-01,2026-08-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02135,Monthly,2026-09-01,2026-09-30,0,2,count,NA
+Influenza,Characteristics of Flu,Zip,02135,Monthly,2026-10-01,2026-10-31,0,9,count,NA
 Influenza,Characteristics of Flu,Zip,02136,Monthly,2018-01-01,2018-01-31,0,37,count,NA
 Influenza,Characteristics of Flu,Zip,02136,Monthly,2018-02-01,2018-02-28,0,39,count,NA
 Influenza,Characteristics of Flu,Zip,02136,Monthly,2018-03-01,2018-03-31,0,16,count,NA
@@ -5669,6 +5722,7 @@ Influenza,Characteristics of Flu,Zip,02136,Monthly,2026-06-01,2026-06-30,0,1,cou
 Influenza,Characteristics of Flu,Zip,02136,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02136,Monthly,2026-08-01,2026-08-31,0,2,count,NA
 Influenza,Characteristics of Flu,Zip,02136,Monthly,2026-09-01,2026-09-30,0,4,count,NA
+Influenza,Characteristics of Flu,Zip,02136,Monthly,2026-10-01,2026-10-31,0,19,count,NA
 Influenza,Characteristics of Flu,Zip,02163,Monthly,2018-01-01,2018-01-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02163,Monthly,2018-02-01,2018-02-28,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02163,Monthly,2018-03-01,2018-03-31,0,0,count,NA
@@ -5774,6 +5828,7 @@ Influenza,Characteristics of Flu,Zip,02163,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02163,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02163,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02163,Monthly,2026-09-01,2026-09-30,0,1,count,NA
+Influenza,Characteristics of Flu,Zip,02163,Monthly,2026-10-01,2026-10-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02199,Monthly,2018-01-01,2018-01-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02199,Monthly,2018-02-01,2018-02-28,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02199,Monthly,2018-03-01,2018-03-31,0,0,count,NA
@@ -5879,6 +5934,7 @@ Influenza,Characteristics of Flu,Zip,02199,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02199,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02199,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02199,Monthly,2026-09-01,2026-09-30,0,0,count,NA
+Influenza,Characteristics of Flu,Zip,02199,Monthly,2026-10-01,2026-10-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02210,Monthly,2018-01-01,2018-01-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02210,Monthly,2018-02-01,2018-02-28,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02210,Monthly,2018-03-01,2018-03-31,0,0,count,NA
@@ -5984,6 +6040,7 @@ Influenza,Characteristics of Flu,Zip,02210,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02210,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02210,Monthly,2026-08-01,2026-08-31,0,1,count,NA
 Influenza,Characteristics of Flu,Zip,02210,Monthly,2026-09-01,2026-09-30,0,0,count,NA
+Influenza,Characteristics of Flu,Zip,02210,Monthly,2026-10-01,2026-10-31,0,2,count,NA
 Influenza,Characteristics of Flu,Zip,02215,Monthly,2018-01-01,2018-01-31,0,3,count,NA
 Influenza,Characteristics of Flu,Zip,02215,Monthly,2018-02-01,2018-02-28,0,9,count,NA
 Influenza,Characteristics of Flu,Zip,02215,Monthly,2018-03-01,2018-03-31,0,3,count,NA
@@ -6089,3 +6146,4 @@ Influenza,Characteristics of Flu,Zip,02215,Monthly,2026-06-01,2026-06-30,0,0,cou
 Influenza,Characteristics of Flu,Zip,02215,Monthly,2026-07-01,2026-07-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02215,Monthly,2026-08-01,2026-08-31,0,0,count,NA
 Influenza,Characteristics of Flu,Zip,02215,Monthly,2026-09-01,2026-09-30,0,1,count,NA
+Influenza,Characteristics of Flu,Zip,02215,Monthly,2026-10-01,2026-10-31,0,4,count,NA

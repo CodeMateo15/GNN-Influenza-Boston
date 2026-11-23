@@ -13,7 +13,7 @@ set up so it can be dropped into a reporting pipeline.
 | `forecast_info.json` | Forecast date, unit, models, and any notes from the last build |
 | `figures/citywide_forecast.png` | Citywide forecast, one panel per model |
 | `figures/neighborhoods_forecast.png` | GNN forecast for each neighborhood |
-| `code/` | Four short scripts that run the weekly steps (see [Run it every week](#run-it-every-week)) |
+| `code/` | Short scripts that run the weekly steps (see [Run it every week](#run-it-every-week)) and make the [offline website](#offline-website) |
 
 ## What the numbers mean
 
@@ -172,22 +172,90 @@ This installs the forecasting models from PyPI
 ([areaFluForecast](https://pypi.org/project/areaFluForecast/) 1.2.0 or newer;
 loading saved models needs 1.2.0).
 
-**Each week:**
+### Each week
+
+**Run every command from `code/`,** with the virtual environment active. The
+steps pass files to each other through `code/live/`, and every path below is
+relative to `code/`. Run step 1 from one folder and step 2 from another, and
+step 2 won't find step 1's output.
+
+```
+code/live/boston/                   step 1 writes it; step 2 reads it
+code/live/2026_27/boston/<week>/    step 2 writes it; steps 3 and 4 read it
+code/live/runs/boston/              step 2's first run writes it (the backtest), later runs reuse it
+```
+
+**Step 1: turn the dashboard export into model input** (seconds)
+
+Download "Influenza Neighborhood" from the BPHC dashboard (save it anywhere), then:
 
 ```bash
-# 1. Download "Influenza Neighborhood" from the BPHC dashboard, then:
-python bphc_export_to_city.py --export "BPHC Dashboard Influenza Neighborhood.csv" --out live/boston
+python bphc_export_to_city.py --export "/path/to/BPHC Dashboard Influenza Neighborhood.csv" --out live/boston
+```
 
-# 2. Forecast, loading this season's saved GNN. Archives the forecast under
-#    live/<season>/boston/<week>/. The first run also backtests 3 past seasons
-#    (about 12 CPU-hours, once). --jobs 2 runs two weeks-ahead at a time if the
-#    computer has 2+ cores free (same numbers, about half the time).
+- **Reads** the export CSV.
+- **Writes** `live/boston/`: the weekly rates (`rates.csv`), the neighborhood
+  map and borders (`city.json`, `centroids.csv`, `edges.csv`) and the weather
+  (`weather.csv`).
+- **Needs internet** to download the weather from Open-Meteo.
+- Run it **every week, before step 2**. Step 2 forecasts from whatever is in
+  `live/boston/`, so skipping this step forecasts last week's data again.
+
+**Step 2: forecast** (about 30 CPU-minutes; the first run takes about 12 CPU-hours more)
+
+```bash
 python live_forecast.py run --city boston --models gnn_st lstm arima \
     --models-dir ../models/2026_27/boston
+```
 
-# 3. Build this folder's tables and figures from that week's forecast
+- **Reads** `live/boston/` (from step 1) and `../models/2026_27/boston/` (this
+  season's saved GNN, shipped in this folder).
+- **Writes** `live/2026_27/boston/<week>/`, one folder per forecast, named by the
+  newest week in the data (for example `2026-11-08`). The last line it prints,
+  `Outputs: ...`, is that folder.
+- **The first run** also backtests 3 past seasons into `live/runs/boston/`
+  (about 12 CPU-hours, once); later weeks reuse it.
+- `--jobs 2` forecasts two weeks-ahead at a time if 2 or more cores are free
+  (same numbers, about half the time).
+- Before a long run, set `AREAFLU_QUICK=1` to check that everything runs end to
+  end: every model is made tiny, so the numbers are meaningless but every file
+  gets written. Then delete `live/2026_27/` and `live/runs/` before the real
+  run. Otherwise the real run reuses the quick backtest for its accuracy check,
+  and refuses to overwrite the quick forecast's week folder.
+
+**Step 3: this folder's tables and figures** (seconds)
+
+```bash
 python make_bphc.py --origin live/2026_27/boston/<week> --out ..
 ```
+
+- **Reads** the folder step 2 wrote (`<week>` is its name), plus earlier weeks
+  beside it for the live accuracy.
+- **Writes** into the BPHC folder (`..`): `forecast_2week.csv`, `observed.csv`,
+  `accuracy.csv`, `forecast_info.json` and `figures/`.
+
+**Step 4 (optional): the website as one offline HTML file** (seconds; see
+[Offline website](#offline-website))
+
+```bash
+python make_site.py --origin live/2026_27/boston/<week> --out ../boston_flu_outlook.html
+```
+
+- **Reads** the same folder as step 3.
+- **Writes** one `.html` file.
+
+### Common errors
+
+| Message | What it means | Fix |
+|---|---|---|
+| `No city data in live/boston/ (no city.json)`, or in older copies `FileNotFoundError: ... 'live/boston/city.json'` | Step 2 can't find step 1's output: step 1 hasn't been run yet, or it was run from another folder or with a different `--out` | Run step 1 from `code/` with `--out live/boston`, then step 2 from `code/` |
+| `../models/2026_27/boston/manifest.json not found` | Step 2 was run from a folder other than `code/`, so `../models/...` points somewhere else | `cd` into `code/` and run it again |
+| `... holds boston 2026_27 models, but this forecast is boston 2027_28` | The data has reached a new season; the saved GNN is for the last one | Ask us for the new `models/<season>/` folder, or see "Once a season" below |
+| `live/2026_27/boston/<week> exists. Archived forecasts are never overwritten` | That week was already forecast. Usually step 1 wasn't re-run with the new export. The check comes at the end of step 2, so the run's time is spent first | Download the new export, re-run step 1, then step 2 |
+| Step 1 stops while fetching the weather | The computer can't reach Open-Meteo | Run step 1 on a computer with internet access, then copy `live/boston/` across |
+| `make_bphc: missing input ...` or `make_site: missing input ...` | `--origin` doesn't point at a folder step 2 wrote | Use the folder on step 2's `Outputs:` line |
+
+### Other options
 
 `make_bphc.py --add-forecast FILE` adds models that an archived forecast
 lacks, if they were made later from the same data. The current folder used it
@@ -207,14 +275,40 @@ are for another season, are missing a week ahead, or were trained on data that
 BPHC has since revised. Leave out `--models-dir` to retrain the GNN every week
 instead (about 4 CPU-hours).
 
-To check step 2 end to end before a long run, set `AREAFLU_QUICK=1`. This makes
-every model tiny; the numbers are meaningless but every file gets written.
+## Offline website
+
+`make_site.py` writes the whole [Boston Flu Outlook](https://codemateo15-boston-flu-outlook.share.connect.posit.cloud/)
+site as **one HTML file**, from the same archived forecast folder step 3 reads:
+
+```bash
+python make_site.py --origin live/2026_27/boston/<week> --out ../boston_flu_outlook.html
+python make_site.py --origin live/2026_27/boston --out ../boston_flu_outlook.html   # newest week
+```
+
+- **Private and offline.** Open the file in any browser (Chrome, Edge, Firefox,
+  Safari). It needs no internet connection and no server, loads nothing from
+  anywhere, and sends nothing anywhere. It can sit on a shared drive or go out as an
+  email attachment like any other file.
+- **What's in it:** every tab of the public site for Boston (This week with the
+  map you can step through, Neighborhood, Severity, All neighborhoods, Track record,
+  How it works), both the briefing and analyst views, dark mode, and the forecast
+  and FluSight CSV downloads.
+- **What's left out:** the Chicago tab (this folder forecasts Boston only) and
+  "What's driving it" (it needs a step this folder's `live_forecast.py` doesn't
+  run). On the Neighborhood tab, unticking a model hides its line rather than
+  redrawing the chart, so the scale fits every model.
+- **It is a snapshot.** It shows the week it was made from and doesn't update; make
+  a new one after each weekly forecast. It takes a few seconds and is about 3 MB.
+- **Needs** `requirements-report.txt` (numpy, pandas, shiny). No PyTorch.
+- The site's code is a copy in `code/outlook/`, kept in step with the public site;
+  don't edit it there. A missing or incomplete forecast folder exits with status 2
+  and a plain message, as `make_bphc.py` does.
 
 ## Put it in your reporting pipeline
 
 - **If you only display our forecasts,** you need step 3 and
-  `requirements-report.txt` (numpy, pandas, matplotlib), nothing else. Point
-  `--origin` at an archived forecast folder.
+  `requirements-report.txt` (numpy, pandas, matplotlib, and shiny for the offline
+  website), nothing else. Point `--origin` at an archived forecast folder.
 - **If you make the forecasts yourself,** step 2 needs the full
   `requirements.txt` (PyTorch etc.). No GPU is needed.
 - **Paths:** every path is a command-line argument; nothing points at our
