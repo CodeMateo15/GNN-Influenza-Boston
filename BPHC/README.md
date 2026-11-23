@@ -162,6 +162,12 @@ There are three steps. Only the middle one is heavy.
 
 **Set up once** (Python 3.10 or newer):
 
+ALSO NOTE, use this if still in (.venv):
+```bash
+deactivate
+```
+
+If all is working, then:
 ```bash
 cd code
 python -m venv .venv && source .venv/bin/activate
@@ -182,15 +188,15 @@ step 2 won't find step 1's output.
 ```
 code/live/boston/                   step 1 writes it; step 2 reads it
 code/live/2026_27/boston/<week>/    step 2 writes it; steps 3 and 4 read it
-code/live/runs/boston/              step 2's first run writes it (the backtest), later runs reuse it
+code/live/runs/boston/              the past-season backtest, shipped in this folder; step 2 reuses it
 ```
 
 **Step 1: turn the dashboard export into model input** (seconds)
 
-Download "Influenza Neighborhood" from the BPHC dashboard (save it anywhere), then:
+Download "Influenza Neighborhood" from the BPHC dashboard (save it anywhere, but change /path/to), then:
 
 ```bash
-python bphc_export_to_city.py --export "/path/to/BPHC Dashboard Influenza Neighborhood.csv" --out live/boston
+python bphc_export_to_city.py --export "/path/to/BPHC Dashboard Confirmed Influenza Cases and ILI Emergency Department (ED) Visits - Neighborhood.csv" --out live/boston
 ```
 
 - **Reads** the export CSV.
@@ -201,7 +207,7 @@ python bphc_export_to_city.py --export "/path/to/BPHC Dashboard Influenza Neighb
 - Run it **every week, before step 2**. Step 2 forecasts from whatever is in
   `live/boston/`, so skipping this step forecasts last week's data again.
 
-**Step 2: forecast** (about 30 CPU-minutes; the first run takes about 12 CPU-hours more)
+**Step 2: forecast** (about 30 CPU-minutes)
 
 ```bash
 python live_forecast.py run --city boston --models gnn_st lstm arima \
@@ -213,15 +219,20 @@ python live_forecast.py run --city boston --models gnn_st lstm arima \
 - **Writes** `live/2026_27/boston/<week>/`, one folder per forecast, named by the
   newest week in the data (for example `2026-11-08`). The last line it prints,
   `Outputs: ...`, is that folder.
-- **The first run** also backtests 3 past seasons into `live/runs/boston/`
-  (about 12 CPU-hours, once); later weeks reuse it.
+- **Reuses the backtest** in `live/runs/boston/backtest_20261013-arima/`: our
+  replay of the 2023-24 to 2025-26 seasons, which gives the "past-season check"
+  badges and the backtest rows of `accuracy.csv`. It must say
+  `Reusing backtest live/runs/boston/backtest_20261013-arima` near the start. If
+  it says `Backtesting seasons [2023, 2024, 2025]` instead, the folder is missing
+  (for example, not copied to this computer): stop it with Ctrl-C and copy the
+  folder in. Otherwise it recomputes the backtest, about 12-17 CPU-hours.
 - `--jobs 2` forecasts two weeks-ahead at a time if 2 or more cores are free
   (same numbers, about half the time).
 - Before a long run, set `AREAFLU_QUICK=1` to check that everything runs end to
   end: every model is made tiny, so the numbers are meaningless but every file
-  gets written. Then delete `live/2026_27/` and `live/runs/` before the real
-  run. Otherwise the real run reuses the quick backtest for its accuracy check,
-  and refuses to overwrite the quick forecast's week folder.
+  gets written. Then delete `live/2026_27/` before the real run, or the real
+  run refuses to overwrite the quick forecast's week folder. Don't delete
+  `live/runs/`: that would remove the shipped backtest.
 
 **Step 3: this folder's tables and figures** (seconds)
 
@@ -253,6 +264,7 @@ python make_site.py --origin live/2026_27/boston/<week> --out ../boston_flu_outl
 | `... holds boston 2026_27 models, but this forecast is boston 2027_28` | The data has reached a new season; the saved GNN is for the last one | Ask us for the new `models/<season>/` folder, or see "Once a season" below |
 | `live/2026_27/boston/<week> exists. Archived forecasts are never overwritten` | That week was already forecast. Usually step 1 wasn't re-run with the new export. The check comes at the end of step 2, so the run's time is spent first | Download the new export, re-run step 1, then step 2 |
 | Step 1 stops while fetching the weather | The computer can't reach Open-Meteo | Run step 1 on a computer with internet access, then copy `live/boston/` across |
+| Step 2 prints `Backtesting seasons [2023, 2024, 2025]` and estimates many hours left | The shipped backtest isn't in `live/runs/boston/` | Ctrl-C, copy `code/live/runs/boston/backtest_20261013-arima/` from this folder, run again |
 | `make_bphc: missing input ...` or `make_site: missing input ...` | `--origin` doesn't point at a folder step 2 wrote | Use the folder on step 2's `Outputs:` line |
 
 ### Other options
