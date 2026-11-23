@@ -2,17 +2,38 @@
   "city": "boston",
   "season": "2026_27",
   "anchor": "2026-06-01",
-  "trained_through": "2026-10-04",
+  "trained_through": "2026-10-11",
   "models": [
-    "gnn_st"
+    "gnn_st",
+    "lstm",
+    "colagnn",
+    "arima"
   ],
-  "package_version": "1.1.0",
+  "trained": {
+    "gnn_st": "2026-10-04",
+    "lstm": "2026-10-11",
+    "colagnn": "2026-10-11",
+    "arima": "2026-10-11"
+  },
+  "package_version": "1.2.0",
   "quick": false,
   "files": {
+    "arima_h1.pt": "9216a67f35f610fd183f5cce66c117d0532f19b47fefda1eff843197ff162075",
+    "arima_h2.pt": "fe23d55fbb35098a4b8ef4ba93adfa1b0774920fabd525f1e8074f1b8a10a17d",
+    "arima_h3.pt": "39b655e37117585588449f149d83252df57213ef08225e92b948bcb1cdb504da",
+    "arima_h4.pt": "ca1fd1a5e8a76a6e89ba64fa75eedd44620bc05ce110930b88c6aed941b25a7c",
+    "colagnn_h1.pt": "12f05e0af3fae2aab8240dd072c7e824a0df64bec6cb05e9fa5f93ac0ba03864",
+    "colagnn_h2.pt": "300688f80ddd6a9bd733f267d869c0d7cfbbeff4cda428a7743b9796af4d87eb",
+    "colagnn_h3.pt": "5bad805d76cfc21a7b96c506cb5f88b5a92f9087ff6147467f6724c814475ed0",
+    "colagnn_h4.pt": "a21b877855985fa16b355ebb943c07b82dab80a8563a8ca833dd24c1ee15007a",
     "gnn_st_h1.pt": "6af5ad7078d4d7b1a2b534feac0b4910d3c1736b7f3436d47da5ffa6727c7175",
     "gnn_st_h2.pt": "2bc5c9ec2970d7c5d779027cf215edd6fc659a4c49c02595a4dea447fb512bb8",
     "gnn_st_h3.pt": "f63e09e776f3d6c85376fe8ae5124731c0657fc5d20b4377c1d9ed6fb1223311",
-    "gnn_st_h4.pt": "456fee1c6c2290e9e0cc5bebea5d86775135d3c34b76d72e735186a8eb70b76a"
+    "gnn_st_h4.pt": "456fee1c6c2290e9e0cc5bebea5d86775135d3c34b76d72e735186a8eb70b76a",
+    "lstm_h1.pt": "28ed31ffd9f10c11d9c15174ea70be93d540851446504efd3350a131401f40c7",
+    "lstm_h2.pt": "8725be0fcbc2e21fc6f7d0bc780b3c5cae640688742660e084cf50759c5a5ee8",
+    "lstm_h3.pt": "d38f8db5571308be49c6fc465129d8543ade4f78c768ab417d6464cf0a6a08ae",
+    "lstm_h4.pt": "ed6395a65d6af718b84b07eafea22282104a01d6b380b1add8d14fd28c3ffed7"
   },
-  "updated": "2026-10-16T16:39:57"
+  "updated": "2026-10-19T18:26:56"
 }

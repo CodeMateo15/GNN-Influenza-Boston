@@ -50,12 +50,14 @@ when rates can turn quickly.
     then the middle is closer to the truth. That doesn't always happen.
     `accuracy.csv` shows whether it did.
 
-ARIMA and LSTM retrain every week on every week of data BPHC has published
-since 2018. The GNN is trained once a season, on every week before the season
-opens (June 1), and saved in `models/`; each week it is loaded and fed that
-week's data. This is how the accuracy in `accuracy.csv` was measured (one model
-per past season, trained before it opened), and loading the saved GNN gives
-exactly the forecast that retraining it from scratch would.
+The GNN and LSTM are trained once a season, on every week of data BPHC has
+published since 2018 up to the season start (June 1), and saved in `models/`;
+each week they are loaded and fed that week's data. ARIMA's settings (which
+lags and trends each neighborhood's model uses) are chosen at the same time and
+saved too; each week it refits with those settings on every week up to the
+newest. This is how the accuracy in `accuracy.csv` was measured (one model per
+past season, trained before it opened), and loading the saved models gives the
+forecast that retraining them from the season start would.
 
 ## How "Citywide" is calculated
 
@@ -154,8 +156,8 @@ There are three steps. Only the middle one is heavy.
 ```
 1. BPHC dashboard export        bphc_export_to_city.py   (seconds, any computer)
         │
-2. Train + forecast             live_forecast.py         (about 30 CPU-minutes with the
-        │                                                 saved GNN in models/; mostly ARIMA)
+2. Forecast                     live_forecast.py         (a few minutes with the
+        │                                                 saved models in models/)
         ▼
 3. Tables + figures             make_bphc.py             (seconds, any computer)
 ```
@@ -175,8 +177,9 @@ pip install -r requirements.txt
 ```
 
 This installs the forecasting models from PyPI
-([areaFluForecast](https://pypi.org/project/areaFluForecast/) 1.2.0 or newer;
-loading saved models needs 1.2.0).
+([areaFluForecast](https://pypi.org/project/areaFluForecast/) 1.3.0, which
+loads the saved LSTM and ARIMA as well as the GNN). If `.venv` was set up
+earlier with 1.2.0, run `pip install -r requirements.txt` again inside it.
 
 ### Each week
 
@@ -207,7 +210,7 @@ python bphc_export_to_city.py --export "/path/to/BPHC Dashboard Confirmed Influe
 - Run it **every week, before step 2**. Step 2 forecasts from whatever is in
   `live/boston/`, so skipping this step forecasts last week's data again.
 
-**Step 2: forecast** (about 30 CPU-minutes)
+**Step 2: forecast** (a few minutes)
 
 ```bash
 python live_forecast.py run --city boston --models gnn_st lstm arima \
@@ -215,7 +218,8 @@ python live_forecast.py run --city boston --models gnn_st lstm arima \
 ```
 
 - **Reads** `live/boston/` (from step 1) and `../models/2026_27/boston/` (this
-  season's saved GNN, shipped in this folder).
+  season's saved GNN, LSTM and ARIMA settings, shipped in this folder). Each
+  model prints `... wk: 23.6s (loaded)`.
 - **Writes** `live/2026_27/boston/<week>/`, one folder per forecast, named by the
   newest week in the data (for example `2026-11-08`). The last line it prints,
   `Outputs: ...`, is that folder.
@@ -261,10 +265,13 @@ python make_site.py --origin live/2026_27/boston/<week> --out ../boston_flu_outl
 |---|---|---|
 | `No city data in live/boston/ (no city.json)`, or in older copies `FileNotFoundError: ... 'live/boston/city.json'` | Step 2 can't find step 1's output: step 1 hasn't been run yet, or it was run from another folder or with a different `--out` | Run step 1 from `code/` with `--out live/boston`, then step 2 from `code/` |
 | `../models/2026_27/boston/manifest.json not found` | Step 2 was run from a folder other than `code/`, so `../models/...` points somewhere else | `cd` into `code/` and run it again |
-| `... holds boston 2026_27 models, but this forecast is boston 2027_28` | The data has reached a new season; the saved GNN is for the last one | Ask us for the new `models/<season>/` folder, or see "Once a season" below |
+| `... holds boston 2026_27 models, but this forecast is boston 2027_28` | The data has reached a new season; the saved models are for the last one | Ask us for the new `models/<season>/` folder, or see "Once a season" below |
 | `live/2026_27/boston/<week> exists. Archived forecasts are never overwritten` | That week was already forecast. Usually step 1 wasn't re-run with the new export. The check comes at the end of step 2, so the run's time is spent first | Download the new export, re-run step 1, then step 2 |
 | Step 1 stops while fetching the weather | The computer can't reach Open-Meteo | Run step 1 on a computer with internet access, then copy `live/boston/` across |
 | `DataError: The weekly rates before 2026-06-01 differ from the ones ../models/2026_27/boston/gnn_st_h1.pt was trained on` | BPHC revised an old week, and `live_forecast.py` or `models/2026_27/boston/pinned_rates.csv` is an older copy without the fix | Copy both from this folder and run step 2 again |
+| Step 2 shows `2wk arima <neighborhood>` lines a minute or more apart, and an hour or more left | ARIMA is searching for its settings because the saved ones weren't loaded: an older `live_forecast.py`, or `models/2026_27/boston/` without the `arima_h*.pt` files | Copy `code/live_forecast.py` and `models/2026_27/boston/` from this folder, run `pip install -r requirements.txt`, run step 2 again |
+| `ImportError: cannot import name 'is_freezable'` | `.venv` still has areaFluForecast 1.2.0 | `pip install -r requirements.txt`, then run step 2 again |
+| `../models/2026_27/boston is missing ['arima_h1.pt', ...]` | The `models/` folder is an older copy that holds only the GNN | Copy `models/2026_27/boston/` from this folder |
 | Step 2 prints `Backtesting seasons [2023, 2024, 2025]` and estimates many hours left | The shipped backtest isn't in `live/runs/boston/` | Ctrl-C, copy `code/live/runs/boston/backtest_20261013-arima/` from this folder, run again |
 | `make_bphc: missing input ...` or `make_site: missing input ...` | `--origin` doesn't point at a folder step 2 wrote | Use the folder on step 2's `Outputs:` line |
 
@@ -277,18 +284,20 @@ were made afterwards from that week's exact data. `forecast_info.json` records
 this. New weeks include all three models and don't need it.
 
 **Once a season** (we normally do this and send you the new `models/<season>/`
-folder; it is about 2 CPU-hours):
+folder; it is about 2.5 CPU-hours):
 
 ```bash
-python live_forecast.py train --city boston --models gnn_st --out ../models/2026_27/boston
+python live_forecast.py train --city boston --models gnn_st lstm arima --out ../models/2026_27/boston
 ```
+
+`--models lstm arima` adds those to a folder that already holds the GNN.
 
 Step 2 stops with a message, rather than quietly retraining, if the saved models
 are for another season or are missing a week ahead. Leave out `--models-dir` to
-retrain the GNN every week instead (about 4 CPU-hours).
+retrain every model every week instead (about 4 CPU-hours).
 
 **When BPHC revises old weeks.** `models/<season>/boston/pinned_rates.csv` holds
-the weeks before the season start exactly as the saved GNN learned them. Step 2
+the weeks before the season start exactly as the saved models learned them. Step 2
 uses those, not the new export, for every week before the season start. It
 lists any old week the export changed (`The export revised 1 rate(s) before
 2026-06-01; keeping ...`) and carries on. Every week from the season start on

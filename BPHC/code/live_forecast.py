@@ -3,12 +3,13 @@
     # refresh the data first (BPHC export, with weather), then
     python bphc_export_to_city.py --export "BPHC Dashboard Influenza Neighborhood.csv" --out live/boston
 
-    # every week: load the season's saved graph models (minutes), fit the rest
+    # every week: load the season's saved models (minutes; nothing is retrained)
     python live_forecast.py run --city boston --models gnn_st lstm arima \
         --models-dir ../models/2026_27/boston
 
-    # once a season (heavy, ~2 h; usually done for you and shipped in ../models/):
-    python live_forecast.py train --city boston --models gnn_st --out ../models/2026_27/boston
+    # once a season (heavy, ~2.5 h; usually done for you and shipped in ../models/;
+    # --models lstm arima adds to a folder that already holds gnn_st):
+    python live_forecast.py train --city boston --models gnn_st lstm arima --out ../models/2026_27/boston
 
     # all in one, retraining everything (~4 h; or AREAFLU_QUICK=1 for a quick test)
     python live_forecast.py run --city boston --models gnn_st lstm arima
@@ -20,16 +21,17 @@
 
     python live_forecast.py score --city boston     # light: once new weeks arrive
 
-A copy of areaFluForecast's scripts/live_forecast.py (v1.2.0), standalone:
+A copy of areaFluForecast's scripts/live_forecast.py (v1.3.0), standalone:
 it needs only the installed package. Two additions since that release, both also in
 the package's current script or meant for it: the pinned pre-season rates above, and a
 plain message, instead of a traceback, when the city folder from step 1 is missing.
+Left out: `explain` and the "avg" ensemble.
 
 Layout under --root (default live/):
     <city>/                         the data, as export_sample.py --out writes it
     runs/<city>/backtest_*          the trust-check backtest, reused until the seasons change
     runs/<city>/parts/              per-task pieces before `assemble`
-    models/<season>/<city>/         `train` output: gnn_st_h<h>.pt + manifest.json +
+    models/<season>/<city>/         `train` output: <model>_h<h>.pt + manifest.json +
                                     pinned_rates.csv (the pre-season weeks they learned from)
     <season>/<city>/<origin>/       one frozen folder per forecast: forecast.csv,
                                     forecast_flusight.csv, trust.md, rates_asof.csv, meta.json,
@@ -68,7 +70,7 @@ import pandas as pd
 
 import areafluforecast as af
 from areafluforecast.backtest import BacktestResult, combine
-from areafluforecast.configs import DEFAULT_MODELS, GNNConfig
+from areafluforecast.configs import DEFAULT_MODELS, is_freezable
 from areafluforecast.engine import make_split, make_window
 from areafluforecast.forecast import _trust
 from areafluforecast.scoring import add_cell_scores
@@ -159,13 +161,14 @@ def season_start(city: af.City) -> pd.Timestamp:
     return city.season_window(season_year(city, city.rates.index.max()))[0]
 
 
-def graph_models(models) -> list[str]:
-    """The models `train` saves and --models-dir loads (the slow ones)."""
-    return [m for m in models if isinstance(af.resolve(m), GNNConfig)]
+def saved_models(models) -> list[str]:
+    """The models `train` saves and --models-dir loads: all but the baselines (ARIMA
+    keeps its chosen orders and refits on the new weeks, skipping the order search)."""
+    return [m for m in models if is_freezable(af.resolve(m))]
 
 
 def check_models_dir(args, city: af.City) -> Path | None:
-    """--models-dir, checked to hold this season's frozen models for every graph model
+    """--models-dir, checked to hold this season's frozen models for every saved model
     and horizon. Fails rather than quietly retraining."""
     if not getattr(args, "models_dir", None):
         return None
@@ -179,7 +182,7 @@ def check_models_dir(args, city: af.City) -> Path | None:
         raise SystemExit(f"{folder} holds {info.get('city')} {info.get('season')} models, but this "
                          f"forecast is {args.city} {season}. Retrain for the new season with "
                          "`live_forecast.py train`.")
-    missing = [f"{m}_h{h}.pt" for m in graph_models(args.models) for h in HORIZONS
+    missing = [f"{m}_h{h}.pt" for m in saved_models(args.models) for h in HORIZONS
                if not (folder / f"{m}_h{h}.pt").is_file()]
     if missing:
         raise SystemExit(f"{folder} is missing {missing}. Run `live_forecast.py train`.")
@@ -231,7 +234,7 @@ def timed_forecast(city: af.City, models, horizons, configs: dict, frozen: Path 
                                   [frozen] * len(horizons)))
         return (pd.concat([t for t, _ in parts], ignore_index=True),
                 pd.concat([r for _, r in parts], ignore_index=True))
-    loaded = set(graph_models(models)) if frozen is not None else set()
+    loaded = set(saved_models(models)) if frozen is not None else set()
     frames, rows = [], []
     for horizon in horizons:
         for model in models:
@@ -342,17 +345,23 @@ def backtest_part(args) -> None:
 
 
 def train(args) -> None:
-    """Train each graph model on the weeks before the live season starts and save it
+    """Train each model on the weeks before the live season starts and save it
     for --models-dir: the same training the backtest gives each past season."""
     city = load(args)
     print(city.summary(), flush=True)
-    models = graph_models(args.models)
+    models = saved_models(args.models)
     if not models:
-        raise SystemExit(f"None of {list(args.models)} is a graph model; nothing to train.")
+        raise SystemExit(f"None of {list(args.models)} has anything to train.")
     origin = city.rates.index.max()
     season, anchor = season_of(city, origin), season_start(city)
     out = Path(args.out or Path(args.root) / "models" / season / args.city)
     horizons = (args.horizon,) if args.horizon else HORIZONS
+    manifest_path = out / "manifest.json"
+    same_season = (manifest_path.is_file() and
+                   json.loads(manifest_path.read_text()).get("anchor") == str(anchor.date()))
+    if same_season:
+        # Adding models to a folder: train them on the history the others were.
+        city = pin_history(city, out)
     print(f"Training {models} for {season}, on the weeks before {anchor.date()}", flush=True)
     with tempfile.TemporaryDirectory() as tmp:
         fc = af.forecast(city, models, horizons=horizons, configs=quick_configs(models),
@@ -362,10 +371,21 @@ def train(args) -> None:
             shutil.copy2(saved, out / Path(saved).name)
     # The history these models learned from, so later exports' revisions to it don't
     # stop the weekly run (see pin_history).
-    city.rates.loc[city.rates.index < anchor].to_csv(out / PINNED, date_format="%Y-%m-%d")
+    if not (same_season and (out / PINNED).is_file()):
+        city.rates.loc[city.rates.index < anchor].to_csv(out / PINNED, date_format="%Y-%m-%d")
     files = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(out.glob("*.pt"))}
+    # Models trained in an earlier call stay listed: train can add models to a folder.
+    before = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    if before and before.get("anchor") != str(anchor.date()):
+        before = {}
+    trained = {**before.get("trained", {m: before.get("trained_through") for m in
+                                        before.get("models", [])}),
+               **{m: str(origin.date()) for m in models}}
     manifest = {"city": args.city, "season": season, "anchor": str(anchor.date()),
-                "trained_through": str(origin.date()), "models": models,
+                "trained_through": str(origin.date()),
+                "models": [m for m in DEFAULT_MODELS if m in trained] +
+                          sorted(set(trained) - set(DEFAULT_MODELS)),
+                "trained": trained,
                 "package_version": af.__version__, "quick": bool(quick_configs(models)),
                 "files": files, "updated": time.strftime("%Y-%m-%dT%H:%M:%S")}
     # Array tasks finish one horizon each; the last to finish lists them all.
@@ -482,7 +502,7 @@ def main() -> None:
                            help="train one horizon (one array task); default all four")
             p.add_argument("--out", help="default <root>/models/<season>/<city>")
         if name in ("run", "forecast-part", "assemble"):
-            p.add_argument("--models-dir", help="load the graph models `train` saved here instead "
+            p.add_argument("--models-dir", help="load the models `train` saved here instead "
                            "of retraining them")
         if name == "run":
             p.add_argument("--jobs", type=int, default=1,
