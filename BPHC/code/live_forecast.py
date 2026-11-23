@@ -21,14 +21,16 @@
     python live_forecast.py score --city boston     # light: once new weeks arrive
 
 A copy of areaFluForecast's scripts/live_forecast.py (v1.2.0), standalone:
-it needs only the installed package. One change from the package's copy: a plain
-message, instead of a traceback, when the city folder from step 1 is missing.
+it needs only the installed package. Two additions since that release, both also in
+the package's current script or meant for it: the pinned pre-season rates above, and a
+plain message, instead of a traceback, when the city folder from step 1 is missing.
 
 Layout under --root (default live/):
     <city>/                         the data, as export_sample.py --out writes it
     runs/<city>/backtest_*          the trust-check backtest, reused until the seasons change
     runs/<city>/parts/              per-task pieces before `assemble`
-    models/<season>/<city>/         `train` output: gnn_st_h<h>.pt + manifest.json
+    models/<season>/<city>/         `train` output: gnn_st_h<h>.pt + manifest.json +
+                                    pinned_rates.csv (the pre-season weeks they learned from)
     <season>/<city>/<origin>/       one frozen folder per forecast: forecast.csv,
                                     forecast_flusight.csv, trust.md, rates_asof.csv, meta.json,
                                     runtime.csv (seconds per model and horizon)
@@ -37,6 +39,13 @@ Layout under --root (default live/):
 This track is separate from the paper's backtest: its forecasts are written once and
 never re-run, so the scores are a true prospective record. Persistence is forecast
 alongside the models so each week has its "same as last week" reference.
+
+With --models-dir, the weeks before the season start come from the folder's
+pinned_rates.csv, not the new export: BPHC keeps revising old weeks (a Fenway
+week from 2025 moved 4.0 -> 2.6 in a later download), and frozen models must see the
+history they were trained on. Every week from the season start on comes from the new
+export, revisions included. Changed old weeks are listed and then ignored; a forecast only
+reads the last few weeks, so retraining for them is not worth it.
 """
 
 from __future__ import annotations
@@ -77,6 +86,7 @@ def maybe_quick(config):
     return replace(config, **{k: v for k, v in small.items() if k in names})
 
 HORIZONS = (1, 2, 3, 4)
+PINNED = "pinned_rates.csv"
 SEASON_GLOB = "[0-9][0-9][0-9][0-9]_[0-9][0-9]"
 
 
@@ -98,11 +108,41 @@ def city_folder(args) -> Path:
 
 def load(args) -> af.City:
     city = af.load_city(city_folder(args), name=args.city)
+    if getattr(args, "models_dir", None):
+        city = pin_history(city, Path(args.models_dir))
     if getattr(args, "as_of", None):
         as_of = pd.Timestamp(args.as_of)
         weather = {k: v.loc[:as_of] for k, v in city.weather.items()} if city.weather else None
         city = replace(city, rates=city.rates.loc[:as_of], weather=weather)
     return city
+
+
+def pin_history(city: af.City, folder: Path) -> af.City:
+    """`city` with the weeks before `folder`'s anchor replaced by its pinned_rates.csv,
+    the rates its frozen models were trained on. Reports any old week the export changed."""
+    path, manifest = folder / PINNED, folder / "manifest.json"
+    if not path.is_file() or not manifest.is_file():
+        return city
+    anchor = pd.Timestamp(json.loads(manifest.read_text())["anchor"])
+    pinned = pd.read_csv(path, index_col=0, parse_dates=True)
+    pinned.columns = pinned.columns.astype(str)
+    if sorted(pinned.columns) != sorted(city.rates.columns):
+        raise SystemExit(f"{path} has other areas than the export; retrain with `train`.")
+    pinned = pinned.loc[pinned.index < anchor, list(city.rates.columns)]
+    fresh = city.rates.loc[city.rates.index < anchor].reindex(pinned.index)
+    a, b = pinned.round(6), fresh.round(6)
+    changed = (a != b) & ~(a.isna() & b.isna())
+    cells = [(week, area) for week, area in changed.stack().loc[lambda x: x].index]
+    if cells:
+        print(f"The export revised {len(cells)} rate(s) before {anchor.date()}; keeping the "
+              f"values the frozen models were trained on ({path}):", flush=True)
+        for week, area in cells[:20]:
+            print(f"  {week.date()} {area}: kept {a.at[week, area]}, export has "
+                  f"{b.at[week, area]}", flush=True)
+        if len(cells) > 20:
+            print(f"  ... and {len(cells) - 20} more", flush=True)
+    rates = pd.concat([pinned, city.rates.loc[city.rates.index >= anchor]])
+    return replace(city, rates=rates)
 
 
 def season_year(city: af.City, week: pd.Timestamp) -> int:
@@ -320,6 +360,9 @@ def train(args) -> None:
         out.mkdir(parents=True, exist_ok=True)
         for saved in fc.meta["saved_models"]:
             shutil.copy2(saved, out / Path(saved).name)
+    # The history these models learned from, so later exports' revisions to it don't
+    # stop the weekly run (see pin_history).
+    city.rates.loc[city.rates.index < anchor].to_csv(out / PINNED, date_format="%Y-%m-%d")
     files = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(out.glob("*.pt"))}
     manifest = {"city": args.city, "season": season, "anchor": str(anchor.date()),
                 "trained_through": str(origin.date()), "models": models,

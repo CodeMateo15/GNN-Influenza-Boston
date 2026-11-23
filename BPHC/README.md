@@ -264,6 +264,7 @@ python make_site.py --origin live/2026_27/boston/<week> --out ../boston_flu_outl
 | `... holds boston 2026_27 models, but this forecast is boston 2027_28` | The data has reached a new season; the saved GNN is for the last one | Ask us for the new `models/<season>/` folder, or see "Once a season" below |
 | `live/2026_27/boston/<week> exists. Archived forecasts are never overwritten` | That week was already forecast. Usually step 1 wasn't re-run with the new export. The check comes at the end of step 2, so the run's time is spent first | Download the new export, re-run step 1, then step 2 |
 | Step 1 stops while fetching the weather | The computer can't reach Open-Meteo | Run step 1 on a computer with internet access, then copy `live/boston/` across |
+| `DataError: The weekly rates before 2026-06-01 differ from the ones ../models/2026_27/boston/gnn_st_h1.pt was trained on` | BPHC revised an old week, and `live_forecast.py` or `models/2026_27/boston/pinned_rates.csv` is an older copy without the fix | Copy both from this folder and run step 2 again |
 | Step 2 prints `Backtesting seasons [2023, 2024, 2025]` and estimates many hours left | The shipped backtest isn't in `live/runs/boston/` | Ctrl-C, copy `code/live/runs/boston/backtest_20261013-arima/` from this folder, run again |
 | `make_bphc: missing input ...` or `make_site: missing input ...` | `--origin` doesn't point at a folder step 2 wrote | Use the folder on step 2's `Outputs:` line |
 
@@ -283,9 +284,18 @@ python live_forecast.py train --city boston --models gnn_st --out ../models/2026
 ```
 
 Step 2 stops with a message, rather than quietly retraining, if the saved models
-are for another season, are missing a week ahead, or were trained on data that
-BPHC has since revised. Leave out `--models-dir` to retrain the GNN every week
-instead (about 4 CPU-hours).
+are for another season or are missing a week ahead. Leave out `--models-dir` to
+retrain the GNN every week instead (about 4 CPU-hours).
+
+**When BPHC revises old weeks.** `models/<season>/boston/pinned_rates.csv` holds
+the weeks before the season start exactly as the saved GNN learned them. Step 2
+uses those, not the new export, for every week before the season start. It
+lists any old week the export changed (`The export revised 1 rate(s) before
+2026-06-01; keeping ...`) and carries on. Every week from the season start on
+comes from the new export, revisions included, so each new export just adds its
+new week. Without that file, any revision to an old week stops step 2 with
+`The weekly rates before 2026-06-01 differ from the ones ... was trained on`.
+`train` writes the file each season.
 
 ## Offline website
 
@@ -349,7 +359,8 @@ live forecast has reached its target week yet".
 
 - **BPHC revises past weeks.** About 0.6% of past neighborhood-weeks changed
   between two exports this year. Recent observed numbers can shift a little
-  after a forecast is made.
+  after a forecast is made. Revisions to weeks before the season start are
+  ignored (see "When BPHC revises old weeks").
 - **Suppressed weeks.** When a neighborhood has very few visits, BPHC leaves the
   week blank. The models treat it as unknown, not zero, and it is never scored.
 - **Early season.** The first weeks of a season are low and noisy, so ranges are
