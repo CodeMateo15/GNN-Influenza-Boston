@@ -13,7 +13,7 @@ set up so it can be dropped into a reporting pipeline.
 | `forecast_info.json` | Forecast date, unit, models, and any notes from the last build |
 | `figures/citywide_forecast.png` | Citywide forecast, one panel per model |
 | `figures/neighborhoods_forecast.png` | GNN forecast for each neighborhood |
-| `code/` | Four short scripts that run the weekly steps (see [Run it every week](#run-it-every-week)) |
+| `code/` | Short scripts that run the weekly steps (see [Run it every week](#run-it-every-week)) and make the [offline website](#offline-website) |
 
 ## What the numbers mean
 
@@ -187,6 +187,9 @@ python live_forecast.py run --city boston --models gnn_st lstm arima \
 
 # 3. Build this folder's tables and figures from that week's forecast
 python make_bphc.py --origin live/2026_27/boston/<week> --out ..
+
+# 4. Optional: the website as one offline HTML file (see "Offline website")
+python make_site.py --origin live/2026_27/boston/<week> --out ../boston_flu_outlook.html
 ```
 
 `make_bphc.py --add-forecast FILE` adds models that an archived forecast
@@ -210,11 +213,40 @@ instead (about 4 CPU-hours).
 To check step 2 end to end before a long run, set `AREAFLU_QUICK=1`. This makes
 every model tiny; the numbers are meaningless but every file gets written.
 
+## Offline website
+
+`make_site.py` writes the whole [Boston Flu Outlook](https://codemateo15-boston-flu-outlook.share.connect.posit.cloud/)
+site as **one HTML file**, from the same archived forecast folder step 3 reads:
+
+```bash
+python make_site.py --origin live/2026_27/boston/<week> --out ../boston_flu_outlook.html
+python make_site.py --origin live/2026_27/boston --out ../boston_flu_outlook.html   # newest week
+```
+
+- **Private and offline.** Open the file in any browser (Chrome, Edge, Firefox,
+  Safari). It needs no internet connection and no server, loads nothing from
+  anywhere, and sends nothing anywhere. It can sit on a shared drive or go out as an
+  email attachment like any other file.
+- **What's in it:** every tab of the public site for Boston (This week with the
+  map you can step through, Neighborhood, Severity, All neighborhoods, Track record,
+  How it works), both the briefing and analyst views, dark mode, and the forecast
+  and FluSight CSV downloads.
+- **What's left out:** the Chicago tab (this folder forecasts Boston only) and
+  "What's driving it" (it needs a step this folder's `live_forecast.py` doesn't
+  run). On the Neighborhood tab, unticking a model hides its line rather than
+  redrawing the chart, so the scale fits every model.
+- **It is a snapshot.** It shows the week it was made from and doesn't update; make
+  a new one after each weekly forecast. It takes a few seconds and is about 3 MB.
+- **Needs** `requirements-report.txt` (numpy, pandas, shiny). No PyTorch.
+- The site's code is a copy in `code/outlook/`, kept in step with the public site;
+  don't edit it there. A missing or incomplete forecast folder exits with status 2
+  and a plain message, as `make_bphc.py` does.
+
 ## Put it in your reporting pipeline
 
 - **If you only display our forecasts,** you need step 3 and
-  `requirements-report.txt` (numpy, pandas, matplotlib), nothing else. Point
-  `--origin` at an archived forecast folder.
+  `requirements-report.txt` (numpy, pandas, matplotlib, and shiny for the offline
+  website), nothing else. Point `--origin` at an archived forecast folder.
 - **If you make the forecasts yourself,** step 2 needs the full
   `requirements.txt` (PyTorch etc.). No GPU is needed.
 - **Paths:** every path is a command-line argument; nothing points at our

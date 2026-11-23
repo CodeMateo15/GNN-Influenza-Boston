@@ -1,0 +1,672 @@
+/* Generated copy of boston-flu-outlook/www/styles.css. Edit it there and run vendor_bphc.py; changes made here are overwritten. */
+:root {
+  color-scheme: light;
+  --surface-0: #f6f5f2;
+  --surface-1: #fcfcfb;
+  --border:    #e2e0da;
+  --text-primary:   #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted:     #7a7873;
+  --series-1: #2a78d6;
+  --good:     #0ca30c;
+  --warning:  #fab219;
+  --serious:  #ec835a;
+  --critical: #d03b3b;
+}
+
+/* Dark steps are chosen for the dark surface, not flipped from the light ones.
+   The attribute scopes below are what normally apply: a script in <head> sets
+   data-bs-theme from the stored choice before first paint, defaulting to light.
+   The media query is only a fallback for a browser running without scripts,
+   where no attribute is ever set. Bootstrap themes its own components off the
+   same attribute, which is what keeps table and input text legible rather than
+   staying black. */
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-bs-theme="light"])) {
+    color-scheme: dark;
+    --surface-0: #131312;
+    --surface-1: #1a1a19;
+    --border:    #34342f;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #94938a;
+    --series-1: #3987e5;
+  }
+}
+:root[data-bs-theme="dark"] {
+  color-scheme: dark;
+  --surface-0: #131312;
+  --surface-1: #1a1a19;
+  --border:    #34342f;
+  --text-primary:   #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted:     #94938a;
+  --series-1: #3987e5;
+}
+:root[data-bs-theme="light"] {
+  color-scheme: light;
+  --surface-0: #f6f5f2;
+  --surface-1: #fcfcfb;
+  --border:    #e2e0da;
+  --text-primary:   #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted:     #7a7873;
+  --series-1: #2a78d6;
+}
+
+body {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0 24px 48px;
+}
+
+.topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 24px 0 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.brand { font-size: 26px; margin: 0; letter-spacing: -0.01em; }
+.brand-sub { color: var(--text-secondary); margin: 4px 0 0; font-size: 14px; }
+.audience-block { min-width: 230px; }
+.audience-block .form-group { margin-bottom: 0; }
+
+h2 { font-size: 20px; margin: 4px 0 6px; }
+h3 { font-size: 17px; margin: 20px 0 6px; }
+h4 { font-size: 15px; margin: 18px 0 6px; color: var(--text-secondary); }
+.blurb { color: var(--text-secondary); font-size: 14px; max-width: 70ch; margin: 0 0 14px; }
+.note  { color: var(--text-muted); font-size: 13px; max-width: 70ch; }
+
+.controls {
+  display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end;
+  margin: 12px 0 18px;
+}
+.controls .form-group { margin-bottom: 0; min-width: 170px; }
+
+.tiles { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0 18px; }
+.tile {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  min-width: 150px;
+}
+.tile-label { font-size: 12px; color: var(--text-secondary);
+              text-transform: uppercase; letter-spacing: 0.04em; }
+.tile-value { font-size: 24px; font-weight: 600; margin-top: 4px;
+              font-variant-numeric: tabular-nums; }
+.tile-sub   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.pill {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-weight: 600; font-size: 18px; color: #fff;
+}
+.pill-good     { background: var(--good); }
+.pill-warning  { background: var(--warning); color: #0b0b0b; }
+.pill-serious  { background: var(--serious); color: #0b0b0b; }
+.pill-critical { background: var(--critical); }
+.pill-none     { background: transparent; color: var(--text-muted); }
+
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-top: 16px;
+}
+.report {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre;
+  color: var(--text-primary);
+}
+
+.go { margin: 6px 0 4px; }
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px 14px;
+  margin-bottom: 14px;
+}
+.stat-grid .form-group { margin-bottom: 0; }
+
+.chart-block { margin-top: 22px; }
+.scatter { width: 100%; max-width: 700px; height: auto;
+           background: var(--surface-1); border: 1px solid var(--border);
+           border-radius: 10px; }
+.scatter .grid     { stroke: var(--border); stroke-width: 1; }
+.scatter .diagonal { stroke: var(--text-muted); stroke-width: 2;
+                     stroke-dasharray: 4 4; opacity: 0.55; }
+.scatter .mark     { fill: var(--series-1); stroke: var(--surface-1);
+                     stroke-width: 2; }
+.scatter .mark:hover { r: 6.5; }
+.scatter .tick { fill: var(--text-muted); font-size: 11px; }
+.scatter .axis { fill: var(--text-secondary); font-size: 12px; }
+
+/* The data grid and form controls render inside their own shadow-free
+   wrappers; without these they keep Bootstrap's default ink and go black on
+   the dark surface. */
+.shiny-data-grid, .shiny-data-frame { color: var(--text-primary); }
+.shiny-data-grid table { color: var(--text-primary); }
+.shiny-data-grid thead th {
+  background: var(--surface-0) !important;
+  color: var(--text-secondary) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+.shiny-data-grid tbody td {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  border-color: var(--border) !important;
+}
+.shiny-data-grid tbody tr:hover td { background: var(--surface-0); }
+
+.card, .nav-tabs, .tab-content { color: var(--text-primary); }
+.nav-tabs .nav-link { color: var(--text-secondary); }
+.nav-tabs .nav-link.active { color: var(--text-primary); }
+
+.form-label, label { color: var(--text-secondary); }
+.form-control, .form-select, .selectize-input, .selectize-dropdown {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+.selectize-input > .item, .selectize-dropdown-content .option {
+  color: var(--text-primary);
+}
+
+.theme-block { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.theme-label { font-size: 12px; color: var(--text-secondary); margin: 0; }
+
+.disclaimer {
+  margin-top: 32px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted); font-size: 12.5px; max-width: 80ch;
+}
+
+/* --- glossary --- */
+.note-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 16px 0 26px;
+}
+.note-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--series-1);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.note-card h4 { margin: 0 0 6px; color: var(--text-primary); font-size: 14px; }
+.note-card .blurb { margin: 0; font-size: 13px; }
+
+.gloss-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 26px;
+  font-size: 14px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.gloss-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: var(--surface-0);
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+}
+.gloss-table td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+  color: var(--text-primary);
+  vertical-align: top;
+}
+.gloss-table tr:hover td { background: var(--surface-0); }
+.gloss-table td:nth-child(2) { color: var(--text-secondary); white-space: nowrap; }
+.gloss-table td:nth-child(3) { max-width: 46ch; }
+.gloss-term code {
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 7px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.src {
+  display: inline-block; white-space: nowrap;
+  font-size: 11px; padding: 2px 8px; border-radius: 999px;
+  border: 1px solid var(--border); color: var(--text-secondary);
+}
+.src-recorded            { border-color: var(--good); color: var(--good); }
+.src-computed            { border-color: var(--series-1); color: var(--series-1); }
+.src-college-calibrated  { border-color: var(--serious); color: var(--serious); }
+.src-model-output        { border-color: var(--critical); color: var(--critical); }
+
+.version-chip {
+  display: inline-block; margin-right: 10px;
+  font-size: 11px; padding: 2px 9px; border-radius: 999px;
+  border: 1px solid var(--border); color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.note-card ul { margin: 6px 0 0 18px; padding: 0; }
+.note-card li { color: var(--text-secondary); font-size: 13px;
+                margin-bottom: 6px; line-height: 1.5; }
+
+.paper-note {
+  margin-top: 34px;
+  padding: 18px 20px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--series-1);
+  border-radius: 10px;
+  max-width: 90ch;
+}
+.paper-note h4 {
+  margin: 0 0 10px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+.paper-note p {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+.paper-note p:last-child { margin-bottom: 0; }
+
+.ai-note {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  max-width: 80ch;
+}
+
+/* =====================================================================
+   Boston Flu Outlook additions. Same token discipline as above: every chart
+   colour is a variable, with dark steps chosen for the dark surface (the
+   reference palette's dark column), not flipped from the light ones.
+   ===================================================================== */
+:root, :root[data-bs-theme="light"] {
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --ref: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --past: #c3c2b7;
+  /* Sequential blue, light -> dark: low values recede toward the surface. */
+  --seq-0: #cde2fb; --seq-1: #9ec5f4; --seq-2: #6da7ec;
+  --seq-3: #3987e5; --seq-4: #256abf; --seq-5: #104281;
+  --na: #ecebe7;
+  /* Diverging, for what pushed a forecast: cool pulls it down, warm pushes it up,
+     grey is "same as a usual week". Poles validated as a pair (CVD and contrast). */
+  --dn3: #2a78d6; --dn2: #86b6ef; --dn1: #cde2fb; --d0: #f0efec;
+  --dp1: #fbdcda; --dp2: #f09a97; --dp3: #e34948;
+  --usual: #898781;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-bs-theme="light"])) {
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --ref: #94938a;
+    --grid: #2c2c2a; --axis: #383835; --past: #4a4a45;
+    --seq-0: #0d366b; --seq-1: #184f95; --seq-2: #256abf;
+    --seq-3: #3987e5; --seq-4: #6da7ec; --seq-5: #b7d3f6;
+    --na: #262624;
+
+    --dn3: #3987e5; --dn2: #24599c; --dn1: #1b3a5f; --d0: #383835;
+    --dp1: #5e2b2a; --dp2: #a8403f; --dp3: #e66767;
+    --usual: #94938a;
+  }
+}
+:root[data-bs-theme="dark"] {
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --ref: #94938a;
+  --grid: #2c2c2a; --axis: #383835; --past: #4a4a45;
+  /* In dark mode the ramp runs the other way: low values are the dark steps,
+     so "near zero" still recedes into the surface. */
+  --seq-0: #0d366b; --seq-1: #184f95; --seq-2: #256abf;
+  --seq-3: #3987e5; --seq-4: #6da7ec; --seq-5: #b7d3f6;
+  --na: #262624;
+  --dn3: #3987e5; --dn2: #24599c; --dn1: #1b3a5f; --d0: #383835;
+  --dp1: #5e2b2a; --dp2: #a8403f; --dp3: #e66767;
+  --usual: #94938a;
+}
+
+.brand-mark { display: inline-block; width: 12px; height: 12px; border-radius: 3px;
+              background: var(--s1); margin-right: 10px; vertical-align: 2px; }
+.fresh {
+  display: inline-flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;
+}
+.chip {
+  font-size: 12px; padding: 3px 10px; border-radius: 999px;
+  border: 1px solid var(--border); color: var(--text-secondary);
+  background: var(--surface-1); font-variant-numeric: tabular-nums;
+}
+.chip strong { color: var(--text-primary); font-weight: 600; }
+.banner {
+  margin: 0 0 16px; padding: 12px 16px; border-radius: 10px;
+  border: 1px solid var(--warning); border-left: 4px solid var(--warning);
+  background: var(--surface-1); color: var(--text-primary); font-size: 14px;
+}
+.banner b { margin-right: 6px; }
+
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+.card h3 { margin-top: 0; }
+.card .controls { margin-top: 0; }
+
+/* Status pills small enough to sit in a row of text. The label always carries
+   the meaning; the colour only repeats it. */
+.pill-sm { font-size: 12px; padding: 1px 8px; font-weight: 600; }
+.trust { font-size: 12px; padding: 1px 8px; border-radius: 999px; white-space: nowrap;
+         border: 1px solid var(--border); color: var(--text-secondary); }
+.trust-good { border-color: var(--good); }
+.trust-warning { border-color: var(--warning); }
+.trust-critical { border-color: var(--critical); }
+
+/* ---- charts ---- */
+.chart { width: 100%; height: auto; display: block; }
+.chart-card { background: var(--surface-1); border: 1px solid var(--border);
+              border-radius: 12px; padding: 14px 16px; margin-top: 16px; }
+.chart-card h3 { margin: 0 0 4px; }
+.chart-card .blurb { margin-bottom: 8px; }
+.chart .grid  { stroke: var(--grid); stroke-width: 1; }
+.chart .axis  { stroke: var(--axis); stroke-width: 1; }
+.chart .tick  { fill: var(--text-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart .row-label { fill: var(--text-secondary); font-size: 12px; }
+.chart .direct { fill: var(--text-secondary); font-size: 12px; font-weight: 600; }
+.chart .today { stroke: var(--text-muted); stroke-width: 1; }
+.chart .today-label { fill: var(--text-muted); font-size: 11px; }
+.chart .target { stroke: var(--text-muted); stroke-width: 1.5; }
+.chart .line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart .line.obs { stroke: var(--text-primary); }
+.chart .dot { stroke: var(--surface-1); stroke-width: 2; }
+.chart .dot.obs { fill: var(--text-primary); }
+.chart .s1 { --c: var(--s1); } .chart .s2 { --c: var(--s2); }
+.chart .s3 { --c: var(--s3); } .chart .s4 { --c: var(--s4); } .chart .s5 { --c: var(--s5); }
+.chart .sref { --c: var(--ref); }
+.chart .line.s1, .chart .line.s2, .chart .line.s3, .chart .line.s4, .chart .line.s5,
+.chart .line.sref { stroke: var(--c); }
+.chart .dot.s1, .chart .dot.s2, .chart .dot.s3, .chart .dot.s4, .chart .dot.s5,
+.chart .dot.sref { fill: var(--c); }
+/* Slot 4 sits close to slot 2 (orange) when every model is on one chart, so it is
+   dashed as well, and slot 5 (the average) close to slot 3 for deuteranopes, so it
+   is dotted: identity never rests on colour alone. */
+.chart .line.s4 { stroke-dasharray: 6 4; }
+.chart .line.s5 { stroke-dasharray: 1.5 4; }
+.chart .band95 { fill: var(--c); fill-opacity: 0.14; stroke: none; }
+.chart .band50 { fill: var(--c); fill-opacity: 0.28; stroke: none; }
+.chart .hit { fill: transparent; }
+.chart .col .guide { stroke: var(--text-muted); stroke-width: 1; opacity: 0; }
+.chart .col.hover .guide { opacity: 1; }
+.chart .past { fill: none; stroke: var(--past); stroke-width: 1.5; }
+.chart .past:hover, .chart .past.hover { stroke: var(--text-secondary); stroke-width: 2.5; }
+.chart .line.now { stroke: var(--s1); stroke-width: 2.5; }
+.chart .line.now-fc { stroke: var(--s1); stroke-width: 2; opacity: 0.6; }
+.chart .dot.now { fill: var(--s1); }
+
+/* ---- map ---- */
+.chart.map { max-height: 520px; }
+.map .context { fill: var(--na); stroke: none; opacity: 0.6; }
+.map .area { stroke: var(--surface-1); stroke-width: 1; cursor: pointer;
+             transition: fill 450ms ease; outline: none; }
+.map .area:hover, .map .area.hover, .map .area:focus { stroke: var(--text-primary); stroke-width: 1.5; }
+.map .area-outline { fill: none; stroke: var(--text-primary); stroke-width: 2.5; pointer-events: none; }
+.map .map-label { fill: var(--text-primary); font-size: 11px; font-weight: 600; pointer-events: none;
+                  paint-order: stroke; stroke: var(--surface-1); stroke-width: 3px; }
+.b0 { fill: var(--seq-0); background: var(--seq-0); }
+.b1 { fill: var(--seq-1); background: var(--seq-1); }
+.b2 { fill: var(--seq-2); background: var(--seq-2); }
+.b3 { fill: var(--seq-3); background: var(--seq-3); }
+.b4 { fill: var(--seq-4); background: var(--seq-4); }
+.b5 { fill: var(--seq-5); background: var(--seq-5); }
+.bna { fill: var(--na); background: var(--na); }
+.legend-bins { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center;
+               font-size: 12px; color: var(--text-secondary); margin-top: 8px; }
+.lg-title { color: var(--text-muted); margin-right: 4px; }
+.lg-cell { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
+.lg-swatch { width: 14px; height: 10px; border-radius: 2px; display: inline-block;
+             border: 1px solid var(--border); }
+.when { font-size: 13px; color: var(--text-secondary); margin: 2px 0 6px; }
+.when strong { color: var(--text-primary); }
+
+/* Ranked list beside the map: the table view of the same numbers. */
+.ranked { list-style: none; margin: 0; padding: 0; }
+.ranked li { display: grid; grid-template-columns: minmax(0, 1fr) 80px 50px 40px 82px;
+             align-items: center; gap: 8px; padding: 6px 4px; border-top: 1px solid var(--border);
+             cursor: pointer; font-size: 13px; }
+.ranked li:first-child { border-top: none; }
+.ranked li:hover { background: var(--surface-0); }
+.ranked .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ranked .bar { height: 8px; border-radius: 0 4px 4px 0; background: var(--s1); }
+.ranked .bar-track { background: var(--surface-0); border-radius: 4px; height: 8px; }
+.ranked .val { text-align: right; font-variant-numeric: tabular-nums; }
+.ranked .chg { font-size: 12px; color: var(--text-muted); text-align: right; font-variant-numeric: tabular-nums; }
+.ranked .lvl { text-align: right; }
+
+/* Epigraph at the top of How it works. */
+.epigraph { margin: 0 0 16px; padding: 2px 0 2px 12px; border-left: 3px solid var(--border);
+            color: var(--text-secondary); font-size: 14px; max-width: 70ch; }
+.epigraph p { margin: 0; font-style: italic; }
+.epigraph footer { margin-top: 2px; font-size: 12px; color: var(--text-muted); }
+
+/* ---- small multiples ---- */
+.multiples { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.mini { background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
+        padding: 10px 12px 8px; cursor: pointer; }
+.mini:hover { border-color: var(--text-muted); }
+.mini-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.mini-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mini-val { font-size: 12px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mini-foot { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-muted); }
+
+/* ---- legend row above line charts ---- */
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px;
+          color: var(--text-secondary); margin: 4px 0 6px; align-items: center; }
+.legend .key { display: inline-flex; align-items: center; gap: 6px; }
+.legend .sw { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+.legend .sw-band { width: 16px; height: 10px; border-radius: 2px; display: inline-block; }
+.sw.obs { background: var(--text-primary); }
+.sw.s1, .sw-band.s1 { background: var(--s1); } .sw.s2 { background: var(--s2); }
+.sw.s3 { background: var(--s3); } .sw.sref { background: var(--ref); }
+.sw.s4 { background: repeating-linear-gradient(90deg, var(--s4) 0 6px, transparent 6px 9px); }
+.sw-band.s4 { background: var(--s4); }
+.sw.s5 { background: repeating-linear-gradient(90deg, var(--s5) 0 3px, transparent 3px 6px); }
+.sw-band.s5 { background: var(--s5); }
+.sw-band.b95 { opacity: 0.25; } .sw-band.b50 { opacity: 0.5; }
+.sw.past { background: var(--past); }
+
+/* ---- network ---- */
+.network .net-area { fill: var(--surface-0); stroke: var(--border); stroke-width: 1; }
+.network .net-edge { stroke: var(--s1); stroke-width: 2.5; stroke-linecap: round; opacity: 0.7; }
+.network .net-edge:hover, .network .net-edge.hover { opacity: 1; stroke-width: 4; }
+.network .net-node { fill: var(--s1); stroke: var(--surface-1); stroke-width: 2; }
+
+/* ---- track record ---- */
+.score-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.score-table th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em;
+                  color: var(--text-secondary); padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.score-table td { padding: 8px 10px; border-top: 1px solid var(--border); vertical-align: middle;
+                  font-variant-numeric: tabular-nums; }
+.table-scroll { overflow-x: auto; }
+.callout { font-size: 15px; line-height: 1.55; max-width: 72ch; margin: 0 0 4px; }
+.callout strong { font-weight: 650; }
+.empty { color: var(--text-muted); font-size: 14px; padding: 12px 0; }
+
+/* ---- tooltip ---- */
+.viz-tip {
+  position: fixed; z-index: 2000; pointer-events: none; display: none;
+  background: var(--surface-1); color: var(--text-primary);
+  border: 1px solid var(--border); border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
+  padding: 8px 10px; font-size: 12.5px; line-height: 1.45; max-width: 320px;
+  font-variant-numeric: tabular-nums;
+}
+.viz-tip-head { font-weight: 600; margin-bottom: 2px; }
+
+/* Shiny's slider play button sits under the slider; give it room and colour. */
+.irs--shiny .irs-bar, .irs--shiny .irs-single { background: var(--s1); border-color: var(--s1); }
+.slider-animate-container { margin-top: 2px; text-align: left !important; }
+.slider-animate-button { color: var(--s1); font-size: 13px; }
+
+@media (max-width: 600px) {
+  body { padding: 0 16px 40px; }
+  .ranked li { grid-template-columns: minmax(0, 1fr) 60px 50px 82px; }
+  .ranked .chg { display: none; }
+  .tile { min-width: 140px; flex: 1 1 140px; }
+}
+
+/* Charts are drawn at a fixed size; cap their width so text stays near 11-12px
+   instead of growing with the card. */
+.chart.fan, .chart.ribbons, .chart.twocity { max-width: 900px; }
+.chart.dots { max-width: 640px; }
+.chart.network { max-width: 560px; margin: 0 auto; }
+/* On a phone the line charts scroll sideways rather than shrink to unreadable
+   type, the same trade the NCAA app makes for its waterfall. */
+.chart-card { overflow-x: auto; }
+@media (max-width: 600px) {
+  .chart.fan, .chart.ribbons, .chart.twocity { min-width: 600px; }
+}
+
+/* ---- season-set toggle in the ribbon card ---- */
+.chart-card .shiny-input-radiogroup { margin: 4px 0 6px; }
+.chart-card .shiny-input-radiogroup .radio-inline { margin-right: 16px; font-size: 13.5px;
+  color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; }
+.chart-card .shiny-input-radiogroup input[type="radio"] { accent-color: var(--s1); }
+
+/* ---- 50% / 95% coverage marks ---- */
+.chart .ring { fill: var(--surface-1); stroke: var(--c); stroke-width: 2; }
+.legend .sw-ring, .legend .sw-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.legend .sw-ring { border: 2px solid var(--text-secondary); }
+.legend .sw-dot { background: var(--text-secondary); }
+
+/* ---- what's driving it ---- */
+.dn3 { fill: var(--dn3); background: var(--dn3); } .dn2 { fill: var(--dn2); background: var(--dn2); }
+.dn1 { fill: var(--dn1); background: var(--dn1); } .d0  { fill: var(--d0);  background: var(--d0); }
+.dp1 { fill: var(--dp1); background: var(--dp1); } .dp2 { fill: var(--dp2); background: var(--dp2); }
+.dp3 { fill: var(--dp3); background: var(--dp3); }
+.chart.waterfall { max-width: 760px; }
+.waterfall .wf-bar { stroke: none; }
+.waterfall .wf-up, .sw-box.wf-up { fill: var(--dp3); background: var(--dp3); }
+.waterfall .wf-down, .sw-box.wf-down { fill: var(--dn3); background: var(--dn3); }
+.waterfall .wf-base { fill: var(--usual); fill-opacity: 0.55; }
+.waterfall .wf-total { fill: var(--text-primary); }
+.waterfall .wf-link { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 2 2; }
+.waterfall .wf-val { fill: var(--text-secondary); font-size: 12px; font-variant-numeric: tabular-nums; }
+.waterfall .wf-sub { fill: var(--text-muted); font-size: 10.5px; }
+.waterfall .strong { fill: var(--text-primary); font-weight: 650; }
+.waterfall .wf-whisker line { stroke: var(--surface-1); stroke-width: 2; }
+.waterfall .wf-row:hover .wf-bar, .waterfall .wf-row.hover .wf-bar { opacity: 0.8; }
+.legend .sw-box { width: 12px; height: 10px; border-radius: 2px; display: inline-block; }
+.chart.spill { max-height: 460px; }
+.spill .spill-target { fill: var(--surface-0); }
+.spill .spill-arrow { fill: none; stroke-linecap: round; pointer-events: none; opacity: 0.9; }
+.spill .spill-arrow.up { stroke: var(--dp3); } .spill .head-up { fill: var(--dp3); }
+.spill .spill-arrow.down { stroke: var(--dn3); } .spill .head-down { fill: var(--dn3); }
+.spill .spill-dot { fill: var(--text-primary); stroke: var(--surface-1); stroke-width: 2; pointer-events: none; }
+.matrix .col-head { fill: var(--text-muted); font-size: 11px; }
+.matrix .mx-row { cursor: pointer; outline: none; }
+.matrix .mx-hit { fill: transparent; }
+.matrix .mx-row:hover .mx-hit, .matrix .mx-row:focus .mx-hit { fill: var(--surface-0); }
+.matrix .mx-row.selected .mx-hit { fill: var(--surface-0); stroke: var(--text-primary); stroke-width: 1.5; }
+.matrix .mx-row.selected .row-label { fill: var(--text-primary); font-weight: 650; }
+.chart .mx-cell { stroke: var(--surface-1); stroke-width: 0; }
+.chart .mx-cell:hover, .chart .mx-cell.hover { stroke: var(--text-primary); stroke-width: 1.5; }
+.matrix .mx-total { fill: var(--text-primary); font-size: 12px; font-variant-numeric: tabular-nums; }
+.matrix .mx-delta { fill: var(--text-muted); }
+.timeline .line.usual { stroke: var(--usual); stroke-dasharray: 5 4; }
+.timeline .line.forecast { stroke: var(--text-primary); }
+.timeline .dot.actual { fill: var(--surface-1); stroke: var(--text-secondary); stroke-width: 1.5; }
+.chart .direct.muted { fill: var(--text-muted); font-weight: 500; }
+.timeline .col.latest .guide { opacity: 0.5; }
+.sw.usual { background: repeating-linear-gradient(90deg, var(--usual) 0 5px, transparent 5px 8px); }
+.chart.matrix, .chart.timeline { max-width: 900px; }
+@media (max-width: 600px) {
+  .chart.waterfall, .chart.matrix, .chart.timeline { min-width: 600px; }
+}
+.card { overflow-x: auto; }
+.teaser { font-size: 13.5px; color: var(--text-secondary); max-width: 80ch; margin: 2px 0 6px; }
+.teaser a { color: var(--s1); font-weight: 600; white-space: nowrap; }
+
+/* ---- severity ---- */
+/* One custom property per class, so the zone, the bar, the odds cell and the
+   pill all draw "High" in the same status colour. */
+.sev-good { --sev: var(--good); } .sev-warning { --sev: var(--warning); }
+.sev-serious { --sev: var(--serious); } .sev-critical { --sev: var(--critical); }
+.chart.severity { max-width: 900px; }
+.chart.odds { max-width: 640px; }
+.severity .sev-zone { fill: var(--sev); fill-opacity: 0.09; }
+.severity .sev-name { fill: var(--text-secondary); font-weight: 600; }
+.severity .sev-line { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 4 3; }
+.chart .tick.strong { fill: var(--text-primary); font-weight: 600; }
+.severity .sev-bar { fill: var(--sev); }
+.severity .sev-bar.sev-skip { fill: var(--past); }
+.severity .sev-ahead { fill: none; stroke: var(--text-secondary); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.severity .sev-whisker line { stroke: var(--text-secondary); stroke-width: 1.5; }
+.severity .sev-val { fill: var(--text-secondary); font-size: 12px; font-variant-numeric: tabular-nums; }
+.severity .sev-row.now .sev-val, .severity .row-label.strong { fill: var(--text-primary); font-weight: 650; }
+.severity .sev-row:hover .sev-bar, .severity .sev-row.hover .sev-bar { opacity: 0.8; }
+.legend .sw-box.sev-ahead { background: transparent; border: 1.5px dashed var(--text-secondary); }
+.legend .sw-box.sev-skip { background: var(--past); }
+.odds .odds-cell { fill: var(--sev); stroke: var(--border); stroke-width: 1; }
+.odds .odds-val { fill: var(--text-primary); font-size: 13px; font-weight: 600;
+                  font-variant-numeric: tabular-nums; }
+@media (max-width: 600px) {
+  .chart.severity { min-width: 600px; }
+}
+
+/* The formula, step by step. */
+.steps { margin: 6px 0 0; padding-left: 22px; max-width: 900px; }
+.steps > li { margin: 0 0 16px; font-size: 14px; line-height: 1.55; color: var(--text-secondary); }
+.steps > li > strong { color: var(--text-primary); }
+.steps .fresh { margin-top: 8px; }
+.steps .score-table { max-width: 720px; margin-top: 8px; }
+.formula {
+  display: inline-block; margin: 8px 12px 0 0; padding: 6px 12px; border-radius: 8px;
+  background: var(--surface-0); border: 1px solid var(--border); color: var(--text-primary);
+  font-family: "Cambria Math", "STIX Two Math", Georgia, serif; font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.formula var { font-style: italic; }
+.formula sup, .formula sub { font-size: 0.72em; }
+.rules { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 8px; }
+.rule { font-size: 13.5px; color: var(--text-secondary); white-space: nowrap;
+        font-variant-numeric: tabular-nums; }
+
+/* Past seasons that look like this one. */
+.analogs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+           gap: 12px; margin: 4px 0 10px; }
+.analog { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+          background: var(--surface-0); }
+.analog p { margin: 4px 0 0; font-size: 13.5px; }
+.analog-head { display: flex; align-items: center; gap: 8px; }
+.analog-head .sw { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+.analog-name { font-weight: 650; font-size: 15px; }
+.analog-sub { color: var(--text-muted); font-size: 12.5px !important; }
+
+/* Neighborhood x season severity grid, and the per-neighborhood table. */
+.chart.sevgrid { max-width: 900px; }
+.sevgrid .odds-cell { fill: var(--sev); fill-opacity: 0.75; stroke: var(--border); stroke-width: 1; }
+.sevgrid .odds-cell.now { fill-opacity: 0.35; stroke: var(--text-muted); stroke-dasharray: 3 2; }
+.sevgrid .odds-val { font-size: 11.5px; }
+.sevgrid .col-head.strong { fill: var(--text-primary); font-weight: 650; }
+@media (max-width: 600px) { .chart.sevgrid { min-width: 600px; } }
+.sev-table tr[data-area] { cursor: pointer; }
+.sev-table tr[data-area]:hover td { background: var(--surface-0); }
+.sev-table tr.selected td { background: var(--surface-0); font-weight: 650; }
+.share { display: flex; align-items: center; gap: 8px; min-width: 150px; }
+.share-track { flex: 1; height: 8px; border-radius: 4px; background: var(--surface-0);
+               border: 1px solid var(--border); overflow: hidden; }
+.share-bar { height: 100%; background: var(--sev); }
